@@ -1,0 +1,11 @@
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Trending News</h5>
+    <ul class="list-unstyled">
+      <li *ngFor="let news of trendingNews">
+        <strong>{{ news.title }}</strong>
+        <p class="text-muted">{{ news.readers }} readers</p>
+      </li>
+    </ul>
+  </div>
+</div>

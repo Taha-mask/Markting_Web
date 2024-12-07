@@ -1,0 +1,71 @@
+/* Navbar overall styling */
+.navbar {
+  padding: 0.5rem 1.5rem;
+  background-color: #b9e4d3;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .container-fluid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Centered navigation tabs */
+.navbar-nav {
+  display: flex;
+  justify-content: center;
+}
+
+.navbar-nav .nav-link {
+  margin: 0 12px;
+  display: flex;
+  align-items: center;
+  color: #0f084b;
+  font-size: 0.9rem;
+}
+
+.navbar-nav .nav-link i {
+  margin-right: 5px;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #0f084b;
+  background-color: #a6cfd5;
+  border-radius: 5px;
+
+  box-shadow: 0 2px 6px rgba(10, 102, 194, 0.2);
+}
+
+/* Styling for the Search Bar */
+.search-bar {
+  width: 200px;
+  max-width: 100%;
+  margin-right: 15px;
+}
+
+.search-bar input {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  width: 100%;
+  transition: border-color 9s ease;
+}
+
+
+
+/* Profile picture styling */
+.profile-pic {
+  display: flex;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-pic img {
+  width: 100%;
+  height: auto;
+}

@@ -1,0 +1,67 @@
+.profile-sidebar {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cover-photo img {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.profile-info {
+  margin-top: -40px;
+}
+
+.profile-picture {
+  width: 80px;
+  height: 80px;
+  border: 3px solid white;
+}
+
+.stats p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.stats a {
+  color: #0a66c2;
+}
+
+.actions {
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+}
+
+.actions button {
+  font-size: 0.9rem;
+  color: #0a66c2;
+}
+
+.recent h6 {
+  font-size: 0.85rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.recent ul li a {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #0a66c2;
+  text-decoration: none;
+}
+
+.recent ul li a:hover {
+  color: #004182;
+}
+
+.recent ul li i {
+  margin-right: 5px;
+}
