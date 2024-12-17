@@ -2,25 +2,21 @@ import { Component } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ProfileSidebarComponent } from "../profile-sidebar/profile-sidebar.component";
+import { ProfileComponent } from '../profile/profile.component';
 
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProfileSidebarComponent],
+  imports: [CommonModule, FormsModule, ProfileComponent],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
-  providers: [DatePipe]
+  providers: [DatePipe],
 })
 export class FeedComponent {
-  // Profile image URL and dropdown visibility
-  profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg'; // Sample image URL
-  isDropdownVisible = false; // Control the dropdown visibility
-
-  // Toggle the visibility of the dropdown menu
-  toggleDropdown() {
-    this.isDropdownVisible = !this.isDropdownVisible;
-  }
+  profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg'; // Sample profile image
+  isDropdownVisible = false; // Control dropdown visibility
+  newComment: string = ''; // Input for comments
+  postContent: string = ''; // Input for new post content
 
   posts = [
     {
@@ -35,8 +31,8 @@ export class FeedComponent {
       isLiked: false,
       comments: [
         { username: 'Jane', text: 'Great post!' },
-        { username: 'Mike', text: 'Interesting thoughts.' }
-      ]
+        { username: 'Mike', text: 'Interesting thoughts.' },
+      ],
     },
     {
       username: 'Sara Smith',
@@ -50,12 +46,12 @@ export class FeedComponent {
       isLiked: true,
       comments: [
         { username: 'Tom', text: 'Nice one!' },
-        { username: 'Emma', text: 'Very inspiring.' }
-      ]
+        { username: 'Emma', text: 'Very inspiring.' },
+      ],
     },
     {
-      username: 'rashwan mahmoud',
-      profileImageUrl: 'https://randomuser.me/api/portraits/wome',
+      username: 'Rashwan Mahmoud',
+      profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg',
       timestamp: new Date(),
       content: 'Another post with no image!',
       imageUrl: '',
@@ -65,12 +61,15 @@ export class FeedComponent {
       isLiked: false,
       comments: [
         { username: 'Tom', text: 'Nice one!' },
-        { username: 'Emma', text: 'Very inspiring.' }
-      ]
-    }
+        { username: 'Emma', text: 'Very inspiring.' },
+      ],
+    },
   ];
 
-  newComment: string = '';  // Define the newComment property
+  // Toggle dropdown menu
+  toggleDropdown() {
+    this.isDropdownVisible = !this.isDropdownVisible;
+  }
 
   // Like a post
   likePost(post: any) {
@@ -82,29 +81,51 @@ export class FeedComponent {
     post.isLiked = !post.isLiked;
   }
 
+  // Toggle comments visibility
   toggleComments(post: any) {
     post.showComments = !post.showComments;
   }
 
+  // Share a post
   sharePost(post: any) {
     alert('Post shared!');
   }
 
-  // Toggle Edit mode
+  // Toggle edit mode
   toggleEdit(post: any) {
     post.isEditing = !post.isEditing;
   }
 
-  // Save the edited post content
+  // Save edited post
   savePost(post: any) {
     post.isEditing = false;
   }
 
   // Add a comment to a post
   addComment(post: any, commentText: string) {
-    if (commentText) {
+    if (commentText.trim()) {
       post.comments.push({ username: 'New User', text: commentText });
-      this.newComment = ''; // Clear the input after posting the comment
+      this.newComment = ''; // Clear input field
+    }
+  }
+
+  // Add a new post
+  addPost() {
+    if (this.postContent.trim()) {
+      const newPost = {
+        username: 'Current User', // Sample current user
+        profileImageUrl: this.profileImageUrl, // User's profile picture
+        timestamp: new Date(),
+        content: this.postContent,
+        imageUrl: '', // No image for simplicity
+        likes: 0,
+        showComments: false,
+        isEditing: false,
+        isLiked: false,
+        comments: [],
+      };
+      this.posts.unshift(newPost); // Add new post to the top
+      this.postContent = ''; // Clear input field
     }
   }
 }

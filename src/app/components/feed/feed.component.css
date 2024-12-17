@@ -62,8 +62,25 @@
   margin-right: 5px;
 }
 .profile-pic {
-  width: 50px;   /* Adjust the width of the profile picture */
-  height: 50px;  /* Adjust the height of the profile picture */
-  border-radius: 50%; /* Make it circular */
-  object-fit: cover; /* Ensures the image maintains its aspect ratio while filling the element */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
+.scrollable-content {
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.add-post{
+  width: 50%;
+}
+.btnpost
+{
+  background-color: black;
+  color: white;
+  padding: 7px 20px;
+  border: none;
+  border-radius: 10px;
+}
+

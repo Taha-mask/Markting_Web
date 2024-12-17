@@ -1,39 +1,46 @@
 /* Navbar overall styling */
 .navbar {
   padding: 0.5rem 1.5rem;
-  background-color: #b9e4d3;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #00000069;
+ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
 }
 
 .navbar .container-fluid {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
 }
 
 /* Centered navigation tabs */
 .navbar-nav {
   display: flex;
   justify-content: center;
+
 }
 
 .navbar-nav .nav-link {
-  margin: 0 12px;
+  margin: 0 0px;
   display: flex;
   align-items: center;
-  color: #0f084b;
+  color: #000000;
   font-size: 0.9rem;
+  border-radius: 10px;
+  padding: 10px 15px;
+
 }
 
 .navbar-nav .nav-link i {
   margin-right: 5px;
+
 }
 
 .navbar-nav .nav-link:hover {
-  color: #0f084b;
-  background-color: #a6cfd5;
-  border-radius: 5px;
-
+  color: #ffffff;
+  background-color: #000000;
+  border-radius: 10px;
+transition-delay: 50ms;
   box-shadow: 0 2px 6px rgba(10, 102, 194, 0.2);
 }
 
@@ -68,4 +75,105 @@
 .profile-pic img {
   width: 100%;
   height: auto;
+}
+.nav-profile-img{
+  width: 40px;
+  border-radius: 50%;
+  display: block;
+  cursor: pointer;
+  position: relative;
+}
+
+.online{
+  position: relative;
+}
+.online::after{
+  content: '';
+  width: 7px;
+  height: 7px;
+  border: 5px solid #41db51;
+  border-radius: 50%;
+  right: 0;
+  top: 0;
+  background: #41db51;
+  position: absolute;
+}
+.profile-menu-wrap{
+  position: absolute;
+  top: 70%;
+  right: 2%;
+  width: 320px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s;
+  display: none;
+
+
+}
+.profile-menu-wrap.open-menu{
+  max-height: 400px;
+  display: block;
+}
+.profile-menu{
+  background: #222;
+  color: #fff;
+  padding: 20px;
+  margin: 10px;
+
+
+}
+.user-info{
+  display: flex;
+  align-items: center;
+
+}
+.user-info img{
+  width: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+.user-info h4{
+  font-weight: 300;
+  margin-bottom: 0  px;
+}
+.user-info a{
+  color: #c9dbf8;
+  font-size: 13px;
+  margin-top: 0  px;
+
+}
+.profile-menu hr{
+  border: 0;
+  height: 1px;
+  width: 100%;
+  background: #fff;
+  margin: 15px 0 10px;
+
+}
+.profile-menu-link{
+  display: flex;
+  align-items: center;
+  color: #fff;
+  margin: 12px 0;
+  font-size: 14px;
+
+}
+.profile-menu-link p{
+  width: 100%;
+}
+.profile-menu-link img{
+  width: 35px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+.profile-menu-link span{
+  font-size: 10px;
+}
+
+#showMoreLink{
+  display: none;
+}
+
+a{
+  text-decoration: none;
 }
