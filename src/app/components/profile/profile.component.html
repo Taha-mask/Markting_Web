@@ -1,4 +1,5 @@
 <app-navbar></app-navbar>
+<div class="topPart">
 <div class="d-flex justify-content-center ">
   <!-- الصورة الرئيسية -->
   <img src="images/wallpaperflare.com_wallpaper (9).jpg" alt="Centered Image" class="img-fluid custom-image rounded rounded-4">
@@ -6,19 +7,38 @@
   <!-- الصورة الدائرية -->
   <img src="images/user-1.png" alt="Circle Image" class="profile-image">
 </div>
+<div class="followrs d-flex justify-content-between align-items-center pt-3">
+  <!-- Column 1 -->
+  <div class="text-center pe-4">
+    <p class="mb-0 fw-bold">FOLLOWING</p>
+    <p class="mb-0">54 MARKET</p>
+  </div>
+
+  <!-- Column 2 -->
+  <div class="text-center">
+    <p class="mb-0 fw-bold">FOLLOWING</p>
+    <p class="mb-0">54 MARKET</p>
+  </div>
+</div>
 
 <!-- الزر المضاف -->
 <div class="d-flex justify-content-center mt-4">
   <button class="btnchat px-5 py-2">
     <i class="bi bi-chat me-2"></i> Chat
   </button>
+
 </div>
 
-<div class="profile-info">
-  <h2 class="fw-semibold mb-0">{{profileName}}</h2>
-  <h5>{{userType}}</h5>
+<div  *ngFor="let use of user" class="profile-info ">
 
-  <div class="d-flex align-items-center">
+
+
+
+  <h2 class="fw-semibold mb-0">{{ use.username }}</h2>
+  <h5>{{ use.type}}</h5>
+
+
+  <div class="d-flex align-items-center pt-2 ">
     <!-- صور المستخدمين -->
     <div class="d-flex">
       <img
@@ -36,6 +56,7 @@
 
 </div>
 
+</div>
 
 
 
@@ -151,7 +172,7 @@
 </div>
 
 
-<div class="card p-4 shadow-sm rounded-4" style="max-width: 500px; margin: 80px 10px 0 80px; background-color: #DBDBDB;">
+<div class="card p-4 shadow-sm rounded-4" style="max-width: 500px; margin: 160px 10px 20px 80px; background-color: #DBDBDB;">
   <!-- Header -->
   <div class="mb-3">
     <h5 class="card-title">Information</h5>
@@ -167,30 +188,70 @@
   <!-- Add/Edit Bio Button -->
   <div class="d-flex justify-content-between mb-3">
     <button class="btn btn-dark m-auto mt-1 px-5 py-2" (click)="isEditingBio ? saveBio(bio) : toggleEditBio()">
-      {{ isEditingBio ? 'Save Bio' : 'Edit Bio' }}
+      {{ isEditingBio ? 'Add Bio' : 'Edit Bio' }}
     </button>
   </div>
 
   <!-- Information Section -->
   <div class="mb-3">
-    <p><i class="bi bi-shop me-2"></i> Al-Medan Store</p>
-    <p><i class="bi bi-geo-alt me-2"></i> Egypt, Assiut</p>
-    <p><i class="bi bi-telephone me-2"></i> 01120927249</p>
-    <p><i class="bi bi-envelope me-2"></i> taha.mahmoud.enggmail.com</p>
+    <p>
+      <i class="bi bi-shop me-2"></i>
+      <span *ngIf="!isEditingAddress">{{ address }}</span>
+      <input *ngIf="isEditingAddress" [(ngModel)]="address" class="form-control d-inline-block w-auto" />
+      <i *ngIf="!isEditingAddress" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditAddress()"></i>
+      <button *ngIf="isEditingAddress" class="btn btn-sm btn-primary ms-2" (click)="saveAddress(address)">Save</button>
+    </p>
+    <p>
+      <i class="bi bi-geo-alt me-2"></i>
+      <span *ngIf="!isEditingLocation">{{ location }}</span>
+      <input *ngIf="isEditingLocation" [(ngModel)]="location" class="form-control d-inline-block w-auto" />
+      <i *ngIf="!isEditingLocation" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditLocation()"></i>
+      <button *ngIf="isEditingLocation" class="btn btn-sm btn-primary ms-2" (click)="saveLocation(location)">Save</button>
+    </p>
+    <p>
+      <i class="bi bi-telephone me-2"></i>
+      <span *ngIf="!isEditingPhoneNumber">{{ phoneNumber }}</span>
+      <input *ngIf="isEditingPhoneNumber" [(ngModel)]="phoneNumber" class="form-control d-inline-block w-auto" />
+      <i *ngIf="!isEditingPhoneNumber" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditPhoneNumber()"></i>
+      <button *ngIf="isEditingPhoneNumber" class="btn btn-sm btn-primary ms-2" (click)="savePhoneNumber(phoneNumber)">Save</button>
+    </p>
+    <p>
+      <i class="bi bi-envelope me-2"></i>
+      <span *ngIf="!isEditingEmail">{{ email }}</span>
+      <input *ngIf="isEditingEmail" [(ngModel)]="email" class="form-control d-inline-block w-auto" />
+      <i *ngIf="!isEditingEmail" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditEmail()"></i>
+      <button *ngIf="isEditingEmail" class="btn btn-sm btn-primary ms-2" (click)="saveEmail(email)">Save</button>
+    </p>
   </div>
 
+<hr>
+
   <!-- Ratings and Views Section -->
-  <div class="d-flex justify-content-between align-items-center">
-    <div>
-      <span>4.5</span>
-      <i class="bi bi-star-fill text-warning"></i>
-      <i class="bi bi-star-fill text-warning"></i>
-      <i class="bi bi-star-fill text-warning"></i>
-      <i class="bi bi-star-fill text-warning"></i>
-      <i class="bi bi-star-half text-warning"></i>
-    </div>
-    <div>
-      <span class="text-muted">150 views</span>
-    </div>
+  <div class="d-flex align-items-center justify-content-center ">
+  <!-- الرقم -->
+  <span class="fw-semibold fs-2 me-2 align-middle mt-3" style="font-size: 2.5rem; line-height: 1; margin-bottom: -5px;">
+    {{ rating }}
+  </span>
+
+  <!-- النجوم -->
+  <div class="d-flex align-items-center ">
+    <!-- النجوم الممتلئة -->
+    <ng-container *ngFor="let star of fullStars">
+      <i class="bi bi-star-fill text-warning fs-4"></i>
+    </ng-container>
+
+    <!-- نصف النجم -->
+    <i *ngIf="hasHalfStar" class="bi bi-star-half text-warning fs-4"></i>
+
+    <!-- النجوم الفارغة -->
+    <ng-container *ngFor="let star of emptyStars">
+      <i class="bi bi-star text-warning fs-4"></i>
+    </ng-container>
   </div>
+
+
 </div>
+ <!-- عدد المشاهدات -->
+ <span class=" text-muted d-block text-center" style="font-size: 0.9rem; line-height: 1;">
+  {{ totalViews }} views
+</span>

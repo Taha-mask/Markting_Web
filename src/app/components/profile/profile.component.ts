@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from "../navbar/navbar.component";
+import { User } from '../../user';
 
 @Component({
   selector: 'app-profile',
@@ -28,14 +29,45 @@ export class ProfileComponent {
   }
 
 
-  profileName= 'Taha Mahmoud Ahmed'; // Sample profile name
-  userType = 'Markter'; // Sample user type
+  user: User[] = [
+    {
+      username: 'Taha Mahmoud Ahmed',
+      type: 'Markter',
+      profileImageUrl: 'images/user-1.jpg'
+    }];
+
   profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg'; // Sample profile image
   isDropdownVisible = false; // Control dropdown visibility
   newComment: string = ''; // Input for comments
   postContent: string = ''; // Input for new post content
   bio: string = '';
-  isEditingBio: boolean = false;
+  isEditingBio: boolean = true; // Initially true to show textarea
+
+  address: string = 'Al-Medan Store';
+  location: string = 'Egypt, Assiut';
+  phoneNumber: string = '01120927249';
+  email: string = 'taha.mahmoud.enggmail.com';
+
+  isEditingAddress: boolean = false;
+  isEditingLocation: boolean = false;
+  isEditingPhoneNumber: boolean = false;
+  isEditingEmail: boolean = false;
+
+  rating: number = 4.5; // التقييم
+  totalViews: number = 150; // عدد المشاهدات
+
+  // إنشاء مصفوفة للنجوم
+  get fullStars(): number[] {
+    return Array(Math.floor(this.rating)).fill(0); // نجوم ممتلئة
+  }
+
+  get hasHalfStar(): boolean {
+    return this.rating % 1 !== 0; // نجم نصف
+  }
+
+  get emptyStars(): number[] {
+    return Array(5 - Math.ceil(this.rating)).fill(0); // نجوم فارغة
+  }
 
   posts = [
     {
@@ -60,9 +92,9 @@ export class ProfileComponent {
       content: 'Another post with no image!',
       imageUrl: 'images/post-image-3.png',
       likes: 8,
-      showComments: true,
-      isEditing: true,
-      isLiked: true,
+      showComments: false,
+      isEditing: false,
+      isLiked: false,
       comments: [
         { username: 'Tom', text: 'Nice one!' },
         { username: 'Emma', text: 'Very inspiring.' },
@@ -153,7 +185,54 @@ export class ProfileComponent {
   }
 
   saveBio(newBio: string) {
-    this.bio = newBio;
-    this.isEditingBio = false;
+    if (newBio.trim()) {
+      this.bio = newBio;
+      this.isEditingBio = false;
+    }
+  }
+
+  toggleEditAddress() {
+    this.isEditingAddress = !this.isEditingAddress;
+  }
+
+  toggleEditLocation() {
+    this.isEditingLocation = !this.isEditingLocation;
+  }
+
+  toggleEditPhoneNumber() {
+    this.isEditingPhoneNumber = !this.isEditingPhoneNumber;
+  }
+
+  toggleEditEmail() {
+    this.isEditingEmail = !this.isEditingEmail;
+  }
+
+  saveAddress(newAddress: string) {
+    if (newAddress.trim()) {
+
+      this.address = newAddress;
+      this.isEditingAddress = false;
+    }
+  }
+
+  saveLocation(newLocation: string) {
+    if (newLocation.trim()) {
+      this.location = newLocation;
+      this.isEditingLocation = false;
+    }
+  }
+
+  savePhoneNumber(newPhoneNumber: string) {
+    if (newPhoneNumber.trim()) {
+      this.phoneNumber = newPhoneNumber;
+      this.isEditingPhoneNumber = false;
+    }
+  }
+
+  saveEmail(newEmail: string) {
+    if (newEmail.trim()) {
+      this.email = newEmail;
+      this.isEditingEmail = false;
+    }
   }
 }

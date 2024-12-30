@@ -72,6 +72,14 @@
   padding-right: 10px;
   margin-right: 70px;
   margin-top: 80px;
+  border-radius: 10px;
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.scrollable-content::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
 .add-post{
@@ -147,4 +155,18 @@
 h2{
   color: black;
 
+}
+.topPart
+{
+  margin-bottom: 80px;
+}
+
+/* Enable smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+.followrs{
+  position: absolute;
+  right: 370px;
+  
 }
