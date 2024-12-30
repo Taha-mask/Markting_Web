@@ -168,5 +168,23 @@ html {
 .followrs{
   position: absolute;
   right: 370px;
-  
+
+}
+.bi-pencil-square{
+  position: absolute;
+  right: 20px;
+}
+.saveEdit{
+  font: 10px;
+
+background-color: black;
+  padding: 5px 10px;
+  margin-left: 80px;
+  border-radius: 10px;
+  color: white;
+}
+.inputEdit
+{
+  border: none;
+width: 60%;
 }

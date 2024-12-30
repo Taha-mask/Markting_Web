@@ -1,11 +1,11 @@
 <app-navbar></app-navbar>
 <div class="topPart">
-<div class="d-flex justify-content-center ">
-  <!-- الصورة الرئيسية -->
+<div *ngFor="let use of user" class="d-flex justify-content-center ">
+  <!-- cover image-->
   <img src="images/wallpaperflare.com_wallpaper (9).jpg" alt="Centered Image" class="img-fluid custom-image rounded rounded-4">
 
   <!-- الصورة الدائرية -->
-  <img src="images/user-1.png" alt="Circle Image" class="profile-image">
+  <img [src]="use.profileImageUrl" alt="Circle Image" class="profile-image">
 </div>
 <div class="followrs d-flex justify-content-between align-items-center pt-3">
   <!-- Column 1 -->
@@ -175,18 +175,18 @@
 <div class="card p-4 shadow-sm rounded-4" style="max-width: 500px; margin: 160px 10px 20px 80px; background-color: #DBDBDB;">
   <!-- Header -->
   <div class="mb-3">
-    <h5 class="card-title">Information</h5>
+    <h3 class="card-title mb-3">Information</h3>
     <div *ngIf="isEditingBio">
       <textarea [(ngModel)]="bio" class="form-control" placeholder="Write Something..." maxlength="100"></textarea>
       <small class="text-muted">{{ 100 - bio.length }} characters remaining</small>
     </div>
     <div *ngIf="!isEditingBio">
-      <p>{{ bio }}</p>
+      <p class="text-center">{{ bio }}</p>
     </div>
   </div>
 
   <!-- Add/Edit Bio Button -->
-  <div class="d-flex justify-content-between mb-3">
+  <div class="d-flex justify-content-between mb-4">
     <button class="btn btn-dark m-auto mt-1 px-5 py-2" (click)="isEditingBio ? saveBio(bio) : toggleEditBio()">
       {{ isEditingBio ? 'Add Bio' : 'Edit Bio' }}
     </button>
@@ -197,30 +197,30 @@
     <p>
       <i class="bi bi-shop me-2"></i>
       <span *ngIf="!isEditingAddress">{{ address }}</span>
-      <input *ngIf="isEditingAddress" [(ngModel)]="address" class="form-control d-inline-block w-auto" />
-      <i *ngIf="!isEditingAddress" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditAddress()"></i>
-      <button *ngIf="isEditingAddress" class="btn btn-sm btn-primary ms-2" (click)="saveAddress(address)">Save</button>
+      <input *ngIf="isEditingAddress" [(ngModel)]="address" class="inputEdit d-inline-block bg-transparent border-bottom border-black " />
+      <i *ngIf="!isEditingAddress" class="bi bi-pencil-square ms-2 " style="cursor: pointer;" (click)="toggleEditAddress()"></i>
+      <button *ngIf="isEditingAddress" class="saveEdit " (click)="saveAddress(address)">Save</button>
     </p>
     <p>
       <i class="bi bi-geo-alt me-2"></i>
       <span *ngIf="!isEditingLocation">{{ location }}</span>
-      <input *ngIf="isEditingLocation" [(ngModel)]="location" class="form-control d-inline-block w-auto" />
+      <input *ngIf="isEditingLocation" [(ngModel)]="location" class="inputEdit d-inline-block  bg-transparent border-bottom border-black " />
       <i *ngIf="!isEditingLocation" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditLocation()"></i>
-      <button *ngIf="isEditingLocation" class="btn btn-sm btn-primary ms-2" (click)="saveLocation(location)">Save</button>
+      <button *ngIf="isEditingLocation" class="saveEdit" (click)="saveLocation(location)">Save</button>
     </p>
     <p>
       <i class="bi bi-telephone me-2"></i>
       <span *ngIf="!isEditingPhoneNumber">{{ phoneNumber }}</span>
-      <input *ngIf="isEditingPhoneNumber" [(ngModel)]="phoneNumber" class="form-control d-inline-block w-auto" />
+      <input *ngIf="isEditingPhoneNumber" [(ngModel)]="phoneNumber" class="inputEdit d-inline-block  bg-transparent border-bottom border-black" />
       <i *ngIf="!isEditingPhoneNumber" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditPhoneNumber()"></i>
-      <button *ngIf="isEditingPhoneNumber" class="btn btn-sm btn-primary ms-2" (click)="savePhoneNumber(phoneNumber)">Save</button>
+      <button *ngIf="isEditingPhoneNumber" class="saveEdit" (click)="savePhoneNumber(phoneNumber)">Save</button>
     </p>
     <p>
       <i class="bi bi-envelope me-2"></i>
       <span *ngIf="!isEditingEmail">{{ email }}</span>
-      <input *ngIf="isEditingEmail" [(ngModel)]="email" class="form-control d-inline-block w-auto" />
+      <input *ngIf="isEditingEmail" [(ngModel)]="email" class="inputEdit d-inline-block w-70 bg-transparent border-bottom border-black" />
       <i *ngIf="!isEditingEmail" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditEmail()"></i>
-      <button *ngIf="isEditingEmail" class="btn btn-sm btn-primary ms-2" (click)="saveEmail(email)">Save</button>
+      <button *ngIf="isEditingEmail" class="saveEdit" (click)="saveEmail(email)">Save</button>
     </p>
   </div>
 

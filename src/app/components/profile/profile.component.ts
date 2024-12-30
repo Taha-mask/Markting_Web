@@ -33,7 +33,7 @@ export class ProfileComponent {
     {
       username: 'Taha Mahmoud Ahmed',
       type: 'Markter',
-      profileImageUrl: 'images/user-1.jpg'
+      profileImageUrl: 'images/user-1.png'
     }];
 
   profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg'; // Sample profile image
