@@ -12,10 +12,30 @@ import { NavbarComponent } from "../navbar/navbar.component";
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent {
+
+  users = [
+    { imageUrl: 'images/WhatsApp Image 2024-11-19 at 06.28.34_f5d6e241.jpg' },
+    { imageUrl: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg' },
+    { imageUrl: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
+    { imageUrl: 'images/dabe49c2-2037-4968-ab78-78f2d9341d1f.jpg' },
+    { imageUrl: 'images/f983f47c-90a7-415f-bcfd-bb489ab674b7.jpg' },
+    { imageUrl: 'images/user-3.png' }, // الصور الإضافية
+  ];
+
+  // دالة عرض المزيد (اختياري)
+  viewMore() {
+    alert('View more users!');
+  }
+
+
+  profileName= 'Taha Mahmoud Ahmed'; // Sample profile name
+  userType = 'Markter'; // Sample user type
   profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg'; // Sample profile image
   isDropdownVisible = false; // Control dropdown visibility
   newComment: string = ''; // Input for comments
   postContent: string = ''; // Input for new post content
+  bio: string = '';
+  isEditingBio: boolean = false;
 
   posts = [
     {
@@ -126,5 +146,14 @@ export class ProfileComponent {
       this.posts.unshift(newPost); // Add new post to the top
       this.postContent = ''; // Clear input field
     }
+  }
+
+  toggleEditBio() {
+    this.isEditingBio = !this.isEditingBio;
+  }
+
+  saveBio(newBio: string) {
+    this.bio = newBio;
+    this.isEditingBio = false;
   }
 }

@@ -84,6 +84,7 @@
   padding: 7px 20px;
   border: none;
   border-radius: 10px;
+
 }
 
 
@@ -113,17 +114,37 @@
 }
 
 /* تخصيص الزر */
-.btn-primary {
+.btnchat {
+  background-color: black;
   font-size: 1rem; /* حجم النص */
   padding: 12px 24px; /* المسافة داخل الزر */
   border-radius: 8px; /* حواف دائرية للزر */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* ظل خفيف */
   transition: all 0.3s ease; /* تأثير الحركة */
+  color: white;
+  border-radius: 25px;
+  position: absolute;
+  right: 80px;
 }
 
 /* تأثير الزر عند التحويم */
-.btn-primary:hover {
-  background-color: #0056b3; /* تغيير اللون عند التحويم */
+.btn-chat:hover {
+  background-color: #0000004d; /* تغيير اللون عند التحويم */
   transform: translateY(-2px); /* حركة طفيفة للأعلى */
 }
 
+.main
+{
+  background-color: #DBDBDB ;
+  padding: 20px;
+  border-radius: 20px;
+}
+.profile-info{
+  position: absolute;
+  left: 370px;
+  top: 300px;
+}
+h2{
+  color: black;
+
+}
