@@ -16,7 +16,7 @@
   color: #333; /* لون متناسق */
   letter-spacing: 0.5px; /* تعديل التباعد بين الحروف */
 
-
+margin-left: 5%;
 }
 
 .navbar-brand img {
@@ -54,32 +54,39 @@
 
 /* Gradient Button Styling */
 .btn-gradient {
-  background: linear-gradient(to right, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  background: linear-gradient(to right, #D16BA5, #86A8E7, #5FFBF1);
   color: #fff;
   border: none;
-  font-weight: bold;
-  font-size: 14px;
+  font-size: 13px;
   transition: 0.3s ease-in-out;
-  margin-right: 200px;
+  width: 150px;
+  height: 48px;
+  margin-left: 0px;
+
 }
 
 .btn-gradient:hover {
-  background: linear-gradient(to left,#f09433, #e6683c, #dc2743, #cc2366, #bc1888);
   transform: scale(1.05);
+  transition: 3ms;
 }
 
 /* Icons Styling */
 .icon {
   position: relative;
   cursor: pointer;
+  border: 1px solid #959595;
+  border-radius: 100%;
+  padding: 5px;
+  height: 45px;
+  width: 35px;
 }
 
 .icon .badge-dot {
   position: absolute;
   top: -2px;
   right: -2px;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   background-color: #ff3e3e;
   border: 2px solid #fff;
   border-radius: 50%;
@@ -88,4 +95,18 @@
 /* Adjust spacing between sections */
 .d-flex.align-items-center.gap-4 {
   gap: 20px;
+}
+.search-container {
+  width: 100%;
+  max-width: 400px;
+  background-color: #fff;
+}
+
+.search-container input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.search-container i {
+  font-size: 1.2rem;
 }

@@ -1,12 +1,11 @@
-
-
 <div class="container-fluid ms-0 pe-0">
   <div class="row">
     <!-- Left Sidebar -->
-    <div class="col-md-3 col-12">
-      <div *ngFor="let use of user" class="sidebar text-center align-items-left">
+    <div class="col-md-3 col-12 position-relative mt-4">
+      <div class="sidebar-line"></div>
+      <div *ngFor="let use of user" class="sidebar text-center align-items-left m-auto">
         <!-- User Profile -->
-        <div class="py-4">
+        <div class="py-3 my-auto">
           <img [src]="use.profileImageUrl" alt="Profile Picture" class="proimg rounded-circle mb-2" width="80" />
           <h5 class="mb-0">{{ use.username }}</h5>
           <small>{{ use.type }}</small>
@@ -27,27 +26,34 @@
         </div>
 
         <!-- Navigation Menu -->
-        <nav class="nav flex-column px-1">
+        <nav class="nav flex-column px-1 my-2">
           <a href="#" class="nav-link active d-flex align-items-center py-2">
+            <span class="horizontal-line"></span>
             <i class="bi bi-house-door me-2"></i> Feed
           </a>
           <a href="#" class="nav-link d-flex align-items-center py-2">
+            <span class="horizontal-line-hover"></span>
             <i class="bi bi-compass me-2"></i> Explore
           </a>
           <a href="#" class="nav-link d-flex align-items-center py-2">
+            <span class="horizontal-line-hover"></span>
             <i class="bi bi-bookmark me-2"></i> My Favorite
           </a>
           <a href="#" class="nav-link d-flex align-items-center py-2">
+            <span class="horizontal-line-hover"></span>
             <i class="bi bi-chat-dots me-2"></i> Direct
           </a>
           <a href="#" class="nav-link d-flex align-items-center py-2">
+            <span class="horizontal-line-hover"></span>
             <i class="bi bi-bar-chart me-2"></i> Stats
           </a>
           <a href="#" class="nav-link d-flex align-items-center py-2">
+            <span class="horizontal-line-hover"></span>
             <i class="bi bi-gear me-2"></i> Settings
           </a>
-          <a href="#" class="nav-link text-danger d-flex align-items-center py-2">
-            <i class="bi bi-box-arrow-left me-2"></i> Log Out
+          <a href="#" class="nav-link text-danger d-flex align-items-center py-2 mt-3">
+            <span class="horizontal-line-hover"></span>
+            <i class="bi bi-box-arrow-left me-2 "></i> Log Out
           </a>
         </nav>
       </div>
@@ -58,7 +64,7 @@
       <div class="container mt-4 mb-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="fw-bold">Stories</h5>
+          <h5 class="fw-bold">Advertisement </h5>
           <a href="#" class="text-decoration-none text-dark">
             Watch All <i class="bi bi-chevron-right"></i>
           </a>
@@ -78,7 +84,7 @@
             >
               <i class="bi bi-plus-lg fs-2"></i>
             </div>
-            <small class="d-block mt-1">Add Story</small>
+            <small class="d-block mt-1">Add Ad</small>
           </div>
 
           <!-- User Stories -->
@@ -101,11 +107,11 @@
 
           <!--addaion button-->
 
-            
+
 
       <!-- new postes-->
-      <div class="card mb-4" *ngFor="let post of posts">
-        <div class="card-body">
+      <div class="card mb-4 " *ngFor="let post of posts">
+        <div class="card-body my-4">
 
           <!-- User Info -->
           <div class="d-flex align-items-center mb-3">
@@ -150,21 +156,35 @@
           <!-- Comments Section -->
           <div *ngIf="post.showComments" class="mt-3">
             <hr>
-            <h5 class="fw-bold mb-4">Comments</h5>
-            <div  *ngFor="let comment of post.comments" class="mb-2">
+            <h5 class="fw-bold mb-3 ">Comments</h5>
+            <div  *ngFor="let comment of post.comments" class="mb-2 ms-4">
               <strong *ngFor="let use of user" >{{ use.username}}</strong>: {{ comment.text }}
             </div>
-            <div class="d-flex align-items-center mt-2">
+            <div *ngFor="let use of user" class="comment-box d-flex align-items-center p-2  ">
+              <!-- User Avatar -->
+              <img
+                [src]="use.profileImageUrl"
+                alt="User Avatar"
+                class="rounded-circle avatar"
+              />
+              <!-- Input Field -->
               <input
                 type="text"
                 [(ngModel)]="newComment"
-                class="form-control form-control-sm"
-                placeholder="Write a comment..."
+                class="form-control mx-2 comment-input"
+                placeholder="Write your comment..."
               />
-              <button class="btn btn-sm btn-primary ms-2" (click)="addComment(post, newComment)">
-                Send
-              </button>
+              <!-- Action Icons -->
+              <div class="icons d-flex align-items-center">
+                <i class="bi bi-paperclip mx-2"></i>
+                <i class="bi bi-image mx-2"></i>
+                <i class="bi bi-emoji-smile mx-2"></i>
+                <i class="bi bi-send mx-2" (click)="addComment(post, newComment)"></i>
+
+              </div>
+              <!-- Submit Icon -->
             </div>
+
           </div>
         </div>
       </div>
@@ -188,15 +208,15 @@
         <!-- Suggestions for You Section -->
         <div>
           <h5>Suggestions for you</h5>
-          <div *ngFor="let user of usersFol" class="d-flex align-items-center justify-content-between border-bottom py-2">
+          <div *ngFor="let user of usersFol" class="d-flex align-items-center justify-content-between border-bottom py-1">
             <div class="d-flex align-items-center">
-              <img src="https://via.placeholder.com/40" class="rounded-circle me-3" alt="User" />
+              <img src="https://via.placeholder.com/40" class="rounded-circle me-3 " alt="User" />
               <div>
                 <p class="mb-0">{{ user.name }}</p>
                 <small class="text-muted">{{ user.location }}</small>
               </div>
             </div>
-            <button class="btn btn-primary btn-sm" (click)="followUser(user)">Follow</button>
+            <button class="btn btn-primary btn-sm ms-0"  (click)="followUser(user)">Follow</button>
           </div>
         </div>
       </div>

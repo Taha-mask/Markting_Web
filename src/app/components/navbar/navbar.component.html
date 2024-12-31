@@ -1,31 +1,42 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sirin+Stencil&display=swap" rel="stylesheet">
+
 <nav class="navbar navbar-expand-lg bg-white shadow-sm px-4">
   <div class="container-fluid d-flex align-items-center">
     <!-- Brand Logo -->
-    <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
+    <a class="navbar-brand d-flex align-items-center fw-bold " href="#">
       <img src="images/image.png" alt="Brand Logo" width="30" class="me-2" />
       <span class="brand-name">BrandIt</span>
     </a>
 
     <!-- Search Bar -->
-    <div class="search-bar d-flex align-items-center mx-4 flex-grow-1">
+    <div class="search-container d-flex align-items-center border rounded-pill px-3 py-1 me-0">
+      <!-- Icon: Search -->
+      <i class="bi bi-search text-muted me-0"></i>
+      <!-- Input -->
       <input
         type="text"
-        class="form-control rounded-pill shadow-sm"
+        class="form-control border-0"
         placeholder="Search"
+        aria-label="Search"
       />
-      <i class="bi bi-mic ms-2 text-muted"></i>
-    </div>
+      <!-- Icon: Voice -->
+      <i class="bi bi-mic text-muted ms-2"></i>
 
-    <!-- Right Section -->
-    <div class="d-flex align-items-center gap-4">
+
+    </div>
+    <div class="d-flex align-items-center gap-4 ms-0" >
       <!-- Create New Post Button -->
-      <button class="btn btn-gradient rounded-pill px-4 py-2">
+      <button class="btn btn-gradient rounded-pill px-2 py-2 me-5">
         + Create a new post
       </button>
+</div>
 
+    <!-- Right Section -->
       <!-- Icons -->
-      <div class="d-flex align-items-center gap-3">
-        <div class="icon position-relative">
+      <div class="d-flex align-items-center gap-4">
+        <div class="icon position-relative ">
           <i class="bi bi-send fs-5"></i>
           <span class="badge-dot"></span>
         </div>
@@ -35,6 +46,6 @@
         </div>
         <i class="bi bi-list fs-4"></i>
       </div>
-    </div>
+
   </div>
 </nav>

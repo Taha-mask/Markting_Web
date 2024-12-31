@@ -87,9 +87,9 @@ export class FeedComponent {
       content: 'Another post with no image!',
       imageUrl: 'images/post-image-3.png',
       likes: 8,
-      showComments: true,
-      isEditing: true,
-      liked: true,
+      showComments: false,
+      isEditing: false,
+      liked: false,
       saved: false,
       comments: [
         { username: 'Tom', text: 'Nice one!' },
@@ -152,7 +152,7 @@ export class FeedComponent {
   // Add a comment to a post
   addComment(post: any, commentText: string) {
     if (commentText.trim()) {
-      post.comments.push({ username: 'New User', text: commentText });
+      post.comments.push({ username: 'Current User', text: commentText });
       this.newComment = ''; // Clear input field
     }
   }
