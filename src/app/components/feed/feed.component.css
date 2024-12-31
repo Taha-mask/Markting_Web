@@ -70,6 +70,13 @@
   max-height: 80vh;
   overflow-y: auto;
   padding-right: 10px;
+  overflow-x: hidden; /* Ensure horizontal overflow is hidden */
+
+
+  min-height: 100vh; /* اجعل الحاوية تملأ الشاشة */
+  display: flex;
+  flex-direction: column; /* لتوزيع المحتوى بشكل عمودي */
+
 }
 
 .add-post{
@@ -140,4 +147,27 @@
 }
 .leftside{
   width: 30%;
+}
+
+
+
+
+
+
+
+
+
+
+.risaide{
+  width: 23%;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 10px;
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.risaide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }

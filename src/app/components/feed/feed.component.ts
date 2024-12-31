@@ -8,7 +8,7 @@ import { User } from '../../user';
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProfileComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
   providers: [DatePipe],

@@ -1,14 +1,13 @@
-<div class="container ms-0 ">
-
+<div class="container-fluid ms-0 pe-0">
   <div class="row">
     <!-- Left Sidebar -->
-    <div class="col-md- col-12 d-flex  me-0 w-auto">
-      <div *ngFor="let use of user" class="sidebar text-center align-items-left" style="width: 30%;">
+    <div class="col-md-3 col-12">
+      <div *ngFor="let use of user" class="sidebar text-center align-items-left">
         <!-- User Profile -->
         <div class="py-4">
           <img [src]="use.profileImageUrl" alt="Profile Picture" class="rounded-circle mb-2" width="80" />
-          <h5 class="mb-0">{{use.username}}</h5>
-          <small>{{use.type}}</small>
+          <h5 class="mb-0">{{ use.username }}</h5>
+          <small>{{ use.type }}</small>
           <div class="d-flex justify-content-around text-center py-3">
             <div>
               <small class="text-muted">Posts</small>
@@ -23,7 +22,7 @@
               <h6 class="mb-0">618</h6>
             </div>
           </div>
-
+        </div>
 
         <!-- Navigation Menu -->
         <nav class="nav flex-column px-1">
@@ -53,7 +52,7 @@
     </div>
 
     <!-- Main Content (Feed) -->
-    <div class="col-md-7 col-12 scrollable-content">
+    <div class="col-md-6 col-12 scrollable-content">
       <div class="container mt-4 mb-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -87,7 +86,7 @@
           >
             <div
               class="rounded-circle story-frame"
-              style="width: 70px; height: 70px; background-image: url({{ user.image }}); background-size: cover; background-position: center;"
+              [ngStyle]="{'width': '70px', 'height': '70px', 'background-image': 'url(' + user.image + ')', 'background-size': 'cover', 'background-position': 'center'}"
             >
             </div>
             <small class="d-block mt-1">{{ user.name }}</small>
@@ -201,34 +200,34 @@
     </div>
 
     <!-- Right Sidebar -->
-    <div class="container mt-4 col-md-2 col-12 w-auto ms-0">
-      <!-- Trending Feeds Section -->
-      <div class="mb-4  me-0">
-        <h5>Trending Feeds</h5>
-        <div class="d-flex justify-content-start flex-wrap">
-          <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 1" />
-          <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 2" />
-          <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 3" />
-          <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 4" />
-        </div>
-      </div>
-
-      <!-- Suggestions for You Section -->
-      <div>
-        <h5>Suggestions for you</h5>
-        <div *ngFor="let user of usersFol" class="d-flex align-items-center justify-content-between border-bottom py-2">
-          <div class="d-flex align-items-center">
-            <img
-              src="https://via.placeholder.com/40"
-              class="rounded-circle me-3"
-              alt="User"
-            />
-            <div>
-              <p class="mb-0">{{ user.name }}</p>
-              <small class="text-muted">{{ user.location }}</small>
-            </div>
+    <div class="risaide col-md-2 col-12 p-0 mt-5">
+      <div class="position-sticky" style="top: 20px;">
+        <!-- Trending Feeds Section -->
+        <div class="mb-4">
+          <h5>Trending Feeds</h5>
+          <div class="d-flex justify-content-start flex-wrap">
+            <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 1" />
+            <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 2" />
+            <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 3" />
+            <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 4" />
           </div>
-          <button class="btn btn-primary btn-sm" (click)="followUser(user)">Follow</button>
+        </div>
+
+        <!-- Suggestions for You Section -->
+        <div>
+          <h5>Suggestions for you</h5>
+          <div *ngFor="let user of usersFol" class="d-flex align-items-center justify-content-between border-bottom py-2">
+            <div class="d-flex align-items-center">
+              <img src="https://via.placeholder.com/40" class="rounded-circle me-3" alt="User" />
+              <div>
+                <p class="mb-0">{{ user.name }}</p>
+                <small class="text-muted">{{ user.location }}</small>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" (click)="followUser(user)">Follow</button>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
