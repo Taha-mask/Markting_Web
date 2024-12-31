@@ -17,15 +17,5 @@ export class NavbarComponent {
 
 
 
-  @ViewChild('profileMenu') profileMenu!: ElementRef;
-
-  constructor(private router: Router) {}
-
-  // دالة لتبديل حالة القائمة
-  toggleMenu(): void {
-    if (this.profileMenu) {
-      this.profileMenu.nativeElement.classList.toggle("open-menu");
-    }
-  }
 }
 

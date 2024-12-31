@@ -73,7 +73,8 @@ export class FeedComponent {
       likes: 15,
       showComments: false,
       isEditing: false,
-      isLiked: false,
+      liked: false,
+      saved: false,
       comments: [
         { username: 'Jane', text: 'Great post!' },
         { username: 'Mike', text: 'Interesting thoughts.' },
@@ -88,7 +89,8 @@ export class FeedComponent {
       likes: 8,
       showComments: true,
       isEditing: true,
-      isLiked: true,
+      liked: true,
+      saved: false,
       comments: [
         { username: 'Tom', text: 'Nice one!' },
         { username: 'Emma', text: 'Very inspiring.' },
@@ -103,7 +105,8 @@ export class FeedComponent {
       likes: 8,
       showComments: false,
       isEditing: false,
-      isLiked: false,
+      liked: false,
+      saved: false,
       comments: [
         { username: 'Tom', text: 'Nice one!' },
         { username: 'Emma', text: 'Very inspiring.' },
@@ -166,7 +169,8 @@ export class FeedComponent {
         likes: 0,
         showComments: false,
         isEditing: false,
-        isLiked: false,
+        liked: false,
+        saved: false,
         comments: [],
       };
       this.posts.unshift(newPost); // Add new post to the top
@@ -195,5 +199,14 @@ export class FeedComponent {
 
   onMouseUp() {
     this.isDragging = false;
+  }
+
+  toggleLike(post: any) {
+    post.liked = !post.liked;
+    post.likes += post.liked ? 1 : -1;
+  }
+
+  toggleSave(post: any) {
+    post.saved = !post.saved;
   }
 }

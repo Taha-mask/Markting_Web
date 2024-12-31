@@ -147,25 +147,34 @@
 }
 .leftside{
   width: 30%;
+  background-color: #ffffff;
+  border-right: 1px solid #ddd;
+  height: 100vh;
+  padding-left: 20px;
 }
+.proimg{
 
-
-
-
-
-
-
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  z-index: -1;
+}
 
 
 
 .risaide{
   width: 23%;
-  max-height: 80vh;
-  overflow-y: auto;
-  padding-right: 10px;
+
   /* Hide scrollbar for Chrome, Safari and Opera */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* IE and Edge */
+  min-height: 100vh; /* اجعل الحاوية تملأ الشاشة */
+  display: flex;
+  flex-direction: column; /* لتوزيع المحتوى بشكل عمودي */
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 10px;
+  overflow-x: hidden; /* Ensure horizontal overflow is hidden */
+
+
 }
 
 .risaide::-webkit-scrollbar {

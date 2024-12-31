@@ -1,92 +1,40 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-  <div class="container-fluid">
+<nav class="navbar navbar-expand-lg bg-white shadow-sm px-4">
+  <div class="container-fluid d-flex align-items-center">
     <!-- Brand Logo -->
-    <a class="navbar-brand" href="#">
-      <img src="images/north.png" alt="Brand Logo" height="30">
-      Marketing
+    <a class="navbar-brand d-flex align-items-center fw-bold" href="#">
+      <img src="images/image.png" alt="Brand Logo" width="30" class="me-2" />
+      <span class="brand-name">BrandIt</span>
     </a>
 
-    <!-- Toggler for mobile view -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <!-- Search Bar -->
+    <div class="search-bar d-flex align-items-center mx-4 flex-grow-1">
+      <input
+        type="text"
+        class="form-control rounded-pill shadow-sm"
+        placeholder="Search"
+      />
+      <i class="bi bi-mic ms-2 text-muted"></i>
+    </div>
 
-    <!-- Navigation Links -->
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav mx-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="bi bi-house-door"></i> Home</a> <!-- Feed/Home icon -->
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="bi bi-person-bounding-box"></i> My Network</a> <!-- Network icon -->
-        </li>
-        <!-- Changed Jobs tab to Reels -->
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="bi bi-film"></i> Reels</a> <!-- Reels icon -->
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="bi bi-chat-dots"></i> Messaging</a> <!-- Messaging icon -->
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="bi bi-bell"></i> Notifications</a> <!-- Notifications icon -->
-        </li>
-      </ul>
+    <!-- Right Section -->
+    <div class="d-flex align-items-center gap-4">
+      <!-- Create New Post Button -->
+      <button class="btn btn-gradient rounded-pill px-4 py-2">
+        + Create a new post
+      </button>
 
-      <!-- Search Bar -->
-      <div class="search-bar ms-3">
-        <input type="text" class="form-control" placeholder="Search for anything">
-      </div>
-
-
-
-      <div class="navbar-right">
-        <div class="online">
-          <img src="images/user-1.png" class="nav-profile-img" (click)="toggleMenu()">
+      <!-- Icons -->
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon position-relative">
+          <i class="bi bi-send fs-5"></i>
+          <span class="badge-dot"></span>
         </div>
-      </div>
-
-
-<!-- قائمة الملف الشخصي -->
-<div class="profile-menu-wrap " #profileMenu>
-  <div class="profile-menu rounded rounded-4  ">
-    <div class="user-info ">
-      <img src="images/user-1.png">
-      <div>
-        <h4>John Doe</h4>
-        <a href="#" >See your profile</a>
+        <div class="icon position-relative">
+          <i class="bi bi-bell fs-5"></i>
+          <span class="badge-dot"></span>
+        </div>
+        <i class="bi bi-list fs-4"></i>
       </div>
     </div>
-    <hr>
-    <a href="#" class="profile-menu-link align-items-center justify-content-center">
-      <img src="images/feedback.png">
-      <p >Give Feedback</p>
-      <span>></span>
-    </a>
-    <a href="#" class="profile-menu-link">
-      <img src="images/setting.png">
-      <p>Settings & Privacy</p>
-      <span>></span>
-    </a>
-    <a href="#" class="profile-menu-link">
-      <img src="images/help.png">
-      <p>Help & Support</p>
-      <span>></span>
-    </a>
-    <a href="#" class="profile-menu-link">
-      <img src="images/display.png">
-      <p>Display & Accessibility</p>
-      <span>></span>
-    </a>
-    <a href="#" class="profile-menu-link">
-      <img src="images/logout.png">
-      <p>Logout</p>
-      <span>></span>
-    </a>
   </div>
-</div>
-
-
-      </div>
-    </div>
 </nav>
-

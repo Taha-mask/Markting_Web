@@ -20,4 +20,21 @@ describe('FeedComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should toggle like', () => {
+    const initialLikes = component.posts[0].likes;
+    component.toggleLike(component.posts[0]);
+    expect(component.posts[0].likes).toBe(initialLikes + 1);
+    expect(component.posts[0].liked).toBeTrue();
+  });
+
+  it('should toggle comments', () => {
+    component.toggleComments(component.posts[0]);
+    expect(component.posts[0].showComments).toBeTrue();
+  });
+
+  it('should toggle save', () => {
+    component.toggleSave(component.posts[0]);
+    expect(component.posts[0].saved).toBeTrue();
+  });
 });

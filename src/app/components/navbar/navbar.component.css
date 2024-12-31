@@ -1,179 +1,91 @@
-/* Navbar overall styling */
+
+
+
+/* Navbar Styling */
 .navbar {
-  padding: 0.5rem 1.5rem;
-  background-color: #00000069;
- box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #ddd;
+  height: 70px; /* لضبط ارتفاع الشريط */
+  padding: 0 20px;
+}
+
+/* Brand Logo and Name Styling */
+.navbar-brand {
+  font-family: 'Sirin Stencil', sans-serif; /* تطبيق خط مشابه */
+  font-size: 20px; /* حجم مناسب */
+  font-weight: 700; /* خط عريض */
+  color: #333; /* لون متناسق */
+  letter-spacing: 0.5px; /* تعديل التباعد بين الحروف */
+
 
 }
 
-.navbar .container-fluid {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
+.navbar-brand img {
+  height: 30px; /* لضبط حجم الشعار */
 }
 
-/* Centered navigation tabs */
-.navbar-nav {
-  display: flex;
-  justify-content: center;
-
+.brand-name {
+  color: #333;
+  font-size: 26px;
 }
 
-.navbar-nav .nav-link {
-  margin: 0 0px;
-  display: flex;
-  align-items: center;
-  color: #000000;
-  font-size: 0.9rem;
-  border-radius: 10px;
-  padding: 10px 15px;
-
-}
-
-.navbar-nav .nav-link i {
-  margin-right: 5px;
-
-}
-
-.navbar-nav .nav-link:hover {
-  color: #ffffff;
-  background-color: #000000;
-  border-radius: 10px;
-transition-delay: 50ms;
-  box-shadow: 0 2px 6px rgba(10, 102, 194, 0.2);
-}
-
-/* Styling for the Search Bar */
+/* Search Bar Styling */
 .search-bar {
-  width: 200px;
-  max-width: 100%;
-  margin-right: 15px;
+  flex-grow: 1;
+  max-width: 500px;
 }
 
 .search-bar input {
-  padding: 0.25rem 0.75rem;
-  font-size: 0.9rem;
-  border-radius: 10px;
+  width: 100%;
   border: 1px solid #ddd;
-  width: 100%;
-  transition: border-color 9s ease;
-}
-
-
-
-/* Profile picture styling */
-.profile-pic {
-  display: flex;
-  align-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  overflow: hidden;
-}
-
-.profile-pic img {
-  width: 100%;
-  height: auto;
-}
-.nav-profile-img{
-  width: 40px;
-  border-radius: 50%;
-  display: block;
-  cursor: pointer;
-  position: relative;
-}
-
-.online{
-  position: relative;
-}
-.online::after{
-  content: '';
-  width: 7px;
-  height: 7px;
-  border: 5px solid #41db51;
-  border-radius: 50%;
-  right: 0;
-  top: 0;
-  background: #41db51;
-  position: absolute;
-}
-.profile-menu-wrap{
-  position: absolute;
-  top: 70%;
-  right: 2%;
-  width: 320px;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s;
-  display: none;
-
-
-}
-.profile-menu-wrap.open-menu{
-  max-height: 400px;
-  display: block;
-}
-.profile-menu{
-  background: #222;
-  color: #fff;
-  padding: 20px;
-  margin: 10px;
-
-
-}
-.user-info{
-  display: flex;
-  align-items: center;
-
-}
-.user-info img{
-  width: 50px;
-  border-radius: 50%;
-  margin-right: 15px;
-}
-.user-info h4{
-  font-weight: 300;
-  margin-bottom: 0  px;
-}
-.user-info a{
-  color: #c9dbf8;
-  font-size: 13px;
-  margin-top: 0  px;
-
-}
-.profile-menu hr{
-  border: 0;
-  height: 1px;
-  width: 100%;
-  background: #fff;
-  margin: 15px 0 10px;
-
-}
-.profile-menu-link{
-  display: flex;
-  align-items: center;
-  color: #fff;
-  margin: 12px 0;
+  padding: 8px 12px;
   font-size: 14px;
+}
 
+.search-bar input:focus {
+  outline: none;
+  border-color: #6a11cb;
+  box-shadow: 0 0 4px rgba(106, 17, 203, 0.5);
 }
-.profile-menu-link p{
-  width: 100%;
+
+.search-bar i {
+  font-size: 1.2rem;
+  cursor: pointer;
 }
-.profile-menu-link img{
-  width: 35px;
+
+/* Gradient Button Styling */
+.btn-gradient {
+  background: linear-gradient(to right, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: #fff;
+  border: none;
+  font-weight: bold;
+  font-size: 14px;
+  transition: 0.3s ease-in-out;
+  margin-right: 200px;
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(to left,#f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  transform: scale(1.05);
+}
+
+/* Icons Styling */
+.icon {
+  position: relative;
+  cursor: pointer;
+}
+
+.icon .badge-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff3e3e;
+  border: 2px solid #fff;
   border-radius: 50%;
-  margin-right: 15px;
-}
-.profile-menu-link span{
-  font-size: 10px;
 }
 
-#showMoreLink{
-  display: none;
-}
-
-a{
-  text-decoration: none;
+/* Adjust spacing between sections */
+.d-flex.align-items-center.gap-4 {
+  gap: 20px;
 }
