@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProfileComponent } from '../profile/profile.component';
+import { User } from '../../user';
 
 @Component({
   selector: 'app-feed',
@@ -17,6 +18,50 @@ export class FeedComponent {
   isDropdownVisible = false; // Control dropdown visibility
   newComment: string = ''; // Input for comments
   postContent: string = ''; // Input for new post content
+
+  private isDragging = false;
+  private startX = 0;
+  private scrollLeft = 0;
+
+  users = [
+    { name: 'Angel', image: 'images/user-1.png' },
+    { name: 'Arlene', image: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg' },
+    { name: 'Aubrey', image: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
+    { name: 'Mitchell', image: 'images/user-1.png' },
+    { name: 'Eduardo', image: 'images/user-2.png' },
+    { name: 'Darrell', image: 'images/user-3.png' },
+    { name: 'Camer', image: 'images/user-4.png' },
+    { name: 'Angel', image: 'images/user-1.png' },
+    { name: 'Arlene', image: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg' },
+    { name: 'Aubrey', image: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
+    { name: 'Mitchell', image: 'images/user-1.png' },
+    { name: 'Eduardo', image: 'images/user-2.png' },
+    { name: 'Darrell', image: 'images/user-3.png' },
+    { name: 'Camer', image: 'images/user-4.png' }
+  ];
+
+
+  usersFol = [
+    { name: 'Wade Warren', location: 'Assiut, Egypt' },
+    { name: 'Darlene Robertson', location: 'Assiut, Egypt' },
+    { name: 'Floyd Miles', location: 'Assiut, Egypt' },
+    { name: 'Bessie Cooper', location: 'Assiut, Egypt' },
+    { name: 'Savannah Nguyen', location: 'Assiut, Egypt' },
+    { name: 'Courtney Henry', location: 'Assiut, Egypt' },
+    { name: 'Brooklyn Simmons', location: 'Assiut, Egypt' },
+    { name: 'Jacob Jones', location: 'Assiut, Egypt' },
+  ];
+
+  followUser(user: any) {
+    alert(`You followed ${user.name}`);
+  }
+  user: User[] = [
+    {
+      username: 'Taha Mahmoud ',
+      type: 'Markter',
+      profileImageUrl: 'images/user-1.png'
+    }
+  ];
 
   posts = [
     {
@@ -127,5 +172,28 @@ export class FeedComponent {
       this.posts.unshift(newPost); // Add new post to the top
       this.postContent = ''; // Clear input field
     }
+  }
+
+  onScroll(event: WheelEvent) {
+    const container = event.currentTarget as HTMLElement;
+    container.scrollLeft += event.deltaY;
+  }
+
+  onMouseDown(event: MouseEvent) {
+    this.isDragging = true;
+    this.startX = event.pageX - (event.currentTarget as HTMLElement).offsetLeft;
+    this.scrollLeft = (event.currentTarget as HTMLElement).scrollLeft;
+  }
+
+  onMouseMove(event: MouseEvent) {
+    if (!this.isDragging) return;
+    event.preventDefault();
+    const x = event.pageX - (event.currentTarget as HTMLElement).offsetLeft;
+    const walk = (x - this.startX) * 2; // Scroll-fast
+    (event.currentTarget as HTMLElement).scrollLeft = this.scrollLeft - walk;
+  }
+
+  onMouseUp() {
+    this.isDragging = false;
   }
 }

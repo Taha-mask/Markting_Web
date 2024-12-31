@@ -1,19 +1,100 @@
-<div class="container my-5">
+<div class="container ms-0 ">
+
   <div class="row">
     <!-- Left Sidebar -->
-    <div class="col-md-3 col-12">
-      <div class="sidebar">
-        <h5>Left Sidebar</h5>
-        <ul class="list-unstyled">
-          <li><a href="#">Link 1</a></li>
-          <li><a href="#">Link 2</a></li>
-          <li><a href="#">Link 3</a></li>
-        </ul>
+    <div class="col-md- col-12 d-flex  me-0 w-auto">
+      <div *ngFor="let use of user" class="sidebar text-center align-items-left" style="width: 30%;">
+        <!-- User Profile -->
+        <div class="py-4">
+          <img [src]="use.profileImageUrl" alt="Profile Picture" class="rounded-circle mb-2" width="80" />
+          <h5 class="mb-0">{{use.username}}</h5>
+          <small>{{use.type}}</small>
+          <div class="d-flex justify-content-around text-center py-3">
+            <div>
+              <small class="text-muted">Posts</small>
+              <h6 class="mb-0">351</h6>
+            </div>
+            <div>
+              <small class="text-muted">Followers</small>
+              <h6 class="mb-0">96.28k</h6>
+            </div>
+            <div>
+              <small class="text-muted">Following</small>
+              <h6 class="mb-0">618</h6>
+            </div>
+          </div>
+
+
+        <!-- Navigation Menu -->
+        <nav class="nav flex-column px-1">
+          <a href="#" class="nav-link active d-flex align-items-center py-2">
+            <i class="bi bi-house-door me-2"></i> Feed
+          </a>
+          <a href="#" class="nav-link d-flex align-items-center py-2">
+            <i class="bi bi-compass me-2"></i> Explore
+          </a>
+          <a href="#" class="nav-link d-flex align-items-center py-2">
+            <i class="bi bi-bookmark me-2"></i> My Favorite
+          </a>
+          <a href="#" class="nav-link d-flex align-items-center py-2">
+            <i class="bi bi-chat-dots me-2"></i> Direct
+          </a>
+          <a href="#" class="nav-link d-flex align-items-center py-2">
+            <i class="bi bi-bar-chart me-2"></i> Stats
+          </a>
+          <a href="#" class="nav-link d-flex align-items-center py-2">
+            <i class="bi bi-gear me-2"></i> Settings
+          </a>
+          <a href="#" class="nav-link text-danger d-flex align-items-center py-2">
+            <i class="bi bi-box-arrow-left me-2"></i> Log Out
+          </a>
+        </nav>
       </div>
     </div>
 
     <!-- Main Content (Feed) -->
-    <div class="col-md-6 col-12 scrollable-content">
+    <div class="col-md-7 col-12 scrollable-content">
+      <div class="container mt-4 mb-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold">Stories</h5>
+          <a href="#" class="text-decoration-none text-dark">
+            Watch All <i class="bi bi-chevron-right"></i>
+          </a>
+        </div>
+
+        <!-- Stories Section -->
+        <div class="d-flex align-items-center overflow-auto hide-scrollbar no-select"
+             (mousedown)="onMouseDown($event)"
+             (mousemove)="onMouseMove($event)"
+             (mouseup)="onMouseUp()"
+             (mouseleave)="onMouseUp()">
+          <!-- Add Story -->
+          <div class="text-center me-3">
+            <div
+              class="rounded-circle story-frame d-flex justify-content-center align-items-center"
+              style="width: 70px; height: 70px;"
+            >
+              <i class="bi bi-plus-lg fs-2"></i>
+            </div>
+            <small class="d-block mt-1">Add Story</small>
+          </div>
+
+          <!-- User Stories -->
+          <div
+            *ngFor="let user of users"
+            class="text-center me-3"
+          >
+            <div
+              class="rounded-circle story-frame"
+              style="width: 70px; height: 70px; background-image: url({{ user.image }}); background-size: cover; background-position: center;"
+            >
+            </div>
+            <small class="d-block mt-1">{{ user.name }}</small>
+          </div>
+        </div>
+      </div>
+
       <!-- add post -->
       <div class="card mb-4">
         <div class="card-body">
@@ -120,16 +201,34 @@
     </div>
 
     <!-- Right Sidebar -->
-    <div class="col-md-3 col-12">
-      <div class="sidebar">
-        <h5>Right Sidebar</h5>
-        <ul class="list-unstyled">
-          <li><a href="#">Link A</a></li>
-          <li><a href="#">Link B</a></li>
-          <li><a href="#">Link C</a></li>
-          <button routerLink="/profile" class="btn btn-danger">Route</button>
-        </ul>
+    <div class="container mt-4 col-md-2 col-12 w-auto ms-0">
+      <!-- Trending Feeds Section -->
+      <div class="mb-4  me-0">
+        <h5>Trending Feeds</h5>
+        <div class="d-flex justify-content-start flex-wrap">
+          <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 1" />
+          <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 2" />
+          <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 3" />
+          <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 4" />
+        </div>
+      </div>
+
+      <!-- Suggestions for You Section -->
+      <div>
+        <h5>Suggestions for you</h5>
+        <div *ngFor="let user of usersFol" class="d-flex align-items-center justify-content-between border-bottom py-2">
+          <div class="d-flex align-items-center">
+            <img
+              src="https://via.placeholder.com/40"
+              class="rounded-circle me-3"
+              alt="User"
+            />
+            <div>
+              <p class="mb-0">{{ user.name }}</p>
+              <small class="text-muted">{{ user.location }}</small>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" (click)="followUser(user)">Follow</button>
+        </div>
       </div>
     </div>
-  </div>
-</div>

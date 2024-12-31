@@ -83,4 +83,61 @@
   border: none;
   border-radius: 10px;
 }
+.story-frame {
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  background-color: #f8f9fa; /* Default background for "Add Story" */
+  position: relative;
+}
 
+.story-frame::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  z-index: -1;
+}
+
+.story-frame img {
+  border-radius: 50%;
+}
+
+.overflow-auto {
+  white-space: nowrap;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.no-select {
+  user-select: none; /* Disable text selection */
+}
+
+.nav-link {
+  color: #555;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+.nav-link:hover {
+  color: #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
+}
+.nav-link.active {
+  color: #fff;
+  background-color: #007bff;
+}
+.leftside{
+  width: 30%;
+}

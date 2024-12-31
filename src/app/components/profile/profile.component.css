@@ -18,8 +18,6 @@
   margin-top: -40px;
 }
 
-
-
 .stats p {
   margin: 0.25rem 0;
   font-size: 0.9rem;
@@ -61,11 +59,13 @@
 .recent ul li i {
   margin-right: 5px;
 }
+
 .profile-pic {
   width: 50px;
   height: 50px;
   border-radius: 50%;
 }
+
 .scrollable-content {
   max-height: 80vh;
   overflow-y: auto;
@@ -82,19 +82,17 @@
   display: none; /* Chrome, Safari and Opera */
 }
 
-.add-post{
+.add-post {
   width: 50%;
 }
-.btnpost
-{
+
+.btnpost {
   background-color: black;
   color: white;
   padding: 7px 20px;
   border: none;
   border-radius: 10px;
-
 }
-
 
 .custom-image {
   height: 200px; /* ارتفاع الصورة الرئيسية */
@@ -141,23 +139,23 @@
   transform: translateY(-2px); /* حركة طفيفة للأعلى */
 }
 
-.main
-{
-  background-color: #DBDBDB ;
+.main {
+  background-color: #DBDBDB;
   padding: 20px;
   border-radius: 20px;
 }
-.profile-info{
+
+.profile-info {
   position: absolute;
   left: 370px;
   top: 300px;
 }
-h2{
-  color: black;
 
+h2 {
+  color: black;
 }
-.topPart
-{
+
+.topPart {
   margin-bottom: 80px;
 }
 
@@ -165,26 +163,27 @@ h2{
 html {
   scroll-behavior: smooth;
 }
-.followrs{
+
+.followrs {
   position: absolute;
   right: 370px;
-
 }
-.bi-pencil-square{
+
+.bi-pencil-square {
   position: absolute;
   right: 20px;
 }
-.saveEdit{
-  font: 10px;
 
-background-color: black;
+.saveEdit {
+  font-size: 10px;
+  background-color: black;
   padding: 5px 10px;
   margin-left: 80px;
   border-radius: 10px;
   color: white;
 }
-.inputEdit
-{
+
+.inputEdit {
   border: none;
-width: 60%;
+  width: 60%;
 }

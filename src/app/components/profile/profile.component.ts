@@ -13,35 +13,33 @@ import { User } from '../../user';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent {
-
   users = [
     { imageUrl: 'images/WhatsApp Image 2024-11-19 at 06.28.34_f5d6e241.jpg' },
     { imageUrl: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg' },
     { imageUrl: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
     { imageUrl: 'images/dabe49c2-2037-4968-ab78-78f2d9341d1f.jpg' },
     { imageUrl: 'images/f983f47c-90a7-415f-bcfd-bb489ab674b7.jpg' },
-    { imageUrl: 'images/user-3.png' }, // الصور الإضافية
+    { imageUrl: 'images/user-3.png' },
   ];
 
-  // دالة عرض المزيد (اختياري)
   viewMore() {
     alert('View more users!');
   }
-
 
   user: User[] = [
     {
       username: 'Taha Mahmoud Ahmed',
       type: 'Markter',
       profileImageUrl: 'images/user-1.png'
-    }];
+    }
+  ];
 
-  profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg'; // Sample profile image
-  isDropdownVisible = false; // Control dropdown visibility
-  newComment: string = ''; // Input for comments
-  postContent: string = ''; // Input for new post content
+  profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg';
+  isDropdownVisible = false;
+  newComment: string = '';
+  postContent: string = '';
   bio: string = '';
-  isEditingBio: boolean = true; // Initially true to show textarea
+  isEditingBio: boolean = true;
 
   address: string = 'Al-Medan Store';
   location: string = 'Egypt, Assiut';
@@ -53,20 +51,19 @@ export class ProfileComponent {
   isEditingPhoneNumber: boolean = false;
   isEditingEmail: boolean = false;
 
-  rating: number = 4.5; // التقييم
-  totalViews: number = 150; // عدد المشاهدات
+  rating: number = 4.5;
+  totalViews: number = 150;
 
-  // إنشاء مصفوفة للنجوم
   get fullStars(): number[] {
-    return Array(Math.floor(this.rating)).fill(0); // نجوم ممتلئة
+    return Array(Math.floor(this.rating)).fill(0);
   }
 
   get hasHalfStar(): boolean {
-    return this.rating % 1 !== 0; // نجم نصف
+    return this.rating % 1 !== 0;
   }
 
   get emptyStars(): number[] {
-    return Array(5 - Math.ceil(this.rating)).fill(0); // نجوم فارغة
+    return Array(5 - Math.ceil(this.rating)).fill(0);
   }
 
   posts = [
@@ -117,12 +114,10 @@ export class ProfileComponent {
     },
   ];
 
-  // Toggle dropdown menu
   toggleDropdown() {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
 
-  // Like a post
   likePost(post: any) {
     if (post.isLiked) {
       post.likes--;
@@ -132,51 +127,45 @@ export class ProfileComponent {
     post.isLiked = !post.isLiked;
   }
 
-  // Toggle comments visibility
   toggleComments(post: any) {
     post.showComments = !post.showComments;
   }
 
-  // Share a post
   sharePost(post: any) {
     alert('Post shared!');
   }
 
-  // Toggle edit mode
   toggleEdit(post: any) {
     post.isEditing = !post.isEditing;
   }
 
-  // Save edited post
   savePost(post: any) {
     post.isEditing = false;
   }
 
-  // Add a comment to a post
   addComment(post: any, commentText: string) {
     if (commentText.trim()) {
       post.comments.push({ username: 'New User', text: commentText });
-      this.newComment = ''; // Clear input field
+      this.newComment = '';
     }
   }
 
-  // Add a new post
   addPost() {
     if (this.postContent.trim()) {
       const newPost = {
-        username: 'Current User', // Sample current user
-        profileImageUrl: this.profileImageUrl, // User's profile picture
+        username: 'Current User',
+        profileImageUrl: this.profileImageUrl,
         timestamp: new Date(),
         content: this.postContent,
-        imageUrl: '', // No image for simplicity
+        imageUrl: '',
         likes: 0,
         showComments: false,
         isEditing: false,
         isLiked: false,
         comments: [],
       };
-      this.posts.unshift(newPost); // Add new post to the top
-      this.postContent = ''; // Clear input field
+      this.posts.unshift(newPost);
+      this.postContent = '';
     }
   }
 
@@ -209,7 +198,6 @@ export class ProfileComponent {
 
   saveAddress(newAddress: string) {
     if (newAddress.trim()) {
-
       this.address = newAddress;
       this.isEditingAddress = false;
     }
