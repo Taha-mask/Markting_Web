@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import {  ViewChild, ElementRef } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -10,12 +9,10 @@ import {  ViewChild, ElementRef } from '@angular/core';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
+  notifications: string[] = [];
+  showNotifications: boolean = false;
 
-
-
-    // يمكن إضافة بعض الكود داخل المُنشئ إذا لزم الأمر
-
-
-
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+  }
 }
-
