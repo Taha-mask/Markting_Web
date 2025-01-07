@@ -24,10 +24,10 @@ export class FeedComponent {
   private scrollLeft = 0;
 
   users = [
-    { name: 'Angel', image: 'images/user-1.png' },
+    { name: 'Angel', image:'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg' },
     { name: 'Arlene', image: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg' },
     { name: 'Aubrey', image: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
-    { name: 'Mitchell', image: 'images/user-1.png' },
+    { name: 'Mitchell', image: 'https://images.deepai.org/art-image/a769515ed5a643ba96cbb3d5a9f24eba/girl-is-a-mix-between-korean-and-egyptian-fcbde4.jpg' },
     { name: 'Eduardo', image: 'images/user-2.png' },
     { name: 'Darrell', image: 'images/user-3.png' },
     { name: 'Camer', image: 'images/user-4.png' },
