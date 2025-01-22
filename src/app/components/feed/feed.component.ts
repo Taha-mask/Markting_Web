@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProfileComponent } from '../profile/profile.component';
 import { User } from '../../user';
+import { TrendingSidebarComponent } from "../trending-sidebar/trending-sidebar.component";
 
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TrendingSidebarComponent],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
   providers: [DatePipe],

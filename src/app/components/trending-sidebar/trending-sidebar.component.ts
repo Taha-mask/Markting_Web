@@ -1,16 +1,21 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { User } from '../../user';
 
 @Component({
   selector: 'app-trending-sidebar',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './trending-sidebar.component.html',
   styleUrls: ['./trending-sidebar.component.css']
 })
 export class TrendingSidebarComponent {
-  trendingNews = [
-    { title: "High Demand for Skilled Employees", readers: 10934 },
-    { title: "Inflation in Canada Affects the Workforce", readers: 7043 },
-    { title: "Mass Recruiters fire Employees", readers: 17789 },
-    { title: "Crypto predicted to Boom this year", readers: 2436 },
-  ];
+  profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg'; // Sample profile image
+   user: User[] = [
+     {
+       username: 'Taha Mahmoud ',
+       type: 'Markter',
+       profileImageUrl: 'images/user-1.png'
+     }
+   ];
 }

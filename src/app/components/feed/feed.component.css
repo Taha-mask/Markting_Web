@@ -1,10 +1,30 @@
-.profile-sidebar {
-  padding: 1rem;
-  border: 1px solid #ddd;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* General Styles */
+.scrollable-content {
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 10px;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-select {
+  user-select: none;
+}
+
+/* Left Sidebar */
+
+
 
 .cover-photo img {
   width: 100%;
@@ -18,7 +38,11 @@
   margin-top: -40px;
 }
 
-
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
 
 .stats p {
   margin: 0.25rem 0;
@@ -61,39 +85,12 @@
 .recent ul li i {
   margin-right: 5px;
 }
-.profile-pic {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-}
-.scrollable-content {
-  max-height: 80vh;
-  overflow-y: auto;
-  padding-right: 10px;
-  overflow-x: hidden; /* Ensure horizontal overflow is hidden */
 
-
-  min-height: 100vh; /* اجعل الحاوية تملأ الشاشة */
-  display: flex;
-  flex-direction: column; /* لتوزيع المحتوى بشكل عمودي */
-
-}
-
-.add-post{
-  width: 50%;
-}
-.btnpost
-{
-  background-color: black;
-  color: white;
-  padding: 7px 20px;
-  border: none;
-  border-radius: 10px;
-}
+/* Story Section */
 .story-frame {
   border: 3px solid transparent;
   background-clip: padding-box;
-  background-color: #f8f9fa; /* Default background for "Add Story" */
+  background-color: #f8f9fa;
   position: relative;
 }
 
@@ -119,140 +116,17 @@
   scroll-behavior: smooth;
 }
 
-.hide-scrollbar {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* IE and Edge */
+/* Post Section */
+.add-post {
+  width: 50%;
 }
 
-.hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
-}
-
-.no-select {
-  user-select: none; /* Disable text selection */
-}
-
-.nav-link {
-  font-size: 16px;
-  font-weight: bold;
-  color: #999999;
-  transition: all 0.3s;
-  align-items: center;
-  gap: 8px;
-  position: relative;
-}
-
-.nav-link .horizontal-line,
-.nav-link .horizontal-line-hover {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 50%;
-  background: linear-gradient(to bottom,#D16BA5, #86A8E7, #5FFBF1);
-  border-radius: 2px;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.nav-link.active .horizontal-line {
-  opacity: 1;
-}
-
-.nav-link:hover .horizontal-line-hover {
-  opacity: 0.5;
-}
-
-.nav-link:hover {
-  background: linear-gradient(to right, #D16BA5, #86A8E7, #5FFBF1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  transition: all 0.3s;
-  background-color: linear-gradient(to right, #D16BA5, #86A8E7, #5FFBF1) ;
-}
-.vertical-line {
-  width: 2px; /* عرض الخط */
-  height: 24px; /* طول الخط */
-  background: linear-gradient(to bottom,#D16BA5, #86A8E7, #5FFBF1); /* التدرج اللوني للخط */
-}
-
-
-.nav-link.active {
-  font-weight: bold;
-  background: linear-gradient(to right, #D16BA5, #86A8E7, #5FFBF1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-
-  transition: all 0.3s;}
-
-
-  .nav .bi{
-    font-size: 20px;
-  }
-.leftside{
-  width: 30%;
-  background-color: #ffffff;
-  border-right: 1px solid #ddd;
-  height: 100vh;
-  padding-left: 20px;
-}
-.proimg{
-
-  background:linear-gradient(45deg, #D16BA5, #86A8E7, #5FFBF1);
-  z-index: -1;
-}
-
-
-
-.risaide{
-  width: 23%;
-
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* IE and Edge */
-  min-height: 100vh; /* اجعل الحاوية تملأ الشاشة */
-  display: flex;
-  flex-direction: column; /* لتوزيع المحتوى بشكل عمودي */
-  max-height: 80vh;
-  overflow-y: auto;
-  padding-right: 10px;
-  overflow-x: hidden; /* Ensure horizontal overflow is hidden */
-
-
-}
-
-.risaide::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
-}
-.sidebar {
-  width: 250px;
-
-}
-
-.sidebar-line {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: .1px;
-  background: rgb(191, 191, 191);
-  border-radius: 2px;
-}
-
-.nav-link {
-  text-decoration: none;
-}
-
-.nav-link span {
-  font-size: 16px;
-}
-
-.nav-link:hover {
-  background-color: #f8f9fa;
-  border-radius: 5px;
+.btnpost {
+  background-color: black;
+  color: white;
+  padding: 7px 20px;
+  border: none;
+  border-radius: 10px;
 }
 
 .text-primary {
@@ -262,17 +136,17 @@
 .text-muted {
   color: #6c757d !important;
 }
+
+/* Comment Section */
 .comment-box {
   width: 100%;
-  background-color: #fff; /* خلفية الحقل */
+  background-color: #fff;
   border-radius: 30px;
   border: 1px solid rgb(125, 125, 125);
   display: flex;
   align-items: center;
   padding: 8px;
-
   border: none;
-
 }
 
 .avatar {
@@ -282,18 +156,16 @@
 }
 
 .comment-input {
-border: 1px solid #000000;
-border-radius: 20px;
-outline: none;
-
-  flex-grow: 1; /* لجعل الحقل يتمدد */
+  border: 1px solid #000000;
+  border-radius: 20px;
+  outline: none;
+  flex-grow: 1;
 }
 
 .icons {
   display: flex;
   align-items: flex-end;
   margin-right: auto;
-
 }
 
 .icons i {
@@ -303,11 +175,11 @@ outline: none;
 }
 
 .icons i:hover {
-  color: #6c757d; /* لون عند التمرير */
+  color: #6c757d;
 }
 
 .comment-input:focus {
-  box-shadow: none; /* إزالة ظل التركيز */
+  box-shadow: none;
 }
 
 .bi-send {
@@ -317,5 +189,23 @@ outline: none;
 }
 
 .bi-send:hover {
-  color: #0056b3; /* لون عند التمرير */
+  color: #0056b3;
+}
+
+/* Right Sidebar */
+.risaide {
+  width: 23%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 10px;
+  overflow-x: hidden;
+}
+
+.risaide::-webkit-scrollbar {
+  display: none;
 }

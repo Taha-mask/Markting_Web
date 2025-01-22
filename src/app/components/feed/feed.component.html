@@ -1,66 +1,10 @@
 <div class="container-fluid ms-0 pe-0">
-  <div class="row">
+  <div class="row ms-0 pe-0">
     <!-- Left Sidebar -->
-    <div class="col-md-3 col-12 position-relative mt-4">
-      <div class="sidebar-line"></div>
-      <div *ngFor="let use of user" class="sidebar text-center align-items-left m-auto">
-        <!-- User Profile -->
-        <div class="py-3 my-auto">
-          <img [src]="use.profileImageUrl" alt="Profile Picture" class="proimg rounded-circle mb-2" width="80" />
-          <h5 class="mb-0">{{ use.username }}</h5>
-          <small>{{ use.type }}</small>
-          <div class="d-flex justify-content-around text-center py-3">
-            <div>
-              <small class="text-muted">Posts</small>
-              <h6 class="mb-0">351</h6>
-            </div>
-            <div>
-              <small class="text-muted">Followers</small>
-              <h6 class="mb-0">96.28k</h6>
-            </div>
-            <div>
-              <small class="text-muted">Following</small>
-              <h6 class="mb-0">618</h6>
-            </div>
-          </div>
-        </div>
-
-        <!-- Navigation Menu -->
-        <nav class="nav flex-column px-1 my-2">
-          <a href="#" class="nav-link active d-flex align-items-center py-2">
-            <span class="horizontal-line"></span>
-            <i class="bi bi-house-door me-2"></i> Feed
-          </a>
-          <a href="#" class="nav-link d-flex align-items-center py-2">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-compass me-2"></i> Explore
-          </a>
-          <a href="#" class="nav-link d-flex align-items-center py-2">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-bookmark me-2"></i> My Favorite
-          </a>
-          <a href="#" class="nav-link d-flex align-items-center py-2">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-chat-dots me-2"></i> Direct
-          </a>
-          <a href="#" class="nav-link d-flex align-items-center py-2">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-bar-chart me-2"></i> Stats
-          </a>
-          <a href="#" class="nav-link d-flex align-items-center py-2">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-gear me-2"></i> Settings
-          </a>
-          <a href="#" class="nav-link text-danger d-flex align-items-center py-2 mt-3">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-box-arrow-left me-2 "></i> Log Out
-          </a>
-        </nav>
-      </div>
-    </div>
+    <app-trending-sidebar class="col-md-3 col-12 position-relative mt-4 d-flex"></app-trending-sidebar>
 
     <!-- Main Content (Feed) -->
-    <div class="col-md-6 col-12 scrollable-content">
+    <div class="col-md-6 col-12 scrollable-content d-flex">
       <div class="container mt-4 mb-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -101,8 +45,6 @@
           </div>
         </div>
       </div>
-
-
 
 
           <!--addaion button-->
@@ -185,7 +127,7 @@
               <!-- Submit Icon -->
             </div>
           </div>
-          
+
         </div>
 
       </div>
@@ -201,10 +143,11 @@
         <div class="mb-4 ms-4">
 
           <div class="d-flex justify-content-start flex-wrap">
-            <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 1" />
-            <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 2" />
-            <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 3" />
-            <img src="https://via.placeholder.com/100" class="rounded me-2 mb-2" alt="Feed 4" />
+            <img src="https://images.deepai.org/art-image/fca7454eeb5b41f18f1f1dd7f5d31e74/a-small-closed-room-with-a-small-bed-that-can_gH54Ii2.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
+            <img src="https://images.deepai.org/art-image/d9f992e2353d4652b8e5e3a419935d50/a-small-closed-room-with-a-small-bed-that-can_XL2tHnl.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
+            <img src="https://images.deepai.org/art-image/3a07efb0d73b46728bad3e1db4c74ffe/a-small-closed-room-with-a-small-bed-that-can_cNnH96r.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
+            <img src="https://images.deepai.org/art-image/7e55e370ca7646f59074e58d698eb026/a-small-closed-room-with-a-small-bed-that-can_vANQe8W.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
+
           </div>
         </div>
 
