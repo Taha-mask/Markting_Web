@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './fiveprofile.component.html',
-  styleUrls: ['./fiveprofile.component.css'] // Update to CSS
+  styleUrl: './fiveprofile.component.scss'
 })
 export class FiveprofileComponent {
 

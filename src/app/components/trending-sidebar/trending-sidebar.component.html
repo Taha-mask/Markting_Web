@@ -4,9 +4,11 @@
       <div *ngFor="let use of user" class="sidebar text-center align-items-left m-auto">
         <!-- User Profile -->
         <div class="py-3 my-auto">
-          <img [src]="use.profileImageUrl" alt="Profile Picture" class="proimg rounded-circle mb-2" width="80" />
-          <h5 class="mb-0">{{ use.username }}</h5>
-          <small>{{ use.type }}</small>
+          <a class="text-decoration-none text-dark" href="profile" routerlink="profile">
+            <img [src]="use.profileImageUrl" alt="Profile Picture" class="proimg rounded-circle mb-2" width="80" />
+            <h5 class="mb-0">{{ use.username }}</h5>
+            <small>{{ use.type }}</small>
+          </a>
           <div class="d-flex justify-content-around text-center py-3">
             <div>
               <small class="text-muted">Posts</small>

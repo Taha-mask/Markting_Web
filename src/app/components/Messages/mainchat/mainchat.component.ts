@@ -1,11 +1,12 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NavbarComponent } from "../../navbar/navbar.component";
 
 
 @Component({
   selector: 'app-mainchat',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NavbarComponent],
   templateUrl: './mainchat.component.html',
   styleUrl: './mainchat.component.scss'
 })
@@ -101,9 +102,9 @@ export class MainchatComponent {
   }
 }
 
- 
-      
-   
-  
+
+
+
+
 
 

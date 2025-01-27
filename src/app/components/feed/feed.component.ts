@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { ProfileComponent } from '../profile/profile.component';
 import { User } from '../../user';
 import { TrendingSidebarComponent } from "../trending-sidebar/trending-sidebar.component";
+import { NavbarComponent } from "../navbar/navbar.component";
 
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, FormsModule, TrendingSidebarComponent],
+  imports: [CommonModule, FormsModule, TrendingSidebarComponent, NavbarComponent],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
   providers: [DatePipe],

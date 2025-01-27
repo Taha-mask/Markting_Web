@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-com1',
+  selector: 'app-com',
   standalone: true,
   imports: [],
-  templateUrl: './com1.component.html',
+  templateUrl: './com.component.html',
   styleUrls: ['./com.component.css'] // Update to CSS
 })
-export class Com1Component {
+export class ComComponent {
 
 }
