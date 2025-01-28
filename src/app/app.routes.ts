@@ -23,7 +23,10 @@ import { NinthprofileComponent } from './components/Messages/ninthprofile/ninthp
 import { TinthprofileComponent } from './components/Messages/tinthprofile/tinthprofile.component';
 import { TrendingSidebarComponent } from './components/trending-sidebar/trending-sidebar.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { SidebarComponent } from './components/settings/sidebar/sidebar.component';
+import { MainContentComponent } from './components/settings/main-content/main-content.component';
 import { NotificationComponent } from './components/notification/notification.component';
+import { SettingComponent } from './components/settings/setting/setting.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { FeedComponent } from './components/feed/feed.component';
 export const routes: Routes = [
@@ -33,6 +36,9 @@ export const routes: Routes = [
     {path: 'feed' , component : FeedComponent},
     {path: 'profile' , component : ProfileComponent},
     {path: 'notf' , component : NotificationComponent},
+    {path: 'setting' , component : SettingComponent},
+    {path: 'maincontent' , component : MainContentComponent},
+    {path: 'sidebarsetting' , component : SidebarComponent},
 
     {path: 'secondprofile' , component : SecondprofileComponent},
     {path: 'thirdprofile' , component :ThirdprofileComponent },

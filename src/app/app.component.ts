@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { NotificationComponent } from "./components/notification/notification.component";
 import { MainchatComponent } from './components/Messages/mainchat/mainchat.component';
 import { NinechatComponent } from "./components/Messages/ninechat/ninechat.component";
-import { FiveprofileComponent } from "./components/Messages/fiveprofile/fiveprofile.component";
+import { FiveprofileComponent } from './components/Messages/fiveprofile/fiveprofile.component';
 
 @Component({
   selector: 'app-root',
