@@ -8,10 +8,11 @@ import { MainchatComponent } from './components/Messages/mainchat/mainchat.compo
 import { NinechatComponent } from "./components/Messages/ninechat/ninechat.component";
 import { FiveprofileComponent } from './components/Messages/fiveprofile/fiveprofile.component';
 
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule,],
   templateUrl:'./app.component.html',
   styleUrls: ['./app.component.css']
 
