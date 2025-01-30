@@ -5,7 +5,7 @@ import { NgIf } from '@angular/common';
 @Component({
   selector: 'app-main-content',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [ReactiveFormsModule],
   templateUrl: './main-content.component.html',
   styleUrls: ['./main-content.component.css']
 })

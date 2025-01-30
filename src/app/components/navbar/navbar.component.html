@@ -1,4 +1,3 @@
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sirin+Stencil&display=swap" rel="stylesheet">
@@ -24,29 +23,27 @@
       />
       <!-- Icon: Voice -->
       <i class="bi bi-mic text-muted ms-2"></i>
-
-
     </div>
     <div class="d-flex align-items-center gap-4 ms-0" >
       <!-- Create New Post Button -->
-      <button class="btn btn-gradient rounded-pill px-2 py-2 me-5">
+      <button class="btn btn-gradient rounded-pill px-2 py-2 me-5" data-bs-toggle="modal" data-bs-target="#postModal">
         + Create a new post
       </button>
-</div>
+    </div>
 
     <!-- Right Section -->
-      <!-- Icons -->
-      <div class="d-flex align-items-center gap-5" >
-        <a class="icon position-relative text-dark" href="main" routerlink="main">
-          <i class="bi bi-send fs-5 px-1"></i>
-          <span class="badge-dot"></span>
-        </a>
-        <a class="icon position-relative text-dark" href="notf" routerlink="notf">
-          <i class="bi bi-bell fs-5 px-1"></i>
-          <span class="badge-dot"></span>
-        </a>
-        <i class="bi bi-list fs-4 px-1 " style="border: 1px solid #959595; border-radius: 20%;"></i>
-      </div>
-
+    <div class="d-flex align-items-center gap-5" >
+      <a class="icon position-relative text-dark" href="main" routerlink="main">
+        <i class="bi bi-send fs-5 px-1"></i>
+        <span class="badge-dot"></span>
+      </a>
+      <a class="icon position-relative text-dark" href="notf" routerlink="notf">
+        <i class="bi bi-bell fs-5 px-1"></i>
+        <span class="badge-dot"></span>
+      </a>
+      <i class="bi bi-list fs-4 px-1 " style="border: 1px solid #959595; border-radius: 20%;"></i>
+    </div>
   </div>
 </nav>
+
+<app-modal></app-modal>
