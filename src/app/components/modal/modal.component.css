@@ -1,0 +1,82 @@
+.postimg{
+  width: 50px;
+}
+.browse {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.browse.dragover {
+  border-color: #007bff; /* تغيير لون الحدود عند السحب */
+}
+
+.custom-file-upload {
+  color: #007bff;
+}
+
+#imagePreview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.navigation-buttons {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+}
+
+.navigation-buttons button {
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 50%;
+}
+
+.navigation-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.delete-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(255, 0, 0, 0.7);
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.delete-button:hover {
+  background-color: rgba(255, 0, 0, 0.9);
+}
+textarea {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color:transparent;
+  font-size: 16px;
+  resize: none;
+  border: none;
+}
+
+textarea:focus {
+  border: none;
+}
+textarea:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+

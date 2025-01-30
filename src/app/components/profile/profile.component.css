@@ -1,0 +1,189 @@
+.profile-sidebar {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cover-photo img {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.profile-info {
+  margin-top: -40px;
+}
+
+.stats p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.stats a {
+  color: #0a66c2;
+}
+
+.actions {
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+}
+
+.actions button {
+  font-size: 0.9rem;
+  color: #0a66c2;
+}
+
+.recent h6 {
+  font-size: 0.85rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.recent ul li a {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #0a66c2;
+  text-decoration: none;
+}
+
+.recent ul li a:hover {
+  color: #004182;
+}
+
+.recent ul li i {
+  margin-right: 5px;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.scrollable-content {
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-right: 70px;
+  margin-top: 80px;
+  border-radius: 10px;
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.scrollable-content::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.add-post {
+  width: 50%;
+}
+
+.btnpost {
+  background-color: black;
+  color: white;
+  padding: 7px 20px;
+  border: none;
+  border-radius: 10px;
+}
+
+.custom-image {
+  height: 200px; /* ارتفاع الصورة الرئيسية */
+  width: calc(100% - 160px); /* العرض بنسبة 100% مع إزالة الهامش */
+  margin: 0 80px; /* الهامش من اليمين واليسار */
+  object-fit: cover; /* لضمان تناسب الصورة دون تشويه */
+  border-radius: 4px; /* حواف مستديرة */
+}
+
+.image-container {
+  position: relative; /* لتحديد موضع الصورة الدائرية */
+}
+
+/* تنسيق الصورة الدائرية */
+.profile-image {
+  position: absolute;
+  bottom: 300px; /* نصف الصورة خارج الصورة الرئيسية */
+  left: 200px; /* لتنظيم الصورة في أسفل اليسار */
+  width: 150px;
+  height: 150px;
+  border-radius: 50%; /* تجعل الصورة دائرية */
+  object-fit: cover;
+  border: 5px solid #fff; /* إضافة إطار أبيض للصورة */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* ظل للصورة الدائرية */
+}
+
+/* تخصيص الزر */
+.btnchat {
+  background-color: black;
+  font-size: 1rem; /* حجم النص */
+  padding: 12px 24px; /* المسافة داخل الزر */
+  border-radius: 8px; /* حواف دائرية للزر */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* ظل خفيف */
+  transition: all 0.3s ease; /* تأثير الحركة */
+  color: white;
+  border-radius: 25px;
+  position: absolute;
+  right: 80px;
+}
+
+/* تأثير الزر عند التحويم */
+.btn-chat:hover {
+  background-color: #0000004d; /* تغيير اللون عند التحويم */
+  transform: translateY(-2px); /* حركة طفيفة للأعلى */
+}
+
+.main {
+  background-color: #DBDBDB;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.profile-info {
+  position: absolute;
+  left: 370px;
+  top: 315px;
+}
+
+h2 {
+  color: black;
+}
+
+.topPart {
+  margin-bottom: 80px;
+}
+
+/* Enable smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+.followrs {
+  position: absolute;
+  right: 370px;
+}
+
+.bi-pencil-square {
+  position: absolute;
+  right: 20px;
+}
+
+.saveEdit {
+  font-size: 10px;
+  background-color: black;
+  padding: 5px 10px;
+  margin-left: 80px;
+  border-radius: 10px;
+  color: white;
+}
+
+.inputEdit {
+  border: none;
+  width: 60%;
+}
