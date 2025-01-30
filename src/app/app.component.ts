@@ -7,12 +7,13 @@ import { NotificationComponent } from "./components/notification/notification.co
 import { MainchatComponent } from './components/Messages/mainchat/mainchat.component';
 import { NinechatComponent } from "./components/Messages/ninechat/ninechat.component";
 import { FiveprofileComponent } from './components/Messages/fiveprofile/fiveprofile.component';
+import { SignupMarketerComponent } from './signup-marketer/signup-marketer.component';
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule,],
+  imports: [RouterModule,SignupMarketerComponent],
   templateUrl:'./app.component.html',
   styleUrls: ['./app.component.css']
 
