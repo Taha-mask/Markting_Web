@@ -8,12 +8,12 @@ import { MainchatComponent } from './components/Messages/mainchat/mainchat.compo
 import { NinechatComponent } from "./components/Messages/ninechat/ninechat.component";
 import { FiveprofileComponent } from './components/Messages/fiveprofile/fiveprofile.component';
 import { SignupMarketerComponent } from './signup-marketer/signup-marketer.component';
-
-
+import { SignupUserComponent} from './signup-user/signup-user.component';
+import { TypeAccountComponent } from './type-account/type-account.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule,SignupMarketerComponent],
+  imports: [RouterModule,SignupMarketerComponent,SignupUserComponent,TypeAccountComponent],
   templateUrl:'./app.component.html',
   styleUrls: ['./app.component.css']
 

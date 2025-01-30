@@ -1,24 +1,22 @@
 <section>
   <div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-lg-8 col-md-10 col-12">
+      <div class="col-lg-5 col-md-10 col-12">
         <!-- Form Header -->
         <div class="form-header text-center mb-4">
           <h2>Sign Up</h2>
         </div>
 
-        <!-- <h1>{{ marketerRegisterForm.value | json }}</h1> -->
-
         <!-- Form Container -->
         <div class="form-container p-4 border rounded shadow-sm bg-white">
-          <form [formGroup]="marketerRegisterForm" (ngSubmit)="register()">
+          <form [formGroup]="userRegisterForm" (ngSubmit)="register()">
             <!-- First Name and Second Name -->
             <div class="row">
               <div class="col-md-6 mb-3">
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Your First Name"
+                  placeholder="First Name"
                   formControlName="firstName"
                   required
                   maxlength="10"
@@ -29,7 +27,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  placeholder="Your Second Name"
+                  placeholder="Second Name"
                   formControlName="secondName"
                   required
                   maxlength="10"
@@ -37,73 +35,42 @@
               </div>
             </div>
 
-            <!-- ID Number & ID Image Upload -->
             <div class="row">
+              <!-- Date of Birth -->
               <div class="col-md-6 mb-3">
                 <input
-                  type="text"
+                  type="date"
                   class="form-control"
-                  placeholder="Your ID Number"
-                  formControlName="idNumber"
+                  formControlName="birthDate"
                   required
-                  maxlength="15"
                 />
               </div>
+              <!-- Gender -->
 
               <div class="col-md-6 mb-3">
-                <input
-                  type="file"
-                  class="form-control"
-                  (change)="onFileChange($event)"
-                  accept="image/*"
-                />
-              </div>
-            </div>
-
-            <!-- Shop Name & Location (Dynamic Fields) -->
-            <div class="row mb-3 align-items-center" *ngFor="let shop of Shops.controls; let i = index">
-              <div class="col-md-6">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Shop Name"
-                  [formControlName]="i + '.shopName'"
-                  required
-                  maxlength="20"
-                />
-              </div>
-
-              <div class="col-md-4">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Shop Location"
-                  [formControlName]="i + '.shopLocation'"
-                  required
-                  maxlength="20"
-                />
-              </div>
-
-              <div class="col-md-1">
-                <button
-                  type="button"
-                  class="btn btn-danger btn-sm"
-                  (click)="deleteShop(i)"
-                  [disabled]="Shops.length === 1"
-                >
-                  <i class="fa-solid fa-minus"></i>
-                </button>
-              </div>
-
-              <div class="col-md-1">
-                <button
-                  type="button"
-                  class="btn btn-success btn-sm"
-                  (click)="addNewShop()"
-                  [disabled]="Shops.length >= 5"
-                >
-                  <i class="fa-solid fa-plus"></i>
-                </button>
+                <label class="d-block mb-2">Gender</label>
+                <div class="d-flex gap-3">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      id="male"
+                      value="Male"
+                      formControlName="gender"
+                    />
+                    <label class="form-check-label" for="male">Male</label>
+                  </div>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      id="female"
+                      value="Female"
+                      formControlName="gender"
+                    />
+                    <label class="form-check-label" for="female">Female</label>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -113,7 +80,7 @@
                 <input
                   type="email"
                   class="form-control"
-                  placeholder="Your Email Address"
+                  placeholder="Email Address"
                   formControlName="email"
                   required
                   maxlength="30"
@@ -127,17 +94,18 @@
                 <input
                   type="password"
                   class="form-control"
-                  placeholder="Your Password"
+                  placeholder="Password"
                   formControlName="password"
                   required
                   maxlength="30"
                 />
               </div>
+
               <div class="col-md-6 mb-3">
                 <input
                   type="password"
                   class="form-control"
-                  placeholder="Confirm Your Password"
+                  placeholder="Confirm Password"
                   formControlName="confirmPassword"
                   required
                   maxlength="30"
@@ -152,17 +120,18 @@
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Your City"
+                    placeholder="City"
                     formControlName="city"
                     required
                     maxlength="30"
                   />
                 </div>
+
                 <div class="col-md-6 mb-3">
                   <input
                     type="text"
                     class="form-control"
-                    placeholder="Your Street"
+                    placeholder="Street"
                     formControlName="street"
                     required
                     maxlength="30"
@@ -177,7 +146,7 @@
                 <input
                   type="number"
                   class="form-control"
-                  placeholder="Primary Phone"
+                  placeholder="Phone Number"
                   formControlName="primaryPhone"
                   required
                   maxlength="15"
@@ -211,7 +180,7 @@
               <button
                 type="submit"
                 class="btn btn-primary"
-                [disabled]="marketerRegisterForm.invalid"
+                [disabled]="userRegisterForm.invalid"
               >
                 Sign Up
               </button>

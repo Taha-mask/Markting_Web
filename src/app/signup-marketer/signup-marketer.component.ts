@@ -1,6 +1,5 @@
-
 import { JsonPipe, NgFor } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -10,6 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-signup-marketer',
@@ -18,39 +18,35 @@ import { RouterModule } from '@angular/router';
   templateUrl: './signup-marketer.component.html',
   styleUrls: ['./signup-marketer.component.css'],
 })
-export class SignupMarketerComponent {
-  userRegisterForm: FormGroup;
+export class SignupMarketerComponent implements OnInit {
+  marketerRegisterForm: FormGroup;
+  countries: string[] = [];
 
-  constructor() {
-    this.userRegisterForm = new FormGroup({
+  constructor(private http: HttpClient) {
+    this.marketerRegisterForm = new FormGroup({
       firstName: new FormControl('', [
         Validators.required,
         Validators.pattern('^[a-zA-Z]{3,10}$'),
       ]),
       secondName: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [
-        Validators.required,
-        Validators.minLength(6),
-      ]),
+      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
       confirmPassword: new FormControl('', [Validators.required]),
-      
-      // ID Number (National ID)
+
       idNumber: new FormControl('', [
         Validators.required,
         Validators.pattern('^[0-9]{10,15}$'),
       ]),
 
-      // ID Image Upload
       idImage: new FormControl(null, [Validators.required]),
 
-      // Address Group
+      country: new FormControl('', [Validators.required]),
+
       address: new FormGroup({
         city: new FormControl('', [Validators.required]),
         street: new FormControl('', [Validators.required]),
       }),
 
-      // Phone Numbers
       primaryPhone: new FormControl('', [
         Validators.required,
         Validators.pattern('^[0-9]{10,15}$'),
@@ -59,7 +55,6 @@ export class SignupMarketerComponent {
         Validators.pattern('^[0-9]{10,15}$'),
       ]),
 
-      // Shops Array
       shops: new FormArray([
         new FormGroup({
           shopName: new FormControl('', [Validators.required]),
@@ -69,54 +64,58 @@ export class SignupMarketerComponent {
     });
   }
 
-  // Getter for shops FormArray
-  get Shops() {
-    return this.userRegisterForm.get('shops') as FormArray;
+  ngOnInit() {
+    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe(
+      (data) => {
+        this.countries = data.map((country) => country.name.common).sort();
+      },
+      (error) => {
+        console.error('Error fetching countries:', error);
+      }
+    );
   }
 
-  // Function to create a new Shop FormGroup
+  get Shops() {
+    return this.marketerRegisterForm.get('shops') as FormArray;
+  }
+  
   createShop(): FormGroup {
     return new FormGroup({
       shopName: new FormControl('', [Validators.required]),
       shopLocation: new FormControl('', [Validators.required]),
     });
   }
-
-  // Add new shop (Max: 5)
+  
   addNewShop() {
     if (this.Shops.length < 5) {
       this.Shops.push(this.createShop());
     }
   }
-
-  // Delete shop (Min: 1)
+  
   deleteShop(index: number) {
     if (this.Shops.length > 1) {
       this.Shops.removeAt(index);
     }
   }
 
-  // Handle ID Image Upload
   onFileChange(event: any) {
     const file = event.target.files[0];
     if (file) {
-      this.userRegisterForm.patchValue({ idImage: file });
+      this.marketerRegisterForm.patchValue({ idImage: file });
     }
   }
 
-  // Register function
   register() {
-    if (this.userRegisterForm.valid) {
+    if (this.marketerRegisterForm.valid) {
       const formData = new FormData();
-      
-      // Append form values
-      Object.keys(this.userRegisterForm.value).forEach((key) => {
+
+      Object.keys(this.marketerRegisterForm.value).forEach((key) => {
         if (key === 'shops') {
-          formData.append(key, JSON.stringify(this.userRegisterForm.value[key]));
+          formData.append(key, JSON.stringify(this.marketerRegisterForm.value[key]));
         } else if (key === 'idImage') {
-          formData.append(key, this.userRegisterForm.value[key]);
+          formData.append(key, this.marketerRegisterForm.value[key]);
         } else {
-          formData.append(key, this.userRegisterForm.value[key]);
+          formData.append(key, this.marketerRegisterForm.value[key]);
         }
       });
 
