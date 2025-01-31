@@ -10,7 +10,7 @@ import { NavbarComponent } from "../navbar/navbar.component";
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, FormsModule, TrendingSidebarComponent, NavbarComponent],
+  imports: [CommonModule, FormsModule, TrendingSidebarComponent],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
   providers: [DatePipe],
@@ -44,14 +44,14 @@ export class FeedComponent {
 
 
   usersFol = [
-    { name: 'Wade Warren', location: 'Assiut, Egypt' },
-    { name: 'Darlene Robertson', location: 'Assiut, Egypt' },
-    { name: 'Floyd Miles', location: 'Assiut, Egypt' },
-    { name: 'Bessie Cooper', location: 'Assiut, Egypt' },
-    { name: 'Savannah Nguyen', location: 'Assiut, Egypt' },
-    { name: 'Courtney Henry', location: 'Assiut, Egypt' },
-    { name: 'Brooklyn Simmons', location: 'Assiut, Egypt' },
-    { name: 'Jacob Jones', location: 'Assiut, Egypt' },
+    { name: 'Wade Warren', location: 'Assiut, Egypt', img: 'images/user-1.png' },
+    { name: 'Darlene Robertson', location: 'Assiut, Egypt', img: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg' },
+    { name: 'Floyd Miles', location: 'Assiut, Egypt', img: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg'  },
+    { name: 'Bessie Cooper', location: 'Assiut, Egypt' , img: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
+    { name: 'Savannah Nguyen', location: 'Assiut, Egypt', img: 'images/user-2.png'  },
+    { name: 'Courtney Henry', location: 'Assiut, Egypt' , img: 'images/user-3.png' },
+    { name: 'Brooklyn Simmons', location: 'Assiut, Egypt', img: 'images/user-4.png'  },
+    { name: 'Jacob Jones', location: 'Assiut, Egypt', img: 'images/user-1.png'  },
   ];
 
   followUser(user: any) {
@@ -61,7 +61,8 @@ export class FeedComponent {
     {
       username: 'Taha Mahmoud ',
       type: 'Markter',
-      profileImageUrl: 'images/user-1.png'
+      profileImageUrl: 'images/user-1.png',
+      status: 'Online',
     }
   ];
 

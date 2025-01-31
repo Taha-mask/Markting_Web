@@ -11,7 +11,7 @@ import { FiveprofileComponent } from './components/Messages/fiveprofile/fiveprof
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule,NavbarComponent],
   templateUrl:'./app.component.html',
   styleUrls: ['./app.component.css']
 
