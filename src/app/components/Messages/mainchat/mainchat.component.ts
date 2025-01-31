@@ -2,7 +2,6 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from "../../navbar/navbar.component";
 
-
 @Component({
   selector: 'app-mainchat',
   standalone: true,
@@ -12,99 +11,76 @@ import { NavbarComponent } from "../../navbar/navbar.component";
 })
 export class MainchatComponent {
 
-  messages: string[] = [];
+
+
+  // الرسائل الحالية
+  messages: { text: string, time: string }[] = [
+    { text: 'Hello!', time: '12:19' },
+    { text: 'How are you?', time: '12:20' }
+  ];
+
+
+
+  users = [
+    { id: 1, name: 'Markter 1', image: '/images/img1.png', lastMessage: this.messages[this.messages.length-1].text, time: '10:56', unread: false },
+    { id: 2, name: 'Markter 2', image: '/images/img2.png', lastMessage: 'hi asmaa, how are you', time: '09:25', unread: true },
+    { id: 3, name: 'Markter 3', image: '/images/img3.png', lastMessage: 'hello asmaa', time: '02:00', unread: true },
+    // يمكنك إضافة المزيد من المستخدمين هنا
+  ];
+  // متغيرات لإدارة المرفقات
+  isMenuVisible = false;
+  showEmojiPicker = false;
+  emojis = ['😀', '😎', '❤️', '🔥', '👍']; // قائمة بالرموز التعبيرية
 
   // دالة لإرسال الرسالة
   sendMessage(message: string): void {
-    // التأكد من أن الرسالة ليست فارغة أو تحتوي على مسافات فقط
     if (message.trim()) {
-      this.messages.push(message.trim());
+      this.messages.push({ text: message, time: new Date().toLocaleTimeString() });
     }
   }
 
-  showEmojiPicker: boolean = false;
-  emojis:string[] = [
-'😂',
-'❤️',
-'🤡',
-'🙂',
-'🥹',
-'😔',
-'😩',
-'😤',
-'😈',
-'😍',
-'🙂',
-'💖',
-'😅',
-'😻',
-'👏🏻',
-'👍🏻',
-'🌎',
-'💗',
-
-
-  ];
-
-  toggleEmojiPicker(){
-    this.showEmojiPicker =! this.showEmojiPicker;
-  }
-
-  addEmoji(emoji:string, searchBar:HTMLInputElement){
-    searchBar.value += emoji;
-    this.showEmojiPicker = false;
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-  isMenuVisible = false;
-
-  toggleAttachmentMenu() {
+  // دالة لإظهار/إخفاء قائمة المرفقات
+  toggleAttachmentMenu(): void {
     this.isMenuVisible = !this.isMenuVisible;
   }
 
-  attachDocument() {
-    console.log('Attach Document');
+  // دالة لإظهار/إخفاء محدد الرموز التعبيرية
+  toggleEmojiPicker(): void {
+    this.showEmojiPicker = !this.showEmojiPicker;
   }
 
-  openCamera() {
-    console.log('Open Camera');
+  // دالة لإضافة رمز تعبيري إلى حقل الإدخال
+  addEmoji(emoji: string, input: HTMLInputElement): void {
+    input.value += emoji;
+    this.showEmojiPicker = false;
   }
 
-  attachGallery() {
-    console.log('Attach Gallery');
+  // دوال لإدارة المرفقات (يمكنك تنفيذها حسب الحاجة)
+  attachDocument(): void {
+    alert('Attach Document');
   }
 
-  attachAudio() {
-    console.log('Attach Audio');
+  openCamera(): void {
+    alert('Open Camera');
   }
 
-  attachLocation() {
-    console.log('Attach Location');
+  attachGallery(): void {
+    alert('Attach Gallery');
   }
 
-  attachContact() {
-    console.log('Attach Contact');
+  attachAudio(): void {
+    alert('Attach Audio');
   }
 
-  createPoll() {
-    console.log('Create Poll');
+  attachLocation(): void {
+    alert('Attach Location');
+  }
+
+  attachContact(): void {
+    alert('Attach Contact');
+  }
+
+  createPoll(): void {
+    alert('Create Poll');
   }
 }
-
-
-
-
-
-
-

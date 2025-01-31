@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common'; // استيراد CommonModule
 
 @Component({
@@ -9,12 +9,14 @@ import { CommonModule } from '@angular/common'; // استيراد CommonModule
   styleUrls: ['./modal.component.css']
 })
 export class ModalComponent {
+  @ViewChild('postModal') postModal!: ElementRef; // للوصول إلى الـ Modal
+
   previewUrls: string[] = []; // مصفوفة لتخزين روابط الصور
   currentIndex: number = 0; // الفهرس الحالي للصورة المعروضة
 
   // بيانات المستخدمين (مثال)
   users = [
-    { username: 'Taha ' },
+    { username: 'Taha' },
     { username: 'Mahmoud' }
   ];
 

@@ -30,7 +30,8 @@ export class ProfileComponent {
     {
       username: 'Taha Mahmoud Ahmed',
       type: 'Markter',
-      profileImageUrl: 'images/user-1.png'
+      profileImageUrl: 'images/user-1.png',
+      status: 'online',
     }
   ];
 
@@ -76,7 +77,8 @@ export class ProfileComponent {
       likes: 15,
       showComments: false,
       isEditing: false,
-      isLiked: false,
+      liked: false,
+      saved: false,
       comments: [
         { username: 'Jane', text: 'Great post!' },
         { username: 'Mike', text: 'Interesting thoughts.' },
@@ -91,7 +93,8 @@ export class ProfileComponent {
       likes: 8,
       showComments: false,
       isEditing: false,
-      isLiked: false,
+      liked: false,
+      saved: false,
       comments: [
         { username: 'Tom', text: 'Nice one!' },
         { username: 'Emma', text: 'Very inspiring.' },
@@ -106,7 +109,8 @@ export class ProfileComponent {
       likes: 8,
       showComments: false,
       isEditing: false,
-      isLiked: false,
+      liked: false,
+      saved: false,
       comments: [
         { username: 'Tom', text: 'Nice one!' },
         { username: 'Emma', text: 'Very inspiring.' },
@@ -114,10 +118,12 @@ export class ProfileComponent {
     },
   ];
 
+  // Toggle dropdown menu
   toggleDropdown() {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
 
+  // Like a post
   likePost(post: any) {
     if (post.isLiked) {
       post.likes--;
@@ -127,6 +133,7 @@ export class ProfileComponent {
     post.isLiked = !post.isLiked;
   }
 
+  // Toggle comments visibility
   toggleComments(post: any) {
     post.showComments = !post.showComments;
   }
@@ -135,6 +142,7 @@ export class ProfileComponent {
     alert('Post shared!');
   }
 
+  // Toggle edit mode
   toggleEdit(post: any) {
     post.isEditing = !post.isEditing;
   }
@@ -142,32 +150,22 @@ export class ProfileComponent {
   savePost(post: any) {
     post.isEditing = false;
   }
-
   addComment(post: any, commentText: string) {
     if (commentText.trim()) {
-      post.comments.push({ username: 'New User', text: commentText });
-      this.newComment = '';
+      post.comments.push({ username: 'Current User', text: commentText });
+      this.newComment = ''; // Clear input field
     }
   }
 
-  addPost() {
-    if (this.postContent.trim()) {
-      const newPost = {
-        username: 'Current User',
-        profileImageUrl: this.profileImageUrl,
-        timestamp: new Date(),
-        content: this.postContent,
-        imageUrl: '',
-        likes: 0,
-        showComments: false,
-        isEditing: false,
-        isLiked: false,
-        comments: [],
-      };
-      this.posts.unshift(newPost);
-      this.postContent = '';
-    }
+  toggleLike(post: any) {
+    post.liked = !post.liked;
+    post.likes += post.liked ? 1 : -1;
   }
+  
+  toggleSave(post: any) {
+    post.saved = !post.saved;
+  }
+
 
   toggleEditBio() {
     this.isEditingBio = !this.isEditingBio;

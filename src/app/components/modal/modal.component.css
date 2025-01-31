@@ -1,6 +1,7 @@
-.postimg{
+.postimg {
   width: 50px;
 }
+
 .browse {
   border: 2px dashed #ccc;
   padding: 20px;
@@ -59,21 +60,19 @@
 .delete-button:hover {
   background-color: rgba(255, 0, 0, 0.9);
 }
+
 textarea {
   width: 100%;
   padding: 10px;
   box-sizing: border-box;
   border: 2px solid #ccc;
   border-radius: 4px;
-  background-color:transparent;
+  background-color: transparent;
   font-size: 16px;
   resize: none;
   border: none;
 }
 
-textarea:focus {
-  border: none;
-}
 textarea:focus {
   border: none;
   outline: none;
