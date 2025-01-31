@@ -1,0 +1,229 @@
+<section>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10 col-12">
+        <!-- Form Header -->
+        <div class="form-header text-center mb-4">
+          <h2>Sign Up</h2>
+        </div>
+
+        <!-- <h1>{{ marketerRegisterForm.value | json }}</h1> -->
+
+        <!-- Form Container -->
+        <div class="form-container p-4 border rounded shadow-sm bg-white">
+          <form [formGroup]="marketerRegisterForm" (ngSubmit)="register()">
+            <!-- First Name and Second Name -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Your First Name"
+                  formControlName="firstName"
+                  required
+                  maxlength="10"
+                />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Your Second Name"
+                  formControlName="secondName"
+                  required
+                  maxlength="10"
+                />
+              </div>
+            </div>
+
+            <!-- ID Number & ID Image Upload -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Your ID Number"
+                  formControlName="idNumber"
+                  required
+                  maxlength="15"
+                />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <input
+                  type="file"
+                  class="form-control"
+                  (change)="onFileChange($event)"
+                  accept="image/*"
+                />
+              </div>
+            </div>
+
+            <!-- Shop Name & Location (Dynamic Fields) -->
+            <div class="row mb-3 align-items-center" *ngFor="let shop of Shops.controls; let i = index">
+              <div class="col-md-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Shop Name"
+                  [formControlName]="i + '.shopName'"
+                  required
+                  maxlength="20"
+                />
+              </div>
+
+              <div class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Shop Location"
+                  [formControlName]="i + '.shopLocation'"
+                  required
+                  maxlength="20"
+                />
+              </div>
+
+              <div class="col-md-1">
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  (click)="deleteShop(i)"
+                  [disabled]="Shops.length === 1"
+                >
+                  <i class="fa-solid fa-minus"></i>
+                </button>
+              </div>
+
+              <div class="col-md-1">
+                <button
+                  type="button"
+                  class="btn btn-success btn-sm"
+                  (click)="addNewShop()"
+                  [disabled]="Shops.length >= 5"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Email Address -->
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="Your Email Address"
+                  formControlName="email"
+                  required
+                  maxlength="30"
+                />
+              </div>
+            </div>
+
+            <!-- Password & Confirm Password -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <input
+                  type="password"
+                  class="form-control"
+                  placeholder="Your Password"
+                  formControlName="password"
+                  required
+                  maxlength="30"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <input
+                  type="password"
+                  class="form-control"
+                  placeholder="Confirm Your Password"
+                  formControlName="confirmPassword"
+                  required
+                  maxlength="30"
+                />
+              </div>
+            </div>
+
+            <!-- Address -->
+            <div formGroupName="address">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Your City"
+                    formControlName="city"
+                    required
+                    maxlength="30"
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Your Street"
+                    formControlName="street"
+                    required
+                    maxlength="30"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Phone Numbers -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="Primary Phone"
+                  formControlName="primaryPhone"
+                  required
+                  maxlength="15"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Secondary Phone"
+                  formControlName="secondaryPhone"
+                  maxlength="15"
+                />
+              </div>
+            </div>
+
+            <!-- Country Selection -->
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <select class="form-control" formControlName="country" required>
+                  <option value="">-- Select Your Country --</option>
+                  <option *ngFor="let country of countries" [value]="country">
+                    {{ country }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="marketerRegisterForm.invalid"
+              >
+                Sign Up
+              </button>
+            </div>
+
+            <!-- Link to Sign In -->
+            <div class="mt-3 text-center">
+              <a href="login">Already have an account? Sign in</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

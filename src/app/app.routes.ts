@@ -29,6 +29,12 @@ import { NotificationComponent } from './components/notification/notification.co
 import { SettingComponent } from './components/settings/setting/setting.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { FeedComponent } from './components/feed/feed.component';
+import { SignupUserComponent } from './components/ٍsign_up/signup-user/signup-user.component';
+import { SignupMarketerComponent } from './components/ٍsign_up/signup-marketer/signup-marketer.component.spec';
+import { TypeAccountComponent } from './components/ٍsign_up/type-account/type-account.component';
+import { GiveFeedbackComponent } from './components/give-feedback/give-feedback.component';
+import { LoginFormComponent } from './components/login-form/login-form.component';
+import { AboutComponent } from './components/about/about.component';
 export const routes: Routes = [
 
 
@@ -39,6 +45,12 @@ export const routes: Routes = [
     {path: 'setting' , component : SettingComponent},
     {path: 'maincontent' , component : MainContentComponent},
     {path: 'sidebarsetting' , component : SidebarComponent},
+    {path: 'SignupMarkter' , component : SignupMarketerComponent},
+    {path: 'SignupUser' , component : SignupUserComponent},
+    {path: 'TypeAccount' , component : TypeAccountComponent},
+    {path: 'givefeedback' , component : GiveFeedbackComponent},
+    {path: 'login' , component : LoginFormComponent},
+    {path: 'about' , component : AboutComponent},
 
     {path: 'secondprofile' , component : SecondprofileComponent},
     {path: 'thirdprofile' , component :ThirdprofileComponent },
