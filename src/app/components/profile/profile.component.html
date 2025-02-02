@@ -1,4 +1,3 @@
-<app-navbar></app-navbar>
 <div class="topPart">
 <div *ngFor="let use of user" class="d-flex justify-content-center ">
   <!-- cover image-->
@@ -63,60 +62,15 @@
 
 <!--main secroll !-->
 <div class="col-md-6 col-12 scrollable-content align-items-right  float-end ">
-  <!-- add post -->
-  <div class="main mb-4 ">
-    <div class="main-body ">
-      <!-- Profile Image-->
-      <div class="d-flex align-items-center mb-2">
-        <img
-          [src]="profileImageUrl"
-          alt="Profile Picture"
-          class="rounded-circle me-2"
-          style="width: 40px; height: 40px;"
-        />
-        <input
-          type="text"
-          [(ngModel)]="postContent"
-          class="border border-black form-control rounded-pill shadow-sm"
-          placeholder="What's on your mind?"
-        />
-      </div>
 
-      <!-- Add button-->
-      <div class="d-flex align-items-center mt-4">
-        <button
-          class="rounded-4 px-5 py-2  btnpost"
-          [disabled]="!postContent.trim()"
-          (click)="addPost()"
-        >
-          Add Post
-        </button>
-        <div class="d-flex gap-3 ms-5 col-me-0">
-          <div class="text-center">
-            <i class="bi bi-camera fs-5"></i>
-            <small class="d-block text-muted">Camera</small>
-          </div>
-          <div class="text-center">
-            <i class="bi bi-image fs-5"></i>
-            <small class="d-block text-muted">Photo</small>
-          </div>
-          <div class="text-center">
-            <i class="bi bi-camera-reels fs-5"></i>
-            <small class="d-block text-muted">Video</small>
-          </div>
-        </div>
-      </div> <!-- End of Button Section -->
-    </div> <!-- End of New Post Section -->
-  </div>
+  <div class="card mb-4 " *ngFor="let post of posts">
+    <div class="card-body my-4">
 
-  <!-- new posts-->
-  <div class="main mb-4" *ngFor="let post of posts">
-    <div class="main-body">
       <!-- User Info -->
       <div class="d-flex align-items-center mb-3">
         <img [src]="post.profileImageUrl" alt="Profile Picture" class="profile-pic me-3" />
         <div>
-          <h6 class="m-0">{{ post.username }}</h6>
+          <h6 class="m-0 fw-medium  fs-5">{{ post.username }}</h6>
           <small class="text-muted">{{ post.timestamp | date: 'short' }}</small>
         </div>
       </div>
@@ -130,50 +84,75 @@
       <div *ngIf="post.imageUrl" class="mb-3">
         <img [src]="post.imageUrl" alt="Post Image" class="img-fluid rounded" />
       </div>
-
+  <hr>
       <!-- Action Buttons -->
-      <div class="d-flex justify-content-between border-top pt-3">
-        <button class="btn btn-light" (click)="likePost(post)">
-          <i class="bi bi-hand-thumbs-up"></i> Like
-          <span class="badge bg-primary">{{ post.likes }}</span>
-        </button>
-        <button class="btn btn-light" (click)="toggleComments(post)">
-          <i class="bi bi-chat-dots"></i> Comment
-        </button>
-        <button class="btn btn-light" (click)="sharePost(post)">
-          <i class="bi bi-share"></i> Share
-        </button>
+      <div class="p-3 d-flex justify-content-between text-center">
+        <div (click)="toggleLike(post)" class="d-flex align-items-center" style="cursor: pointer;">
+          <i [class.bi-heart-fill]="post.liked" [class.bi-heart]="!post.liked" [class.text-danger]="post.liked"></i>
+          <span class="ms-1" style="user-select: none;">{{ post.likes }} Likes</span>
+        </div>
+        <div (click)="toggleComments(post)" class="d-flex align-items-center" style="cursor: pointer;">
+          <i class="bi bi-chat-dots-fill text-secondary"></i>
+          <span class="ms-1" style="user-select: none;">{{ post.comments.length }} Comments</span>
+        </div>
+        <div (click)="sharePost(post)" class="d-flex align-items-center" style="cursor: pointer;">
+          <i class="bi bi-share-fill text-primary"></i>
+          <span class="ms-1" style="user-select: none;">165 Shares</span>
+        </div>
+        <div (click)="toggleSave(post)" class="d-flex align-items-center" style="cursor: pointer;">
+          <i [class.bi-bookmark-fill]="post.saved" [class.bi-bookmark]="!post.saved" [class.text-warning]="post.saved"></i>
+          <span class="ms-1" style="user-select: none;">24 Saved</span>
+        </div>
       </div>
+
 
       <!-- Comments Section -->
       <div *ngIf="post.showComments" class="mt-3">
-        <h6>Comments</h6>
-        <div *ngFor="let comment of post.comments" class="mb-2">
-          <strong>{{ comment.username }}</strong>: {{ comment.text }}
+        <hr>
+        <h5 class="fw-bold mb-3 ">Comments</h5>
+        <div  *ngFor="let comment of post.comments" class="mb-2 ms-4">
+          <strong *ngFor="let use of user" >{{ use.username}}</strong>: {{ comment.text }}
         </div>
-        <div class="d-flex align-items-center mt-2">
+        <div *ngFor="let use of user" class="comment-box d-flex align-items-center p-2  ">
+          <!-- User Avatar -->
+          <img
+            [src]="use.profileImageUrl"
+            alt="User Avatar"
+            class="rounded-circle avatar"
+          />
+          <!-- Input Field -->
           <input
             type="text"
             [(ngModel)]="newComment"
-            class="form-control form-control-sm"
-            placeholder="Write a comment..."
+            class="form-control mx-2 comment-input"
+            placeholder="Write your comment..."
           />
-          <button class="btn btn-sm btn-primary ms-2" (click)="addComment(post, newComment)">
-            Send
-          </button>
+          <!-- Action Icons -->
+          <div class="icons d-flex align-items-center">
+            <i class="bi bi-paperclip mx-2"></i>
+            <i class="bi bi-image mx-2"></i>
+            <i class="bi bi-emoji-smile mx-2"></i>
+            <i class="bi bi-send mx-2" (click)="addComment(post, newComment)"></i>
+
+          </div>
+          <!-- Submit Icon -->
         </div>
       </div>
+
     </div>
+
   </div>
+
+
 </div>
 
 
-<div class="card p-4 shadow-sm rounded-4" style="max-width: 500px; margin: 160px 10px 20px 80px; background-color: #DBDBDB;">
+<div class="card p-4 shadow-sm rounded-4" style="max-width: 500px; margin: 160px 10px 20px 80px; ">
   <!-- Header -->
   <div class="mb-3">
     <h3 class="card-title mb-3">Information</h3>
     <div *ngIf="isEditingBio">
-      <textarea [(ngModel)]="bio" class="form-control" placeholder="Write Something..." maxlength="100"></textarea>
+      <textarea [(ngModel)]="bio" class="form-control" placeholder="Write Something..." maxlength="100" style="background-color: #DBDBDB;"></textarea>
       <small class="text-muted">{{ 100 - bio.length }} characters remaining</small>
     </div>
     <div *ngIf="!isEditingBio">

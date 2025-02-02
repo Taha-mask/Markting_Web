@@ -10,7 +10,7 @@
 body
 {
     display: flex;
-  
+
     min-height: 100vh;
     background: linear-gradient(#009688 0% , #009688 130px , #d9dbd5 130px , #d9dbd5 100%);
 
@@ -31,7 +31,7 @@ body
 {
     position: relative;
     flex: 30%;
-    background: #fff; 
+    background: #fff;
     border-right: 1px solid rgba(0,0,0,0.2);
 }
 
@@ -40,10 +40,10 @@ body
     position: relative;
     flex: 70%;
     background: #e5ddd5;
-   
+
 }
 
-.container .rightside::before 
+.container .rightside::before
 {
     content: '';
     position: absolute;
@@ -53,11 +53,11 @@ body
     height: 100%;
 
     opacity: 0.06;
-    
+
 
 }
 
-.header 
+.header
 {
     position: relative;
     width: 100%;
@@ -156,7 +156,7 @@ body
     position: relative;
     width: 100%;
     display: flex;
-  
+
     align-items: center;
     padding: 15px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
@@ -201,7 +201,7 @@ body
     color: #111;
 }
 
-.chatlist .block .details .listhead .time 
+.chatlist .block .details .listhead .time
 {
     font-size: 0.75em;
     color: #aaa;
@@ -230,6 +230,7 @@ color: #111;
     color: #aaa;
     display: -webkit-box;
     -webkit-line-clamp: 1;
+    line-clamp: 1;
     font-size: 0.9em;
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -276,7 +277,7 @@ color: #111;
     height: calc(100% - 120px);
     padding: 50px;
     overflow-y: auto;
-    
+
 }
 
 .message {
@@ -294,7 +295,7 @@ color: #111;
     max-width: 65%;
     padding: 12px;
     background: #26408b;
-    
+
     border-radius: 10px;
     font-size: 0.9em;
 }
@@ -309,7 +310,7 @@ color: #111;
     height: 20px;
     background: linear-gradient(135deg,#26408b 0%,#26408b 50%,transparent 50%,transparent);
 
-  
+
 }
 
 .message p span {
@@ -384,7 +385,7 @@ color: #111;
     outline: none;
     border-radius: 30px;
     font-size: 1em;
- 
+
 }
 
 .button
@@ -397,7 +398,7 @@ background: #26408b;
 border: none;
 padding: 5px 10px;
 
-  
+
 }
 
 
@@ -441,8 +442,8 @@ padding: 5px 10px;
     gap: 10px;
     margin-top: 10px;
     padding: 10px;
-   
-  
+
+
     border-radius: 10px;
 }
 .emoji{
@@ -455,30 +456,30 @@ padding: 5px 10px;
 .chat-container {
     max-width: 700px;
     margin: 0 auto;
-  
+
     border-radius: 10px;
     padding: 10px;
     background: #f0f0f0;
   }
-  
+
   .search-bar {
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  
- 
-  
+
+
+
   .emoji-icon {
     width: 30px;
     height: 30px;
     cursor: pointer;
   }
-  
+
   .emoji-icon:hover {
     transform: scale(1.1);
   }
-  
+
   .emoji-picker {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -486,16 +487,16 @@ padding: 5px 10px;
     margin-top: 10px;
     padding: 10px;
     background: #f0f0f0;
-   
+
     border-radius: 10px;
   }
-  
+
   .emoji {
     font-size: 20px;
     text-align: center;
     cursor: pointer;
   }
-  
+
   .emoji:hover {
     background: #f0f0f0;
     border-radius: 5px;
@@ -506,7 +507,7 @@ padding: 5px 10px;
 
 
 
- 
+
 .attach-button {
   background-color: transparent;
   border: none;

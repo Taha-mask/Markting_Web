@@ -10,11 +10,12 @@ import {
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { NavbarComponent } from "../../navbar/navbar.component";
 
 @Component({
   selector: 'app-signup-marketer',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterModule, JsonPipe, NgFor],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor, NavbarComponent],
   templateUrl: './signup-marketer.component.html',
   styleUrls: ['./signup-marketer.component.css'],
 })
@@ -39,6 +40,7 @@ export class SignupMarketerComponent implements OnInit {
       ]),
 
       idImage: new FormControl(null, [Validators.required]),
+
 
       country: new FormControl('', [Validators.required]),
 
@@ -78,20 +80,20 @@ export class SignupMarketerComponent implements OnInit {
   get Shops() {
     return this.marketerRegisterForm.get('shops') as FormArray;
   }
-  
+
   createShop(): FormGroup {
     return new FormGroup({
       shopName: new FormControl('', [Validators.required]),
       shopLocation: new FormControl('', [Validators.required]),
     });
   }
-  
+
   addNewShop() {
     if (this.Shops.length < 5) {
       this.Shops.push(this.createShop());
     }
   }
-  
+
   deleteShop(index: number) {
     if (this.Shops.length > 1) {
       this.Shops.removeAt(index);

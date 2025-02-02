@@ -4,6 +4,9 @@ body {
 
 .account-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+width: 95%;
+
     /* cursor: pointer; */
 }
 
@@ -16,7 +19,7 @@ body {
     height: 200px;
 }
 .botton{
-  
+
 
     background-color: transparent;
     border: 2px solid #ac0c82;

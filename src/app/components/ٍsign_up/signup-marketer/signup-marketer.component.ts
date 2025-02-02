@@ -10,11 +10,12 @@ import {
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { NavbarComponent } from "../../navbar/navbar.component";
 
 @Component({
   selector: 'app-signup-marketer',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterModule, JsonPipe, NgFor],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor, NavbarComponent],
   templateUrl: './signup-marketer.component.html',
   styleUrls: ['./signup-marketer.component.css'],
 })
@@ -40,7 +41,6 @@ export class SignupMarketerComponent implements OnInit {
 
       idImage: new FormControl(null, [Validators.required]),
 
-      
       country: new FormControl('', [Validators.required]),
 
       address: new FormGroup({

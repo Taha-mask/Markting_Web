@@ -10,11 +10,12 @@ import {
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { NavbarComponent } from "../../navbar/navbar.component";
 
 @Component({
   selector: 'app-signup-user',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterModule, JsonPipe, NgFor],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor, NavbarComponent],
   templateUrl: './signup-user.component.html',
   styleUrls: ['./signup-user.component.css'],
 })

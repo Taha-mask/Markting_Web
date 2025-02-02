@@ -15,7 +15,8 @@ export class TrendingSidebarComponent {
      {
        username: 'Taha Mahmoud ',
        type: 'Markter',
-       profileImageUrl: 'images/user-1.png'
+       profileImageUrl: 'images/user-1.png',
+       status: 'online',
      }
    ];
 }
