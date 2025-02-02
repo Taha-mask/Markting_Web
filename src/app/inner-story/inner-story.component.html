@@ -1,0 +1,81 @@
+<div class="main-container">
+  <aside class="stories-sidebar">
+    <h3>Stories</h3>
+    <button class="create-story">Create Story</button>
+    <ul class="stories-list">
+      <li *ngFor="let story of stories; let i = index" 
+          [class.active]="i === currentStoryIndex"
+          (click)="selectStory(i)">
+        <img [src]="story.image" alt="Story Image">
+        <div class="story-info">
+          <h4>{{ story.user }}</h4>
+        </div>
+      </li>
+    </ul>
+  </aside>
+
+  
+  <div class="shorts-wrapper">
+    <div class="short">
+      <video #videoPlayer 
+             [src]="videos[currentVideoIndex].src" autoplay loop>
+      </video>
+
+      <!-- user_info-->
+      <div class="user_info">
+        <img src="/images/husseini.jpg" alt="User Image">
+        <h5>Al-Husseini</h5>
+      </div>
+
+      <!-- video-info-->
+      <div class="video-info">
+        <p>الانسان المصري بياكل كم جرام سكر ؟</p>
+      </div>
+
+      <!-- Reaction -->
+
+      <div class="actions">
+        <!-- like -->
+        <button class="btn btn-light like-btn" (click)="toggleLike()">
+          <i [class.bi-hand-thumbs-up-fill]="liked" [class.bi-hand-thumbs-up]="!liked"></i>
+          <span>{{ likes }}</span> <!-- counter like -->
+        </button>
+
+        <!-- comments -->
+        <button class="btn btn-light comments" (click)="toggleComments()">
+          <i class="bi bi-chat-dots"></i>
+          <span>{{ comments.length }}</span> <!-- counter comment -->
+        </button>
+
+        <div *ngIf="showComments" class="comments-section">
+          <h4>Comments</h4>
+          
+          <!-- Show comments  -->
+          <div *ngFor="let comment of comments" class="comment">
+            <p>{{ comment }}</p>
+          </div>
+        
+          <!-- Add comment -->
+          <div class="comment-input">
+          <input class="form-control" [(ngModel)]="newComment" placeholder="Write a comment..." />
+          <button class="btn btn-primary send-btn" (click)="addComment()">Send</button>
+        </div>
+        </div>
+        <!-- share -->
+        <button class="btn btn-light"><i class="bi bi-share share-btn"></i></button>
+        <!-- more -->
+         <button class="btn btn-light"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+      </div>
+
+      <!--Up and Down control-->
+      <div class="story-navigation">
+        <button class="nav-btn" (click)="goToPreviousStory()" [disabled]="currentStoryIndex === 0">
+          <i class="fa-solid fa-arrow-up"></i></button>
+        <button class="nav-btn todown" (click)="goToNextStory()" [disabled]="currentStoryIndex === stories.length - 1">
+          <i class="fa-solid fa-arrow-down"></i></button>
+      </div>
+
+    </div>
+  </div>
+ 
+</div>

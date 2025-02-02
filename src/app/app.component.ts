@@ -10,10 +10,11 @@ import { FiveprofileComponent } from './components/Messages/fiveprofile/fiveprof
 import { SignupMarketerComponent } from './signup-marketer/signup-marketer.component';
 import { SignupUserComponent} from './signup-user/signup-user.component';
 import { TypeAccountComponent } from './type-account/type-account.component';
+import { InnerStoryComponent } from './inner-story/inner-story.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule,SignupMarketerComponent,SignupUserComponent,TypeAccountComponent],
+  imports: [RouterModule,SignupMarketerComponent,SignupUserComponent,TypeAccountComponent,InnerStoryComponent],
   templateUrl:'./app.component.html',
   styleUrls: ['./app.component.css']
 
