@@ -8,11 +8,16 @@ import { MainchatComponent } from './components/Messages/mainchat/mainchat.compo
 import { NinechatComponent } from "./components/Messages/ninechat/ninechat.component";
 import { FiveprofileComponent } from './components/Messages/fiveprofile/fiveprofile.component';
 import { InnerStoryComponent } from './inner-story/inner-story.component';
+import { TypeAccountComponent } from "./components/\u064Dsign_up/type-account/type-account.component";
+
+
+import { SignupMarketerComponent } from './components/ٍsign_up/signup-marketer/signup-marketer.component.spec';
+
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule, NavbarComponent, FeedComponent, ProfileComponent, NotificationComponent, MainchatComponent, NinechatComponent, FiveprofileComponent, InnerStoryComponent], 
+  imports: [RouterModule, NavbarComponent, FeedComponent, ProfileComponent, NotificationComponent, MainchatComponent, NinechatComponent, FiveprofileComponent, InnerStoryComponent, TypeAccountComponent , SignupMarketerComponent], 
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })

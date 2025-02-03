@@ -1,24 +1,27 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SafeUrlPipe } from '../safe-url.pipe'; 
 import { FormsModule } from '@angular/forms';
 
-
 @Component({
   selector: 'app-inner-story',
   standalone: true,
-  imports: [CommonModule, SafeUrlPipe,FormsModule],
+  imports: [CommonModule, SafeUrlPipe, FormsModule],
   templateUrl: './inner-story.component.html',
   styleUrls: ['./inner-story.component.css']
 })
 export class InnerStoryComponent {
+  @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef<HTMLVideoElement>;
+
   likes = 0;
   liked = false;
   showComments = false;
+  showShareSection: boolean = false;
+  showOptions = false;
   comments: string[] = [];
   newComment: string = '';
-  
- 
+
+
 
   currentStoryIndex = 0;
 
@@ -30,17 +33,17 @@ export class InnerStoryComponent {
     { user: 'Asmaa', image: 'images/asmaa.jpg' }
   ];
 
-  selectStory(index: number): void {
-    this.currentStoryIndex = index;
-  }
-
   currentVideoIndex = 0;
 
   videos = [
-    { src: 'vedios/الانسان المصري بياكل كم جرا سكر ؟.mp4', type: 'video' },
+    { src: 'vedios/الانسان المصري بياكل كم جرام سكر ؟.mp4', type: 'video' },
     { src: 'vedios/992596-hd_1920_1080_25fps.mp4', type: 'video' },
     { src: 'vedios/6035962_Gym_Fitness_1280x720.mp4', type: 'video' }
   ];
+
+  selectStory(index: number): void {
+    this.currentStoryIndex = index;
+  }
 
   goToPreviousStory(): void {
     if (this.currentStoryIndex > 0) {
@@ -53,26 +56,47 @@ export class InnerStoryComponent {
       this.currentStoryIndex++;
     }
   }
-   //like
-   toggleLike() {
-    if(this.liked){
-      this.likes--;
+
+  toggleLike() {
+    this.liked = !this.liked;
+    this.likes += this.liked ? 1 : -1;
+  }
+
+  toggleComments() {
+    this.showComments = !this.showComments;
+  }
+
+  addComment() {
+    if (this.newComment.trim() !== '') {  
+      this.comments.push(this.newComment);  
+      this.newComment = '';  
     }
-      else {
-        this.likes++;
-      }
-      this.liked = !this.liked;
-    }
-    toggleComments() {
-      this.showComments = !this.showComments;
-    }
+  }
+
+  togglePlayPause() {
+    const video = this.videoPlayer.nativeElement;
+    video.paused ? video.play() : video.pause();
+  }
+  toggleShareSection(): void {
+    this.showShareSection = !this.showShareSection;
+  }
+
+  closeShareSection(): void {
+    this.showShareSection = false;
+  }
+
+
+  toggleOptions() {
+    this.showOptions = !this.showOptions;
+  }
+
   
-    // إضافة تعليق جديد
-    addComment() {
-      if (this.newComment.trim() !== '') {  
-        this.comments.push(this.newComment);  
-        this.newComment = '';  
-      }
-    }
-  
+  showDescription() {
+    console.log('Description clicked');
+  }
+
+  showReport() {
+    console.log('Report clicked');
+  }
+
 }
