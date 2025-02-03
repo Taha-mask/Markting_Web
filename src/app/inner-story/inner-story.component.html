@@ -5,7 +5,7 @@
     <ul class="stories-list">
       <!-- story -->
       <li
-        *ngFor="let story of stories; let i = index"
+        *ngFor="let story of stories_users; let i = index"
         [class.active]="i === currentStoryIndex"
         (click)="selectStory(i)"
       >
@@ -21,12 +21,13 @@
     <div class="short">
       <video
         #videoPlayer
-        [src]="videos[currentVideoIndex].src"
+        [src]="story[currentVideoIndex].src"
         autoplay
         loop
         (click)="togglePlayPause()"
       ></video>
 
+      <img src="" alt="">
       <!-- user_info-->
       <div class="user_info">
         <img src="/images/husseini.jpg" alt="User Image" />
@@ -122,7 +123,7 @@
           <button
             class="nav-btn todown"
             (click)="goToNextStory()"
-            [disabled]="currentStoryIndex === stories.length - 1"
+            [disabled]="currentStoryIndex === stories_users.length - 1"
           >
             <i class="fa-solid fa-arrow-down"></i>
           </button>

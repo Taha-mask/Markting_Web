@@ -21,11 +21,10 @@ export class InnerStoryComponent {
   comments: string[] = [];
   newComment: string = '';
 
-
-
   currentStoryIndex = 0;
+  currentVideoIndex = 0;
 
-  stories = [
+  stories_users = [
     { user: 'Al-Husseini', image: 'images/husseini.jpg' },
     { user: 'Taha', image: 'images/taha.jpg' },
     { user: 'Hassan', image: 'images/hassan.jpg' },
@@ -33,12 +32,8 @@ export class InnerStoryComponent {
     { user: 'Asmaa', image: 'images/asmaa.jpg' }
   ];
 
-  currentVideoIndex = 0;
-
-  videos = [
-    { src: 'vedios/الانسان المصري بياكل كم جرام سكر ؟.mp4', type: 'video' },
-    { src: 'vedios/992596-hd_1920_1080_25fps.mp4', type: 'video' },
-    { src: 'vedios/6035962_Gym_Fitness_1280x720.mp4', type: 'video' }
+  story = [
+    { src: 'vedios/الانسان المصري بياكل كم جرام سكر ؟.mp4', type: 'video', description: 'How much shuger egyptian person eat ' },
   ];
 
   selectStory(index: number): void {
@@ -52,7 +47,7 @@ export class InnerStoryComponent {
   }
 
   goToNextStory(): void {
-    if (this.currentStoryIndex < this.stories.length - 1) {
+    if (this.currentStoryIndex < this.stories_users.length - 1) {
       this.currentStoryIndex++;
     }
   }
@@ -77,6 +72,7 @@ export class InnerStoryComponent {
     const video = this.videoPlayer.nativeElement;
     video.paused ? video.play() : video.pause();
   }
+  
   toggleShareSection(): void {
     this.showShareSection = !this.showShareSection;
   }
@@ -85,11 +81,9 @@ export class InnerStoryComponent {
     this.showShareSection = false;
   }
 
-
   toggleOptions() {
     this.showOptions = !this.showOptions;
   }
-
   
   showDescription() {
     console.log('Description clicked');
@@ -98,5 +92,4 @@ export class InnerStoryComponent {
   showReport() {
     console.log('Report clicked');
   }
-
 }
