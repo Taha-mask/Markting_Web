@@ -1,0 +1,134 @@
+<div class="main-container">
+  <aside class="stories-sidebar">
+    <h3>Stories</h3>
+    <button class="create-story">Create Story</button>
+    <ul class="stories-list">
+      <!-- story -->
+      <li
+        *ngFor="let story of stories_users; let i = index"
+        [class.active]="i === currentStoryIndex"
+        (click)="selectStory(i)"
+      >
+        <img [src]="story.image" alt="Story Image" />
+        <div class="story-info">
+          <h4>{{ story.user }}</h4>
+        </div>
+      </li>
+    </ul>
+  </aside>
+
+  <div class="shorts-wrapper">
+    <div class="short">
+      <video
+        #videoPlayer
+        [src]="story[currentVideoIndex].src"
+        autoplay
+        loop
+        (click)="togglePlayPause()"
+      ></video>
+
+      <img src="" alt="">
+      <!-- user_info-->
+      <div class="user_info">
+        <img src="/images/husseini.jpg" alt="User Image" />
+        <h5>Al-Husseini</h5>
+      </div>
+
+      <!-- video-info-->
+      <div class="video-info">
+        <p>الانسان المصري بياكل كم جرام سكر ؟</p>
+      </div>
+
+      <!-- Reaction -->
+      <div class="actions">
+        <!-- like -->
+        <button class="btn btn-light like-btn" (click)="toggleLike()">
+          <i
+            [class.bi-hand-thumbs-up-fill]="liked"
+            [class.bi-hand-thumbs-up]="!liked"
+          ></i>
+          <span>{{ likes }}</span>
+        </button>
+
+        <!-- comments -->
+        <button class="btn btn-light comments" (click)="toggleComments()">
+          <i class="bi bi-chat-dots"></i>
+          <span class="count-commet">{{ comments.length }}</span>  <!--comment counter-->
+        </button>
+
+        <!-- show comments -->
+        <div *ngIf="showComments" class="comments-section">
+          <h4>Comments</h4>
+          <div *ngFor="let comment of comments" class="comment">
+            <p>{{ comment }}</p>
+          </div>
+          <div class="comment-input">
+            <input
+              class="form-control"
+              [(ngModel)]="newComment"
+              placeholder="Write a comment..."
+            />
+            <button class="btn btn-primary send-btn" (click)="addComment()">
+              Send
+            </button>
+          </div>
+        </div>
+        <!-- share -->
+        <button class="btn btn-light" (click)="toggleShareSection()">
+          <i class="bi bi-share share-btn"></i>
+        </button>
+
+        <!-- share section -->
+        <div *ngIf="showShareSection" class="share-section">
+          <h4>Share</h4>
+          <div class="share-links">
+            <button class="btn btn-light">
+              <img src="/icons/facebook.png" alt="" />
+            </button>
+            <button class="btn btn-light">
+              <img src="/icons/instagram.png" alt="" />
+            </button>
+            <button class="btn btn-light">
+              <img src="/icons/whatsapp.png" alt="" />
+            </button>
+            <button class="btn btn-light">
+              <img src="/icons/link.png" alt="" />
+            </button>
+          </div>
+          <button class="btn btn-light close-btn" (click)="closeShareSection()">
+            <i class="fa-solid fa-xmark close"></i>
+          </button>
+        </div>
+
+        <!-- Options -->
+        <button class="btn btn-light" (click)="toggleOptions()">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+
+        <!-- Options section -->
+        <div *ngIf="showOptions" class="options-section">
+          <button class="btn btn-primary option-btn" (click)="showDescription()">Description</button>
+          <button class=" option-btn" (click)="showReport()">Report</button>
+        </div>
+
+        
+        <div class="story-navigation">
+          <button
+            class="nav-btn"
+            (click)="goToPreviousStory()"
+            [disabled]="currentStoryIndex === 0"
+          >
+            <i class="fa-solid fa-arrow-up"></i>
+          </button>
+          <button
+            class="nav-btn todown"
+            (click)="goToNextStory()"
+            [disabled]="currentStoryIndex === stories_users.length - 1"
+          >
+            <i class="fa-solid fa-arrow-down"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
