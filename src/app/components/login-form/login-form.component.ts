@@ -4,7 +4,6 @@ import { NavbarComponent } from "../navbar/navbar.component";
 @Component({
   selector: 'app-login-form',
   standalone: true,
-  imports: [NavbarComponent],
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css']
 })

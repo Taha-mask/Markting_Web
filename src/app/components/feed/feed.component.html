@@ -46,20 +46,14 @@
         </div>
       </div>
 
-
-          <!--addaion button-->
-
-
-
-      <!-- new postes-->
-      <div class="card mb-4 " *ngFor="let post of posts">
+      <!-- Posts -->
+      <div class="card mb-4" *ngFor="let post of posts">
         <div class="card-body my-4">
-
           <!-- User Info -->
           <div class="d-flex align-items-center mb-3">
             <img [src]="post.profileImageUrl" alt="Profile Picture" class="profile-pic me-3" />
             <div>
-              <h6 class="m-0 fw-medium  fs-5">{{ post.username }}</h6>
+              <h6 class="m-0 fw-medium fs-5">{{ post.username }}</h6>
               <small class="text-muted">{{ post.timestamp | date: 'short' }}</small>
             </div>
           </div>
@@ -69,11 +63,31 @@
             <p>{{ post.content }}</p>
           </div>
 
-          <!-- Post Image -->
-          <div *ngIf="post.imageUrl" class="mb-3">
-            <img [src]="post.imageUrl" alt="Post Image" class="img-fluid rounded" />
+          <!-- Post Images -->
+          <div *ngIf="post.images && post.images.length > 0" class="mb-3 position-relative">
+            <img [src]="post.images[post.currentImageIndex]" alt="Post Image" class="img-fluid rounded" />
+
+            <!-- Navigation Buttons -->
+            <div class="navigation-buttons position-absolute top-50 start-0 end-0 d-flex justify-content-between px-3">
+              <button class="btn btn-light rounded-circle" (click)="prevImage(post)" [disabled]="post.currentImageIndex === 0">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button class="btn btn-light rounded-circle" (click)="nextImage(post)" [disabled]="post.currentImageIndex === post.images.length - 1">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+
+            <!-- Dots Navigation -->
+            <div class="dots-navigation position-absolute bottom-0 start-50 translate-middle-x d-flex gap-1 mb-2">
+              <div
+                *ngFor="let image of post.images; let i = index"
+                class="dot"
+                [ngClass]="{'active': post.currentImageIndex === i}"
+                (click)="post.currentImageIndex = i"
+              ></div>
+            </div>
           </div>
-<hr>
+
           <!-- Action Buttons -->
           <div class="p-3 d-flex justify-content-between text-center">
             <div (click)="toggleLike(post)" class="d-flex align-items-center" style="cursor: pointer;">
@@ -94,75 +108,54 @@
             </div>
           </div>
 
-
           <!-- Comments Section -->
           <div *ngIf="post.showComments" class="mt-3">
             <hr>
-            <h5 class="fw-bold mb-3 ">Comments</h5>
-            <div  *ngFor="let comment of post.comments" class="mb-2 ms-4">
-              <strong *ngFor="let use of user" >{{ use.username}}</strong>: {{ comment.text }}
+            <h5 class="fw-bold mb-3">Comments</h5>
+            <div *ngFor="let comment of post.comments" class="mb-2 ms-4">
+              <strong>{{ comment.username }}</strong>: {{ comment.text }}
             </div>
-            <div *ngFor="let use of user" class="comment-box d-flex align-items-center p-2  ">
-              <!-- User Avatar -->
-              <img
-                [src]="use.profileImageUrl"
-                alt="User Avatar"
-                class="rounded-circle avatar"
-              />
-              <!-- Input Field -->
-              <input
-                type="text"
-                [(ngModel)]="newComment"
-                class="form-control mx-2 comment-input"
-                placeholder="Write your comment..."
-              />
-              <!-- Action Icons -->
+            <div *ngFor="let use of user" class="comment-box d-flex align-items-center p-2">
+              <img [src]="use.profileImageUrl" alt="User Avatar" class="rounded-circle avatar" />
+              <input type="text" [(ngModel)]="newComment" class="form-control mx-2 comment-input" placeholder="Write your comment..." />
               <div class="icons d-flex align-items-center">
                 <i class="bi bi-paperclip mx-2"></i>
                 <i class="bi bi-image mx-2"></i>
                 <i class="bi bi-emoji-smile mx-2"></i>
                 <i class="bi bi-send mx-2" (click)="addComment(post, newComment)"></i>
-
               </div>
-              <!-- Submit Icon -->
             </div>
           </div>
-
         </div>
-
       </div>
-
-
     </div>
 
     <!-- Right Sidebar -->
     <div class="risaide col-md-2 col-12 p-0 mt-5 ms-1">
       <div class="position-sticky" style="top: 20px;">
         <!-- Trending Feeds Section -->
-        <h5 >Trending Feeds</h5>
+        <h5>Trending Feeds</h5>
         <div class="mb-4 ms-4">
-
-          <div class="d-flex justify-content-start flex-wrap" >
-            <img src="https://images.deepai.org/art-image/fca7454eeb5b41f18f1f1dd7f5d31e74/a-small-closed-room-with-a-small-bed-that-can_gH54Ii2.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
-            <img src="https://images.deepai.org/art-image/d9f992e2353d4652b8e5e3a419935d50/a-small-closed-room-with-a-small-bed-that-can_XL2tHnl.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
-            <img src="https://images.deepai.org/art-image/3a07efb0d73b46728bad3e1db4c74ffe/a-small-closed-room-with-a-small-bed-that-can_cNnH96r.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
-            <img src="https://images.deepai.org/art-image/7e55e370ca7646f59074e58d698eb026/a-small-closed-room-with-a-small-bed-that-can_vANQe8W.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
-
+          <div class="d-flex justify-content-start flex-wrap">
+            <img src="https://images.deepai.org/art-image/fca7454eeb5b41f18f1f1dd7f5d31e74/a-small-closed-room-with-a-small-bed-that-can_gH54Ii2.jpg" class="rounded me-2 mb-2" alt="Feed 1" style="width: 100px; height: 100px;" />
+            <img src="https://images.deepai.org/art-image/d9f992e2353d4652b8e5e3a419935d50/a-small-closed-room-with-a-small-bed-that-can_XL2tHnl.jpg" class="rounded me-2 mb-2" alt="Feed 1" style="width: 100px; height: 100px;" />
+            <img src="https://images.deepai.org/art-image/3a07efb0d73b46728bad3e1db4c74ffe/a-small-closed-room-with-a-small-bed-that-can_cNnH96r.jpg" class="rounded me-2 mb-2" alt="Feed 1" style="width: 100px; height: 100px;" />
+            <img src="https://images.deepai.org/art-image/7e55e370ca7646f59074e58d698eb026/a-small-closed-room-with-a-small-bed-that-can_vANQe8W.jpg" class="rounded me-2 mb-2" alt="Feed 1" style="width: 100px; height: 100px;" />
           </div>
         </div>
 
         <!-- Suggestions for You Section -->
         <div>
           <h5>Suggestions for you</h5>
-          <div *ngFor="let user of usersFol"  class="d-flex align-items-center justify-content-between border-bottom py-1">
-            <div  class="d-flex align-items-center">
-              <img src="{{user.img}}" class="rounded-circle me-3 " alt="User" style="width: 50px; display: block;" />
+          <div *ngFor="let user of usersFol" class="d-flex align-items-center justify-content-between border-bottom py-1">
+            <div class="d-flex align-items-center">
+              <img src="{{user.img}}" class="rounded-circle me-3" alt="User" style="width: 50px; display: block;" />
               <div>
                 <p class="mb-0">{{ user.name }}</p>
                 <small class="text-muted">{{ user.location }}</small>
               </div>
             </div>
-            <button class="btn btn-primary btn-sm ms-0"  (click)="followUser(user)">Follow</button>
+            <button class="btn btn-primary btn-sm ms-0" (click)="followUser(user)">Follow</button>
           </div>
         </div>
       </div>

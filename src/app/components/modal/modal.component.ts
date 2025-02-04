@@ -1,26 +1,45 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common'; // استيراد CommonModule
+import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'; // استيراد CUSTOM_ELEMENTS_SCHEMA
 
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [CommonModule], // إضافة CommonModule إلى imports
+  imports: [CommonModule],
   templateUrl: './modal.component.html',
-  styleUrls: ['./modal.component.css']
+  styleUrls: ['./modal.component.css'],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA], // إضافة CUSTOM_ELEMENTS_SCHEMA هنا
 })
 export class ModalComponent {
   @ViewChild('postModal') postModal!: ElementRef; // للوصول إلى الـ Modal
+  @ViewChild('postTextarea') postTextarea!: ElementRef; // للوصول إلى الـ textarea
 
   previewUrls: string[] = []; // مصفوفة لتخزين روابط الصور
   currentIndex: number = 0; // الفهرس الحالي للصورة المعروضة
+  selectedAudience: string = 'public'; // خاصية لتخزين الجمهور المحدد
+  selectedAudienceText: string = 'Select audience'; // نص الجمهور المحدد
+  showEmojiPicker: boolean = false; // حالة إظهار منتقي الإيموجيات
 
   // بيانات المستخدمين (مثال)
   users = [
     { username: 'Taha' },
-    { username: 'Mahmoud' }
+    { username: 'Mahmoud' },
   ];
 
   constructor() {}
+
+  // دالة لإظهار/إخفاء منتقي الإيموجيات
+  toggleEmojiPicker(): void {
+    this.showEmojiPicker = !this.showEmojiPicker;
+    console.log('Emoji Picker Visibility:', this.showEmojiPicker); // للتحقق من تغيير الحالة
+  }
+
+  // دالة لإضافة الإيموجي إلى الـ textarea
+  addEmoji(event: any): void {
+    const textarea = this.postTextarea.nativeElement;
+    const emoji = event.emoji.native; // Adjust based on the library's event structure
+    textarea.value += emoji;
+  }
 
   // دالة معالجة اختيار الملف
   onFileSelected(event: Event): void {
@@ -94,5 +113,26 @@ export class ModalComponent {
         this.readFile(file);
       }
     }
+  }
+
+  // دالة لتحديد الجمهور
+  selectAudience(audience: string): void {
+    this.selectedAudience = audience;
+  }
+
+  // دالة لحفظ الجمهور المحدد وتحديث النص
+  saveAudience(): void {
+    const audienceMap = {
+      public: 'Public',
+      friends: 'Friends',
+      onlyMe: 'Only Me',
+    };
+    this.selectedAudienceText =
+      audienceMap[this.selectedAudience as keyof typeof audienceMap];
+  }
+
+  // دالة لتعقب المستخدمين بواسطة اسم المستخدم
+  trackByUsername(index: number, user: any): string {
+    return user.username;
   }
 }

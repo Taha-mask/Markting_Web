@@ -42,7 +42,6 @@ export class FeedComponent {
     { name: 'Camer', image: 'images/user-4.png' }
   ];
 
-
   usersFol = [
     { name: 'Wade Warren', location: 'Assiut, Egypt', img: 'images/user-1.png' },
     { name: 'Darlene Robertson', location: 'Assiut, Egypt', img: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg' },
@@ -57,6 +56,7 @@ export class FeedComponent {
   followUser(user: any) {
     alert(`You followed ${user.name}`);
   }
+
   user: User[] = [
     {
       username: 'Taha Mahmoud ',
@@ -72,7 +72,12 @@ export class FeedComponent {
       profileImageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
       timestamp: new Date(),
       content: 'This is a sample post content!',
-      imageUrl: 'images/post-image-1.png',
+      images: [
+        'images/post-image-1.png',
+        'images/post-image-2.png',
+        'images/post-image-3.png',
+      ],
+      currentImageIndex: 0, // تتبع الصورة الحالية
       likes: 15,
       showComments: false,
       isEditing: false,
@@ -88,7 +93,11 @@ export class FeedComponent {
       profileImageUrl: 'https://randomuser.me/api/portraits/women/2.jpg',
       timestamp: new Date(),
       content: 'Another post with no image!',
-      imageUrl: 'images/post-image-3.png',
+      images: [
+        'images/post-image-3.png',
+        'images/post-image-4.png',
+      ],
+      currentImageIndex: 0,
       likes: 8,
       showComments: false,
       isEditing: false,
@@ -104,7 +113,8 @@ export class FeedComponent {
       profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg',
       timestamp: new Date(),
       content: 'Another post with no image!',
-      imageUrl: '',
+      images: [],
+      currentImageIndex: 0,
       likes: 8,
       showComments: false,
       isEditing: false,
@@ -168,7 +178,8 @@ export class FeedComponent {
         profileImageUrl: this.profileImageUrl, // User's profile picture
         timestamp: new Date(),
         content: this.postContent,
-        imageUrl: '', // No image for simplicity
+        images: [], // No images for simplicity
+        currentImageIndex: 0,
         likes: 0,
         showComments: false,
         isEditing: false,
@@ -211,5 +222,19 @@ export class FeedComponent {
 
   toggleSave(post: any) {
     post.saved = !post.saved;
+  }
+
+  // التنقل إلى الصورة التالية
+  nextImage(post: any) {
+    if (post.currentImageIndex < post.images.length - 1) {
+      post.currentImageIndex++;
+    }
+  }
+
+  // التنقل إلى الصورة السابقة
+  prevImage(post: any) {
+    if (post.currentImageIndex > 0) {
+      post.currentImageIndex--;
+    }
   }
 }

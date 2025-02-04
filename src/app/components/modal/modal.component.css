@@ -78,3 +78,25 @@ textarea:focus {
   outline: none;
   box-shadow: none;
 }
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+}
+.emoji-picker-container {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

@@ -1,232 +1,247 @@
 <div class="topPart">
-<div *ngFor="let use of user" class="d-flex justify-content-center ">
-  <!-- cover image-->
-  <img src="images/wallpaperflare.com_wallpaper (9).jpg" alt="Centered Image" class="img-fluid custom-image rounded rounded-4">
+  <img src="images/wallpaperflare.com_wallpaper (9).jpg" alt="Centered Image" class="img-fluid custom-image ">
 
-  <!-- الصورة الدائرية -->
-  <img [src]="use.profileImageUrl" alt="Circle Image" class="profile-image">
+  <div class="edit-cover-icon">
+
+  <i class="bi bi-pencil-square fs-5 " style="cursor: pointer;" (click)="changeCoverImage()"> <span class="Edit" style="font-style: normal;"> Edit</span></i>
 </div>
-<div class="followrs d-flex justify-content-between align-items-center pt-3">
-  <!-- Column 1 -->
-  <div class="text-center pe-4">
-    <p class="mb-0 fw-bold">FOLLOWING</p>
-    <p class="mb-0">54 MARKET</p>
-  </div>
-
-  <!-- Column 2 -->
-  <div class="text-center">
-    <p class="mb-0 fw-bold">FOLLOWING</p>
-    <p class="mb-0">54 MARKET</p>
-  </div>
-</div>
-
-<!-- الزر المضاف -->
-<a class="d-flex justify-content-center mt-4" href="main" routerlink="main">
-  <button class="btnchat px-5 py-2" >
-    <i class="bi bi-chat me-2"></i> Chat
-  </button>
-
-</a>
-
-<div  *ngFor="let use of user" class="profile-info ">
-
-
-
-
-  <h2 class="fw-semibold mb-0">{{ use.username }}</h2>
-  <h5>{{ use.type}}</h5>
-
-
-  <div class="d-flex align-items-center pt-2 ">
-    <!-- صور المستخدمين -->
-    <div class="d-flex">
-      <img
-        *ngFor="let user of users.slice(0, 5); let i = index"
-        [src]="user.imageUrl"
-        [alt]="'User ' + (i + 1)"
-        class="rounded-circle border"
-        style="width: 40px; height: 40px; margin-left: -10px;"
-      />
-    </div>
-
-    <!-- النص بجانب الصور -->
-    <span class="ms-2 text-primary" style="cursor: pointer;" (click)="viewMore()">+{{ users.length - 5 }} more</span>
-  </div>
-
-</div>
-
-</div>
-
-
-
-
-<!--main secroll !-->
-<div class="col-md-6 col-12 scrollable-content align-items-right  float-end ">
-
-  <div class="card mb-4 " *ngFor="let post of posts">
-    <div class="card-body my-4">
-
-      <!-- User Info -->
-      <div class="d-flex align-items-center mb-3">
-        <img [src]="post.profileImageUrl" alt="Profile Picture" class="profile-pic me-3" />
-        <div>
-          <h6 class="m-0 fw-medium  fs-5">{{ post.username }}</h6>
-          <small class="text-muted">{{ post.timestamp | date: 'short' }}</small>
-        </div>
+  <div *ngFor="let use of user" class="d-flex justify-content-center">
+    <!-- Cover Image with Edit Icon -->
+    <!-- Profile Image with Edit Icon -->
+    <div class="profile-image-container position-relative">
+      <img [src]="use.profileImageUrl" alt="Circle Image" class="profile-image">
+      <!-- أيقونة التعديل -->
+      <div class="edit-profile-icon position-absolute top-50 start-50 translate-middle">
+        <i class="bi bi-pencil-square fs-4 text-white" style="cursor: pointer;" (click)="changeProfileImage()"></i>
       </div>
-
-      <!-- Post Content -->
-      <div *ngIf="!post.isEditing">
-        <p>{{ post.content }}</p>
-      </div>
-
-      <!-- Post Image -->
-      <div *ngIf="post.imageUrl" class="mb-3">
-        <img [src]="post.imageUrl" alt="Post Image" class="img-fluid rounded" />
-      </div>
-  <hr>
-      <!-- Action Buttons -->
-      <div class="p-3 d-flex justify-content-between text-center">
-        <div (click)="toggleLike(post)" class="d-flex align-items-center" style="cursor: pointer;">
-          <i [class.bi-heart-fill]="post.liked" [class.bi-heart]="!post.liked" [class.text-danger]="post.liked"></i>
-          <span class="ms-1" style="user-select: none;">{{ post.likes }} Likes</span>
-        </div>
-        <div (click)="toggleComments(post)" class="d-flex align-items-center" style="cursor: pointer;">
-          <i class="bi bi-chat-dots-fill text-secondary"></i>
-          <span class="ms-1" style="user-select: none;">{{ post.comments.length }} Comments</span>
-        </div>
-        <div (click)="sharePost(post)" class="d-flex align-items-center" style="cursor: pointer;">
-          <i class="bi bi-share-fill text-primary"></i>
-          <span class="ms-1" style="user-select: none;">165 Shares</span>
-        </div>
-        <div (click)="toggleSave(post)" class="d-flex align-items-center" style="cursor: pointer;">
-          <i [class.bi-bookmark-fill]="post.saved" [class.bi-bookmark]="!post.saved" [class.text-warning]="post.saved"></i>
-          <span class="ms-1" style="user-select: none;">24 Saved</span>
-        </div>
-      </div>
-
-
-      <!-- Comments Section -->
-      <div *ngIf="post.showComments" class="mt-3">
-        <hr>
-        <h5 class="fw-bold mb-3 ">Comments</h5>
-        <div  *ngFor="let comment of post.comments" class="mb-2 ms-4">
-          <strong *ngFor="let use of user" >{{ use.username}}</strong>: {{ comment.text }}
-        </div>
-        <div *ngFor="let use of user" class="comment-box d-flex align-items-center p-2  ">
-          <!-- User Avatar -->
-          <img
-            [src]="use.profileImageUrl"
-            alt="User Avatar"
-            class="rounded-circle avatar"
-          />
-          <!-- Input Field -->
-          <input
-            type="text"
-            [(ngModel)]="newComment"
-            class="form-control mx-2 comment-input"
-            placeholder="Write your comment..."
-          />
-          <!-- Action Icons -->
-          <div class="icons d-flex align-items-center">
-            <i class="bi bi-paperclip mx-2"></i>
-            <i class="bi bi-image mx-2"></i>
-            <i class="bi bi-emoji-smile mx-2"></i>
-            <i class="bi bi-send mx-2" (click)="addComment(post, newComment)"></i>
-
-          </div>
-          <!-- Submit Icon -->
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-
-</div>
-
-
-<div class="card p-4 shadow-sm rounded-4" style="max-width: 500px; margin: 160px 10px 20px 80px; ">
-  <!-- Header -->
-  <div class="mb-3">
-    <h3 class="card-title mb-3">Information</h3>
-    <div *ngIf="isEditingBio">
-      <textarea [(ngModel)]="bio" class="form-control" placeholder="Write Something..." maxlength="100" style="background-color: #DBDBDB;"></textarea>
-      <small class="text-muted">{{ 100 - bio.length }} characters remaining</small>
-    </div>
-    <div *ngIf="!isEditingBio">
-      <p class="text-center">{{ bio }}</p>
     </div>
   </div>
 
-  <!-- Add/Edit Bio Button -->
-  <div class="d-flex justify-content-between mb-4">
-    <button class="btn btn-dark m-auto mt-1 px-5 py-2" (click)="isEditingBio ? saveBio(bio) : toggleEditBio()">
-      {{ isEditingBio ? 'Add Bio' : 'Edit Bio' }}
+  <!-- باقي الكود بدون تغيير... -->
+</div>
+  <div class="followrs d-flex justify-content-between align-items-center pt-3">
+    <!-- Column 1 -->
+    <div class="text-center pe-4">
+      <p class="mb-0 fw-bold">FOLLOWING</p>
+      <p class="mb-0">54 MARKET</p>
+    </div>
+
+    <!-- Column 2 -->
+    <div class="text-center">
+      <p class="mb-0 fw-bold">FOLLOWING</p>
+      <p class="mb-0">54 MARKET</p>
+    </div>
+  </div>
+
+  <!-- الزر المضاف -->
+  <a class="d-flex justify-content-center mt-4" href="main" routerlink="main">
+    <button class="btnchat px-5 py-2" >
+      <i class="bi bi-chat me-2"></i> Chat
     </button>
+
+  </a>
+
+  <div  *ngFor="let use of user" class="profile-info ">
+
+
+
+
+    <h2 class="fw-semibold mb-0">{{ use.username }}</h2>
+    <h5>{{ use.type}}</h5>
+
+
+    <div class="d-flex align-items-center pt-2 ">
+      <!-- صور المستخدمين -->
+      <div class="d-flex">
+        <img
+          *ngFor="let user of users.slice(0, 5); let i = index"
+          [src]="user.imageUrl"
+          [alt]="'User ' + (i + 1)"
+          class="rounded-circle border"
+          style="width: 40px; height: 40px; margin-left: -10px;"
+        />
+      </div>
+
+      <!-- النص بجانب الصور -->
+      <span class="ms-2 text-primary" style="cursor: pointer;" (click)="viewMore()">+{{ users.length - 5 }} more</span>
+    </div>
+
   </div>
 
-  <!-- Information Section -->
-  <div class="mb-3">
-    <p>
-      <i class="bi bi-shop me-2"></i>
-      <span *ngIf="!isEditingAddress">{{ address }}</span>
-      <input *ngIf="isEditingAddress" [(ngModel)]="address" class="inputEdit d-inline-block bg-transparent border-bottom border-black " />
-      <i *ngIf="!isEditingAddress" class="bi bi-pencil-square ms-2 " style="cursor: pointer;" (click)="toggleEditAddress()"></i>
-      <button *ngIf="isEditingAddress" class="saveEdit " (click)="saveAddress(address)">Save</button>
-    </p>
-    <p>
-      <i class="bi bi-geo-alt me-2"></i>
-      <span *ngIf="!isEditingLocation">{{ location }}</span>
-      <input *ngIf="isEditingLocation" [(ngModel)]="location" class="inputEdit d-inline-block  bg-transparent border-bottom border-black " />
-      <i *ngIf="!isEditingLocation" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditLocation()"></i>
-      <button *ngIf="isEditingLocation" class="saveEdit" (click)="saveLocation(location)">Save</button>
-    </p>
-    <p>
-      <i class="bi bi-telephone me-2"></i>
-      <span *ngIf="!isEditingPhoneNumber">{{ phoneNumber }}</span>
-      <input *ngIf="isEditingPhoneNumber" [(ngModel)]="phoneNumber" class="inputEdit d-inline-block  bg-transparent border-bottom border-black" />
-      <i *ngIf="!isEditingPhoneNumber" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditPhoneNumber()"></i>
-      <button *ngIf="isEditingPhoneNumber" class="saveEdit" (click)="savePhoneNumber(phoneNumber)">Save</button>
-    </p>
-    <p>
-      <i class="bi bi-envelope me-2"></i>
-      <span *ngIf="!isEditingEmail">{{ email }}</span>
-      <input *ngIf="isEditingEmail" [(ngModel)]="email" class="inputEdit d-inline-block w-70 bg-transparent border-bottom border-black" />
-      <i *ngIf="!isEditingEmail" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditEmail()"></i>
-      <button *ngIf="isEditingEmail" class="saveEdit" (click)="saveEmail(email)">Save</button>
-    </p>
+
+
+
+
+  <!--main secroll !-->
+  <div class="col-md-6 col-12 scrollable-content align-items-right  float-end ">
+
+    <div class="card mb-4" *ngFor="let post of posts">
+      <div class="card-body my-4">
+        <!-- User Info -->
+        <div class="d-flex align-items-center mb-3">
+          <img [src]="post.profileImageUrl" alt="Profile Picture" class="profile-pic me-3" />
+          <div>
+            <h6 class="m-0 fw-medium fs-5">{{ post.username }}</h6>
+            <small class="text-muted">{{ post.timestamp | date: 'short' }}</small>
+          </div>
+        </div>
+
+        <!-- Post Content -->
+        <div *ngIf="!post.isEditing">
+          <p>{{ post.content }}</p>
+        </div>
+
+        <!-- Post Images -->
+        <div *ngIf="post.images && post.images.length > 0" class="mb-3 position-relative">
+          <img [src]="post.images[post.currentImageIndex]" alt="Post Image" class="img-fluid rounded" />
+
+          <!-- Navigation Buttons -->
+          <div class="navigation-buttons position-absolute top-50 start-0 end-0 d-flex justify-content-between px-3">
+            <button class="btn btn-light rounded-circle" (click)="prevImage(post)" [disabled]="post.currentImageIndex === 0">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+            <button class="btn btn-light rounded-circle" (click)="nextImage(post)" [disabled]="post.currentImageIndex === post.images.length - 1">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- Dots Navigation -->
+          <div class="dots-navigation position-absolute bottom-0 start-50 translate-middle-x d-flex gap-1 mb-2">
+            <div
+              *ngFor="let image of post.images; let i = index"
+              class="dot"
+              [ngClass]="{'active': post.currentImageIndex === i}"
+              (click)="post.currentImageIndex = i"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="p-3 d-flex justify-content-between text-center">
+          <div (click)="toggleLike(post)" class="d-flex align-items-center" style="cursor: pointer;">
+            <i [class.bi-heart-fill]="post.liked" [class.bi-heart]="!post.liked" [class.text-danger]="post.liked"></i>
+            <span class="ms-1" style="user-select: none;">{{ post.likes }} Likes</span>
+          </div>
+          <div (click)="toggleComments(post)" class="d-flex align-items-center" style="cursor: pointer;">
+            <i class="bi bi-chat-dots-fill text-secondary"></i>
+            <span class="ms-1" style="user-select: none;">{{ post.comments.length }} Comments</span>
+          </div>
+          <div (click)="sharePost(post)" class="d-flex align-items-center" style="cursor: pointer;">
+            <i class="bi bi-share-fill text-primary"></i>
+            <span class="ms-1" style="user-select: none;">165 Shares</span>
+          </div>
+          <div (click)="toggleSave(post)" class="d-flex align-items-center" style="cursor: pointer;">
+            <i [class.bi-bookmark-fill]="post.saved" [class.bi-bookmark]="!post.saved" [class.text-warning]="post.saved"></i>
+            <span class="ms-1" style="user-select: none;">24 Saved</span>
+          </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div *ngIf="post.showComments" class="mt-3">
+          <hr>
+          <h5 class="fw-bold mb-3">Comments</h5>
+          <div *ngFor="let comment of post.comments" class="mb-2 ms-4">
+            <strong>{{ comment.username }}</strong>: {{ comment.text }}
+          </div>
+          <div *ngFor="let use of user" class="comment-box d-flex align-items-center p-2">
+            <img [src]="use.profileImageUrl" alt="User Avatar" class="rounded-circle avatar" />
+            <input type="text" [(ngModel)]="newComment" class="form-control mx-2 comment-input" placeholder="Write your comment..." />
+            <div class="icons d-flex align-items-center">
+              <i class="bi bi-paperclip mx-2"></i>
+              <i class="bi bi-image mx-2"></i>
+              <i class="bi bi-emoji-smile mx-2"></i>
+              <i class="bi bi-send mx-2" (click)="addComment(post, newComment)"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-<hr>
 
-  <!-- Ratings and Views Section -->
-  <div class="d-flex align-items-center justify-content-center ">
-  <!-- الرقم -->
-  <span class="fw-semibold fs-2 me-2 align-middle mt-3" style="font-size: 2.5rem; line-height: 1; margin-bottom: -5px;">
-    {{ rating }}
+
+
+
+  <div class="card p-4 shadow-sm rounded-4" style="max-width: 500px; margin: 80px 10px 20px 80px; ">
+    <!-- Header -->
+    <div class="mb-3">
+      <h3 class="card-title mb-3">Information</h3>
+      <div *ngIf="isEditingBio">
+        <textarea [(ngModel)]="bio" class="form-control" placeholder="Write Something..." maxlength="100" style="background-color: #ffffff;"></textarea>
+        <small class="text-muted">{{ 100 - bio.length }} characters remaining</small>
+      </div>
+      <div *ngIf="!isEditingBio">
+        <p class="text-center">{{ bio }}</p>
+      </div>
+    </div>
+
+    <!-- Add/Edit Bio Button -->
+    <div class="d-flex justify-content-between mb-4">
+      <button class="btn btn-dark m-auto mt-1 px-5 py-2" (click)="isEditingBio ? saveBio(bio) : toggleEditBio()">
+        {{ isEditingBio ? 'Add Bio' : 'Edit Bio' }}
+      </button>
+    </div>
+
+    <!-- Information Section -->
+    <div class="mb-3">
+      <p>
+        <i class="bi bi-shop me-2"></i>
+        <span *ngIf="!isEditingAddress">{{ address }}</span>
+        <input *ngIf="isEditingAddress" [(ngModel)]="address" class="inputEdit d-inline-block bg-transparent border-bottom border-black " />
+        <i *ngIf="!isEditingAddress" class="bi bi-pencil-square ms-2 " style="cursor: pointer;" (click)="toggleEditAddress()"></i>
+        <button *ngIf="isEditingAddress" class="saveEdit " (click)="saveAddress(address)">Save</button>
+      </p>
+      <p>
+        <i class="bi bi-geo-alt me-2"></i>
+        <span *ngIf="!isEditingLocation">{{ location }}</span>
+        <input *ngIf="isEditingLocation" [(ngModel)]="location" class="inputEdit d-inline-block  bg-transparent border-bottom border-black " />
+        <i *ngIf="!isEditingLocation" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditLocation()"></i>
+        <button *ngIf="isEditingLocation" class="saveEdit" (click)="saveLocation(location)">Save</button>
+      </p>
+      <p>
+        <i class="bi bi-telephone me-2"></i>
+        <span *ngIf="!isEditingPhoneNumber">{{ phoneNumber }}</span>
+        <input *ngIf="isEditingPhoneNumber" [(ngModel)]="phoneNumber" class="inputEdit d-inline-block  bg-transparent border-bottom border-black" />
+        <i *ngIf="!isEditingPhoneNumber" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditPhoneNumber()"></i>
+        <button *ngIf="isEditingPhoneNumber" class="saveEdit" (click)="savePhoneNumber(phoneNumber)">Save</button>
+      </p>
+      <p>
+        <i class="bi bi-envelope me-2"></i>
+        <span *ngIf="!isEditingEmail">{{ email }}</span>
+        <input *ngIf="isEditingEmail" [(ngModel)]="email" class="inputEdit d-inline-block w-70 bg-transparent border-bottom border-black" />
+        <i *ngIf="!isEditingEmail" class="bi bi-pencil-square ms-2" style="cursor: pointer;" (click)="toggleEditEmail()"></i>
+        <button *ngIf="isEditingEmail" class="saveEdit" (click)="saveEmail(email)">Save</button>
+      </p>
+    </div>
+
+  <hr>
+
+    <!-- Ratings and Views Section -->
+    <div class="d-flex align-items-center justify-content-center ">
+    <!-- الرقم -->
+    <span class="fw-semibold fs-2 me-2 align-middle mt-3" style="font-size: 2.5rem; line-height: 1; margin-bottom: -5px;">
+      {{ rating }}
+    </span>
+
+    <!-- النجوم -->
+    <div class="d-flex align-items-center ">
+      <!-- النجوم الممتلئة -->
+      <ng-container *ngFor="let star of fullStars">
+        <i class="bi bi-star-fill text-warning fs-4"></i>
+      </ng-container>
+
+      <!-- نصف النجم -->
+      <i *ngIf="hasHalfStar" class="bi bi-star-half text-warning fs-4"></i>
+
+      <!-- النجوم الفارغة -->
+      <ng-container *ngFor="let star of emptyStars">
+        <i class="bi bi-star text-warning fs-4"></i>
+      </ng-container>
+    </div>
+
+
+  </div>
+   <!-- عدد المشاهدات -->
+   <span class=" text-muted d-block text-center" style="font-size: 0.9rem; line-height: 1;">
+    {{ totalViews }} views
   </span>
-
-  <!-- النجوم -->
-  <div class="d-flex align-items-center ">
-    <!-- النجوم الممتلئة -->
-    <ng-container *ngFor="let star of fullStars">
-      <i class="bi bi-star-fill text-warning fs-4"></i>
-    </ng-container>
-
-    <!-- نصف النجم -->
-    <i *ngIf="hasHalfStar" class="bi bi-star-half text-warning fs-4"></i>
-
-    <!-- النجوم الفارغة -->
-    <ng-container *ngFor="let star of emptyStars">
-      <i class="bi bi-star text-warning fs-4"></i>
-    </ng-container>
-  </div>
-
-
-</div>
- <!-- عدد المشاهدات -->
- <span class=" text-muted d-block text-center" style="font-size: 0.9rem; line-height: 1;">
-  {{ totalViews }} views
-</span>

@@ -24,8 +24,6 @@
 
 /* Left Sidebar */
 
-
-
 .cover-photo img {
   width: 100%;
   height: 80px;
@@ -208,4 +206,72 @@
 
 .risaide::-webkit-scrollbar {
   display: none;
+}
+
+/* Navigation Buttons */
+.navigation-buttons button {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  color: #000;
+  padding: 5px 10px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.navigation-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+}
+/* Navigation Buttons */
+.navigation-buttons {
+  opacity: 0; /* إخفاء الأسهم بشكل افتراضي */
+  transition: opacity 0.3s ease; /* إضافة انتقال سلس */
+}
+
+.navigation-buttons button {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  color: #000;
+  padding: 5px 10px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.navigation-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* إظهار الأسهم عند وضع الماوس فوق الصورة */
+.position-relative:hover .navigation-buttons {
+  opacity: 1; /* إظهار الأسهم */
+}
+/* Dots Navigation */
+.dots-navigation {
+  z-index: 10; /* تأكد من ظهور النقاط فوق الصورة */
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.5); /* لون النقاط غير النشطة */
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* تأثير انتقال سلس */
+}
+
+.dot.active {
+  background-color: rgba(255, 255, 255, 1); /* لون النقطة النشطة */
+}
+
+.dot:hover {
+  background-color: rgba(255, 255, 255, 0.8); /* لون النقاط عند وضع الماوس فوقها */
 }
