@@ -3,6 +3,7 @@
 
 /* Navbar Styling */
 .navbar {
+  width: 100%;
   border-bottom: 1px solid #ddd;
   height: 70px; /* لضبط ارتفاع الشريط */
   padding: 0 20px;

@@ -1,5 +1,5 @@
 <div class="main-container">
-  <aside class="stories-sidebar">
+  <aside class="stories-sidebar" [class.hidden]="!isSidebarVisible">
     <h3>Stories</h3>
     <button class="create-story">Create Story</button>
     <ul class="stories-list">
@@ -21,13 +21,14 @@
     <div class="short">
       <video
         #videoPlayer
-        [src]="story[currentVideoIndex].src"
+        [src]="story[currentStoryIndex].src"
         autoplay
         loop
         (click)="togglePlayPause()"
+        [ngClass]="{ transitioning: transitioning }"
       ></video>
-
-      <img src="" alt="">
+      
+      <img src="" alt="" />
       <!-- user_info-->
       <div class="user_info">
         <img src="/images/husseini.jpg" alt="User Image" />
@@ -36,11 +37,32 @@
 
       <!-- video-info-->
       <div class="video-info">
-        <p>الانسان المصري بياكل كم جرام سكر ؟</p>
+        <p class="video-description">
+          {{ story[currentStoryIndex]?.description }}
+        </p>
       </div>
 
       <!-- Reaction -->
       <div class="actions">
+
+          <!-- arrow icons -->
+          <div class="story-navigation">
+            <button
+              class="nav-btn"
+              (click)="goToPreviousStory()"
+              [disabled]="currentStoryIndex === 0"
+            >
+              <i class="fa-solid fa-arrow-up"></i>
+            </button>
+            <button
+              class="nav-btn todown"
+              (click)="goToNextStory()"
+              [disabled]="currentStoryIndex === stories_users.length - 1"
+            >
+              <i class="fa-solid fa-arrow-down"></i>
+            </button>
+          </div>
+          
         <!-- like -->
         <button class="btn btn-light like-btn" (click)="toggleLike()">
           <i
@@ -50,10 +72,12 @@
           <span>{{ likes }}</span>
         </button>
 
+    
         <!-- comments -->
         <button class="btn btn-light comments" (click)="toggleComments()">
           <i class="bi bi-chat-dots"></i>
-          <span class="count-commet">{{ comments.length }}</span>  <!--comment counter-->
+          <span class="count-commet">{{ comments.length }}</span>
+          <!--comment counter-->
         </button>
 
         <!-- show comments -->
@@ -63,6 +87,13 @@
             <p>{{ comment }}</p>
           </div>
           <div class="comment-input">
+            <button
+              class="btn btn-light close-btn closecommentBTN"
+              (click)="closeCommentSection()"
+            >
+              <i class="fa-solid fa-xmark close"></i>
+            </button>
+            <div class="writeSend"></div>
             <input
               class="form-control"
               [(ngModel)]="newComment"
@@ -107,26 +138,13 @@
 
         <!-- Options section -->
         <div *ngIf="showOptions" class="options-section">
-          <button class="btn btn-primary option-btn" (click)="showDescription()">Description</button>
-          <button class=" option-btn" (click)="showReport()">Report</button>
-        </div>
-
-        
-        <div class="story-navigation">
           <button
-            class="nav-btn"
-            (click)="goToPreviousStory()"
-            [disabled]="currentStoryIndex === 0"
+            class="btn btn-primary option-btn"
+            (click)="showDescription()"
           >
-            <i class="fa-solid fa-arrow-up"></i>
+            Description
           </button>
-          <button
-            class="nav-btn todown"
-            (click)="goToNextStory()"
-            [disabled]="currentStoryIndex === stories_users.length - 1"
-          >
-            <i class="fa-solid fa-arrow-down"></i>
-          </button>
+          <button class="option-btn" (click)="showReport()">Report</button>
         </div>
       </div>
     </div>

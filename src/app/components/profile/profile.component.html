@@ -9,7 +9,16 @@
     <!-- Cover Image with Edit Icon -->
     <!-- Profile Image with Edit Icon -->
     <div class="profile-image-container position-relative">
-      <img [src]="use.profileImageUrl" alt="Circle Image" class="profile-image">
+      
+      <div class="profile-container">
+        <img [src]="use.profileImageUrl" alt="Profile Image" class="profile-image">
+        <!-- أيقونة الكاميرا -->
+        <label class="camera-icon">
+          <i class="fa fa-camera"></i>
+          <input type="file" (change)="onClickOnImage($event)" accept="image/*" />
+        </label>
+      </div>
+      
       <!-- أيقونة التعديل -->
       <div class="edit-profile-icon position-absolute top-50 start-50 translate-middle">
         <i class="bi bi-pencil-square fs-4 text-white" style="cursor: pointer;" (click)="changeProfileImage()"></i>
