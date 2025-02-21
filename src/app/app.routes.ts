@@ -15,7 +15,7 @@ import { TypeAccountComponent } from './components/ٍsign_up/type-account/type-a
 import { GiveFeedbackComponent } from './components/give-feedback/give-feedback.component';
 import { LoginFormComponent } from './components/login-form/login-form.component';
 import { AboutComponent } from './components/about/about.component';
-import { InnerStoryComponent } from './inner-story/inner-story.component';
+import { InnerStoryComponent } from './components/inner-story/inner-story.component';
 export const routes: Routes = [
 
 
@@ -32,6 +32,7 @@ export const routes: Routes = [
     {path: 'login' , component : LoginFormComponent},
     {path: 'about' , component : AboutComponent},
     {path: 'Story' , component : InnerStoryComponent},
+    {path: 'stories' , component : InnerStoryComponent},
 
 {
         path: '',

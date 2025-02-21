@@ -1,12 +1,16 @@
 import { Component, ViewChild, ElementRef, HostListener, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+<<<<<<< HEAD:src/app/inner-story/inner-story.component.ts
 import { SafeUrlPipe } from '../safe-url.pipe';
+=======
+// import { SafeUrlPipeModule } from '../safe-url-pipe/safe-url-pipe.module'; // Ensure this module exists or correct the path
+>>>>>>> f7726d2 (Deploy Angular project to GitHub Pages):src/app/components/inner-story/inner-story.component.ts
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-inner-story',
   standalone: true,
-  imports: [CommonModule, SafeUrlPipe, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './inner-story.component.html',
   styleUrls: ['./inner-story.component.css']
 })
@@ -108,6 +112,7 @@ export class InnerStoryComponent {
   showReport() {
     console.log('Report clicked');
   }
+<<<<<<< HEAD:src/app/inner-story/inner-story.component.ts
 
   toggleList() {
     this.isSidebarVisible = !this.isSidebarVisible;
@@ -147,4 +152,6 @@ export class InnerStoryComponent {
       this.transitioning = false;
     }, 300); 
   }
+=======
+>>>>>>> f7726d2 (Deploy Angular project to GitHub Pages):src/app/components/inner-story/inner-story.component.ts
 }
