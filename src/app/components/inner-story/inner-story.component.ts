@@ -1,13 +1,13 @@
 import { Component, ViewChild, ElementRef, HostListener, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SafeUrlPipe } from '../safe-url.pipe';
+// import { SafeUrlPipe } from '..gi/safe-url.pipe';
 import { FormsModule } from '@angular/forms';
 // import { ModalStoryComponent,} from '../modal-story/modal-story.component';
 
 @Component({
   selector: 'app-inner-story',
   standalone: true,
-  imports: [CommonModule, SafeUrlPipe, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './inner-story.component.html',
   styleUrls: ['./inner-story.component.css']
 })
@@ -169,12 +169,12 @@ onClickOutside(event: Event) {
     }, 300); 
   }
 
-  openModal() {
-    this.showModal = true;
-  }
+  // openModal() {
+  //   this.showModal = true;
+  // }
 
-  closeModal() {
-    this.showModal = false;
-  }
+  // closeModal() {
+  //   this.showModal = false;
+  // }
 
 }

@@ -1,15 +1,19 @@
 <div class="container-fluid ms-0 pe-0">
   <div class="row ms-0 pe-0">
     <!-- Left Sidebar -->
-    <app-trending-sidebar class="col-md-3 col-12 position-relative mt-4 d-flex"></app-trending-sidebar>
+    <app-trending-sidebar class="sid col-md-3 col-12 position-relative mt-4 d-flex ms-3"></app-trending-sidebar>
 
     <!-- Main Content (Feed) -->
-    <div class="col-md-6 col-12 scrollable-content d-flex">
+    <div class="main-content col-md-6 col-15 scrollable-content d-flex pe-4">
       <div class="container mt-4 mb-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h5 class="fw-bold">Advertisement </h5>
+<<<<<<< HEAD
           <a href="Story" class="text-decoration-none text-dark" routerLink="/story">
+=======
+          <a href="stories" class="text-decoration-none text-dark" routerlink="stories">
+>>>>>>> f7726d2 (Deploy Angular project to GitHub Pages)
             Watch All <i class="bi bi-chevron-right"></i>
           </a>
         </div>
@@ -131,14 +135,15 @@
     </div>
 
     <!-- Right Sidebar -->
-    <div class="risaide col-md-2 col-12 p-0 mt-5 ms-1">
+    <div class="risaide col-md-2 col-12 p-0 mt-5 ms-2">
       <div class="position-sticky" style="top: 20px;">
         <!-- Trending Feeds Section -->
         <h5>Trending Feeds</h5>
         <div class="mb-4 ms-5 me-5">
           <div class="d-flex justify-content-start flex-wrap">
             <img src="https://images.deepai.org/art-image/fca7454eeb5b41f18f1f1dd7f5d31e74/a-small-closed-room-with-a-small-bed-that-can_gH54Ii2.jpg" class="rounded me-2 mb-2" alt="Feed 1" style="width: 100px; height: 100px;" />
-            <img src="https://images.deepai.org/art-image/d9f992e2353d4652b8e5e3a419935d50/a-small-closed-room-with-a-small-bed-that-can_XL2tHnl.jpg" class="rounded me-2 mb-2" alt="Feed 1" style="width: 100px; height: 100px;" />
+            <img src="https://images.deepai.org/art-image/d9f992e2353d4652b8e5e3a419935d50/a-small-closed-room-with-a-small-bed-that-can_XL2tHnl.jpg" class="rounded me-2 mb-2" alt="Feed 1" style="width: 100px; height: 100px; display: block;" />
+
             <img src="https://images.deepai.org/art-image/3a07efb0d73b46728bad3e1db4c74ffe/a-small-closed-room-with-a-small-bed-that-can_cNnH96r.jpg" class="rounded me-2 mb-2" alt="Feed 1" style="width: 100px; height: 100px;" />
             <img src="https://images.deepai.org/art-image/7e55e370ca7646f59074e58d698eb026/a-small-closed-room-with-a-small-bed-that-can_vANQe8W.jpg" class="rounded me-2 mb-2" alt="Feed 1" style="width: 100px; height: 100px;" />
           </div>
@@ -146,16 +151,16 @@
 
         <!-- Suggestions for You Section -->
         <div>
-          <h5>Suggestions for you</h5>
-          <div *ngFor="let user of usersFol" class="d-flex align-items-center justify-content-between border-bottom py-1">
+          <h5 class="mb-4">Suggestions for you</h5>
+          <div *ngFor="let user of usersFol" class="d-flex align-items-center justify-content-between border-bottom py-1 me-5">
             <div class="d-flex align-items-center">
               <img src="{{user.img}}" class="rounded-circle me-3" alt="User" style="width: 50px; display: block;" />
-              <div>
+              <div class="">
                 <p class="mb-0">{{ user.name }}</p>
                 <small class="text-muted">{{ user.location }}</small>
               </div>
             </div>
-            <button class="btn btn-primary btn-sm ms-0" (click)="followUser(user)">Follow</button>
+            <button class="btn btn-primary btn-sm ms-2" (click)="followUser(user)">Follow</button>
           </div>
         </div>
       </div>

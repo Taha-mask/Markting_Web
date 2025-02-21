@@ -275,3 +275,158 @@
 .dot:hover {
   background-color: rgba(255, 255, 255, 0.8); /* لون النقاط عند وضع الماوس فوقها */
 }
+
+/* Media Queries for Mobile Devices */
+
+
+
+
+@media (max-width: 767px) {
+
+
+  .container-fluid {
+    padding: 0;
+  }
+.risaide{
+  display: none;
+}
+  .row {
+    margin: 0;
+  }
+
+  .col-md-3, .col-md-6, .col-md-2 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .col-md-6 {
+    padding: 0 15px;
+
+  }
+
+  .icons i {
+    margin-left: 10px;
+    margin-right: 0;
+  }
+
+  .icons {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+
+  .comment-input {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .comment-box {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .profile-pic {
+    height: 40px;
+    width: 40px;
+  }
+
+  .story-frame::before {
+    height: calc(100% + 4px);
+    width: calc(100% + 4px);
+    left: -2px;
+    top: -2px;
+  }
+
+  .story-frame {
+    height: 60px;
+    width: 60px;
+  }
+
+  .risaide {
+    display: none;
+  }
+
+  .scrollable-content {
+    min-height: auto;
+    max-height: none;
+  }
+}
+
+
+
+
+
+
+@media scree {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
