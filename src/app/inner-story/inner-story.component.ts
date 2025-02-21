@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef, HostListener, Renderer2 } from '@angu
 import { CommonModule } from '@angular/common';
 import { SafeUrlPipe } from '../safe-url.pipe';
 import { FormsModule } from '@angular/forms';
+// import { ModalStoryComponent,} from '../modal-story/modal-story.component';
 
 @Component({
   selector: 'app-inner-story',
@@ -20,6 +21,7 @@ export class InnerStoryComponent {
   showOptions = false;
   comments: string[] = [];
   newComment: string = '';
+  showModal = false;
 
   currentStoryIndex = 0;
   isSidebarVisible: boolean = false;
@@ -85,29 +87,48 @@ export class InnerStoryComponent {
     video.paused ? video.play() : video.pause();
   }
 
-  toggleShareSection(): void {
+
+  toggleShareSection(event: Event) {
+    event.stopPropagation(); // يمنع الإغلاق عند الضغط على زر المشاركة
     this.showShareSection = !this.showShareSection;
   }
 
-  closeShareSection(): void {
+  closeShareSection() {
     this.showShareSection = false;
   }
+ 
 
   closeCommentSection(): void {
     this.showComments = false;
   }
 
-  toggleOptions() {
+  toggleOptions(event: Event) {
     this.showOptions = !this.showOptions;
+    event.stopPropagation(); 
   }
 
   showDescription() {
-    console.log('Description clicked');
+    console.log('Show Description Clicked');
   }
 
   showReport() {
-    console.log('Report clicked');
+    console.log('Show Report Clicked');
   }
+
+  @HostListener('document:click', ['$event'])
+onClickOutside(event: Event) {
+  const target = event.target as HTMLElement;
+
+  
+  if (!target.closest('.share-section') && !target.closest('.share-btn')) {
+    this.showShareSection = false;
+  }
+
+  
+  if (!target.closest('.options-section') && !target.closest('.options-btn')) {
+    this.showOptions = false;
+  }
+}
 
   toggleList() {
     this.isSidebarVisible = !this.isSidebarVisible;
@@ -147,4 +168,13 @@ export class InnerStoryComponent {
       this.transitioning = false;
     }, 300); 
   }
+
+  openModal() {
+    this.showModal = true;
+  }
+
+  closeModal() {
+    this.showModal = false;
+  }
+
 }

@@ -38,9 +38,28 @@
     overflow-y: auto; 
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   }
+
+  .share-section {
+    width: 80%;  /* يجعلها تأخذ 80% من عرض الشاشة */
+    height: auto;
+    min-height: 120px; /* جعل الارتفاع مناسب */
+    right: 10%;
+    top: 40%;
+    transform: translate(0, -50%);
+  }
+
+  .share-links button {
+    width: 100px;
+    height: 100px;
+  }
+
+  .share-section h4 {
+    font-size: 16px;
+  }
 }
 
 @media screen and (max-width: 900px) {
+  
   .shorts-wrapper {
     position: fixed;
     top: 0;
@@ -304,7 +323,7 @@
   height: 500px;
   width: 400px;
   padding: 10px;
-  background: #f9f9f9;
+  background: #ffffff;
   border-radius: 8px;
 }
 .count-commet{
@@ -312,7 +331,7 @@
 }
 
 .comment {
-  background: #fff;
+  background: #ffffff;
   padding: 8px;
   margin: 5px 0;
   border: 1px solid #ddd;
@@ -320,22 +339,25 @@
 
 .comments-section button {
   background-color: #653cbe;
-  color: white;
-  border-radius: 0%!important;
+  color: rgb(255, 255, 255);
+  border-radius: 15%!important;
   margin-bottom: 10px;
 }
 
 .send-btn {
-  margin-top: 10px;
+  /* margin-top: 10px; */
   margin-left: 20px;
   border-radius: 50%!important;
   gap: 5px;
-  display: block;
+  height: 2.5rem;
+  /* display: block; */  
+
 }
 
 .comment-input {
-  margin-top: 20px;
+  margin-top: 30px;
   gap: 5px;
+  height: 2.5rem;
   display: flex;
   
 }
@@ -347,15 +369,18 @@
 .share-section {
   z-index: 100;
   display: flex;
-  position: fixed;
+  flex-direction: column; /* ترتيب العناصر عموديًا */
   align-items: center;
   justify-content: center;
-  right: 40%;
+  position: fixed;
+  right: 50%;
   top: 50%;
+  transform: translate(50%, -50%); /* ضبط التمركز في المنتصف */
   background-color: rgb(37, 37, 37);
-  height: 20%;
-  width: 20%;
-  border-radius: 5%;
+  width: 300px;
+  height: auto;
+  padding: 15px;
+  border-radius: 10px;
 }
 
 .share-section h4 {
@@ -391,36 +416,54 @@
   position: absolute;
   top: 10px; 
   right: 10px; 
-  background-color: rgb(37, 37, 37);
-  color: white;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
   border: none;
   border-radius: 50%;
   padding: 8px;
   cursor: pointer;
 }
 
-.options-section{
-  
-  position: fixed;
-  right: 40%;
-  height: 13%;
-  bottom: 25%;
-  width: 10%;
-  background-color: rgb(42, 42, 42);
-  border-radius: 5%;
+.options-container {
+  position: relative;
+  display: inline-block;
 }
 
-.options-section button{
-  color: white;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5%;
-  margin-bottom: 10px;
+.options-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.options-section {
+  position: absolute;
+  right: 0;
+  top: 40px;
   background-color: rgb(42, 42, 42);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+  z-index: 1000;
 }
-.options-section button:hover{
+
+.options-section button {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  text-align: left;
+  color: white;
+  background-color: rgb(42, 42, 42);
+  border: none;
+  cursor: pointer;
+}
+
+.options-section button:hover {
   background-color: rgb(37, 37, 37);
+  border-radius: 0%;
 }
+
 /* .closecommentBTN{
   position: relative !important;
   right: 0px !important;
@@ -436,4 +479,23 @@ video {
 video.transitioning {
   opacity: 0;
   transform: translateY(15px);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 50%;
 }
