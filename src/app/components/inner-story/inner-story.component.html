@@ -27,7 +27,7 @@
         (click)="togglePlayPause()"
         [ngClass]="{ transitioning: transitioning }"
       ></video>
-      
+
       <img src="" alt="" />
       <!-- user_info-->
       <div class="user_info">
@@ -38,7 +38,7 @@
       <!-- video-info-->
       <div class="video-info">
         <p class="video-description">
-          {{ story[currentStoryIndex]?.description }}
+          {{ story[currentStoryIndex].description }}
         </p>
       </div>
 
@@ -62,7 +62,7 @@
               <i class="fa-solid fa-arrow-down"></i>
             </button>
           </div>
-          
+
         <!-- like -->
         <button class="btn btn-light like-btn" (click)="toggleLike()">
           <i
@@ -72,7 +72,7 @@
           <span>{{ likes }}</span>
         </button>
 
-    
+
         <!-- comments -->
         <button class="btn btn-light comments" (click)="toggleComments()">
           <i class="bi bi-chat-dots"></i>
