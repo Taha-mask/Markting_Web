@@ -1,7 +1,7 @@
 <div class="container-fluid ms-0 pe-0">
   <div class="row ms-0 pe-0">
     <!-- Left Sidebar -->
-    <app-trending-sidebar class="sid col-md-3 col-12 position-relative mt-4 d-flex ms-3"></app-trending-sidebar>
+    <app-trending-sidebar class="sid col-md-3 col-12 position-relative mt-4 d-flex ms-3 "></app-trending-sidebar>
 
     <!-- Main Content (Feed) -->
     <div class="main-content col-md-6 col-15 scrollable-content d-flex pe-4">
@@ -92,11 +92,11 @@
           <div class="p-3 d-flex justify-content-between text-center">
             <div (click)="toggleLike(post)" class="d-flex align-items-center" style="cursor: pointer;">
               <i [class.bi-heart-fill]="post.liked" [class.bi-heart]="!post.liked" [class.text-danger]="post.liked"></i>
-              <span class="ms-1" style="user-select: none;">{{ post.likes }} Likes</span>
+              <span class=" ms-1" style="user-select: none;">{{ post.likes }}<span class="like">Likes</span> </span>
             </div>
             <div (click)="toggleComments(post)" class="d-flex align-items-center" style="cursor: pointer;">
               <i class="bi bi-chat-dots-fill text-secondary"></i>
-              <span class="ms-1" style="user-select: none;">{{ post.comments.length }} Comments</span>
+              <span class="ms-1" style="user-select: none;">{{ post.comments.length }} <span class="comment">Comments</span> </span>
             </div>
             <div (click)="sharePost(post)" class="d-flex align-items-center" style="cursor: pointer;">
               <i class="bi bi-share-fill text-primary"></i>
@@ -117,7 +117,7 @@
             </div>
             <div *ngFor="let use of user" class="comment-box d-flex align-items-center p-2">
               <img [src]="use.profileImageUrl" alt="User Avatar" class="rounded-circle avatar" />
-              <input type="text" [(ngModel)]="newComment" class="form-control mx-2 comment-input" placeholder="Write your comment..." />
+              <input type="text" [(ngModel)]="newComment" class="form-control mx-2 comment-input  " placeholder="Write your comment..." />
               <div class="icons d-flex align-items-center">
                 <i class="bi bi-paperclip mx-2"></i>
                 <i class="bi bi-image mx-2"></i>

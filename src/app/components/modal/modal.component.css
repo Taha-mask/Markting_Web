@@ -90,7 +90,6 @@ textarea:focus {
 .position-absolute {
   position: absolute;
 }
-
 .emoji-picker-container {
   position: absolute;
   right: 0;
@@ -100,49 +99,4 @@ textarea:focus {
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Media Queries for Mobile Devices */
-@media (max-width: 767px) {
-  .modal-dialog {
-    margin: 10px;
-  }
-
-  .modal-content {
-    padding: 10px;
-  }
-
-  .modal-header, .modal-footer {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .modal-header .btn-close {
-    margin-top: 10px;
-  }
-
-  .modal-body {
-    padding: 10px;
-  }
-
-  .d-flex.align-items-center.mb-3 {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .d-flex.align-items-center.mb-3 img {
-    margin-bottom: 10px;
-  }
-
-  .position-relative {
-    width: 100%;
-  }
-
-  .browse {
-    width: 100%;
-  }
-
-  .navigation-buttons {
-    justify-content: space-between;
-  }
 }

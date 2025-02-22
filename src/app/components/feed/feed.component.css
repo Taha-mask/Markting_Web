@@ -278,18 +278,23 @@
 
 /* Media Queries for Mobile Devices */
 
+@media screen and (max-width: 1201px) {
+  .risaide {
+    display: none; /* إخفاء الـ Right Sidebar */
+  }
 
-
+  .main-content {
+    flex: 1; /* جعل الجزء الأوسط يأخذ العرض المتبقي */
+    max-width: calc(100% - 300px); /* عرض الجزء الأوسط بعد عرض الـ Trending Sidebar */
+    padding-right: 0; /* إزالة الحشو الزائد */
+  }
+}
 
 @media (max-width: 767px) {
-
-
   .container-fluid {
     padding: 0;
   }
-.risaide{
-  display: none;
-}
+
   .row {
     margin: 0;
   }
@@ -301,7 +306,6 @@
 
   .col-md-6 {
     padding: 0 15px;
-
   }
 
   .icons i {
@@ -315,15 +319,9 @@
     margin-top: 10px;
   }
 
-  .comment-input {
-    width: 100%;
-    margin-top: 10px;
-  }
 
-  .comment-box {
-    align-items: flex-start;
-    flex-direction: column;
-  }
+
+
 
   .profile-pic {
     height: 40px;
@@ -342,91 +340,8 @@
     width: 60px;
   }
 
-  .risaide {
-    display: none;
-  }
-
   .scrollable-content {
     min-height: auto;
     max-height: none;
   }
 }
-
-
-
-
-
-
-@media scree {
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

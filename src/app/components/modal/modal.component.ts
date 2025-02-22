@@ -14,8 +14,8 @@ export class ModalComponent {
   @ViewChild('postModal') postModal!: ElementRef; // للوصول إلى الـ Modal
   @ViewChild('postTextarea') postTextarea!: ElementRef; // للوصول إلى الـ textarea
 
-  previewUrls: string[] = [];
-  currentIndex: number = 0; 
+  previewUrls: string[] = []; // مصفوفة لتخزين روابط الصور
+  currentIndex: number = 0; // الفهرس الحالي للصورة المعروضة
   selectedAudience: string = 'public'; // خاصية لتخزين الجمهور المحدد
   selectedAudienceText: string = 'Select audience'; // نص الجمهور المحدد
   showEmojiPicker: boolean = false; // حالة إظهار منتقي الإيموجيات

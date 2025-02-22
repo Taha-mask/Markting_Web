@@ -7,7 +7,7 @@ import { ReportComponent } from "../report/report.component";
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterModule, ModalComponent],
+  imports: [RouterModule, ModalComponent, ReportComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
