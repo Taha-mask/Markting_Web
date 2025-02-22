@@ -1,0 +1,310 @@
+.stories-sidebar {
+  width: 300px;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.stories-sidebar h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.create-story {
+  background-color: #653cbe;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stories-list {
+  list-style: none;
+  padding: 0;
+}
+
+.stories-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.stories-list li:hover {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+.stories-list li.active {
+  background-color: #f0f0f0;
+}
+
+.stories-list li img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.stories-list li .story-info {
+  flex-grow: 1;
+}
+
+.stories-list li .story-info h4 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.shorts-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: black;
+}
+
+.short {
+  width: 320px;
+  height: 560px; /* ارتفاع الديف ثابت مثل Shorts */
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px; /* حواف ناعمة مثل يوتيوب */
+  background-color: #000;
+}
+
+.short video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* يجعل الفيديو يملأ الديف بدون تمدد */
+  border-radius: 20px;
+}
+
+.short img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* يجعل الفيديو يملأ الديف بدون تمدد */
+  border-radius: 20px;
+}
+
+.video-info {
+  position: absolute;
+  bottom: 0%;
+  left: 20px;
+  color: white;
+}
+
+.user_info {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  align-items: center;
+  gap: 10px;
+  display: flex;
+}
+
+.user_info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.user_info h5 {
+  color: white;
+  font-size: 14px;
+  margin: 0;
+}
+
+.actions {
+  position: absolute;
+  right: 10px;
+  bottom: 10%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.actions button {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 5px;
+  border-radius: 50%;
+  font-size: 18px;
+}
+
+.story-navigation {
+  position: fixed;
+  bottom: 40%;
+  right: 500px;
+  justify-content: space-between;
+  width: 80px;
+  gap: 50px;
+}
+
+.todown {
+  margin-top: 10px;
+}
+
+.nav-btn {
+  padding: 10px;
+  background-color: #444444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem; /* حجم الأيقونة */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+}
+
+.nav-btn:disabled {
+  background-color: #444444;
+  cursor: auto;
+}
+
+.nav-btn i {
+  font-size: 1.5rem; /* التحكم في حجم الأيقونة */
+}
+
+.like-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 1.2rem;
+  padding: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.like-btn i {
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+.like-btn i.bi-hand-thumbs-up-fill {
+  color: rgb(255, 255, 255);  /*like*/
+}
+
+/* comments-section  */
+.comments-section {
+  position: fixed;
+  right: 5%;
+  top: 10%;
+  border-top: 1px solid #ddd;
+  margin-top: 10px;
+  height: 500px;
+  width: 400px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+.count-commet{
+  margin-left: 10px;
+}
+
+.comment {
+  background: #fff;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+}
+
+.comments-section button {
+  background-color: #653cbe;
+}
+
+.send-btn {
+  margin-left: 20px;
+  border-radius: 15%!important;
+  gap: 5px;
+}
+
+.comment-input {
+  gap: 5px;
+  display: flex;
+}
+
+/* share-section */
+.share-section {
+  z-index: 100;
+  display: flex;
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+  right: 40%;
+  top: 50%;
+  background-color: rgb(37, 37, 37);
+  height: 20%;
+  width: 20%;
+  border-radius: 5%;
+}
+
+.share-section h4 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 20px;
+  color: white;
+}
+
+.share-links button {
+  margin-top: 30px;
+  margin-right: 5px;
+  margin-left: 5px;
+  width: 20%;
+  height: 20%;
+  font-size: 18px;
+  background-color: rgb(37, 37, 37);
+}
+
+.share-section button.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgb(37, 37, 37);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.options-section{
+
+  position: fixed;
+  right: 40%;
+  height: 13%;
+  bottom: 25%;
+  width: 10%;
+  background-color: rgb(42, 42, 42);
+  border-radius: 5%;
+}
+
+.options-section button{
+  color: white;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5%;
+  margin-bottom: 10px;
+  background-color: rgb(42, 42, 42);
+}
+.options-section button:hover{
+  background-color: rgb(37, 37, 37);
+}

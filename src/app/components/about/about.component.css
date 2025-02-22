@@ -1,0 +1,28 @@
+.about-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  .about-section {
+    margin: 50px 0;
+  }
+
+  .btn-custom {
+    background-color: #1f55c9;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px 20px;
+    text-decoration: none;
+  }
+
+  .btn-custom:hover {
+    background-color: #1f22c9;
+    color: #fff;
+  }
+  span{
+    color: #1f55c9;
+  }
+  h2{
+    font-size: 40px;
+  }
