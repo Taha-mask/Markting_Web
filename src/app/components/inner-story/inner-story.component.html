@@ -46,7 +46,7 @@
       <!-- video-info-->
       <div class="video-info">
         <p class="video-description">
-          {{ story[currentStoryIndex]?.description }}
+          {{ story[currentStoryIndex].description }}
         </p>
       </div>
 
@@ -70,6 +70,25 @@
           </button>
         </div>
 
+          <!-- arrow icons -->
+          <div class="story-navigation">
+            <button
+              class="nav-btn"
+              (click)="goToPreviousStory()"
+              [disabled]="currentStoryIndex === 0"
+            >
+              <i class="fa-solid fa-arrow-up"></i>
+            </button>
+            <button
+              class="nav-btn todown"
+              (click)="goToNextStory()"
+              [disabled]="currentStoryIndex === stories_users.length - 1"
+            >
+              <i class="fa-solid fa-arrow-down"></i>
+            </button>
+          </div>
+
+
         <!-- like -->
         <button class="btn btn-light like-btn" (click)="toggleLike()">
           <i
@@ -78,6 +97,7 @@
           ></i>
           <span>{{ likes }}</span>
         </button>
+
 
         <!-- comments -->
         <button class="btn btn-light comments" (click)="toggleComments()">

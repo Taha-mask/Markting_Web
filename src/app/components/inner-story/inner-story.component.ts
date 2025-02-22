@@ -1,6 +1,8 @@
 import { Component, ViewChild, ElementRef, HostListener, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
 // import { SafeUrlPipe } from '..gi/safe-url.pipe';
+
 import { FormsModule } from '@angular/forms';
 // import { ModalStoryComponent,} from '../modal-story/modal-story.component';
 
@@ -115,6 +117,7 @@ export class InnerStoryComponent {
     console.log('Show Report Clicked');
   }
 
+
   @HostListener('document:click', ['$event'])
 onClickOutside(event: Event) {
   const target = event.target as HTMLElement;
@@ -134,7 +137,7 @@ onClickOutside(event: Event) {
     this.isSidebarVisible = !this.isSidebarVisible;
   }
 
-  
+
   private touchStartY: number = 0;
   private touchEndY: number = 0;
 
@@ -166,8 +169,9 @@ onClickOutside(event: Event) {
   private removeTransition() {
     setTimeout(() => {
       this.transitioning = false;
-    }, 300); 
+    }, 300);
   }
+
 
   // openModal() {
   //   this.showModal = true;

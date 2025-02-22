@@ -16,9 +16,7 @@
             "outputPath": "docs",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
@@ -30,11 +28,13 @@
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
-            ]
+            ],
+            "outputHashing": "all"
           },
           "configurations": {
             "production": {
-             "fileReplacements": [],
+              "fileReplacements": [],
+              "optimization": true,
               "baseHref": "/Markting_Web/",
               "deployUrl": "/Markting_Web/"
             }
