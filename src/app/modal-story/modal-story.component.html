@@ -1,0 +1,100 @@
+<!-- Modal الأساسي -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true" #postModal>
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="postModalLabel">Create Story</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex align-items-center mb-3">
+            <img src="images/user-1.png" class="postimg rounded-circle me-2" alt="User Image">
+            <div>
+              <ng-container *ngFor="let user of users; trackBy: trackByUsername">
+                <strong>{{ user.username }}</strong>
+              </ng-container>
+              <!-- زر "Select audience" لفتح الـ Modal الجديد -->
+              <a class="text-muted small d-block text-decoration-none" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#audienceModal">
+                {{ selectedAudienceText }}
+              </a>
+            </div>
+          </div>
+  
+          <!-- Textarea مع أيقونة الإيموجي -->
+          <div class="position-relative">
+            <textarea class="mb-3" placeholder="What's on your mind, {{users[0].username}}?" rows="1" #postTextarea></textarea>
+            <i class="bi bi-emoji-smile position-absolute" style="right: 10px; top: 10px; cursor: pointer;" (click)="toggleEmojiPicker()"></i>
+            <!-- حاوية منتقي الإيموجيات -->
+            <div id="emojiPickerContainer" *ngIf="showEmojiPicker" class="emoji-picker-container">
+              <emoji-picker (emojiClick)="addEmoji($event)"></emoji-picker>
+            </div>
+          </div>
+  
+          <div class="browse rounded p-3" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+            <label for="fileInput" class="form-label d-block">
+              <strong>Add videos</strong> or drag and drop
+            </label>
+            <label for="fileInput" class="custom-file-upload d-flex justify-content-center">
+              <i class="bi bi-plus-circle" style="font-size: 40px; cursor: pointer;"></i>
+            </label>
+            <div id="imagePreview" class="mt-3 position-relative">
+              <ng-container *ngIf="previewUrls.length > 0">
+                <img [src]="previewUrls[currentIndex]" alt="Image Preview" class="img-thumbnail">
+                <div class="navigation-buttons">
+                  <button class="" (click)="prevImage()" [disabled]="currentIndex === 0">
+                    <i class="bi bi-chevron-left"></i>
+                  </button>
+                  <button class="bg-none" (click)="nextImage()" [disabled]="currentIndex === previewUrls.length - 1">
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
+                </div>
+                <button class="btn btn-danger btn-sm delete-button" (click)="deleteImage()">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+              </ng-container>
+            </div>
+            <input type="file" id="fileInput" class="form-control-file w-100 d-none" (change)="onFileSelected($event)" multiple>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Create</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal الجديد -->
+  <div class="modal fade" id="audienceModal" tabindex="-1" aria-labelledby="audienceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="audienceModalLabel">Select Audience</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- بيانات جديدة -->
+          <div class="mb-3">
+            <h6>Choose your audience:</h6>
+            <ul class="list-group">
+              <li class="list-group-item" (click)="selectAudience('public')">
+                Public <input type="radio" name="audience" value="public" style="position: absolute; top:13px ; right: 10px;" [checked]="selectedAudience === 'public'">
+              </li>
+              <li class="list-group-item" (click)="selectAudience('friends')">
+                Friends <input type="radio" name="audience" value="friends" style="position: absolute; top:13px ; right: 10px;" [checked]="selectedAudience === 'friends'">
+              </li>
+              <li class="list-group-item" (click)="selectAudience('onlyMe')">
+                Only Me <input type="radio" name="audience" value="onlyMe" style="position: absolute; top:13px ; right: 10px;" [checked]="selectedAudience === 'onlyMe'">
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" (click)="saveAudience()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.7.0/index.min.js"></script>
+  
