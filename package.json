@@ -3,14 +3,12 @@
   "name": "angular",
   "version": "0.0.0",
   "scripts": {
-
-  "ng": "ng",
-  "start": "ng serve",
-  "build": "ng build",
-  "watch": "ng build --watch --configuration development",
-  "test": "ng test",
-  "deploy": "gh-pages -d dist/Markting_Web/browser"
-
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "deploy": "gh-pages -d dist/Markting_Web/browser"
   },
   "private": true,
   "dependencies": {
@@ -36,7 +34,7 @@
     "@angular/compiler-cli": "^18.2.0",
     "@types/bootstrap": "^5.2.10",
     "@types/jasmine": "~5.1.0",
-    "gh-pages": "^7.0.0",
+    "gh-pages": "^6.3.0",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
