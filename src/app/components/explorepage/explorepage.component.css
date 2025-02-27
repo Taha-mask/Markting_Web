@@ -1,0 +1,348 @@
+
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* يجعل المحتوى في منتصف الشاشة */
+  margin: 0;
+  background-color: #f0f2f5; /* لون مثل فيسبوك */
+}
+
+/* General Styles */
+.scrollable-content {
+    max-height: 80vh;
+    overflow-y: auto;
+    padding-right: 10px;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .no-select {
+    user-select: none;
+  }
+  
+  /* Left Sidebar */
+  
+  
+  
+  .cover-photo img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  
+  .profile-info {
+    margin-top: -40px;
+  }
+  
+  .profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-bottom: -10px;
+  }
+  
+  .stats p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .stats a {
+    color: #0a66c2;
+  }
+  
+  .actions {
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+  }
+  
+  .actions button {
+    font-size: 0.9rem;
+    color: #0a66c2;
+  }
+  
+  .recent h6 {
+    font-size: 0.85rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  
+  .recent ul li a {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #0a66c2;
+    text-decoration: none;
+  }
+  
+  .recent ul li a:hover {
+    color: #004182;
+  }
+  
+  .recent ul li i {
+    margin-right: 5px;
+  }
+  
+ 
+  
+  /* Post Section */
+  .add-post {
+    width: 50%;
+  }
+  
+  .btnpost {
+    background-color: black;
+    color: white;
+    padding: 7px 20px;
+    border: none;
+    border-radius: 10px;
+  }
+  
+  .text-primary {
+    color: #ff7db5 !important;
+  }
+  
+  .text-muted {
+    color: #6c757d !important;
+  }
+  
+  /* Comment Section */
+  .comment-box {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 30px;
+    border: 1px solid rgb(125, 125, 125);
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border: none;
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+  }
+  
+  .comment-input {
+    border: 1px solid #000000;
+    border-radius: 20px;
+    outline: none;
+    flex-grow: 1;
+  }
+  
+  .icons {
+    display: flex;
+    align-items: flex-end;
+    margin-right: auto;
+  }
+  
+  .icons i {
+    font-size: 1.2rem;
+    color: #b0b0b0;
+    cursor: pointer;
+  }
+  
+  .icons i:hover {
+    color: #6c757d;
+  }
+  
+  .comment-input:focus {
+    box-shadow: none;
+  }
+  
+  .bi-send {
+    font-size: 1.5rem;
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+  .bi-send:hover {
+    color: #0056b3;
+  }
+  
+  /* Right Sidebar */
+  .risaide {
+    width: 23%;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding-right: 10px;
+    overflow-x: hidden;
+  }
+  
+  .risaide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .buttonpost{
+  transform: translateY(-20px);
+    margin-left: 50px;
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 70px;
+   
+  }
+
+
+
+
+
+ /* جعل القسم بالكامل في المنتصف */
+.people-you-may-know {
+  width: 80%; /* تحديد العرض ليكون مناسبًا */
+  max-width: 800px; /* منع التمدد الزائد */
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: 20px auto; /* هذا يضعه في المنتصف أفقيًا */
+  text-align: center;
+  overflow-x: auto;
+}
+
+/* جعل البطاقات أفقية وفي المنتصف */
+.users-list {
+  display: flex;
+  justify-content: center; /* توسيط العناصر */
+  gap: 15px;
+  padding: 10px;
+  overflow-x: auto;
+}
+
+/* تصميم البطاقة */
+.user-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f8f8f8;
+  padding: 10px;
+  border-radius: 8px;
+  width: 150px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* صورة الملف الشخصي */
+.profile-pic {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+/* تنسيق الزر */
+button {
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+
+/* Media Queries for Mobile Devices */
+
+@media screen and (max-width: 1201px) {
+
+
+  .risaide {
+    display: none; /* إخفاء الـ Right Sidebar */
+  }
+
+  .main-content {
+    flex: 1; /* جعل الجزء الأوسط يأخذ العرض المتبقي */
+    max-width: calc(100% - 300px); /* عرض الجزء الأوسط بعد عرض الـ Trending Sidebar */
+    padding-right: 0; /* إزالة الحشو الزائد */
+  }
+}
+
+@media (max-width: 767px) {
+  .container-fluid {
+    padding: 0;
+  }
+
+  .row {
+    margin: 0;
+  }
+
+  
+
+  .col-md-3, .col-md-6, .col-md-2 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .col-md-6 {
+    padding: 0 15px;
+  }
+
+  .icons i {
+    margin-left: 10px;
+    margin-right: 0;
+  }
+
+  .icons {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+
+
+
+
+
+  .profile-pic {
+    height: 40px;
+    width: 40px;
+  }
+
+  .story-frame::before {
+    height: calc(100% + 4px);
+    width: calc(100% + 4px);
+    left: -2px;
+    top: -2px;
+  }
+
+  .story-frame {
+    height: 60px;
+    width: 60px;
+  }
+
+  .scrollable-content {
+    min-height: auto;
+    max-height: none;
+  }
+
+
+
+  .people-you-may-know {
+    height: 60px;
+    width: 60px;
+  }
+}
