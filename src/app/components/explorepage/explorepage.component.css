@@ -269,8 +269,6 @@ button {
 /* Media Queries for Mobile Devices */
 
 @media screen and (max-width: 1201px) {
-
-
   .risaide {
     display: none; /* إخفاء الـ Right Sidebar */
   }
@@ -290,8 +288,6 @@ button {
   .row {
     margin: 0;
   }
-
-  
 
   .col-md-3, .col-md-6, .col-md-2 {
     flex: 0 0 100%;
@@ -337,12 +333,5 @@ button {
   .scrollable-content {
     min-height: auto;
     max-height: none;
-  }
-
-
-
-  .people-you-may-know {
-    height: 60px;
-    width: 60px;
   }
 }
