@@ -40,10 +40,12 @@ import { GiveFeedbackComponent } from './components/give-feedback/give-feedback.
 import { LoginFormComponent } from './components/login-form/login-form.component';
 import { AboutComponent } from './components/about/about.component';
 import { InnerStoryComponent } from './components/inner-story/inner-story.component';
+import { ExplorepageComponent } from './components/explorepage/explorepage.component';
 export const routes: Routes = [
 
 
     {path: 'feed' , component : FeedComponent},
+      {path: 'explore' , component : ExplorepageComponent},
     {path: 'profile' , component : ProfileComponent},
     {path: 'notf' , component : NotificationComponent},
     {path: 'setting' , component : SettingComponent},

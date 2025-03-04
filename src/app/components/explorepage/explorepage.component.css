@@ -271,8 +271,6 @@ button {
 /* Media Queries for Mobile Devices */
 
 @media screen and (max-width: 1201px) {
-
-
   .risaide {
     display: none; /* إخفاء الـ Right Sidebar */
   }
@@ -339,12 +337,5 @@ button {
   .scrollable-content {
     min-height: auto;
     max-height: none;
-  }
-
-
-
-  .people-you-may-know {
-    height: 60px;
-    width: 60px;
   }
 }
