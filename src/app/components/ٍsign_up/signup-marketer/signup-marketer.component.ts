@@ -15,7 +15,7 @@ import { NavbarComponent } from "../../navbar/navbar.component";
 @Component({
   selector: 'app-signup-marketer',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor, NavbarComponent],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor],
   templateUrl: './signup-marketer.component.html',
   styleUrls: ['./signup-marketer.component.css'],
 })

@@ -131,8 +131,9 @@
   color: #ff7db5 !important;
 }
 
-.text-muted {
+.comment-time {
   color: #6c757d !important;
+  margin-left: 55px; /* Adjust margin to align with the comment content */
 }
 
 /* Comment Section */
@@ -151,6 +152,7 @@
   width: 40px;
   height: 40px;
   object-fit: cover;
+  margin-right: 5px; /* Reduce the margin to bring the image closer to the text */
 }
 
 .comment-input {
@@ -159,7 +161,31 @@
   outline: none;
   flex-grow: 1;
 }
+.comment-input:focus{
+  box-shadow: none;
+}
+.bi-hand-thumbs-up {
+  color: #6c757d;
+  cursor: pointer;
+}
 
+.bi-hand-thumbs-up:hover {
+  color: #000000;
+}
+
+.bi-trash {
+  color: #ff0019;
+  cursor: pointer;
+}
+
+.bi-trash:hover {
+  color: #ff0019;
+}
+.main-content {
+  padding-right: 20px;
+}
+.main-content .container {
+margin-top: 20px;}
 .icons {
   display: flex;
   align-items: flex-end;
@@ -276,6 +302,11 @@
   background-color: rgba(255, 255, 255, 0.8); /* لون النقاط عند وضع الماوس فوقها */
 }
 
+/* Hide the arrow next to the three dots in the dropdown menu */
+.dropdown-toggle::after {
+  display: none;
+}
+
 /* Media Queries for Mobile Devices */
 
 @media screen and (max-width: 1201px) {
@@ -319,9 +350,15 @@
     margin-top: 10px;
   }
 
+  .comment-input {
+    width: 100%;
+    margin-top: 10px;
+  }
 
-
-
+  .comment-box {
+    align-items: center;
+    flex-direction: row;
+  }
 
   .profile-pic {
     height: 40px;
@@ -344,4 +381,56 @@
     min-height: auto;
     max-height: none;
   }
+
+  .post-img {
+    width: 100%;
+    height: 300px;
+  }
+
+  .main-content {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .comment, .like, .Shares, .Saved {
+    display: none;
+  }
+
+  .Action-btn i {
+    font-size: 20px;
+    margin-right: 5px;
+  }
+
+  .main-content .container {
+    margin-top: 0px;
+  }
+
+  .comment-input {
+    width: 70%;
+  }
+}
+.comment-content{
+  border: #000 1px solid;
+  border-radius:15px ;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+}
+.dropdown-item{
+cursor: pointer;
+
+}
+
+.comment-area {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.emoji-picker-container {
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+  z-index: 1000;
 }

@@ -2,6 +2,15 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FeedComponent } from './feed.component';
 
+
+export class ModalComponent {
+  toggleEmojiPicker() {
+  throw new Error('Method not implemented.');
+  }
+  addEmoji($event: Event) {
+  throw new Error('Method not implemented.');
+  }}
+  
 describe('FeedComponent', () => {
   let component: FeedComponent;
   let fixture: ComponentFixture<FeedComponent>;
@@ -35,6 +44,6 @@ describe('FeedComponent', () => {
 
   it('should toggle save', () => {
     component.toggleSave(component.posts[0]);
-    expect(component.posts[0].saved).toBeTrue();
+    expect(component.posts[0].Saved).toBeTrue();
   });
 });

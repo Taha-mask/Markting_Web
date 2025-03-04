@@ -1,5 +1,29 @@
 import { Routes } from '@angular/router';
 import { AppComponent } from './app.component';
+import { ExplorepageComponent } from './components/explorepage/explorepage.component';
+import { ComComponent } from './components/Messages/com/com.component';
+import { FirstchatComponent } from './components/Messages/firstchat/firstchat.component';
+import { SecondchatComponent } from './components/Messages/secondchat/secondchat.component';
+import { ThirdchatComponent } from './components/Messages/thirdchat/thirdchat.component';
+import { FourchatComponent } from './components/Messages/fourchat/fourchat.component';
+import { FivechatComponent } from './components/Messages/fivechat/fivechat.component';
+import { SixchatComponent } from './components/Messages/sixchat/sixchat.component';
+import { SivenchatComponent } from './components/Messages/sivenchat/sivenchat.component';
+import { NinechatComponent } from './components/Messages/ninechat/ninechat.component';
+import { TinchatComponent } from './components/Messages/tinchat/tinchat.component';
+import { MainchatComponent } from './components/Messages/mainchat/mainchat.component';
+import { FirstprofileComponent } from './components/Messages/firstprofile/firstprofile.component';
+import { SecondprofileComponent } from './components/Messages/secondprofile/secondprofile.component';
+import { ThirdprofileComponent } from './components/Messages/thirdprofile/thirdprofile.component';
+import { FourprofileComponent } from './components/Messages/fourprofile/fourprofile.component';
+import { FiveprofileComponent } from './components/Messages/fiveprofile/fiveprofile.component';
+import { SixprofileComponent } from './components/Messages/sixprofile/sixprofile.component';
+import { SivenprofileComponent } from './components/Messages/sivenprofile/sivenprofile.component';
+import { EighthprofileComponent } from './components/Messages/eighthprofile/eighthprofile.component';
+import { NinthprofileComponent } from './components/Messages/ninthprofile/ninthprofile.component';
+import { TinthprofileComponent } from './components/Messages/tinthprofile/tinthprofile.component';
+
+
 
 import { TrendingSidebarComponent } from './components/trending-sidebar/trending-sidebar.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -31,8 +55,43 @@ export const routes: Routes = [
     {path: 'givefeedback' , component : GiveFeedbackComponent},
     {path: 'login' , component : LoginFormComponent},
     {path: 'about' , component : AboutComponent},
+    {path: 'Story' , component : InnerStoryComponent},
     {path: 'stories' , component : InnerStoryComponent},
+    {path: 'Explore' , component : ExplorepageComponent},
 
+
+    {path: 'firstprofile' , component : FirstprofileComponent},
+
+    {path: 'secondprofile' , component : SecondprofileComponent},
+    {path: 'thirdprofile' , component :ThirdprofileComponent },
+    {path: 'fourprofile' , component :FourprofileComponent },
+    {path: 'fiveprofile' , component :FiveprofileComponent},
+    {path: 'sixprofile' , component :SixprofileComponent },
+    {path: 'sivenprofile' , component : SivenprofileComponent},
+    {path: 'eighthprofile' , component :EighthprofileComponent },
+    {path: 'ninthprofile' , component : NinthprofileComponent},
+    {path: 'tinthprofile' , component :TinthprofileComponent },
+    {path: 'com' , component :ComComponent },
+
+   {path: 'first' , component : FirstchatComponent},
+
+    {path: 'second' , component : SecondchatComponent},
+    {path: 'app' , component : AppComponent},
+
+    {path: 'third' , component : ThirdchatComponent},
+
+    {path: 'four' , component : FourchatComponent},
+
+    {path: 'five' , component : FivechatComponent},
+
+    {path: 'six' , component : SixchatComponent},
+
+    {path: 'siven' , component : SivenchatComponent},
+
+    {path: 'nine' , component : NinechatComponent},
+    {path: 'tin' , component : TinchatComponent},
+
+    {path: 'main' , component : MainchatComponent},
 {
         path: '',
         pathMatch : 'full',

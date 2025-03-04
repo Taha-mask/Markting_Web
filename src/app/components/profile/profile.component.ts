@@ -14,7 +14,6 @@ import { User } from '../../user';
 })
 export class ProfileComponent {
 
-
   users = [
     { imageUrl: 'images/WhatsApp Image 2024-11-19 at 06.28.34_f5d6e241.jpg' },
     { imageUrl: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg' },
@@ -342,6 +341,19 @@ changeProfileImage() {
     }
   };
   input.click();
+}
+
+onClickOnImage(event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      if (e.target && e.target.result) {
+        this.user[0].profileImageUrl= e.target.result as string; // تحديث الصورة
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
 }
 
 

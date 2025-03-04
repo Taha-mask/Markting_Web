@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-"outputPath": "dist/Markting_Web",
+            "outputPath": "dist/angular",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -88,7 +88,6 @@
                 "glob": "**/*",
                 "input": "public"
               }
-
             ],
             "styles": [
               "src/styles.css"

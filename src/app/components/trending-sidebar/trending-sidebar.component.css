@@ -84,8 +84,14 @@
   font-size: 20px;
 }
 
-.proimg {
+.proimg{
+
+
+}
+.proimg img {
   background: linear-gradient(45deg, #D16BA5, #86A8E7, #5FFBF1);
+
+  width: 100px;
   z-index: -1;
 }
 
@@ -98,7 +104,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 768px) {
   .leftside {
     display: none;
   }

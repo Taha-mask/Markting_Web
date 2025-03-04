@@ -12,7 +12,7 @@
 
     <!-- Search Bar -->
      <div class="center d-flex gap-4 align-items-center ms-0">
-    <div class="search-container  d-flex align-items-center    py-1 me-0">
+    <div class="search-container  d-flex align-items-center  px-3 py-1 me-0">
       <!-- Icon: Search -->
       <i class="bi bi-search position-relative text-muted me-0"></i>
       <!-- Input -->
@@ -27,14 +27,14 @@
     </div>
     <div class="d-flex align-items-center  ms-0" >
       <!-- Create New Post Button -->
-      <button class="btn btn-gradient rounded-pill px-2 py-2  " data-bs-toggle="modal" data-bs-target="#postModal">
-      <span class="mobile-text">+ </span><span class="desktop-text "> Create<span class="Create"> a new post</span> </span>
+      <button class="btn btn-gradient rounded-pill px-2 py-2 align-items-center " style="font-size: 16px;" data-bs-toggle="modal" data-bs-target="#postModal">
+      <span class="mobile-text text-align-center"><i class="bi bi-plus" style="font-size: 26px; cursor: pointer;"></i> </span><span class="desktop-text"> Create<span class="Create"> a new post</span> </span>
       </button>
     </div>
 </div>
     <!-- Right Section -->
-    <div class="Rightsection d-flex align-items-center gap-2" >
-      <a class="icon position-relative text-dark" href="frist" routerlink="frist">
+    <div class="Rightsection d-flex align-items-center " >
+      <a class="icon position-relative text-dark" href="main" routerlink="main">
         <i class="bi bi-send fs-5 px-1"></i>
         <span class="badge-dot"></span>
       </a>
@@ -45,10 +45,19 @@
       <div class="dropdown">
         <i class="bi bi-list fs-4 px-2 py-1 " id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="border: 1px solid #959595; border-radius: 20%; cursor: pointer;"></i>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-          <li><a class="dropdown-item" href="#"><i class="bi bi-exclamation-circle me-3 fs-5"></i>Report a problem</a></li>
-          <li><a class="dropdown-item" href="#"><i class="bi bi-brightness-high me-3 fs-5"></i>Switch Appearance</a></li>
-          <li><a class="dropdown-item" href="login"><i class="bi bi-person-circle me-3 fs-5"></i>Switch Accounts</a></li>
-          <li><a class="dropdown-item" href="about"><i class="bi bi-info-circle me-3 fs-5"></i>About</a></li>
+          <li *ngFor="let use of user" class="li-pro">
+            <a class="dropdown-item text-decoration-none text-dark user-info d-flex align-items-center pt-3"  href="profile">
+            <img [src]="use.profileImageUrl" class="me-3 fs-5">
+            <div>
+                <h5>{{use.username}}</h5>
+            </div>
+          </a>
+        </li>
+        <hr class=" text-center">
+          <li><a class="dropdown-item fs-5" href="#" (click)="openReportModal()"><i class="bi bi-exclamation-circle me-3 fs-5"></i>Report a problem</a></li>
+          <li><a class="dropdown-item fs-5" href="#"><i class="bi bi-brightness-high me-3 fs-4"></i>Switch Appearance</a></li>
+          <li><a class="dropdown-item fs-5" href="login"><i class="bi bi-person-circle me-3 fs-4"></i>Switch Accounts</a></li>
+          <li><a class="dropdown-item fs-5" href="about"><i class="bi bi-info-circle me-3 fs-4"></i>About</a></li>
         </ul>
       </div>
     </div>
@@ -56,3 +65,4 @@
 </nav>
 
 <app-modal></app-modal>
+<app-report ></app-report>

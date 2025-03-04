@@ -56,16 +56,61 @@ html, body {
 }
 
 /* تنسيق الصورة الدائرية */
-.profile-image {
+/* الحاوية الأساسية للصورة */
+.profile-container {
   position: absolute;
-  bottom: 80px; /* نصف الصورة خارج الصورة الرئيسية */
-  left: 200px; /* لتنظيم الصورة في أسفل اليسار */
-  width: 150px;
+  width: 150px; /* حجم الصورة */
   height: 150px;
-  border-radius: 50%; /* تجعل الصورة دائرية */
+  display: inline-block;
+  margin-top: -200px; /* ارفع العنصر لفوق */
+  left: 250px;
+
+
+}
+
+
+/* صورة البروفايل */
+.profile-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
   object-fit: cover;
-  border: 5px solid #fff; /* إضافة إطار أبيض للصورة */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* ظل للصورة الدائرية */
+  border: 3px solid #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 0; /* خليها تبدأ من بداية الحاوية */
+  left: 0;
+}
+
+
+/* أيقونة الكاميرا */
+.camera-icon {
+  position: absolute;
+  bottom: 10px; /* خليها في أسفل الصورة */
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+
+/* عند تمرير الماوس تظهر الأيقونة */
+.profile-container:hover .camera-icon {
+  opacity: 1;
+}
+
+/* إخفاء زر اختيار الصورة */
+.camera-icon input {
+  display: none;
 }
 
 /* تخصيص الزر */

@@ -6,6 +6,8 @@ describe('ProfileComponent', () => {
   let component: ProfileComponent;
   let fixture: ComponentFixture<ProfileComponent>;
 
+  
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProfileComponent, FormsModule]
@@ -20,4 +22,6 @@ describe('ProfileComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  
 });

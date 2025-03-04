@@ -22,6 +22,7 @@ body {
   overflow-y: auto;
   padding-right: 10px;
   overflow-x: hidden;
+  margin:auto ;
 }
 
 .notification {
@@ -73,3 +74,26 @@ h2 {
   margin-top: 50px;
   color: #333;
 }
+@media screen and (max-width: 767px) {
+  .notifications {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .notification {
+    width: 100%;
+  }
+
+  .container {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+}
+

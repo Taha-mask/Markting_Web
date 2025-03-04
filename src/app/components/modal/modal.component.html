@@ -25,8 +25,8 @@
           <textarea class="mb-3" placeholder="What's on your mind, {{users[0].username}}?" rows="1" #postTextarea></textarea>
           <i class="bi bi-emoji-smile position-absolute" style="right: 10px; top: 10px; cursor: pointer;" (click)="toggleEmojiPicker()"></i>
           <!-- حاوية منتقي الإيموجيات -->
-          <div id="emojiPickerContainer" *ngIf="showEmojiPicker" class="emoji-picker-container">
-            <emoji-picker (emojiClick)="addEmoji($event)"></emoji-picker>
+          <div *ngIf="showEmojiPicker">
+            <emoji-mart (emojiSelect)="addEmoji($event)"  class="emoji-picker-container"></emoji-mart>
           </div>
         </div>
 
@@ -96,4 +96,3 @@
     </div>
   </div>
 </div>
-<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1.7.0/index.min.js"></script>

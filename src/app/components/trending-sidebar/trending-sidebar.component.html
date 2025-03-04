@@ -1,12 +1,14 @@
  <!-- Left Sidebar -->
-<div class="leftside col-md-3 col-12  mt-4 ">
+<div class="sid col-md-3 col-12  mt-4 ">
       <div class="sidebar-line"></div>
       <div *ngFor="let use of user" class="sidebar text-center align-items-left m-auto">
         <!-- User Profile -->
         <div class="py-3 my-auto">
           <a class="text-decoration-none text-dark" href="profile" routerlink="profile">
-            <img [src]="use.profileImageUrl" alt="Profile Picture" class="proimg rounded-circle mb-2" width="80" />
-            <h5 class="mb-0">{{ use.username }}</h5>
+            <div class="proimg">
+            <img [src]="use.profileImageUrl" alt="Profile Picture" class=" rounded-circle mb-2" width="80" />
+          </div>
+            <h4 class="mb-0 " style="font-weight: 600; ">{{ use.username }}</h4>
             <small>{{ use.type }}</small>
           </a>
           <div class="d-flex justify-content-around text-center py-3">
@@ -27,11 +29,11 @@
 
         <!-- Navigation Menu -->
         <nav class="nav flex-column px-1 my-2">
-          <a href="#" class="nav-link active d-flex align-items-center py-2">
+          <a href="feed" class="nav-link active d-flex align-items-center py-2" routerlinke="feed">
             <span class="horizontal-line"></span>
             <i class="bi bi-house-door me-2"></i> Feed
           </a>
-          <a href="#" class="nav-link d-flex align-items-center py-2">
+          <a href="Explore" class="nav-link d-flex align-items-center py-2" routerlink="Explore">
             <span class="horizontal-line-hover"></span>
             <i class="bi bi-compass me-2"></i> Explore
           </a>

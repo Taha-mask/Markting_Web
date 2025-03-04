@@ -1,10 +1,10 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common'; // استيراد CommonModule
-
+import { PickerModule } from '@ctrl/ngx-emoji-mart'; // استورد PickerModule
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [CommonModule], // إضافة CommonModule إلى imports
+  imports: [CommonModule,PickerModule], // إضافة CommonModule إلى imports
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css']
 })

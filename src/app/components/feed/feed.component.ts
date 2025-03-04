@@ -1,29 +1,44 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProfileComponent } from '../profile/profile.component';
 import { User } from '../../user';
+import { Comment as ImportedComment } from '../../Comment';
 import { TrendingSidebarComponent } from "../trending-sidebar/trending-sidebar.component";
 import { NavbarComponent } from "../navbar/navbar.component";
+import { PickerModule } from '@ctrl/ngx-emoji-mart'; // استورد PickerModule
 
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, FormsModule, TrendingSidebarComponent],
+  imports: [CommonModule, FormsModule, TrendingSidebarComponent, PickerModule],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
   providers: [DatePipe],
 })
 export class FeedComponent {
+  @ViewChild('fileInput') fileInput!: ElementRef;
   profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg'; // Sample profile image
   isDropdownVisible = false; // Control dropdown visibility
   newComment: string = ''; // Input for comments
+  newCommentImageUrl: string | ArrayBuffer | null = null; // Store the selected image URL
   postContent: string = ''; // Input for new post content
+  currentUser = 'Taha Mahmoud'; // المستخدم الحالي
+  showEmojiPicker = false; // Add this property
 
   private isDragging = false;
   private startX = 0;
   private scrollLeft = 0;
+
+  user: User[] = [
+    {
+      username: 'Taha Mahmoud ',
+      type: 'Markter',
+      profileImageUrl: 'images/user-1.png',
+      status: 'Online',
+    }
+  ];
 
   users = [
     { name: 'Angel', image:'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg' },
@@ -57,18 +72,11 @@ export class FeedComponent {
     alert(`You followed ${user.name}`);
   }
 
-  user: User[] = [
-    {
-      username: 'Taha Mahmoud ',
-      type: 'Markter',
-      profileImageUrl: 'images/user-1.png',
-      status: 'Online',
-    }
-  ];
+
 
   posts = [
     {
-      username: 'Taha Mahmoud Ahmed',
+      username: 'Taha Mahmoud',
       profileImageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
       timestamp: new Date(),
       content: 'This is a sample post content!',
@@ -79,13 +87,15 @@ export class FeedComponent {
       ],
       currentImageIndex: 0, // تتبع الصورة الحالية
       likes: 15,
+      Shares: 30,
+      Saves: 5,
       showComments: false,
       isEditing: false,
       liked: false,
-      saved: false,
+      Saved: false,
       comments: [
-        { username: 'Jane', text: 'Great post!' },
-        { username: 'Mike', text: 'Interesting thoughts.' },
+        { username: 'Jane', text: 'Great post!', likes: 2, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/1.jpg' },
+        { username: 'Mike', text: 'Interesting thoughts.', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/2.jpg' },
       ],
     },
     {
@@ -99,13 +109,15 @@ export class FeedComponent {
       ],
       currentImageIndex: 0,
       likes: 8,
+      Shares: 165,
+      Saves: 20,
       showComments: false,
       isEditing: false,
       liked: false,
-      saved: false,
+      Saved: false,
       comments: [
-        { username: 'Tom', text: 'Nice one!' },
-        { username: 'Emma', text: 'Very inspiring.' },
+        { username: 'Tom', text: 'Nice one!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg' },
+        { username: 'Emma', text: 'Very inspiring.', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/4.jpg' },
       ],
     },
     {
@@ -116,13 +128,15 @@ export class FeedComponent {
       images: [],
       currentImageIndex: 0,
       likes: 8,
+      Shares: 5,
+      Saves: 7,
       showComments: false,
       isEditing: false,
       liked: false,
       saved: false,
       comments: [
-        { username: 'Tom', text: 'Nice one!' },
-        { username: 'Emma', text: 'Very inspiring.' },
+        { username: 'Tom', text: 'Nice one!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg' },
+        { username: 'Emma', text: 'Very inspiring.', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/4.jpg' },
       ],
     },
   ];
@@ -162,11 +176,30 @@ export class FeedComponent {
     post.isEditing = false;
   }
 
-  // Add a comment to a post
-  addComment(post: any, commentText: string) {
-    if (commentText.trim()) {
-      post.comments.push({ username: 'Current User', text: commentText });
-      this.newComment = ''; // Clear input field
+  // Method to toggle the emoji picker
+  toggleEmojiPicker() {
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  // Method to add emoji to the comment
+  addEmoji(event: any) {
+    this.newComment += event.emoji.native;
+  }
+
+  // Method to trigger file input click
+  triggerFileInput() {
+    this.fileInput.nativeElement.click();
+  }
+
+  // Method to handle file selection
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.newCommentImageUrl = e.target?.result ?? null;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
@@ -181,10 +214,12 @@ export class FeedComponent {
         images: [], // No images for simplicity
         currentImageIndex: 0,
         likes: 0,
+        Shares: 0,
+        Saves: 0,
         showComments: false,
         isEditing: false,
         liked: false,
-        saved: false,
+        Saved: false,
         comments: [],
       };
       this.posts.unshift(newPost); // Add new post to the top
@@ -222,6 +257,7 @@ export class FeedComponent {
 
   toggleSave(post: any) {
     post.saved = !post.saved;
+    post.Saves += post.saved ? 1 : -1;
   }
 
   // التنقل إلى الصورة التالية
@@ -237,4 +273,76 @@ export class FeedComponent {
       post.currentImageIndex--;
     }
   }
+
+  // دالة لحذف التعليق
+  deleteComment(post: any, commentIndex: number) {
+    if (post.comments[commentIndex].username === this.currentUser) {
+      post.comments.splice(commentIndex, 1);
+    } else {
+      alert('You can only delete your own comments.');
+    }
+  }
+
+  // دالة لتعديل التعليق
+  editComment(post: any, comment: any) {
+    const newCommentText = prompt('Edit your comment:', comment.text);
+    if (newCommentText !== null) {
+      comment.text = newCommentText;
+    }
+  }
+
+  // دالة لإضافة تعليق جديد
+  addComment(post: any, commentText: string): void {
+    if (commentText.trim() || this.newCommentImageUrl) {
+      post.comments.push({
+        username: this.currentUser,
+        text: commentText,
+        imageUrl: this.newCommentImageUrl,
+        likes: 0,
+        likedBy: [],
+        timestamp: new Date(),
+        profileImageUrl: this.user[0].profileImageUrl
+      });
+      this.newComment = '';
+      this.newCommentImageUrl = null;
+    }
+  }
+
+  // دالة لإضافة تفاعل (إعجاب) على التعليق
+  toggleCommentLike(comment: any) {
+    if (!comment.likes) {
+      comment.likes = 0;
+    }
+    if (!comment.likedBy) {
+      comment.likedBy = [];
+    }
+
+    if (comment.likedBy.includes(this.currentUser)) {
+      comment.likes--;
+      comment.likedBy = comment.likedBy.filter((user: string) => user !== this.currentUser);
+    } else {
+      comment.likes++;
+      comment.likedBy.push(this.currentUser);
+    }
+  }
+
+  // Close emoji picker when clicking outside
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.emoji-picker-container') && !target.closest('.bi-emoji-smile')) {
+      this.showEmojiPicker = false;
+    }
+  }
+}
+
+// Define the Comment type with the imageUrl property
+export interface LocalComment {
+  username: string;
+  text: string;
+  imageUrl?: string;
+  likes: number;
+  likedBy: string[];
+  timestamp: Date;
+  profileImageUrl: string;
 }

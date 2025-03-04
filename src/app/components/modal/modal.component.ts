@@ -1,11 +1,12 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'; // استيراد CUSTOM_ELEMENTS_SCHEMA
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { PickerComponent } from '@ctrl/ngx-emoji-mart'; // استيراد PickerComponent
 
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PickerComponent], // إضافة PickerComponent هنا
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA], // إضافة CUSTOM_ELEMENTS_SCHEMA هنا
@@ -14,8 +15,8 @@ export class ModalComponent {
   @ViewChild('postModal') postModal!: ElementRef; // للوصول إلى الـ Modal
   @ViewChild('postTextarea') postTextarea!: ElementRef; // للوصول إلى الـ textarea
 
-  previewUrls: string[] = []; // مصفوفة لتخزين روابط الصور
-  currentIndex: number = 0; // الفهرس الحالي للصورة المعروضة
+  previewUrls: string[] = [];
+  currentIndex: number = 0;
   selectedAudience: string = 'public'; // خاصية لتخزين الجمهور المحدد
   selectedAudienceText: string = 'Select audience'; // نص الجمهور المحدد
   showEmojiPicker: boolean = false; // حالة إظهار منتقي الإيموجيات
@@ -37,7 +38,7 @@ export class ModalComponent {
   // دالة لإضافة الإيموجي إلى الـ textarea
   addEmoji(event: any): void {
     const textarea = this.postTextarea.nativeElement;
-    const emoji = event.emoji.native; // Adjust based on the library's event structure
+    const emoji = event.emoji.native; // الحصول على الإيموجي من الحدث
     textarea.value += emoji;
   }
 
