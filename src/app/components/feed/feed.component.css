@@ -7,6 +7,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  scroll-behavior: smooth;
 }
 
 .hide-scrollbar {
@@ -20,6 +21,24 @@
 
 .no-select {
   user-select: none;
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 /* Left Sidebar */
@@ -90,6 +109,12 @@
   background-clip: padding-box;
   background-color: #f8f9fa;
   position: relative;
+  margin-right: 10px; /* Adjust the margin between story icons */
+  transition: background-color 0.3s ease; /* Add transition for smooth background color change */
+}
+
+.story-frame.active {
+  background-color: #d3d3d3; /* Background color when clicked */
 }
 
 .story-frame::before {
@@ -106,6 +131,11 @@
 
 .story-frame img {
   border-radius: 50%;
+}
+
+.story-frame small {
+  display: block; /* Move the text to the next line */
+  margin-top: 5px; /* Add some space above the text */
 }
 
 .overflow-auto {
@@ -215,7 +245,30 @@ margin-top: 20px;}
 .bi-send:hover {
   color: #0056b3;
 }
-
+.pro-pic {
+  width: 250px;
+  padding: 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.user-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #b3b3b3;
+  padding: 10px;
+  border-radius: 8px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.users-list {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 10px;
+  overflow-x: auto;
+}
 /* Right Sidebar */
 .risaide {
   width: 23%;
@@ -243,7 +296,14 @@ margin-top: 20px;}
   border-radius: 50%;
   cursor: pointer;
 }
+/* تنسيقات إضافية للأيقونات */
+.story-frame i {
+  color: #007bff; /* لون الأيقونات */
+}
 
+.story-frame i:hover {
+  color: #0056b3; /* لون الأيقونات عند التمرير */
+}
 .navigation-buttons button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -433,4 +493,32 @@ cursor: pointer;
   bottom: 50px;
   right: 50px;
   z-index: 1000;
+}
+
+/* Category Section */
+.category-item {
+  flex: 0 0 auto; /* عدم السماح للعناصر بالتمدد */
+  margin: 0 10px; /* مسافة أفقية بين الفئات */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* محاذاة العناصر من الأعلى */
+  height: 110px; /* زيادة الارتفاع */
+}
+
+.category-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px; /* Ensure consistent height for all icons */
+}
+
+.category-text {
+  display: inline-block;
+  white-space: pre-line; /* يسمح بفصل الأسطر عند <br> */
+  line-height: 1.2; /* يتحكم في المسافة بين الأسطر */
+  text-align: center; /* توسيط النص */
+  width: 100%; /* تأكد من أن النص يأخذ العرض الكامل */
+  margin-top: 5px; /* مسافة إضافية بين الأيقونة والنص */
 }

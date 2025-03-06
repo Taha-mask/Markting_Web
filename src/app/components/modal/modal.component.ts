@@ -1,33 +1,93 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { PickerComponent } from '@ctrl/ngx-emoji-mart'; // استيراد PickerComponent
+import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+import { PostService } from '../post.service';
+import { User } from '../../user';
 
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [CommonModule, PickerComponent], // إضافة PickerComponent هنا
+  imports: [CommonModule, FormsModule, PickerComponent], // Add FormsModule to imports
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], // إضافة CUSTOM_ELEMENTS_SCHEMA هنا
 })
 export class ModalComponent {
-  @ViewChild('postModal') postModal!: ElementRef; // للوصول إلى الـ Modal
-  @ViewChild('postTextarea') postTextarea!: ElementRef; // للوصول إلى الـ textarea
+  @ViewChild('postModal') postModal!: ElementRef;
+  @ViewChild('postTextarea') postTextarea!: ElementRef;
 
   previewUrls: string[] = [];
   currentIndex: number = 0;
-  selectedAudience: string = 'public'; // خاصية لتخزين الجمهور المحدد
-  selectedAudienceText: string = 'Select audience'; // نص الجمهور المحدد
-  showEmojiPicker: boolean = false; // حالة إظهار منتقي الإيموجيات
+  selectedAudience: string = 'public';
+  selectedAudienceText: string = 'Select audience';
+  showEmojiPicker: boolean = false;
+  selectedCategory: string = 'General'; // Add a property for the selected category
 
-  // بيانات المستخدمين (مثال)
   users = [
     { username: 'Taha' },
     { username: 'Mahmoud' },
   ];
 
-  constructor() {}
+  categories = [
+    { name: 'All' },
+    { name: 'Electrical Tools' },
+    { name: 'Food' },
+    { name: 'Medicines' },
+    { name: 'Electronics' },
+    { name: 'Clothing' },
+    { name: 'Fashion' },
+    { name: 'Home & Kitchen' },
+    { name: 'Beauty & Personal Care' },
+    { name: 'Home Appliances' },
+    { name: 'Sports & Fitness' },
+    { name: 'Video Games' },
+    { name: 'Toys & Hobbies' },
+    { name: 'Auto Parts' },
+    { name: 'Groceries' },
+    { name: 'Health & Personal Care' },
+    { name: 'Books & Media' },
+    { name: 'Pet Supplies' },
+    { name: 'Perfumes' },
+  ];
+
+  constructor(private postService: PostService) {} // حقن الـ Service
+
+  // دالة لإضافة البوست
+  createPost() {
+    const postContent = this.postTextarea.nativeElement.value;
+    const postImages = this.previewUrls;
+
+    if (postContent.trim() || postImages.length > 0) {
+      const newPost = {
+        username: this.users[0].username + this.users[1].username, // المستخدم الحالي
+        profileImageUrl: '', // صورة المستخدم
+        timestamp: new Date(),
+        content: postContent,
+        category: this.selectedCategory, // تضمين الفئة المحددة
+        images: postImages,
+        currentImageIndex: 0,
+        likes: 0,
+        Shares: 0,
+        Saves: 0,
+        showComments: false,
+        isEditing: false,
+        liked: false,
+        saved: false,
+        comments: [],
+      };
+
+      this.postService.addPost(newPost); // إرسال البوست عبر الـ Service
+      this.clearForm(); // تنظيف النموذج
+    }
+  }
+
+  // دالة لتنظيف النموذج بعد إضافة البوست
+  clearForm() {
+    this.postTextarea.nativeElement.value = '';
+    this.previewUrls = [];
+    this.currentIndex = 0;
+    this.selectedCategory = 'General'; // إعادة تعيين الفئة إلى القيمة الافتراضية
+  }
 
   // دالة لإظهار/إخفاء منتقي الإيموجيات
   toggleEmojiPicker(): void {

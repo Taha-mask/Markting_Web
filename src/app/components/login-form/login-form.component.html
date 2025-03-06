@@ -1,4 +1,3 @@
-
 <head>
     <!-- ...existing code... -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -16,26 +15,27 @@
         <div class="login-header">
             <header>Sign in</header>
         </div>
-        <div class="input-box">
-            <input type="text" class="input-field" placeholder="Email" autocomplete="off" required>
-        </div>
-        <div class="input-box position-relative">
-            <input type="password" class="input-field" placeholder="Password" autocomplete="off" required id="password">
-            <i class="fa fa-eye position-absolute" id="togglePassword" style="cursor: pointer; right: 10px; top: 50%; transform: translateY(-50%);"></i>
-        </div>
-        <div class="forgot">
-            <section>
-                <input type="checkbox" id="check">
-                <label for="check">Remember me</label>
-            </section>
-            <section>
-                <a href="#">Forgot password</a>
-            </section>
-        </div>
-        <div class="input-submit">
-            <button class="submit-btn" id="submit"></button>
-            <label for="submit">Log in</label>
-        </div>
+        <form (ngSubmit)="onSubmit()">
+            <div class="input-box">
+                <input type="text" class="input-field" placeholder="Email" autocomplete="off" required [(ngModel)]="email" name="email">
+            </div>
+            <div class="input-box position-relative">
+                <input type="password" class="input-field" placeholder="Password" autocomplete="off" required id="password" [(ngModel)]="password" name="password">
+                <i class="fa fa-eye position-absolute" id="togglePassword" style="cursor: pointer; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+            </div>
+            <div class="forgot">
+                <section>
+                    <input type="checkbox" id="check">
+                    <label for="check">Remember me</label>
+                </section>
+                <section>
+                    <a href="#">Forgot password</a>
+                </section>
+            </div>
+            <div class="input-submit">
+                <button type="submit" class="submit-btn">Log in</button>
+            </div>
+        </form>
     </div>
 </div>
 

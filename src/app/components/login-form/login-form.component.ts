@@ -1,13 +1,20 @@
 import { Component, AfterViewInit } from '@angular/core';
-import { NavbarComponent } from "../navbar/navbar.component";
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login-form',
   standalone: true,
+  imports: [FormsModule],
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css']
 })
 export class LoginFormComponent implements AfterViewInit {
+  email: string = '';
+  password: string = '';
+
+  constructor(private router: Router) {}
+
   ngAfterViewInit() {
     const togglePassword = document.querySelector('#togglePassword');
     const password = document.querySelector('#password') as HTMLInputElement;
@@ -17,5 +24,12 @@ export class LoginFormComponent implements AfterViewInit {
       password.setAttribute('type', type);
       togglePassword.classList.toggle('fa-eye-slash');
     });
+  }
+
+  onSubmit() {
+    // Perform login logic here (e.g., authentication)
+
+    // Navigate to the feed page
+    this.router.navigate(['/feed']);
   }
 }

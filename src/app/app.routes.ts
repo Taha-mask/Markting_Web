@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { AppComponent } from './app.component';
-import { ExplorepageComponent } from './components/explorepage/explorepage.component';
 import { ComComponent } from './components/Messages/com/com.component';
 import { FirstchatComponent } from './components/Messages/firstchat/firstchat.component';
 import { SecondchatComponent } from './components/Messages/secondchat/secondchat.component';
@@ -23,7 +22,7 @@ import { EighthprofileComponent } from './components/Messages/eighthprofile/eigh
 import { NinthprofileComponent } from './components/Messages/ninthprofile/ninthprofile.component';
 import { TinthprofileComponent } from './components/Messages/tinthprofile/tinthprofile.component';
 
-
+import { ModalComponent } from './components/modal/modal.component';
 
 import { TrendingSidebarComponent } from './components/trending-sidebar/trending-sidebar.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -60,7 +59,7 @@ export const routes: Routes = [
     {path: 'Story' , component : InnerStoryComponent},
     {path: 'stories' , component : InnerStoryComponent},
     {path: 'Explore' , component : ExplorepageComponent},
-
+    { path: 'create-post', component: ModalComponent },
 
     {path: 'firstprofile' , component : FirstprofileComponent},
 
@@ -97,7 +96,7 @@ export const routes: Routes = [
 {
         path: '',
         pathMatch : 'full',
-        redirectTo : '/feed'
+        redirectTo : '/login'
 
        }
 

@@ -12,7 +12,7 @@
             <h3>People You May Know</h3>
             <div class="users-list">
               <div class="user-card" *ngFor="let user of suggestedUsers">
-                <img [src]="user.profilePicture" alt="Profile" class="profile-pic">
+                <img [src]="user.profilePicture" alt="Profile" class="pro-pic">
                 <div class="user-info">
                   <h4>{{ user.name }}</h4>
                   <button  style="width: 80px;" (click)="addFriend(user)">Follow</button>

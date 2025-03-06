@@ -1,38 +1,45 @@
-import { Component, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, HostListener, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ProfileComponent } from '../profile/profile.component';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { PostService } from '../post.service';
 import { User } from '../../user';
-import { Comment as ImportedComment } from '../../Comment';
-import { TrendingSidebarComponent } from "../trending-sidebar/trending-sidebar.component";
-import { NavbarComponent } from "../navbar/navbar.component";
-import { PickerModule } from '@ctrl/ngx-emoji-mart'; // استورد PickerModule
-
+import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.component';
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, FormsModule, TrendingSidebarComponent, PickerModule],
+  imports: [CommonModule, FormsModule, PickerModule, TrendingSidebarComponent],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
   providers: [DatePipe],
 })
-export class FeedComponent {
+export class FeedComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
-  profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg'; // Sample profile image
-  isDropdownVisible = false; // Control dropdown visibility
-  newComment: string = ''; // Input for comments
-  newCommentImageUrl: string | ArrayBuffer | null = null; // Store the selected image URL
-  postContent: string = ''; // Input for new post content
-  currentUser = 'Taha Mahmoud'; // المستخدم الحالي
-  showEmojiPicker = false; // Add this property
+  isDropdownVisible = false;
+  newComment: string = '';
+  newCommentImageUrl: string | ArrayBuffer | null = null;
+  postContent: string = '';
+  currentUser = 'Taha Mahmoud';
+  showEmojiPicker = false;
+  activeCategory: string = 'All';
+  constructor(private postService: PostService) {} // حقن الـ Service
+  ngOnInit() {
+    // الاشتراك في الـ Observable علشان نستقبل البوستات الجديدة
+    this.postService.getPostObservable().subscribe((newPost) => {
+      this.posts.unshift(newPost); // إضافة البوست الجديد في بداية المصفوفة
+    });
 
+    // Set default category to 'All'
+    this.filterPostsByCategory('All');
+  }
   private isDragging = false;
   private startX = 0;
   private scrollLeft = 0;
 
   user: User[] = [
     {
+
       username: 'Taha Mahmoud ',
       type: 'Markter',
       profileImageUrl: 'images/user-1.png',
@@ -40,21 +47,49 @@ export class FeedComponent {
     }
   ];
 
-  users = [
-    { name: 'Angel', image:'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg' },
-    { name: 'Arlene', image: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg' },
-    { name: 'Aubrey', image: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
-    { name: 'Mitchell', image: 'https://images.deepai.org/art-image/a769515ed5a643ba96cbb3d5a9f24eba/girl-is-a-mix-between-korean-and-egyptian-fcbde4.jpg' },
-    { name: 'Eduardo', image: 'images/user-2.png' },
-    { name: 'Darrell', image: 'images/user-3.png' },
-    { name: 'Camer', image: 'images/user-4.png' },
-    { name: 'Angel', image: 'images/user-1.png' },
-    { name: 'Arlene', image: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg' },
-    { name: 'Aubrey', image: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
-    { name: 'Mitchell', image: 'images/user-1.png' },
-    { name: 'Eduardo', image: 'images/user-2.png' },
-    { name: 'Darrell', image: 'images/user-3.png' },
-    { name: 'Camer', image: 'images/user-4.png' }
+
+
+
+  categories = [
+    { name: 'All', icon: 'bi bi-collection' }, // الكل
+    { name: 'Electrical Tools', icon: 'bi bi-tools' }, // الأدوات الكهربائية
+    { name: 'Food', icon: 'bi bi-egg-fried' }, // أكلات
+    { name: 'Medicines', icon: 'bi bi-capsule' }, // الأدوية
+    { name: 'Electronics', icon: 'bi bi-laptop' }, // الإلكترونيات
+    { name: 'Clothing', icon: 'bi bi-person' }, // الملابس (تم تغيير الأيقونة إلى bi-person)
+    { name: 'Fashion', icon: 'bi bi-handbag' }, // الموضة
+    { name: 'Home & Kitchen', icon: 'bi bi-house-door' }, // المنزل والمطبخ
+    { name: 'Beauty & Personal Care', icon: 'bi bi-scissors' }, // الجمال والعناية الشخصية
+    { name: 'Home Appliances', icon: 'bi bi-fan' }, // الأجهزة المنزلية
+    { name: 'Sports & Fitness', icon: 'bi bi-bicycle' }, // الرياضة واللياقة البدنية
+    { name: 'Video Games', icon: 'bi bi-controller' }, // ألعاب الفيديو
+    { name: 'Toys & Hobbies', icon: 'bi bi-joystick' }, // الألعاب والهوايات
+    { name: 'Auto Parts', icon: 'bi bi-car-front' }, // قطع الغيار السيارات والدراجات النارية
+    { name: 'Groceries', icon: 'bi bi-cart' }, // البقالة والمنتجات الغذائية
+    { name: 'Health & Personal Care', icon: 'bi bi-heart-pulse' }, // الصحة والعناية الشخصية
+    { name: 'Books & Media', icon: 'bi bi-book' }, // الكتب والوسائط
+    { name: 'Pet Supplies', icon: 'bi bi-heart' }, // مستلزمات الحيوانات الأليفة
+    { name: 'Perfumes', icon: 'bi bi-flower1' }, // العطور
+  ];
+
+  // دالة لتنسيق اسم الفئة
+  formatCategoryName(name: string): string {
+    return name.replace('&', '<br>&');
+  }
+
+
+  suggestedUsers = [
+    { name: 'Alex James', profilePicture: 'images/user-3.png' },
+    { name: 'Maicel David', profilePicture: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
+    { name: 'Wade Warren', profilePicture: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
+    { name: 'Floyd Miles', profilePicture: 'images/user-4.png' },
+    { name: 'Jacob Jones', profilePicture: 'images/user-1.png' },
+    { name: 'Noah Daniel', profilePicture: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
+    { name: 'Bessie Cooper', profilePicture:  'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg'  },
+    { name: 'Brooklyn Simmons', profilePicture: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg'  },
+    { name: 'Courtney Henry', profilePicture: 'https://images.deepai.org/art-image/a769515ed5a643ba96cbb3d5a9f24eba/girl-is-a-mix-between-korean-and-egyptian-fcbde4.jpg'  },
+    { name:'Savannah Nguyen' , profilePicture: 'images/user-2.png' }
+
   ];
 
   usersFol = [
@@ -69,23 +104,33 @@ export class FeedComponent {
   ];
 
   followUser(user: any) {
-    alert(`You followed ${user.name}`);
+    user.following = !user.following;
   }
 
+  filteredPosts: any[] = [];
 
-
+  // دالة لتصفية المنشورات بناءً على الفئة
+  filterPostsByCategory(categoryName: string) {
+    this.activeCategory = categoryName; // تعيين الفئة النشطة
+    if (categoryName === 'All') {
+      this.filteredPosts = this.posts; // عرض جميع المنشورات إذا كانت الفئة "All"
+    } else {
+      this.filteredPosts = this.posts.filter(post => post.category === categoryName);
+    }
+  }
   posts = [
     {
       username: 'Taha Mahmoud',
       profileImageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
       timestamp: new Date(),
-      content: 'This is a sample post content!',
+      content: 'This is a sample post content about electronics!',
+      category: 'Electronics',
       images: [
         'images/post-image-1.png',
         'images/post-image-2.png',
         'images/post-image-3.png',
       ],
-      currentImageIndex: 0, // تتبع الصورة الحالية
+      currentImageIndex: 0,
       likes: 15,
       Shares: 30,
       Saves: 5,
@@ -102,10 +147,11 @@ export class FeedComponent {
       username: 'Sara Smith',
       profileImageUrl: 'https://randomuser.me/api/portraits/women/2.jpg',
       timestamp: new Date(),
-      content: 'Another post with no image!',
+      content: 'Another post about food!',
+      category: 'Food',
       images: [
-        'images/post-image-3.png',
         'images/post-image-4.png',
+        'images/post-image-5.png',
       ],
       currentImageIndex: 0,
       likes: 8,
@@ -124,8 +170,11 @@ export class FeedComponent {
       username: 'Rashwan Mahmoud',
       profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg',
       timestamp: new Date(),
-      content: 'Another post with no image!',
-      images: [],
+      content: 'Post about sports and fitness!',
+      category: 'Sports & Fitness',
+      images: [
+        'images/post-image-6.png',
+      ],
       currentImageIndex: 0,
       likes: 8,
       Shares: 5,
@@ -139,13 +188,215 @@ export class FeedComponent {
         { username: 'Emma', text: 'Very inspiring.', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/4.jpg' },
       ],
     },
-  ];
+    {
+      username: 'Alex James',
+      profileImageUrl: 'https://randomuser.me/api/portraits/men/4.jpg',
+      timestamp: new Date(),
+      content: 'Post about beauty and personal care!',
+      category: 'Beauty & Personal Care',
+      images: [
+        'images/post-image-7.png',
+      ],
+      currentImageIndex: 0,
+      likes: 12,
+      Shares: 10,
+      Saves: 3,
+      showComments: false,
+      isEditing: false,
+      liked: false,
+      saved: false,
+      comments: [
+        { username: 'Anna', text: 'Lovely!', likes: 3, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/5.jpg' },
+        { username: 'John', text: 'Great tips.', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/6.jpg' },
+      ],
+    },
+    {
+      username: 'Emily Clark',
+      profileImageUrl: 'https://randomuser.me/api/portraits/women/6.jpg',
+      timestamp: new Date(),
+      content: 'Post about home appliances!',
+      category: 'Home Appliances',
+      images: [
+        'images/post-image-8.png',
+      ],
+      currentImageIndex: 0,
+      likes: 20,
+      Shares: 25,
+      Saves: 10,
+      showComments: false,
+      isEditing: false,
+      liked: false,
+      saved: false,
+      comments: [
+        { username: 'Chris', text: 'Very useful!', likes: 5, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/7.jpg' },
+        { username: 'Sophia', text: 'Thanks for sharing.', likes: 2, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/8.jpg' },
+      ],
+    },
+    {
+      username: 'John Doe',
+      profileImageUrl: 'https://randomuser.me/api/portraits/men/5.jpg',
+      timestamp: new Date(),
+      content: 'Post about clothing and fashion!',
+      category: 'Clothing',
+      images: [
+        'images/post-image-9.png',
+      ],
+      currentImageIndex: 0,
+      likes: 10,
+      Shares: 15,
+      Saves: 2,
+      showComments: false,
+      isEditing: false,
+      liked: false,
+      saved: false,
+      comments: [
+        { username: 'Alice', text: 'Nice outfit!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/9.jpg' },
+        { username: 'Bob', text: 'Looking good!', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/10.jpg' },
+      ],
+    },
+    {
+      username: 'Jane Doe',
+      profileImageUrl: 'https://randomuser.me/api/portraits/women/7.jpg',
+      timestamp: new Date(),
+      content: 'Post about video games!',
+      category: 'Video Games',
+      images: [
+        'images/post-image-10.png',
+      ],
+      currentImageIndex: 0,
+      likes: 18,
+      Shares: 22,
+      Saves: 6,
+      showComments: false,
+      isEditing: false,
+      liked: false,
+      saved: false,
+      comments: [
+        { username: 'Charlie', text: 'Awesome game!', likes: 2, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/11.jpg' },
+        { username: 'Diana', text: 'I love this game!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/12.jpg' },
+      ],
+    },
+    {
+      username: 'Michael Brown',
+      profileImageUrl: 'https://randomuser.me/api/portraits/men/6.jpg',
+      timestamp: new Date(),
+      content: 'Post about groceries!',
+      category: 'Groceries',
+      images: [
+        'images/post-image-11.png',
+      ],
+      currentImageIndex: 0,
+      likes: 7,
+      Shares: 12,
+      Saves: 4,
+      showComments: false,
+      isEditing: false,
+      liked: false,
+      saved: false,
+      comments: [
+        { username: 'Eva', text: 'Great deals!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/13.jpg' },
+        { username: 'Frank', text: 'Thanks for sharing!', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/14.jpg' },
+      ],
+    },
+    {
+      username: 'Sophia White',
+      profileImageUrl: 'https://randomuser.me/api/portraits/women/8.jpg',
+      timestamp: new Date(),
+      content: 'Post about health and personal care!',
+      category: 'Health & Personal Care',
+      images: [
+        'images/post-image-12.png',
+      ],
+      currentImageIndex: 0,
+      likes: 14,
+      Shares: 18,
+      Saves: 5,
+      showComments: false,
+      isEditing: false,
+      liked: false,
+      saved: false,
+      comments: [
+        { username: 'George', text: 'Very helpful!', likes: 3, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/15.jpg' },
+        { username: 'Hannah', text: 'Great advice!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/16.jpg' },
+      ],
+    },
+    {
+      username: 'Oliver Green',
+      profileImageUrl: 'https://randomuser.me/api/portraits/men/7.jpg',
+      timestamp: new Date(),
+      content: 'Post about books and media!',
+      category: 'Books & Media',
+      images: [
+        'images/post-image-13.png',
+      ],
+      currentImageIndex: 0,
+      likes: 9,
+      Shares: 11,
+      Saves: 3,
+      showComments: false,
+      isEditing: false,
+      liked: false,
+      saved: false,
+      comments: [
+        { username: 'Isabella', text: 'Great book!', likes: 2, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/17.jpg' },
+        { username: 'Jack', text: 'I enjoyed reading it!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/18.jpg' },
+      ],
+    },
+    {
+      username: 'Emma Black',
+      profileImageUrl: 'https://randomuser.me/api/portraits/women/9.jpg',
+      timestamp: new Date(),
+      content: 'Post about pet supplies!',
+      category: 'Pet Supplies',
+      images: [
+        'images/post-image-14.png',
+      ],
+      currentImageIndex: 0,
+      likes: 11,
+      Shares: 14,
+      Saves: 4,
+      showComments: false,
+      isEditing: false,
+      liked: false,
+      saved: false,
+      comments: [
+        { username: 'Kevin', text: 'My pet loves this!', likes: 2, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/19.jpg' },
+        { username: 'Laura', text: 'Great product!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/20.jpg' },
+      ],
+    },
+    {
+      username: 'Liam Brown',
+      profileImageUrl: 'https://randomuser.me/api/portraits/men/8.jpg',
+      timestamp: new Date(),
+      content: 'Post about perfumes!',
+      category: 'Perfumes',
+      images: [
 
+      ],
+      currentImageIndex: 0,
+      likes: 13,
+      Shares: 17,
+      Saves: 6,
+      showComments: false,
+      isEditing: false,
+      liked: false,
+      saved: false,
+      comments: [
+        { username: 'Mia', text: 'Lovely scent!', likes: 3, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/21.jpg' },
+        { username: 'Noah', text: 'Great choice!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/22.jpg' },
+      ],
+    },
+  ];
+  addNewPost(newPost: any) {
+    this.posts.unshift(newPost); // إضافة البوست الجديد في بداية المصفوفة
+  }
   // Toggle dropdown menu
   toggleDropdown() {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
-
+ addFriend(user: any) {
+    console.log('Friend request sent to', user.name);
+  }
   // Like a post
   likePost(post: any) {
     if (post.isLiked) {
@@ -207,10 +458,11 @@ export class FeedComponent {
   addPost() {
     if (this.postContent.trim()) {
       const newPost = {
-        username: 'Current User', // Sample current user
-        profileImageUrl: this.profileImageUrl, // User's profile picture
+        username: this.user[0].username, // Sample current user
+        profileImageUrl: this.user[0].profileImageUrl, // User's profile picture
         timestamp: new Date(),
         content: this.postContent,
+        category: 'General', // Add a default category
         images: [], // No images for simplicity
         currentImageIndex: 0,
         likes: 0,

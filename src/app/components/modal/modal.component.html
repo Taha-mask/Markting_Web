@@ -26,8 +26,16 @@
           <i class="bi bi-emoji-smile position-absolute" style="right: 10px; top: 10px; cursor: pointer;" (click)="toggleEmojiPicker()"></i>
           <!-- حاوية منتقي الإيموجيات -->
           <div *ngIf="showEmojiPicker">
-            <emoji-mart (emojiSelect)="addEmoji($event)"  class="emoji-picker-container"></emoji-mart>
+            <emoji-mart (emojiSelect)="addEmoji($event)" class="emoji-picker-container"></emoji-mart>
           </div>
+        </div>
+
+        <!-- Dropdown لاختيار الفئة -->
+        <div class="mb-3">
+          <label for="categorySelect" class="form-label">Select Category</label>
+          <select id="categorySelect" class="form-select" [(ngModel)]="selectedCategory">
+            <option *ngFor="let category of categories" [value]="category.name">{{ category.name }}</option>
+          </select>
         </div>
 
         <div class="browse rounded p-3" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
@@ -58,7 +66,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Post</button>
+        <button type="button" class="btn btn-primary" (click)="createPost()" data-bs-dismiss="modal">Post</button>
       </div>
     </div>
   </div>

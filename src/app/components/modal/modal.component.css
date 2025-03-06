@@ -16,7 +16,39 @@
 .custom-file-upload {
   color: #007bff;
 }
+/* داخل feed.component.css */
+.categories-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+}
 
+.category-item {
+  flex: 0 0 auto;
+  margin: 0 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 120px;
+}
+
+.category-icon {
+  margin-bottom: 10px;
+}
+
+.category-text {
+  display: inline-block;
+  white-space: pre-line;
+  line-height: 1.2;
+  text-align: center;
+  width: 100%;
+  margin-top: 5px;
+}
 #imagePreview img {
   max-width: 100%;
   height: auto;
