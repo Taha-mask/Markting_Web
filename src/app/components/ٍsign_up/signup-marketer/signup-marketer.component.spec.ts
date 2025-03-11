@@ -1,4 +1,4 @@
-import { JsonPipe, NgFor } from '@angular/common';
+import { JsonPipe, NgFor, CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormArray,
@@ -15,7 +15,7 @@ import { NavbarComponent } from "../../navbar/navbar.component";
 @Component({
   selector: 'app-signup-marketer',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor, CommonModule],
   templateUrl: './signup-marketer.component.html',
   styleUrls: ['./signup-marketer.component.css'],
 })
@@ -105,6 +105,10 @@ export class SignupMarketerComponent implements OnInit {
     if (file) {
       this.marketerRegisterForm.patchValue({ idImage: file });
     }
+  }
+
+  isFormValid(): boolean {
+    return this.marketerRegisterForm.valid;
   }
 
   register() {

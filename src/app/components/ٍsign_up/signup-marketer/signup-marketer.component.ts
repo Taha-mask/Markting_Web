@@ -1,4 +1,4 @@
-import { JsonPipe, NgFor } from '@angular/common';
+import { JsonPipe, NgFor, CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormArray,
@@ -7,30 +7,36 @@ import {
   FormsModule,
   ReactiveFormsModule,
   Validators,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from "../../navbar/navbar.component";
+import { UserService } from '../../services/User.service';
 
 @Component({
   selector: 'app-signup-marketer',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor, CommonModule],
   templateUrl: './signup-marketer.component.html',
   styleUrls: ['./signup-marketer.component.css'],
 })
 export class SignupMarketerComponent implements OnInit {
   marketerRegisterForm: FormGroup;
   countries: string[] = [];
-
-  constructor(private http: HttpClient) {
+  constructor(private userService: UserService, private router: Router, private http: HttpClient) {
     this.marketerRegisterForm = new FormGroup({
       firstName: new FormControl('', [
         Validators.required,
         Validators.pattern('^[a-zA-Z]{3,10}$'),
       ]),
       secondName: new FormControl('', [Validators.required]),
-      email: new FormControl('', [Validators.required, Validators.email]),
+      email: new FormControl('', [
+        Validators.required,
+        Validators.email,
+        Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$')
+      ]),
       password: new FormControl('', [Validators.required, Validators.minLength(6)]),
       confirmPassword: new FormControl('', [Validators.required]),
 
@@ -50,10 +56,10 @@ export class SignupMarketerComponent implements OnInit {
 
       primaryPhone: new FormControl('', [
         Validators.required,
-        Validators.pattern('^[0-9]{10,15}$'),
+        Validators.pattern('^\\+?[0-9]{1,4}?[0-9]{10}$'),
       ]),
       secondaryPhone: new FormControl('', [
-        Validators.pattern('^[0-9]{10,15}$'),
+        Validators.pattern('^\\+?[0-9]{1,4}?[0-9]{10}$'),
       ]),
 
       shops: new FormArray([
@@ -62,7 +68,7 @@ export class SignupMarketerComponent implements OnInit {
           shopLocation: new FormControl('', [Validators.required]),
         }),
       ]),
-    });
+    }, { validators: this.passwordMatchValidator });
   }
 
   ngOnInit() {
@@ -104,6 +110,23 @@ export class SignupMarketerComponent implements OnInit {
     if (file) {
       this.marketerRegisterForm.patchValue({ idImage: file });
     }
+  }
+
+  isFormValid(): boolean {
+    return this.marketerRegisterForm.valid;
+  }
+
+  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const password = control.get('password');
+    const confirmPassword = control.get('confirmPassword');
+    if (password && confirmPassword && password.value !== confirmPassword.value) {
+      return { passwordMismatch: true };
+    }
+    return null;
+  }
+
+  getControl(controlName: string): AbstractControl | null {
+    return this.marketerRegisterForm.get(controlName);
   }
 
   register() {

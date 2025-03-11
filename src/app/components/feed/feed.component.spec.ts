@@ -10,7 +10,7 @@ export class ModalComponent {
   addEmoji($event: Event) {
   throw new Error('Method not implemented.');
   }}
-  
+
 describe('FeedComponent', () => {
   let component: FeedComponent;
   let fixture: ComponentFixture<FeedComponent>;
@@ -45,5 +45,9 @@ describe('FeedComponent', () => {
   it('should toggle save', () => {
     component.toggleSave(component.posts[0]);
     expect(component.posts[0].Saved).toBeTrue();
+  });
+  it('should toggle Follow', () => {
+    component.toggleFollow(component.usersFol[0]);
+    expect(component.usersFol[0].Follow).toBeTrue();
   });
 });

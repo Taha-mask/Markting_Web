@@ -1,19 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from "../navbar/navbar.component";
 import { User } from '../../user';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [RouterModule, FormsModule, CommonModule],
+  imports: [RouterModule, FormsModule, CommonModule, PickerModule],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent {
-
+  @ViewChild('fileInput') fileInput!: ElementRef;
+  isDropdownVisible = false;
+  newComment: string = '';
+  newCommentImageUrl: string | ArrayBuffer | null = null;
+  postContent: string = '';
+  currentUser = 'Taha Mahmoud';
+  showEmojiPicker = false;
+  activeCategory: string = 'All';
   users = [
     { imageUrl: 'images/WhatsApp Image 2024-11-19 at 06.28.34_f5d6e241.jpg' },
     { imageUrl: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg' },
@@ -37,12 +45,9 @@ export class ProfileComponent {
   ];
 
   profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg';
-  isDropdownVisible = false;
   isDragging = false;
-  newComment: string = '';
   scrollLeft: number = 0;
   startX: number = 0;
-  postContent: string = '';
   bio: string = '';
   isEditingBio: boolean = true;
 
@@ -82,15 +87,17 @@ export class ProfileComponent {
         'images/post-image-2.png',
         'images/post-image-3.png',
       ],
-      currentImageIndex: 0, // تتبع الصورة الحالية
+      currentImageIndex: 0,
       likes: 15,
+      Shares: 30,
+      Saves: 5,
       showComments: false,
       isEditing: false,
       liked: false,
       saved: false,
       comments: [
-        { username: 'Jane', text: 'Great post!' },
-        { username: 'Mike', text: 'Interesting thoughts.' },
+        { username: 'Jane', text: 'Great post!', likes: 2, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/1.jpg' },
+        { username: 'Mike', text: 'Interesting thoughts.', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/2.jpg' },
       ],
     },
     {
@@ -104,33 +111,19 @@ export class ProfileComponent {
       ],
       currentImageIndex: 0,
       likes: 8,
+      Shares: 165,
+      Saves: 20,
       showComments: false,
       isEditing: false,
       liked: false,
       saved: false,
       comments: [
-        { username: 'Tom', text: 'Nice one!' },
-        { username: 'Emma', text: 'Very inspiring.' },
-      ],
-    },
-    {
-      username: 'Rashwan Mahmoud',
-      profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg',
-      timestamp: new Date(),
-      content: 'Another post with no image!',
-      images: [],
-      currentImageIndex: 0,
-      likes: 8,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { username: 'Tom', text: 'Nice one!' },
-        { username: 'Emma', text: 'Very inspiring.' },
+        { username: 'Tom', text: 'Nice one!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg' },
+        { username: 'Emma', text: 'Very inspiring.', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/4.jpg' },
       ],
     },
   ];
+
 
   // Toggle dropdown menu
   toggleDropdown() {
@@ -167,10 +160,25 @@ export class ProfileComponent {
     post.isEditing = false;
   }
 
+  addEmoji(event: any) {
+    this.newComment += event.emoji.native;
+  }
+
+  toggleEmojiPicker() {
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
   // Add a comment to a post
   addComment(post: any, commentText: string) {
     if (commentText.trim()) {
-      post.comments.push({ username: 'Current User', text: commentText });
+      post.comments.push({
+        username: this.currentUser,
+        text: commentText,
+        likes: 0,
+        likedBy: [],
+        timestamp: new Date(),
+        profileImageUrl: this.user[0].profileImageUrl
+      });
       this.newComment = ''; // Clear input field
     }
   }
@@ -179,13 +187,15 @@ export class ProfileComponent {
   addPost() {
     if (this.postContent.trim()) {
       const newPost = {
-        username: 'Current User', // Sample current user
-        profileImageUrl: this.profileImageUrl, // User's profile picture
+        username: this.user[0].username, // Sample current user
+        profileImageUrl: this.user[0].profileImageUrl, // User's profile picture
         timestamp: new Date(),
         content: this.postContent,
         images: [], // No images for simplicity
         currentImageIndex: 0,
         likes: 0,
+        Shares: 0,
+        Saves: 0,
         showComments: false,
         isEditing: false,
         liked: false,
@@ -227,6 +237,7 @@ export class ProfileComponent {
 
   toggleSave(post: any) {
     post.saved = !post.saved;
+    post.Saves += post.saved ? 1 : -1;
   }
 
   // التنقل إلى الصورة التالية
@@ -242,6 +253,7 @@ export class ProfileComponent {
       post.currentImageIndex--;
     }
   }
+
   toggleEditBio() {
     this.isEditingBio = !this.isEditingBio;
   }
@@ -297,65 +309,144 @@ export class ProfileComponent {
     }
   }
 
-
-
-// دالة لتغيير صورة الغلاف
-changeCoverImage() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = (event: any) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        // تغيير صورة الغلاف هنا (يمكنك حفظها في قاعدة البيانات أو تحديث الواجهة)
-        const coverImage = document.querySelector('.custom-image') as HTMLImageElement;
-        if (coverImage) {
-          coverImage.src = reader.result as string;
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  input.click();
-}
-
-// دالة لتغيير الصورة الدائرية
-changeProfileImage() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = (event: any) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        // تغيير الصورة الدائرية هنا (يمكنك حفظها في قاعدة البيانات أو تحديث الواجهة)
-        const profileImage = document.querySelector('.profile-image') as HTMLImageElement;
-        if (profileImage) {
-          profileImage.src = reader.result as string;
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  input.click();
-}
-
-onClickOnImage(event: Event) {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-      if (e.target && e.target.result) {
-        this.user[0].profileImageUrl= e.target.result as string; // تحديث الصورة
+  // دالة لتغيير صورة الغلاف
+  changeCoverImage() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          // تغيير صورة الغلاف هنا (يمكنك حفظها في قاعدة البيانات أو تحديث الواجهة)
+          const coverImage = document.querySelector('.custom-image') as HTMLImageElement;
+          if (coverImage) {
+            coverImage.src = reader.result as string;
+          }
+        };
+        reader.readAsDataURL(file);
       }
     };
-    reader.readAsDataURL(input.files[0]);
+    input.click();
+  }
+
+  // دالة لتغيير الصورة الدائرية
+  changeProfileImage() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          // تغيير الصورة الدائرية هنا (يمكنك حفظها في قاعدة البيانات أو تحديث الواجهة)
+          const profileImage = document.querySelector('.profile-image') as HTMLImageElement;
+          if (profileImage) {
+            profileImage.src = reader.result as string;
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  }
+
+  onClickOnImage(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target && e.target.result) {
+          this.user[0].profileImageUrl = e.target.result as string; // تحديث الصورة
+        }
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  // دالة لحذف التعليق
+  deleteComment(post: any, commentIndex: number) {
+    if (post.comments[commentIndex].username === this.currentUser) {
+      post.comments.splice(commentIndex, 1);
+    } else {
+      alert('You can only delete your own comments.');
+    }
+  }
+
+  // دالة لتعديل التعليق
+  editComment(post: any, comment: any) {
+    const newCommentText = prompt('Edit your comment:', comment.text);
+    if (newCommentText !== null) {
+      comment.text = newCommentText;
+    }
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.newCommentImageUrl = e.target?.result ?? null;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+  // دالة لإضافة تفاعل (إعجاب) على التعليق
+  toggleCommentLike(comment: any) {
+    if (!comment.likes) {
+      comment.likes = 0;
+    }
+    if (!comment.likedBy) {
+      comment.likedBy = [];
+    }
+
+    if (comment.likedBy.includes(this.currentUser)) {
+      comment.likes--;
+      comment.likedBy = comment.likedBy.filter((user: string) => user !== this.currentUser);
+    } else {
+      comment.likes++;
+      comment.likedBy.push(this.currentUser);
+    }
+  }
+
+  // دالة لحذف المنشور
+  deletePost(post: any) {
+    const index = this.posts.indexOf(post);
+    if (index > -1) {
+      this.posts.splice(index, 1);
+    }
+  }
+
+  // دالة للإبلاغ عن المنشور
+  reportPost(post: any) {
+    alert(`Reported post by ${post.username}`);
+  }
+
+  // دالة لإلغاء متابعة المستخدم
+  unfollow(post: any) {
+    alert(`Unfollowed ${post.username}`);
+  }
+
+  // دالة لإخفاء المنشور
+  hidePost(post: any) {
+    const index = this.posts.indexOf(post);
+    if (index > -1) {
+      this.posts.splice(index, 1);
+    }
+  }
+
+  // دالة لإيقاف المستخدم مؤقتًا
+  snoozeUser(post: any, days: number) {
+    alert(`Snoozed ${post.username} for ${days} days`);
+  }
+
+  // دالة لحظر المستخدم
+  blockUser(post: any) {
+    alert(`Blocked ${post.username}`);
+  }
+  triggerFileInput() {
+    this.fileInput.nativeElement.click();
   }
 }
-
-
-}
-

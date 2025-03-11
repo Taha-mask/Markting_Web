@@ -49,6 +49,10 @@
   opacity: 1;
 }
 
+.nav-link.active .horizontal-line-hover {
+  opacity: 1;
+}
+
 .nav-link:hover .horizontal-line-hover {
   opacity: 0.5;
 }
@@ -83,10 +87,8 @@
 .nav .bi {
   font-size: 20px;
 }
-
-.proimg{
-
-
+.nav-link.active .horizontal-line {
+  opacity: 1;
 }
 .proimg img {
   background: linear-gradient(45deg, #D16BA5, #86A8E7, #5FFBF1);

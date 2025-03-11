@@ -8,14 +8,14 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from "../../navbar/navbar.component";
-
+import { UserService } from '../../services/User.service';
 @Component({
   selector: 'app-signup-user',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor, NavbarComponent],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor],
   templateUrl: './signup-user.component.html',
   styleUrls: ['./signup-user.component.css'],
 })
@@ -23,7 +23,9 @@ export class SignupUserComponent implements OnInit {
   userRegisterForm: FormGroup;
   countries: string[] = []; // قائمة الدول
 
-  constructor(private http: HttpClient) {
+
+
+  constructor(private http: HttpClient,private userService: UserService, private router: Router) {
     this.userRegisterForm = new FormGroup({
       firstName: new FormControl('', [
         Validators.required,
@@ -49,7 +51,6 @@ export class SignupUserComponent implements OnInit {
       ]),
     });
   }
-
   ngOnInit() {
     this.fetchCountries(); // استدعاء API عند تحميل الصفحة
   }

@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
-import { PostService } from '../post.service';
+import { PostService } from '../services/post.service';
 import { User } from '../../user';
 import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.component';
 @Component({
@@ -93,18 +93,18 @@ export class FeedComponent implements OnInit {
   ];
 
   usersFol = [
-    { name: 'Wade Warren', location: 'Assiut, Egypt', img: 'images/user-1.png' },
-    { name: 'Darlene Robertson', location: 'Assiut, Egypt', img: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg' },
-    { name: 'Floyd Miles', location: 'Assiut, Egypt', img: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg'  },
-    { name: 'Bessie Cooper', location: 'Assiut, Egypt' , img: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
-    { name: 'Savannah Nguyen', location: 'Assiut, Egypt', img: 'images/user-2.png'  },
-    { name: 'Courtney Henry', location: 'Assiut, Egypt' , img: 'images/user-3.png' },
-    { name: 'Brooklyn Simmons', location: 'Assiut, Egypt', img: 'images/user-4.png'  },
-    { name: 'Jacob Jones', location: 'Assiut, Egypt', img: 'images/user-1.png'  },
+    { name: 'Wade Warren', location: 'Assiut, Egypt', img: 'images/user-1.png', Follow: false },
+    { name: 'Darlene Robertson', location: 'Assiut, Egypt', img: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg', Follow: false },
+    { name: 'Floyd Miles', location: 'Assiut, Egypt', img: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg', Follow: false },
+    { name: 'Bessie Cooper', location: 'Assiut, Egypt', img: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg', Follow: false },
+    { name: 'Savannah Nguyen', location: 'Assiut, Egypt', img: 'images/user-2.png', Follow: false },
+    { name: 'Courtney Henry', location: 'Assiut, Egypt', img: 'images/user-3.png', Follow: false },
+    { name: 'Brooklyn Simmons', location: 'Assiut, Egypt', img: 'images/user-4.png', Follow: false },
+    { name: 'Jacob Jones', location: 'Assiut, Egypt', img: 'images/user-1.png', Follow: false },
   ];
 
   followUser(user: any) {
-    user.following = !user.following;
+    user.Follow = !user.Follow;
   }
 
   filteredPosts: any[] = [];
@@ -261,7 +261,8 @@ export class FeedComponent implements OnInit {
       content: 'Post about video games!',
       category: 'Video Games',
       images: [
-        'images/post-image-10.png',
+        'https://s.alicdn.com/@sc04/kf/He134ce4e88ff4f99883e5dcc7b8e280dk.jpg_720x720q50',
+        'https://s.alicdn.com/@sc04/kf/H1ee0efef84d747768d35729e69885b9ee.jpg?avif=close',
       ],
       currentImageIndex: 0,
       likes: 18,
@@ -397,6 +398,24 @@ export class FeedComponent implements OnInit {
  addFriend(user: any) {
     console.log('Friend request sent to', user.name);
   }
+
+  // دالة لإخفاء المنشور
+hidePost(post: any) {
+  const index = this.filteredPosts.indexOf(post);
+  if (index > -1) {
+    this.filteredPosts.splice(index, 1);
+  }
+}
+
+// دالة لإيقاف المستخدم مؤقتًا
+snoozeUser(post: any, days: number) {
+  alert(`Snoozed ${post.username} for ${days} days`);
+}
+
+// دالة لحظر المستخدم
+blockUser(post: any) {
+  alert(`Blocked ${post.username}`);
+}
   // Like a post
   likePost(post: any) {
     if (post.isLiked) {
@@ -458,8 +477,8 @@ export class FeedComponent implements OnInit {
   addPost() {
     if (this.postContent.trim()) {
       const newPost = {
-        username: this.user[0].username, // Sample current user
-        profileImageUrl: this.user[0].profileImageUrl, // User's profile picture
+        username: this.user[0].username, // Use profile's username
+        profileImageUrl: this.user[0].profileImageUrl, // Use profile's profile picture
         timestamp: new Date(),
         content: this.postContent,
         category: 'General', // Add a default category
@@ -510,6 +529,9 @@ export class FeedComponent implements OnInit {
   toggleSave(post: any) {
     post.saved = !post.saved;
     post.Saves += post.saved ? 1 : -1;
+  }
+  toggleFollow(userFol: any) {
+    userFol.Follow = !userFol.Follow;
   }
 
   // التنقل إلى الصورة التالية
@@ -585,6 +607,27 @@ export class FeedComponent implements OnInit {
     if (!target.closest('.emoji-picker-container') && !target.closest('.bi-emoji-smile')) {
       this.showEmojiPicker = false;
     }
+  }
+
+  editPost(post: any) {
+    // Logic to edit the post
+    post.isEditing = true;
+  }
+
+  deletePost(post: any) {
+    // Logic to delete the post
+    const index = this.filteredPosts.indexOf(post);
+    if (index > -1) {
+      this.filteredPosts.splice(index, 1);
+    }
+  }
+
+  reportPost(post: any) {
+    alert(`Reported post by ${post.username}`);
+  }
+
+  unfollow(post: any) {
+    alert(`Unfollowed ${post.username}`);
   }
 }
 

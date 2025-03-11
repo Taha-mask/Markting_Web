@@ -15,6 +15,10 @@ export class LoginFormComponent implements AfterViewInit {
 
   constructor(private router: Router) {}
 
+  login() {
+    // منطق تسجيل الدخول هنا
+    this.router.navigate(['/feed']); // توجيه إلى صفحة Feed
+  }
   ngAfterViewInit() {
     const togglePassword = document.querySelector('#togglePassword');
     const password = document.querySelector('#password') as HTMLInputElement;

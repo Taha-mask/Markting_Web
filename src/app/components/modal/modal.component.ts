@@ -2,7 +2,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Import FormsModule
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
-import { PostService } from '../post.service';
+import { PostService } from '../services/post.service'; // Import the PostService
 import { User } from '../../user';
 
 @Component({
@@ -24,8 +24,7 @@ export class ModalComponent {
   selectedCategory: string = 'General'; // Add a property for the selected category
 
   users = [
-    { username: 'Taha' },
-    { username: 'Mahmoud' },
+    { username: 'Taha Mahmoud', profileImageUrl: 'images/user-1.png' },
   ];
 
   categories = [
@@ -59,8 +58,8 @@ export class ModalComponent {
 
     if (postContent.trim() || postImages.length > 0) {
       const newPost = {
-        username: this.users[0].username + this.users[1].username, // المستخدم الحالي
-        profileImageUrl: '', // صورة المستخدم
+        username: this.users[0].username, // Use profile's username
+        profileImageUrl: this.users[0].profileImageUrl, // Use profile's profile picture
         timestamp: new Date(),
         content: postContent,
         category: this.selectedCategory, // تضمين الفئة المحددة

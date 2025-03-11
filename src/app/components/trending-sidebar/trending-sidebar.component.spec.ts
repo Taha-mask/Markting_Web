@@ -20,4 +20,9 @@ describe('TrendingSidebarComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should set active link', () => {
+    component.setActiveLink('explore');
+    expect(component.activeLink).toBe('explore');
+  });
 });

@@ -10,6 +10,116 @@ html, body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.comment-time {
+  color: #6c757d !important;
+  margin-left: 55px; /* Adjust margin to align with the comment content */
+}
+
+/* Comment Section */
+.comment-box {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 30px;
+  border: 1px solid rgb(125, 125, 125);
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border: none;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  margin-right: 5px; /* Reduce the margin to bring the image closer to the text */
+}
+
+.comment-input {
+  border: 1px solid #000000;
+  border-radius: 20px;
+  outline: none;
+  flex-grow: 1;
+}
+.comment-input:focus{
+  box-shadow: none;
+}
+.bi-hand-thumbs-up {
+  color: #6c757d;
+  cursor: pointer;
+}
+
+.bi-hand-thumbs-up:hover {
+  color: #000000;
+}
+
+.bi-trash {
+  color: #ff0019;
+  cursor: pointer;
+}
+
+.bi-trash:hover {
+  color: #ff0019;
+}
+.main-content {
+  padding-right: 20px;
+}
+.main-content .container {
+margin-top: 20px;}
+.icons {
+  display: flex;
+  align-items: flex-end;
+  margin-right: auto;
+}
+
+.icons i {
+  font-size: 1.2rem;
+  color: #b0b0b0;
+  cursor: pointer;
+}
+
+.icons i:hover {
+  color: #6c757d;
+}
+
+.comment-input:focus {
+  box-shadow: none;
+}
+
+.bi-send {
+  font-size: 1.5rem;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.bi-send:hover {
+  color: #0056b3;
+}
+
+.comment-content{
+  border: #000 1px solid;
+  border-radius:15px ;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+}
+.dropdown-item{
+cursor: pointer;
+
+}
+
+.comment-area {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.emoji-picker-container {
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+  z-index: 1000;
+  overflow: hidden; 
+}
+
 .cover-photo img {
   width: 100%;
   height: 80px;
@@ -17,10 +127,15 @@ html, body {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }
-
-.profile-info {
-  margin-top: -40px;
+/* تنسيق النقاط الثلاث */
+.bi-three-dots {
+  color: #6c757d;
+  cursor: pointer;
 }
+.bi-three-dots:hover {
+  color: #000;
+}
+
 
 .stats p {
   margin: 0.25rem 0;
@@ -43,9 +158,7 @@ html, body {
   -ms-overflow-style: none;  /* IE and Edge */
 }
 
-.scrollable-content::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
-}
+
 
 .btnpost {
   background-color: black;
@@ -58,17 +171,16 @@ html, body {
 /* تنسيق الصورة الدائرية */
 /* الحاوية الأساسية للصورة */
 .profile-container {
-  position: absolute;
   width: 150px; /* حجم الصورة */
   height: 150px;
   display: inline-block;
-  margin-top: -200px; /* ارفع العنصر لفوق */
-  left: 250px;
 
 
 }
 
-
+.profile-image-container{
+  margin-top:-50px; ;
+}
 /* صورة البروفايل */
 .profile-image {
   width: 100%;
@@ -117,15 +229,12 @@ html, body {
 .btnchat {
   background-color: black;
   font-size: 1rem; /* حجم النص */
-  padding: 12px 24px; /* المسافة داخل الزر */
   border-radius: 8px; /* حواف دائرية للزر */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* ظل خفيف */
   transition: all 0.3s ease; /* تأثير الحركة */
   color: white;
   border-radius: 25px;
-  position: absolute;
-  right: 80px;
-  top: 500px;
+ height: 50px;
 }
 
 /* تأثير الزر عند التحويم */
@@ -140,30 +249,20 @@ html, body {
   border-radius: 20px;
 }
 
-.profile-info {
-  position: absolute;
-  left: 370px;
-  top: 520px;
-}
+
 
 h2 {
   color: black;
 }
 
-.topPart {
-  margin-bottom: 80px;
-}
+
 
 /* Enable smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-.followrs {
-  position: absolute;
-  right: 370px;
-  top: 480px;
-}
+
 
 .bi-pencil-square {
   position: absolute;
@@ -218,9 +317,6 @@ html {
   border-top-right-radius: 8px;
 }
 
-.profile-info {
-  margin-top: -40px;
-}
 
 .profile-pic {
   width: 50px;
@@ -408,7 +504,7 @@ textarea {
 
 .custom-image {
   width: 88.3%;
-  height:400px;
+  height:500px;
   margin: 0 80px;
   object-fit: cover;
 border-radius: 20px;
@@ -465,10 +561,6 @@ text-decoration: none;
   background-color: rgba(255, 255, 255, 0.8); /* لون النقاط عند وضع الماوس فوقها */
 }
 /* تنسيق الصورة الدائرية */
-.profile-image-container {
-  position: relative;
-  display: inline-block;
-}
 
 .profile-image {
   width: 150px;
@@ -496,4 +588,77 @@ text-decoration: none;
   border-radius: 50%;
   opacity: 0; /* إخفاء الأيقونة افتراضيًا */
   transition: opacity 0.3s ease;
+}
+/* إضافة Media Queries لتحسين التصميم على الشاشات الصغيرة */
+@media (max-width: 768px) {
+  .Information {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .followrs {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btnchat {
+    margin-top: 10px;
+  }
+
+  .custom-image {
+    width: 100%;
+    height: auto;
+    margin: 0;
+  }
+
+  .profile-image-container {
+    margin-top: -30px;
+  }
+
+  .profile-image {
+    width: 100px;
+    height: 100px;
+  }
+
+  .edit-profile-icon .bi-pencil-square {
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .scrollable-content {
+    margin-right: 0;
+    padding-right: 0;
+  }
+
+  .card {
+    margin: 20px 10px;
+  }
+}
+
+/* تحسين التصميم على الشاشات الكبيرة */
+@media (min-width: 769px) {
+  .Information {
+    justify-content: space-between;
+  }
+
+  .profile-info {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .followrs {
+    flex-direction: row;
+    gap: 20px;
+  }
+
+  .btnchat {
+    margin-top: 0;
+  }
 }

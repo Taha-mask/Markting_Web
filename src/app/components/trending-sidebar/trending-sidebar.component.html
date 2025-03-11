@@ -1,62 +1,66 @@
- <!-- Left Sidebar -->
-<div class="sid col-md-3 col-12  mt-4 ">
-      <div class="sidebar-line"></div>
-      <div *ngFor="let use of user" class="sidebar text-center align-items-left m-auto">
-        <!-- User Profile -->
-        <div class="py-3 my-auto">
-          <a class="text-decoration-none text-dark" href="profile" routerlink="profile">
-            <div class="proimg">
-            <img [src]="use.profileImageUrl" alt="Profile Picture" class=" rounded-circle mb-2" width="80" />
-          </div>
-            <h4 class="mb-0 " style="font-weight: 600; ">{{ use.username }}</h4>
-            <small>{{ use.type }}</small>
-          </a>
-          <div class="d-flex justify-content-around text-center py-3">
-            <div>
-              <small class="text-muted">Posts</small>
-              <h6 class="mb-0">351</h6>
-            </div>
-            <div>
-              <small class="text-muted">Followers</small>
-              <h6 class="mb-0">96.28k</h6>
-            </div>
-            <div>
-              <small class="text-muted">Following</small>
-              <h6 class="mb-0">618</h6>
-            </div>
-          </div>
+<!-- src/app/trending-sidebar/trending-sidebar.component.html -->
+<div class="sid col-md-3 col-12 mt-4">
+  <div class="sidebar-line"></div>
+  <div *ngFor="let use of user" class="sidebar text-center align-items-left m-auto">
+    <!-- User Profile -->
+    <div class="py-3 my-auto">
+      <a class="text-decoration-none text-dark" href="profile" routerlink="profile">
+        <div class="proimg">
+          <img [src]="use.profileImageUrl" alt="Profile Picture" class="rounded-circle mb-2" width="80" />
         </div>
-
-        <!-- Navigation Menu -->
-        <nav class="nav flex-column px-1 my-2">
-          <a href="feed" class="nav-link active d-flex align-items-center py-2" routerlinke="feed">
-            <span class="horizontal-line"></span>
-            <i class="bi bi-house-door me-2"></i> Feed
-          </a>
-          <a href="explore" class="nav-link d-flex align-items-center py-2" routerlink="explore">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-compass me-2"></i> Explore
-          </a>
-          <a href="#" class="nav-link d-flex align-items-center py-2">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-bookmark me-2"></i> My Favorite
-          </a>
-          <a href="givefeedback" class="nav-link d-flex align-items-center py-2" routerlink="givefeedback">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-chat-dots me-2"></i> Give Feedback
-          </a>
-          <a href="#" class="nav-link d-flex align-items-center py-2">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-bar-chart me-2"></i> Stats
-          </a>
-          <a href="setting"  class="nav-link d-flex align-items-center py-2" routerlink="setting">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-gear me-2"></i> Settings
-          </a>
-          <a href="login"  class="nav-link text-danger d-flex align-items-center py-2 mt-3" routerlink="TypeAccount">
-            <span class="horizontal-line-hover"></span>
-            <i class="bi bi-box-arrow-left me-2 "></i> Log Out
-          </a>
-        </nav>
+        <h4 class="mb-0" style="font-weight: 600;">{{ use.username }}</h4>
+        <small>{{ getUserTypeText() }}</small> <!-- عرض النص بناءً على نوع المستخدم -->
+      </a>
+      <div class="d-flex justify-content-around text-center py-3">
+        <div>
+          <small class="text-muted">Posts</small>
+          <h6 class="mb-0">351</h6>
+        </div>
+        <div>
+          <small class="text-muted">Followers</small>
+          <h6 class="mb-0">96.28k</h6>
+        </div>
+        <div>
+          <small class="text-muted">Following</small>
+          <h6 class="mb-0">618</h6>
+        </div>
       </div>
     </div>
+
+    <!-- Navigation Menu -->
+    <nav class="nav flex-column px-1 my-2">
+      <a [routerLink]="['/feed']" class="nav-link d-flex align-items-center py-2"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }">
+        <span class="horizontal-line"></span>
+        <i class="bi bi-house-door me-2"></i> Feed
+      </a>
+      <a [routerLink]="['/explore']" class="nav-link d-flex align-items-center py-2"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }">
+        <span class="horizontal-line"></span>
+        <i class="bi bi-compass me-2"></i> Explore
+      </a>
+      <a href="#" class="nav-link d-flex align-items-center py-2">
+        <span class="horizontal-line-hover"></span>
+        <i class="bi bi-bookmark me-2"></i> My Favorite
+      </a>
+      <a href="givefeedback" class="nav-link d-flex align-items-center py-2" routerlink="givefeedback">
+        <span class="horizontal-line-hover"></span>
+        <i class="bi bi-chat-dots me-2"></i> Give Feedback
+      </a>
+      <a href="#" class="nav-link d-flex align-items-center py-2">
+        <span class="horizontal-line-hover"></span>
+        <i class="bi bi-bar-chart me-2"></i> Stats
+      </a>
+      <a href="setting" class="nav-link d-flex align-items-center py-2" routerlink="setting">
+        <span class="horizontal-line-hover"></span>
+        <i class="bi bi-gear me-2"></i> Settings
+      </a>
+      <a href="login" class="nav-link text-danger d-flex align-items-center py-2 mt-3" routerlink="TypeAccount">
+        <span class="horizontal-line-hover"></span>
+        <i class="bi bi-box-arrow-left me-2"></i> Log Out
+      </a>
+    </nav>
+  </div>
+</div>

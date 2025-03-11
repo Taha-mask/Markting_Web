@@ -50,8 +50,6 @@ export const routes: Routes = [
     {path: 'setting' , component : SettingComponent},
     {path: 'maincontent' , component : MainContentComponent},
     {path: 'sidebarsetting' , component : SidebarComponent},
-    {path: 'SignupMarkter' , component : SignupMarketerComponent},
-    {path: 'SignupUser' , component : SignupUserComponent},
     {path: 'TypeAccount' , component : TypeAccountComponent},
     {path: 'givefeedback' , component : GiveFeedbackComponent},
     {path: 'login' , component : LoginFormComponent},
@@ -60,7 +58,9 @@ export const routes: Routes = [
     {path: 'stories' , component : InnerStoryComponent},
     {path: 'Explore' , component : ExplorepageComponent},
     { path: 'create-post', component: ModalComponent },
-
+ {path: 'signup-user', component: SignupUserComponent },
+  { path: 'signup-marketer', component: SignupMarketerComponent },
+  { path: 'type-account', component: TypeAccountComponent },
     {path: 'firstprofile' , component : FirstprofileComponent},
 
     {path: 'secondprofile' , component : SecondprofileComponent},
