@@ -3,7 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import {  ViewChild, ElementRef } from '@angular/core';
 import { ModalComponent } from '../modal/modal.component';
 import { ReportComponent } from "../report/report.component";
-import { User } from '../../user';
+import { User } from '../../interfaces/user';
 import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-navbar',

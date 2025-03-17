@@ -44,7 +44,7 @@ describe('FeedComponent', () => {
 
   it('should toggle save', () => {
     component.toggleSave(component.posts[0]);
-    expect(component.posts[0].Saved).toBeTrue();
+    expect(component.posts[0].saved).toBeTruthy();
   });
   it('should toggle Follow', () => {
     component.toggleFollow(component.usersFol[0]);

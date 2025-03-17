@@ -1,6 +1,5 @@
-<!-- src/app/trending-sidebar/trending-sidebar.component.html -->
-<div class="sid col-md-3 col-12 mt-4">
-  <div class="sidebar-line"></div>
+<!-- trending-sidebar.component.html -->
+<div class="sidebar-container">
   <div *ngFor="let use of user" class="sidebar text-center align-items-left m-auto">
     <!-- User Profile -->
     <div class="py-3 my-auto">
@@ -21,10 +20,11 @@
           <h6 class="mb-0">96.28k</h6>
         </div>
         <div>
-          <small class="text-muted">Following</small>
-          <h6 class="mb-0">618</h6>
+          <small class="my-following text-muted">Following</small>
+          <h6 class="mb-0">{{ followingCount }}</h6> <!-- عرض عدد المتابعين -->
         </div>
       </div>
+
     </div>
 
     <!-- Navigation Menu -->
@@ -32,13 +32,13 @@
       <a [routerLink]="['/feed']" class="nav-link d-flex align-items-center py-2"
          routerLinkActive="active"
          [routerLinkActiveOptions]="{ exact: true }">
-        <span class="horizontal-line"></span>
+        <span class="horizontal-line-hover"></span>
         <i class="bi bi-house-door me-2"></i> Feed
       </a>
       <a [routerLink]="['/explore']" class="nav-link d-flex align-items-center py-2"
          routerLinkActive="active"
          [routerLinkActiveOptions]="{ exact: true }">
-        <span class="horizontal-line"></span>
+        <span class="horizontal-line-hover"></span>
         <i class="bi bi-compass me-2"></i> Explore
       </a>
       <a href="#" class="nav-link d-flex align-items-center py-2">

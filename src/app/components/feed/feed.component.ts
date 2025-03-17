@@ -1,21 +1,79 @@
-import { Component, HostListener, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, HostListener, ViewChild, ElementRef, OnInit, Inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { RouterModule } from '@angular/router';
 import { PostService } from '../services/post.service';
-import { User } from '../../user';
 import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.component';
+import { User } from '../../interfaces/user';
+
+declare var bootstrap: any;
+
+interface ReactionCount {
+  reaction: string;
+  count: number;
+}
+
+interface ReactionUser {
+  username: string;
+  profileImageUrl: string;
+  reactionType: string;
+  timestamp: Date;
+}
+
+interface Post {
+  id?: string;
+  username: string;
+  profileImageUrl: string;
+  timestamp: Date;
+  content: string;
+  category: string;
+  subCategory?: string;
+  images: string[];
+  currentImageIndex: number;
+  likes: number;
+  Shares: number;
+  Saves: number;
+  showComments: boolean;
+  isEditing: boolean;
+  liked: boolean;
+  saved: boolean;
+  comments: Comment[];
+  reactions?: { [key: string]: number };
+  topReactions?: ReactionCount[];
+  reactionUsers?: ReactionUser[];
+  isPinned?: boolean;
+  showReactionUsers?: boolean;
+}
+
+interface Comment {
+  id: string;
+  username: string;
+  text: string;
+  imageUrl?: string;
+  likes: number;
+  likedBy: { username: string; profileImageUrl: string; }[];
+  timestamp: Date;
+  profileImageUrl: string;
+  replies?: Comment[];
+  showReplyInput?: boolean;
+  parentId?: string;
+  replyText?: string;
+  showLikedBy?: boolean;
+}
+
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, FormsModule, PickerModule, TrendingSidebarComponent],
+  imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
-  providers: [DatePipe],
+  providers: [DatePipe, PostService],
 })
 export class FeedComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
+  @ViewChild(TrendingSidebarComponent) trendingSidebar!: TrendingSidebarComponent;
   isDropdownVisible = false;
   newComment: string = '';
   newCommentImageUrl: string | ArrayBuffer | null = null;
@@ -23,10 +81,17 @@ export class FeedComponent implements OnInit {
   currentUser = 'Taha Mahmoud';
   showEmojiPicker = false;
   activeCategory: string = 'All';
-  constructor(private postService: PostService) {} // حقن الـ Service
+  navbarVisible = true;
+  lastScrollTop = 0;
+  isShareModalVisible = false;
+  selectedPost: Post | null = null;
+  postUrl: string = '';
+  linkCopied: boolean = false;
+  currentReplyText: string = '';
+  constructor(@Inject(PostService) private postService: PostService) {} // حقن الـ Service
   ngOnInit() {
     // الاشتراك في الـ Observable علشان نستقبل البوستات الجديدة
-    this.postService.getPostObservable().subscribe((newPost) => {
+    this.postService.getPostObservable().subscribe((newPost: Post) => {
       this.posts.unshift(newPost); // إضافة البوست الجديد في بداية المصفوفة
     });
 
@@ -47,7 +112,8 @@ export class FeedComponent implements OnInit {
     }
   ];
 
-
+  subCategories: any[] = []; // لتخزين الأيقونات الفرعية
+  activeSubCategory: string = ''; // لتحديد الأيقونة الفرعية النشطة
 
 
   categories = [
@@ -105,9 +171,18 @@ export class FeedComponent implements OnInit {
 
   followUser(user: any) {
     user.Follow = !user.Follow;
+    if (user.Follow) {
+      this.trendingSidebar.incrementFollowingCount();
+    } else {
+      this.trendingSidebar.decrementFollowingCount();
+    }
   }
 
-  filteredPosts: any[] = [];
+  toggleFollow(userFol: any) {
+    this.followUser(userFol); // Reuse the followUser method for consistency
+  }
+
+  filteredPosts: Post[] = [];
 
   // دالة لتصفية المنشورات بناءً على الفئة
   filterPostsByCategory(categoryName: string) {
@@ -118,13 +193,20 @@ export class FeedComponent implements OnInit {
       this.filteredPosts = this.posts.filter(post => post.category === categoryName);
     }
   }
-  posts = [
+
+
+  filterPostsBySubCategory(subCategoryName: string) {
+    this.activeSubCategory = subCategoryName; // تعيين الفئة الفرعية النشطة
+    this.filteredPosts = this.posts.filter(post => post.subCategory === subCategoryName);
+  }
+  posts: Post[] = [
     {
       username: 'Taha Mahmoud',
-      profileImageUrl: 'https://randomuser.me/api/portraits/men/1.jpg',
+      profileImageUrl: 'images/user-1.jpg',
       timestamp: new Date(),
       content: 'This is a sample post content about electronics!',
       category: 'Electronics',
+      subCategory: 'General',
       images: [
         'images/post-image-1.png',
         'images/post-image-2.png',
@@ -137,11 +219,32 @@ export class FeedComponent implements OnInit {
       showComments: false,
       isEditing: false,
       liked: false,
-      Saved: false,
+      saved: false,
       comments: [
-        { username: 'Jane', text: 'Great post!', likes: 2, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/1.jpg' },
-        { username: 'Mike', text: 'Interesting thoughts.', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/2.jpg' },
-      ],
+        {
+          id: 'comment1',
+          username: 'Sarah Johnson',
+          text: 'Great post! Very informative.',
+          likes: 5,
+          likedBy: [
+            { username: 'Mike Chen', profileImageUrl: 'images/user-2.jpg' },
+            { username: 'Emma Davis', profileImageUrl: 'images/user-3.jpg' }
+          ],
+          timestamp: new Date(2025, 2, 15, 14, 30),
+          profileImageUrl: 'images/user-3.jpg',
+          replies: [
+            {
+              id: 'reply1',
+              username: 'Mike Chen',
+              text: 'Totally agree! The insights are valuable.',
+              likes: 2,
+              likedBy: [],
+              timestamp: new Date(2025, 2, 15, 15, 0),
+              profileImageUrl: 'images/user-2.jpg'
+            }
+          ]
+        }
+      ]
     },
     {
       username: 'Sara Smith',
@@ -160,10 +263,26 @@ export class FeedComponent implements OnInit {
       showComments: false,
       isEditing: false,
       liked: false,
-      Saved: false,
+      saved: false,
       comments: [
-        { username: 'Tom', text: 'Nice one!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg' },
-        { username: 'Emma', text: 'Very inspiring.', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/4.jpg' },
+        { 
+          id: 'comment2',
+          username: 'Tom', 
+          text: 'Nice one!', 
+          likes: 1, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg' 
+        },
+        { 
+          id: 'comment3',
+          username: 'Emma', 
+          text: 'Very inspiring.', 
+          likes: 0, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/women/4.jpg' 
+        },
       ],
     },
     {
@@ -184,8 +303,24 @@ export class FeedComponent implements OnInit {
       liked: false,
       saved: false,
       comments: [
-        { username: 'Tom', text: 'Nice one!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg' },
-        { username: 'Emma', text: 'Very inspiring.', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/4.jpg' },
+        { 
+          id: 'comment4',
+          username: 'Tom', 
+          text: 'Nice one!', 
+          likes: 1, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg' 
+        },
+        { 
+          id: 'comment5',
+          username: 'Emma', 
+          text: 'Very inspiring.', 
+          likes: 0, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/women/4.jpg' 
+        },
       ],
     },
     {
@@ -206,8 +341,24 @@ export class FeedComponent implements OnInit {
       liked: false,
       saved: false,
       comments: [
-        { username: 'Anna', text: 'Lovely!', likes: 3, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/5.jpg' },
-        { username: 'John', text: 'Great tips.', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/6.jpg' },
+        { 
+          id: 'comment6',
+          username: 'Anna', 
+          text: 'Lovely!', 
+          likes: 3, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/women/5.jpg' 
+        },
+        { 
+          id: 'comment7',
+          username: 'John', 
+          text: 'Great tips.', 
+          likes: 1, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/men/6.jpg' 
+        },
       ],
     },
     {
@@ -228,8 +379,24 @@ export class FeedComponent implements OnInit {
       liked: false,
       saved: false,
       comments: [
-        { username: 'Chris', text: 'Very useful!', likes: 5, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/7.jpg' },
-        { username: 'Sophia', text: 'Thanks for sharing.', likes: 2, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/8.jpg' },
+        { 
+          id: 'comment8',
+          username: 'Chris', 
+          text: 'Very useful!', 
+          likes: 5, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/men/7.jpg' 
+        },
+        { 
+          id: 'comment9',
+          username: 'Sophia', 
+          text: 'Thanks for sharing.', 
+          likes: 2, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/women/8.jpg' 
+        },
       ],
     },
     {
@@ -250,8 +417,24 @@ export class FeedComponent implements OnInit {
       liked: false,
       saved: false,
       comments: [
-        { username: 'Alice', text: 'Nice outfit!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/9.jpg' },
-        { username: 'Bob', text: 'Looking good!', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/10.jpg' },
+        { 
+          id: 'comment10',
+          username: 'Alice', 
+          text: 'Nice outfit!', 
+          likes: 1, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/women/9.jpg' 
+        },
+        { 
+          id: 'comment11',
+          username: 'Bob', 
+          text: 'Looking good!', 
+          likes: 0, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/men/10.jpg' 
+        },
       ],
     },
     {
@@ -273,8 +456,24 @@ export class FeedComponent implements OnInit {
       liked: false,
       saved: false,
       comments: [
-        { username: 'Charlie', text: 'Awesome game!', likes: 2, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/11.jpg' },
-        { username: 'Diana', text: 'I love this game!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/12.jpg' },
+        { 
+          id: 'comment12',
+          username: 'Charlie', 
+          text: 'Awesome game!', 
+          likes: 2, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/men/11.jpg' 
+        },
+        { 
+          id: 'comment13',
+          username: 'Diana', 
+          text: 'I love this game!', 
+          likes: 1, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/women/12.jpg' 
+        },
       ],
     },
     {
@@ -295,8 +494,24 @@ export class FeedComponent implements OnInit {
       liked: false,
       saved: false,
       comments: [
-        { username: 'Eva', text: 'Great deals!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/13.jpg' },
-        { username: 'Frank', text: 'Thanks for sharing!', likes: 0, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/14.jpg' },
+        { 
+          id: 'comment14',
+          username: 'Eva', 
+          text: 'Great deals!', 
+          likes: 1, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/women/13.jpg' 
+        },
+        { 
+          id: 'comment15',
+          username: 'Frank', 
+          text: 'Thanks for sharing!', 
+          likes: 0, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/men/14.jpg' 
+        },
       ],
     },
     {
@@ -317,8 +532,24 @@ export class FeedComponent implements OnInit {
       liked: false,
       saved: false,
       comments: [
-        { username: 'George', text: 'Very helpful!', likes: 3, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/15.jpg' },
-        { username: 'Hannah', text: 'Great advice!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/16.jpg' },
+        { 
+          id: 'comment16',
+          username: 'George', 
+          text: 'Very helpful!', 
+          likes: 3, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/men/15.jpg' 
+        },
+        { 
+          id: 'comment17',
+          username: 'Hannah', 
+          text: 'Great advice!', 
+          likes: 1, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/women/16.jpg' 
+        },
       ],
     },
     {
@@ -339,8 +570,24 @@ export class FeedComponent implements OnInit {
       liked: false,
       saved: false,
       comments: [
-        { username: 'Isabella', text: 'Great book!', likes: 2, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/17.jpg' },
-        { username: 'Jack', text: 'I enjoyed reading it!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/18.jpg' },
+        { 
+          id: 'comment18',
+          username: 'Isabella', 
+          text: 'Great book!', 
+          likes: 2, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/women/17.jpg' 
+        },
+        { 
+          id: 'comment19',
+          username: 'Jack', 
+          text: 'I enjoyed reading it!', 
+          likes: 1, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/men/18.jpg' 
+        },
       ],
     },
     {
@@ -361,8 +608,24 @@ export class FeedComponent implements OnInit {
       liked: false,
       saved: false,
       comments: [
-        { username: 'Kevin', text: 'My pet loves this!', likes: 2, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/19.jpg' },
-        { username: 'Laura', text: 'Great product!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/20.jpg' },
+        { 
+          id: 'comment20',
+          username: 'Kevin', 
+          text: 'My pet loves this!', 
+          likes: 2, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/men/19.jpg' 
+        },
+        { 
+          id: 'comment21',
+          username: 'Laura', 
+          text: 'Great product!', 
+          likes: 1, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/women/20.jpg' 
+        },
       ],
     },
     {
@@ -383,12 +646,28 @@ export class FeedComponent implements OnInit {
       liked: false,
       saved: false,
       comments: [
-        { username: 'Mia', text: 'Lovely scent!', likes: 3, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/women/21.jpg' },
-        { username: 'Noah', text: 'Great choice!', likes: 1, likedBy: [], timestamp: new Date(), profileImageUrl: 'https://randomuser.me/api/portraits/men/22.jpg' },
+        { 
+          id: 'comment22',
+          username: 'Mia', 
+          text: 'Lovely scent!', 
+          likes: 3, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/women/21.jpg' 
+        },
+        { 
+          id: 'comment23',
+          username: 'Noah', 
+          text: 'Great choice!', 
+          likes: 1, 
+          likedBy: [], 
+          timestamp: new Date(), 
+          profileImageUrl: 'https://randomuser.me/api/portraits/men/22.jpg' 
+        },
       ],
     },
   ];
-  addNewPost(newPost: any) {
+  addNewPost(newPost: Post) {
     this.posts.unshift(newPost); // إضافة البوست الجديد في بداية المصفوفة
   }
   // Toggle dropdown menu
@@ -400,7 +679,7 @@ export class FeedComponent implements OnInit {
   }
 
   // دالة لإخفاء المنشور
-hidePost(post: any) {
+hidePost(post: Post) {
   const index = this.filteredPosts.indexOf(post);
   if (index > -1) {
     this.filteredPosts.splice(index, 1);
@@ -408,41 +687,50 @@ hidePost(post: any) {
 }
 
 // دالة لإيقاف المستخدم مؤقتًا
-snoozeUser(post: any, days: number) {
+snoozeUser(post: Post, days: number) {
   alert(`Snoozed ${post.username} for ${days} days`);
 }
 
 // دالة لحظر المستخدم
-blockUser(post: any) {
+blockUser(post: Post) {
   alert(`Blocked ${post.username}`);
 }
   // Like a post
-  likePost(post: any) {
-    if (post.isLiked) {
+  likePost(post: Post) {
+    if (post.liked) {
       post.likes--;
     } else {
       post.likes++;
     }
-    post.isLiked = !post.isLiked;
+    post.liked = !post.liked;
   }
 
   // Toggle comments visibility
-  toggleComments(post: any) {
+  toggleComments(post: Post) {
     post.showComments = !post.showComments;
   }
 
   // Share a post
-  sharePost(post: any) {
-    alert('Post shared!');
+  sharePost(post: Post) {
+    this.selectedPost = post;
+    const postId = post.id || Date.now().toString();
+    this.postUrl = `${window.location.origin}/post/${postId}`;
+    const modal = document.getElementById('shareModal');
+    if (modal) {
+      const bootstrapModal = new bootstrap.Modal(modal);
+      bootstrapModal.show();
+    }
+    // Increment share count
+    post.Shares++;
   }
 
   // Toggle edit mode
-  toggleEdit(post: any) {
+  toggleEdit(post: Post) {
     post.isEditing = !post.isEditing;
   }
 
   // Save edited post
-  savePost(post: any) {
+  savePost(post: Post) {
     post.isEditing = false;
   }
 
@@ -476,7 +764,7 @@ blockUser(post: any) {
   // Add a new post
   addPost() {
     if (this.postContent.trim()) {
-      const newPost = {
+      const newPost: Post = {
         username: this.user[0].username, // Use profile's username
         profileImageUrl: this.user[0].profileImageUrl, // Use profile's profile picture
         timestamp: new Date(),
@@ -490,7 +778,7 @@ blockUser(post: any) {
         showComments: false,
         isEditing: false,
         liked: false,
-        Saved: false,
+        saved: false,
         comments: [],
       };
       this.posts.unshift(newPost); // Add new post to the top
@@ -498,9 +786,15 @@ blockUser(post: any) {
     }
   }
 
-  onScroll(event: WheelEvent) {
-    const container = event.currentTarget as HTMLElement;
-    container.scrollLeft += event.deltaY;
+  @HostListener('window:scroll', ['$event'])
+  onScroll(event: Event) {
+    const scrollTop = (event as UIEvent).view?.scrollY || document.documentElement.scrollTop;
+    if (scrollTop < this.lastScrollTop) {
+      this.navbarVisible = false;
+    } else {
+      this.navbarVisible = true;
+    }
+    this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
   }
 
   onMouseDown(event: MouseEvent) {
@@ -521,35 +815,32 @@ blockUser(post: any) {
     this.isDragging = false;
   }
 
-  toggleLike(post: any) {
+  toggleLike(post: Post) {
     post.liked = !post.liked;
     post.likes += post.liked ? 1 : -1;
   }
 
-  toggleSave(post: any) {
+  toggleSave(post: Post) {
     post.saved = !post.saved;
     post.Saves += post.saved ? 1 : -1;
   }
-  toggleFollow(userFol: any) {
-    userFol.Follow = !userFol.Follow;
-  }
 
   // التنقل إلى الصورة التالية
-  nextImage(post: any) {
+  nextImage(post: Post) {
     if (post.currentImageIndex < post.images.length - 1) {
       post.currentImageIndex++;
     }
   }
 
   // التنقل إلى الصورة السابقة
-  prevImage(post: any) {
+  prevImage(post: Post) {
     if (post.currentImageIndex > 0) {
       post.currentImageIndex--;
     }
   }
 
   // دالة لحذف التعليق
-  deleteComment(post: any, commentIndex: number) {
+  deleteComment(post: Post, commentIndex: number) {
     if (post.comments[commentIndex].username === this.currentUser) {
       post.comments.splice(commentIndex, 1);
     } else {
@@ -558,7 +849,7 @@ blockUser(post: any) {
   }
 
   // دالة لتعديل التعليق
-  editComment(post: any, comment: any) {
+  editComment(post: Post, comment: Comment) {
     const newCommentText = prompt('Edit your comment:', comment.text);
     if (newCommentText !== null) {
       comment.text = newCommentText;
@@ -566,12 +857,14 @@ blockUser(post: any) {
   }
 
   // دالة لإضافة تعليق جديد
-  addComment(post: any, commentText: string): void {
+  addComment(post: Post, commentText: string): void {
     if (commentText.trim() || this.newCommentImageUrl) {
+      const imageUrl = typeof this.newCommentImageUrl === 'string' ? this.newCommentImageUrl : undefined;
       post.comments.push({
+        id: this.generateCommentId(),
         username: this.currentUser,
         text: commentText,
-        imageUrl: this.newCommentImageUrl,
+        imageUrl,
         likes: 0,
         likedBy: [],
         timestamp: new Date(),
@@ -583,20 +876,19 @@ blockUser(post: any) {
   }
 
   // دالة لإضافة تفاعل (إعجاب) على التعليق
-  toggleCommentLike(comment: any) {
-    if (!comment.likes) {
-      comment.likes = 0;
-    }
-    if (!comment.likedBy) {
-      comment.likedBy = [];
-    }
+  toggleCommentLike(comment: Comment) {
+    const currentUser = {
+      username: this.currentUser,
+      profileImageUrl: this.user[0].profileImageUrl
+    };
 
-    if (comment.likedBy.includes(this.currentUser)) {
-      comment.likes--;
-      comment.likedBy = comment.likedBy.filter((user: string) => user !== this.currentUser);
-    } else {
+    const userIndex = comment.likedBy.findIndex(user => user.username === currentUser.username);
+    if (userIndex === -1) {
       comment.likes++;
-      comment.likedBy.push(this.currentUser);
+      comment.likedBy.push(currentUser);
+    } else {
+      comment.likes--;
+      comment.likedBy.splice(userIndex, 1);
     }
   }
 
@@ -609,12 +901,12 @@ blockUser(post: any) {
     }
   }
 
-  editPost(post: any) {
+  editPost(post: Post) {
     // Logic to edit the post
     post.isEditing = true;
   }
 
-  deletePost(post: any) {
+  deletePost(post: Post) {
     // Logic to delete the post
     const index = this.filteredPosts.indexOf(post);
     if (index > -1) {
@@ -622,22 +914,282 @@ blockUser(post: any) {
     }
   }
 
-  reportPost(post: any) {
+  reportPost(post: Post) {
     alert(`Reported post by ${post.username}`);
   }
 
-  unfollow(post: any) {
+  unfollow(post: Post) {
     alert(`Unfollowed ${post.username}`);
   }
-}
+  goBackToCategories() {
+    this.activeCategory = 'All';
+    this.activeSubCategory = '';
+    this.subCategories = [];
+    this.filterPostsByCategory('All');
+  }
 
-// Define the Comment type with the imageUrl property
-export interface LocalComment {
-  username: string;
-  text: string;
-  imageUrl?: string;
-  likes: number;
-  likedBy: string[];
-  timestamp: Date;
-  profileImageUrl: string;
+
+  showSubCategories(category: any) {
+    this.activeCategory = category.name; // تعيين الفئة النشطة
+    this.subCategories = this.getSubCategories(category.name); // جلب الأيقونات الفرعية
+  }
+
+  getSubCategories(categoryName: string): any[] {
+    const subCategories = [
+        { name: 'All', icon: 'bi bi-collection' } // Add "All" option to each subcategory list
+    ];
+    switch (categoryName) {
+      case 'Food':
+        return subCategories.concat([
+          { name: 'Drinks', icon: 'bi bi-cup' },
+          { name: 'Candy', icon: 'bi bi-candy' },
+          { name: 'Snacks', icon: 'bi bi-basket' },
+          { name: 'Desserts', icon: 'bi bi-cake' }
+        ]);
+      case 'Electronics':
+        return subCategories.concat([
+          { name: 'Phones', icon: 'bi bi-phone' },
+          { name: 'Laptops', icon: 'bi bi-laptop' },
+          { name: 'Accessories', icon: 'bi bi-headphones' }
+        ]);
+      case 'Electrical Tools':
+        return subCategories.concat([
+          { name: 'Power Tools', icon: 'bi bi-lightning' },
+          { name: 'Hand Tools', icon: 'bi bi-wrench' },
+          { name: 'Measurement Tools', icon: 'bi bi-ruler' }
+        ]);
+      case 'Medicines':
+        return subCategories.concat([
+          { name: 'Prescription', icon: 'bi bi-file-medical' },
+          { name: 'Over-the-Counter', icon: 'bi bi-capsule' },
+          { name: 'Supplements', icon: 'bi bi-pills' }
+        ]);
+      case 'Clothing':
+        return subCategories.concat([
+          { name: 'Men', icon: 'bi bi-person' },
+          { name: 'Women', icon: 'bi bi-person-fill' },
+          { name: 'Kids', icon: 'bi bi-person-badge' }
+        ]);
+      case 'Fashion':
+        return subCategories.concat([
+          { name: 'Accessories', icon: 'bi bi-handbag' },
+          { name: 'Jewelry', icon: 'bi bi-gem' },
+          { name: 'Shoes', icon: 'bi bi-shoe' }
+        ]);
+      case 'Home & Kitchen':
+        return subCategories.concat([
+          { name: 'Furniture', icon: 'bi bi-house' },
+          { name: 'Appliances', icon: 'bi bi-fan' },
+          { name: 'Decor', icon: 'bi bi-paint-bucket' }
+        ]);
+      case 'Beauty & Personal Care':
+        return subCategories.concat([
+          { name: 'Skincare', icon: 'bi bi-droplet' },
+          { name: 'Haircare', icon: 'bi bi-scissors' },
+          { name: 'Makeup', icon: 'bi bi-brush' }
+        ]);
+      case 'Home Appliances':
+        return subCategories.concat([
+          { name: 'Kitchen', icon: 'bi bi-fridge' },
+          { name: 'Laundry', icon: 'bi bi-washing-machine' },
+          { name: 'Cleaning', icon: 'bi bi-vacuum' }
+        ]);
+      case 'Sports & Fitness':
+        return subCategories.concat([
+          { name: 'Equipment', icon: 'bi bi-dumbbell' },
+          { name: 'Clothing', icon: 'bi bi-tshirt' },
+          { name: 'Accessories', icon: 'bi bi-watch' }
+        ]);
+      case 'Video Games':
+        return subCategories.concat([
+          { name: 'Consoles', icon: 'bi bi-controller' },
+          { name: 'Games', icon: 'bi bi-gamepad' },
+          { name: 'Accessories', icon: 'bi bi-headset' }
+        ]);
+      case 'Toys & Hobbies':
+        return subCategories.concat([
+          { name: 'Action Figures', icon: 'bi bi-robot' },
+          { name: 'Board Games', icon: 'bi bi-grid' },
+          { name: 'Puzzles', icon: 'bi bi-puzzle' }
+        ]);
+      case 'Auto Parts':
+        return subCategories.concat([
+          { name: 'Engine', icon: 'bi bi-gear' },
+          { name: 'Body', icon: 'bi bi-car-front' },
+          { name: 'Interior', icon: 'bi bi-steering-wheel' }
+        ]);
+      case 'Groceries':
+        return subCategories.concat([
+          { name: 'Fruits', icon: 'bi bi-apple' },
+          { name: 'Vegetables', icon: 'bi bi-carrot' },
+          { name: 'Dairy', icon: 'bi bi-milk' }
+        ]);
+      case 'Health & Personal Care':
+        return subCategories.concat([
+          { name: 'Medical Supplies', icon: 'bi bi-first-aid' },
+          { name: 'Personal Hygiene', icon: 'bi bi-hand-sanitizer' },
+          { name: 'Fitness', icon: 'bi bi-heart-pulse' }
+        ]);
+      case 'Books & Media':
+        return subCategories.concat([
+          { name: 'Books', icon: 'bi bi-book' },
+          { name: 'Magazines', icon: 'bi bi-journal' },
+          { name: 'Music', icon: 'bi bi-music-note' }
+        ]);
+      case 'Pet Supplies':
+        return subCategories.concat([
+          { name: 'Food', icon: 'bi bi-bone' },
+          { name: 'Toys', icon: 'bi bi-ball' },
+          { name: 'Grooming', icon: 'bi bi-scissors' }
+        ]);
+      case 'Perfumes':
+        return subCategories.concat([
+          { name: 'Men', icon: 'bi bi-bottle' },
+          { name: 'Women', icon: 'bi bi-bottle-fill' },
+          { name: 'Unisex', icon: 'bi bi-bottle-half' }
+        ]);
+      default:
+        return subCategories;
+    }
+  }
+
+  // New methods for enhanced post interaction
+  pinPost(post: Post) {
+    post.isPinned = !post.isPinned;
+    if (post.isPinned) {
+      // Move post to top of feed
+      const index = this.posts.indexOf(post);
+      if (index > -1) {
+        this.posts.splice(index, 1);
+        this.posts.unshift(post);
+      }
+    }
+    this.filterPostsByCategory(this.activeCategory);
+  }
+
+  shareViaMessage(post: Post) {
+    // Implementation for direct message sharing
+    console.log('Sharing via message:', post);
+  }
+
+  copyLink(input: HTMLInputElement | Post) {
+    if (input instanceof HTMLInputElement) {
+      input.select();
+      document.execCommand('copy');
+      this.linkCopied = true;
+      setTimeout(() => {
+        this.linkCopied = false;
+      }, 2000);
+    } else {
+      // Handle Post type
+      const dummyUrl = `https://yoursite.com/post/${Date.now()}`;
+      navigator.clipboard.writeText(dummyUrl);
+    }
+  }
+
+  // Enhanced post filtering
+  filterByTrending() {
+    this.filteredPosts = this.posts
+      .sort((a, b) => (b.likes + b.comments.length + b.Shares) - (a.likes + a.comments.length + a.Shares));
+  }
+
+  filterByRecent() {
+    this.filteredPosts = this.posts
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  }
+
+  // Enhanced sharing functionality
+  shareToFacebook() {
+    if (this.selectedPost) {
+      const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(this.postUrl)}`;
+      window.open(url, '_blank', 'width=600,height=400');
+    }
+  }
+
+  shareToTwitter() {
+    if (this.selectedPost) {
+      const text = `Check out this post by ${this.selectedPost.username}`;
+      const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(this.postUrl)}`;
+      window.open(url, '_blank', 'width=600,height=400');
+    }
+  }
+
+  shareToWhatsApp() {
+    if (this.selectedPost) {
+      const text = `Check out this post by ${this.selectedPost.username}: ${this.postUrl}`;
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+    }
+  }
+
+  shareToLinkedIn() {
+    if (this.selectedPost) {
+      const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(this.postUrl)}`;
+      window.open(url, '_blank', 'width=600,height=400');
+    }
+  }
+
+  // Add post reaction feature
+  addReaction(post: Post, reaction: string) {
+    if (!post.reactions) {
+      post.reactions = {};
+    }
+    if (!post.reactions[reaction]) {
+      post.reactions[reaction] = 0;
+    }
+    post.reactions[reaction]++;
+    // Update UI to show reaction
+    this.updateReactionUI(post);
+  }
+
+  private updateReactionUI(post: Post) {
+    post.topReactions = Object.entries(post.reactions || {})
+      .map(([reaction, count]) => ({ reaction, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3);
+  }
+
+  showReactionUsers(post: Post) {
+    post.showReactionUsers = !post.showReactionUsers;
+  }
+
+  showCommentLikes(comment: Comment) {
+    comment.showLikedBy = !comment.showLikedBy;
+  }
+
+  // Generate a unique ID for comments
+  private generateCommentId(): string {
+    return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  }
+
+  // Toggle reply input for a comment
+  toggleReplyInput(comment: Comment) {
+    comment.showReplyInput = !comment.showReplyInput;
+    if (!comment.showReplyInput) {
+      this.currentReplyText = '';
+    }
+  }
+
+  // Add a reply to a comment
+  addReply(comment: Comment, replyText: string) {
+    if (!replyText.trim()) return;
+
+    const reply: Comment = {
+      id: this.generateCommentId(),
+      username: this.currentUser,
+      text: replyText,
+      likes: 0,
+      likedBy: [],
+      timestamp: new Date(),
+      profileImageUrl: this.user[0].profileImageUrl,
+      parentId: comment.id
+    };
+
+    if (!comment.replies) {
+      comment.replies = [];
+    }
+    comment.replies.push(reply);
+    this.currentReplyText = '';
+    comment.showReplyInput = false;
+  }
 }

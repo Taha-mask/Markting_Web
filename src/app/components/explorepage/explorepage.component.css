@@ -42,7 +42,6 @@
 }
 
 /* Left Sidebar */
-
 .cover-photo img {
   width: 100%;
   height: 80px;
@@ -59,6 +58,7 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .stats p {
@@ -109,12 +109,12 @@
   background-clip: padding-box;
   background-color: #f8f9fa;
   position: relative;
-  margin-right: 10px; /* Adjust the margin between story icons */
-  transition: background-color 0.3s ease; /* Add transition for smooth background color change */
+  margin-right: 10px;
+  transition: background-color 0.3s ease;
 }
 
 .story-frame.active {
-  background-color: #e4e4e4; /* Background color when clicked */
+  background-color: #e4e4e4;
 }
 
 .story-frame::before {
@@ -134,19 +134,23 @@
 }
 
 .story-frame small {
-  display: block; /* Move the text to the next line */
-  margin-top: 5px; /* Add some space above the text */
+  display: block;
+  margin-top: 5px;
 }
 
 .overflow-auto {
   white-space: nowrap;
   overflow-x: auto;
   scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px 0;
 }
 
 /* Post Section */
 .add-post {
-  width: 50%;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .btnpost {
@@ -163,7 +167,7 @@
 
 .comment-time {
   color: #6c757d !important;
-  margin-left: 55px; /* Adjust margin to align with the comment content */
+  margin-left: 55px;
 }
 
 /* Comment Section */
@@ -182,7 +186,7 @@
   width: 40px;
   height: 40px;
   object-fit: cover;
-  margin-right: 5px; /* Reduce the margin to bring the image closer to the text */
+  margin-right: 5px;
 }
 
 .comment-input {
@@ -191,103 +195,132 @@
   outline: none;
   flex-grow: 1;
 }
-.comment-input:focus{
-  box-shadow: none;
-}
-.bi-hand-thumbs-up {
-  color: #6c757d;
-  cursor: pointer;
-}
-
-.bi-hand-thumbs-up:hover {
-  color: #000000;
-}
-
-.bi-trash {
-  color: #ff0019;
-  cursor: pointer;
-}
-
-.bi-trash:hover {
-  color: #ff0019;
-}
-.main-content {
-  padding-right: 20px;
-}
-.main-content .container {
-margin-top: 20px;}
-.icons {
-  display: flex;
-  align-items: flex-end;
-  margin-right: auto;
-}
-
-.icons i {
-  font-size: 1.2rem;
-  color: #b0b0b0;
-  cursor: pointer;
-}
-
-.icons i:hover {
-  color: #6c757d;
-}
 
 .comment-input:focus {
   box-shadow: none;
 }
 
-.bi-send {
-  font-size: 1.5rem;
-  color: #007bff;
+.bi-hand-thumbs-up {
+  color: #6c757d;
   cursor: pointer;
 }
 
-.bi-send:hover {
-  color: #0056b3;
+.risaide {
+  width: 23%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  min-height: 100vh;
 }
-.pro-pic {
-  width: 250px;
-  padding: 10px;
-  border-radius: 20px;
-  margin-bottom: 10px;
+
+/* Mobile Optimizations */
+@media screen and (max-width: 768px) {
+  .container-fluid {
+    padding: 0;
+  }
+
+  .main-content {
+    padding: 0 10px;
+  }
+
+  .scrollable-content {
+    padding-right: 0;
+  }
+
+  .story-frame {
+    margin-right: 8px;
+  }
+
+  .story-frame img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .story-frame small {
+    font-size: 11px;
+  }
+
+  .profile-pic {
+    width: 40px;
+    height: 40px;
+  }
+
+  .comment-box {
+    padding: 5px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .comment-input {
+    font-size: 14px;
+  }
+
+  .comment-time {
+    margin-left: 37px;
+    font-size: 12px;
+  }
+
+  .categories {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 0;
+  }
+
+  .category-item {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+
+  .btnpost {
+    padding: 5px 15px;
+    font-size: 14px;
+  }
+
+  .card {
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .card-body {
+    padding: 12px;
+  }
 }
-.user-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #b3b3b3;
-  padding: 10px;
-  border-radius: 8px;
-  width: 350px;
+
+/* Tablet Optimizations */
+@media screen and (min-width: 769px) and (max-width: 991px) {
+  .main-content {
+    padding: 0 15px;
+  }
+
+  .story-frame img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+}
+
+.category-text {
+  display: inline-block;
+  white-space: pre-line;
+  line-height: 1.2;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-.users-list {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  padding: 10px;
-  overflow-x: auto;
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #888 #f1f1f1; /* Firefox */
+  font-size: 14px;
 }
 
-.users-list::-webkit-scrollbar {
-  height: 4px; /* Adjust the height of the scrollbar */
+@media screen and (max-width: 576px) {
+  .category-text {
+    font-size: 12px;
+  }
 }
 
-.users-list::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.users-list::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
-
-.users-list::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
 /* Right Sidebar */
 .risaide {
   width: 23%;
@@ -315,14 +348,7 @@ margin-top: 20px;}
   border-radius: 50%;
   cursor: pointer;
 }
-/* تنسيقات إضافية للأيقونات */
-.story-frame i {
-  color: #007bff; /* لون الأيقونات */
-}
 
-.story-frame i:hover {
-  color: #0056b3; /* لون الأيقونات عند التمرير */
-}
 .navigation-buttons button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -335,10 +361,11 @@ margin-top: 20px;}
 .position-absolute {
   position: absolute;
 }
+
 /* Navigation Buttons */
 .navigation-buttons {
-  opacity: 0; /* إخفاء الأسهم بشكل افتراضي */
-  transition: opacity 0.3s ease; /* إضافة انتقال سلس */
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .navigation-buttons button {
@@ -355,48 +382,142 @@ margin-top: 20px;}
   cursor: not-allowed;
 }
 
-/* إظهار الأسهم عند وضع الماوس فوق الصورة */
 .position-relative:hover .navigation-buttons {
-  opacity: 1; /* إظهار الأسهم */
+  opacity: 1;
 }
+
 /* Dots Navigation */
 .dots-navigation {
-  z-index: 10; /* تأكد من ظهور النقاط فوق الصورة */
+  z-index: 10;
 }
 
 .dot {
   width: 8px;
   height: 8px;
-  background-color: rgba(255, 255, 255, 0.5); /* لون النقاط غير النشطة */
+  background-color: rgba(255, 255, 255, 0.5);
   border-radius: 50%;
   cursor: pointer;
-  transition: background-color 0.3s ease; /* تأثير انتقال سلس */
+  transition: background-color 0.3s ease;
 }
 
 .dot.active {
-  background-color: rgba(255, 255, 255, 1); /* لون النقطة النشطة */
+  background-color: rgba(255, 255, 255, 1);
 }
 
 .dot:hover {
-  background-color: rgba(255, 255, 255, 0.8); /* لون النقاط عند وضع الماوس فوقها */
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
-/* Hide the arrow next to the three dots in the dropdown menu */
-.dropdown-toggle::after {
+.dropdown-item {
+  cursor: pointer;
+}
+
+.comment-area {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.emoji-picker-container {
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+  z-index: 1000;
+}
+
+/* Category Section */
+.category-item {
+  flex: 0 0 auto;
+  margin: 0 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 110px;
+}
+
+.category-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+}
+
+.category-text {
+  display: inline-block;
+  white-space: pre-line;
+  line-height: 1.2;
+  text-align: center;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.pro-pic {
+  width: 260px;
+  border-radius: 20px;
+  margin-bottom: 5px;
+}
+
+.radius {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.radius::-webkit-scrollbar {
   display: none;
+}
+
+.comment-content {
+  border: #000 1px solid;
+  border-radius: 15px;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.users-list {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 10px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+.users-list::-webkit-scrollbar {
+  height: 4px;
+}
+
+.users-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.users-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.users-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 /* Media Queries for Mobile Devices */
 
 @media screen and (max-width: 1201px) {
   .risaide {
-    display: none; /* إخفاء الـ Right Sidebar */
+    display: none;
   }
 
   .main-content {
-    flex: 1; /* جعل الجزء الأوسط يأخذ العرض المتبقي */
-    max-width: calc(100% - 300px); /* عرض الجزء الأوسط بعد عرض الـ Trending Sidebar */
-    padding-right: 0; /* إزالة الحشو الزائد */
+    flex: 1;
+    max-width: calc(100% - 300px);
+    padding-right: 0;
   }
 }
 
@@ -489,73 +610,4 @@ margin-top: 20px;}
   .comment-input {
     width: 70%;
   }
-}
-.comment-content{
-  border: #000 1px solid;
-  border-radius:15px ;
-  padding: 5px 10px;
-  display: flex;
-  flex-direction: column;
-}
-.dropdown-item{
-cursor: pointer;
-
-}
-
-.comment-area {
-  max-height: 250px;
-  overflow-y: auto;
-}
-
-.emoji-picker-container {
-  position: absolute;
-  bottom: 50px;
-  right: 50px;
-  z-index: 1000;
-}
-
-/* Category Section */
-.category-item {
-  flex: 0 0 auto; /* عدم السماح للعناصر بالتمدد */
-  margin: 0 10px; /* مسافة أفقية بين الفئات */
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start; /* محاذاة العناصر من الأعلى */
-  height: 110px; /* زيادة الارتفاع */
-}
-
-.category-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 70px; /* Ensure consistent height for all icons */
-}
-
-.category-text {
-  display: inline-block;
-  white-space: pre-line; /* يسمح بفصل الأسطر عند <br> */
-  line-height: 1.2; /* يتحكم في المسافة بين الأسطر */
-  text-align: center; /* توسيط النص */
-  width: 100%; /* تأكد من أن النص يأخذ العرض الكامل */
-  margin-top: 5px; /* مسافة إضافية بين الأيقونة والنص */
-}
-.pro-pic {
-  width: 260px;
-  border-radius: 20px;
-  margin-bottom: 5px;
-}
-.radius {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  padding: 10px;
-  overflow-x: auto;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-}
-
-.radius::-webkit-scrollbar {
-  display: none; /* WebKit browsers */
 }

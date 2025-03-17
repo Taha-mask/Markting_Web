@@ -1,0 +1,182 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-3 leftside">
+      <div class="search-container p-2">
+        <div class="position-relative">
+          <input class="search-input px-3 py-2 w-100" 
+                 type="text" 
+                 placeholder="Search or start new chat"
+                 [(ngModel)]="searchQuery"
+                 (ngModelChange)="searchChats($event)">
+          <i class="bi bi-search position-absolute" 
+             style="right: 12px; top: 50%; transform: translateY(-50%); color: #adb5bd;"></i>
+        </div>
+      </div>
+      
+      <div class="users-list mt-2 px-2">
+        <div class="user-item d-flex align-items-center p-2" 
+             *ngFor="let chat of filteredChatList" 
+             (click)="selectChat(chat)"
+             [class.active]="selectedChat === chat">
+          <div class="user-avatar position-relative">
+            <img [src]="chat.image" 
+                 [alt]="chat.name" 
+                 class="rounded-circle" 
+                 width="50" 
+                 height="50"
+                 style="object-fit: cover;">
+            <span class="status-dot position-absolute" 
+                  [class.online]="chat.status === 'online'" 
+                  [class.offline]="chat.status === 'offline'"></span>
+          </div>
+          <div class="user-info ms-3 flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">
+                <span [innerHTML]="chat.name | highlight:searchQuery"></span>
+                <span class="unread-badge" *ngIf="chat.unread">●</span>
+              </h6>
+              <small class="text-muted">{{chat.time}}</small>
+            </div>
+            <p class="text-muted mb-0 text-truncate">
+              <span [innerHTML]="chat.lastMessage | highlight:searchQuery"></span>
+            </p>
+          </div>
+        </div>
+        
+        <!-- No Results Message -->
+        <div *ngIf="filteredChatList.length === 0" class="no-results">
+          <i class="bi bi-search mb-2 d-block"></i>
+          <p class="mb-0">No chats found</p>
+          <small class="text-muted d-block mt-1">Try searching with a different term</small>
+        </div>
+      </div>
+
+    
+  </div>
+    <div class="col-md-9 rightside">
+      <div class="chat-header d-flex align-items-center p-3 border-bottom" *ngIf="selectedChat">
+        <div class="d-flex align-items-center">
+          <img [src]="selectedChat.image" alt="User Avatar" class="rounded-circle" width="40" height="40">
+          <div class="ms-2">
+            <h6 class="mb-0">{{selectedChat.name}}</h6>
+            <div class="d-flex align-items-center">
+              <span class="status-dot" [class.online]="selectedChat.status === 'online'" [class.offline]="selectedChat.status === 'offline'"></span>
+              <small class="text-muted status-text">{{selectedChat.status}}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-messages p-3" #chatbox>
+        <div *ngFor="let message of messages; let i = index" class="message mb-3" [class.message-sent]="message.sender === 'me'" [class.message-received]="message.sender === 'other'">
+          <div class="message-content position-relative">
+            <!-- Reply content -->
+            <div *ngIf="message.replyTo" class="reply-content">
+              <div class="reply-text">
+                <small class="reply-sender">{{ message.replyTo.sender === 'me' ? 'You' : 'Them' }}</small>
+                <p class="mb-0">{{ message.replyTo.text }}</p>
+              </div>
+            </div>
+
+            <div *ngIf="message.image">
+              <img [src]="message.image" alt="Shared Image" class="message-image">
+            </div>
+            <div *ngIf="message.text" class="message-text">
+              {{ message.text }}
+            </div>
+            <div class="message-footer">
+              <small class="time">{{ message.timestamp | date:'shortTime' }}</small>
+              <div class="message-actions">
+                <button class="btn btn-sm action-btn" (click)="replyToMessage(message, i)">
+                  <i class="fas fa-reply"></i>
+                </button>
+                <button class="btn btn-sm reaction-btn" (click)="toggleQuickReactions(i, $event)">
+                  <i class="fas fa-smile"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Quick Reactions -->
+            <div *ngIf="showReactionPicker && selectedMessageIndex === i" class="quick-reactions">
+              <button class="reaction-option" [class.active]="message.reactions?.includes('❤️')" (click)="addReaction(i, '❤️')">❤️</button>
+              <button class="reaction-option" [class.active]="message.reactions?.includes('👍')" (click)="addReaction(i, '👍')">👍</button>
+              <button class="reaction-option" [class.active]="message.reactions?.includes('🫡')" (click)="addReaction(i, '🫡')">🫡</button>
+            </div>
+            
+            <!-- Reactions display -->
+            <div *ngIf="message.reactions && message.reactions.length > 0" class="reactions-container">
+              <span class="reaction" (click)="addReaction(i, message.reactions[0])">{{ message.reactions[0] }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reply preview -->
+      <div *ngIf="replyingTo" class="reply-preview">
+        <div class="reply-preview-content">
+          <div>
+            <small class="reply-sender">Replying to {{ replyingTo.sender === 'me' ? 'yourself' : 'them' }}</small>
+            <p class="mb-0">{{ replyingTo.text }}</p>
+          </div>
+          <button class="btn btn-sm close-reply" (click)="cancelReply()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-input border-top p-3">
+        <div class="d-flex align-items-center">
+          <div class="input-group">
+            <button class="btn btn-light emoji-icon" (click)="toggleEmojiPicker()">
+              <i class="fas fa-smile"></i>
+            </button>
+            <button class="btn btn-light" (click)="toggleAttachmentMenu()">
+              <i class="fas fa-paperclip"></i>
+            </button>
+            <input #searchBar type="text" class="form-control" placeholder="Type a message..." 
+                   (keyup.enter)="sendMessage(searchBar.value); searchBar.value = ''">
+            <button class="btn btn-primary" (click)="sendMessage(searchBar.value); searchBar.value = ''">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="showEmojiPicker" class="overlay"></div>
+        <div class="emoji-picker" *ngIf="showEmojiPicker">
+          <emoji-mart [darkMode]="false" 
+                     [enableSearch]="true"
+                     [showPreview]="true"
+                     [emojiSize]="20"
+                     (emojiSelect)="addEmoji($event)"></emoji-mart>
+        </div>
+
+        <div class="attachment-menu position-absolute" *ngIf="isMenuVisible">
+          <div class="list-group">
+            <button class="list-group-item" (click)="attachDocument()">
+              <i class="fas fa-file"></i> Document
+            </button>
+            <button class="list-group-item" (click)="openCamera()">
+              <i class="fas fa-camera"></i> Camera
+            </button>
+            <button class="list-group-item" (click)="attachGallery()">
+              <i class="fas fa-image"></i> Gallery
+            </button>
+            <button class="list-group-item" (click)="attachAudio()">
+              <i class="fas fa-microphone"></i> Audio
+            </button>
+            <button class="list-group-item" (click)="attachLocation()">
+              <i class="fas fa-map-marker-alt"></i> Location
+            </button>
+            <button class="list-group-item" (click)="attachContact()">
+              <i class="fas fa-user"></i> Contact
+            </button>
+            <button class="list-group-item" (click)="createPoll()">
+              <i class="fas fa-poll"></i> Poll
+            </button>
+          </div>
+        </div>
+      </div>
+      <input type="file" #fileInput style="display: none" accept="image/*" (change)="onFileSelected($event)">
+    </div>
+  </div>
+</div>

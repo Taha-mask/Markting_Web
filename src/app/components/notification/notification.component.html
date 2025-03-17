@@ -1,83 +1,95 @@
-<div class="container  ms-5 pe-0 m-auto " style="display: flex; width: 100%;">
-  <app-trending-sidebar class="col-md-2 col-20 position-relative mt-4 d-flex ms-0 me-6" style="flex: 1; margin-right: 10%;"></app-trending-sidebar>
+<div class="container-fluid p-0">
+  <div class="row g-0">
+    <!-- Left Sidebar -->
+    <app-trending-sidebar class="sid col-md-3 col-12 position-relative mt-4 d-flex ms-3"></app-trending-sidebar>
 
-  <div class="notifications col-12 scrollable-content d-flex" style="flex: 4; width: 100%;">
-    <h2 class="header-not">Notifications</h2>
-    <div class="notification">
-      <div class="avatar">
-          <img src="images/user-1.png" alt="Avatar">
-      </div>
-      <div class="content">
-          <h4>John Doe <span class="timestamp">- Just Now</span></h4>
+    <!-- Main Content (Notifications) -->
+    <div class="notifications col-md-8 col-12 d-flex flex-column">
+      <div class="notifications-wrapper flex-grow-1">
+        <!-- Header -->
+        <div class="notification-header">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="header-not mb-0">
+              Notifications
+              <span class="badge rounded-pill" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+            </h2>
+          </div>
+          
+          <div class="notification-controls">
+            <button class="btn btn-light" (click)="toggleFilter()">
+              <i class="bi" [class.bi-funnel-fill]="filterType === 'unread'" [class.bi-funnel]="filterType === 'all'"></i>
+              <span>{{ filterType === 'all' ? 'All' : 'Unread' }}</span>
+            </button>
+            <button class="btn btn-light" (click)="toggleSort()">
+              <i class="bi" [class.bi-sort-down]="sortOrder === 'newest'" [class.bi-sort-up]="sortOrder === 'oldest'"></i>
+              <span>{{ sortOrder === 'newest' ? 'Newest' : 'Oldest' }}</span>
+            </button>
+            <button class="btn btn-primary" (click)="markAllAsRead()" *ngIf="unreadCount > 0">
+              <i class="bi bi-check2-all"></i>
+              <span>Mark all as read</span>
+            </button>
+          </div>
         </div>
-    </div>
-    <div class="notification">
-      <div class="avatar">
-          <img src="images/user-3.png" alt="Avatar">
-      </div>
-      <div class="content">
-          <h4>Alex Johnson <span class="timestamp">- 5 hours ago</span></h4>
-          <p>Shared your Post "Top 10 Marketing Tricks"</p>
-      </div>
-    </div>
 
-    <div class="notification">
-      <div class="avatar" style="background-color: #ddd;">
-          <img src="images/user-4.png" alt="Avatar">
-      </div>
-      <div class="content">
-          <h4>Daimon Salvatore <span class="timestamp">- 7 hours ago </span></h4>
-          <p>mentioned you in a comment</p>
+        <!-- Loading State -->
+        <div class="empty-state" *ngIf="isLoading">
+          <i class="bi bi-hourglass-split"></i>
+          <p>Loading notifications...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!isLoading && filteredNotifications.length === 0">
+          <i class="bi bi-bell-slash"></i>
+          <p>{{ filterType === 'unread' ? 'No unread notifications' : 'No notifications yet' }}</p>
+        </div>
+
+        <!-- Notification List -->
+        <div class="notification-list" *ngIf="!isLoading && filteredNotifications.length > 0">
+          <div class="notification" 
+               *ngFor="let notification of filteredNotifications; trackBy: trackByFn"
+               [class.unread]="!notification.isRead"
+               [@notificationAnimation]>
+            <div class="notification-content d-flex">
+              <!-- Avatar -->
+              <div class="avatar">
+                <img [src]="notification.avatar" [alt]="notification.username">
+                <div class="notification-type-indicator">
+                  {{ getNotificationIcon(notification.type) }}
+                </div>
+              </div>
+
+              <!-- Content -->
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <span class="username">{{ notification.username }}</span>
+                    <p class="notification-text">{{ notification.content }}</p>
+                  </div>
+                  <small class="timestamp text-muted">{{ getTimeAgo(notification.timestamp) }}</small>
+                </div>
+
+                <!-- Link -->
+                <div class="notification-link" *ngIf="notification.link">
+                  <a href="javascript:void(0)" (click)="navigateToContent(notification.link)">
+                    View {{ notification.type === 'like' ? 'post' : notification.type }}
+                    <i class="bi bi-arrow-right"></i>
+                  </a>
+                </div>
+
+                <!-- Actions -->
+                <div class="notification-actions">
+                  <button class="btn btn-link" (click)="markAsRead(notification)" *ngIf="!notification.isRead">
+                    <i class="bi bi-check2"></i>
+                  </button>
+                  <button class="btn btn-link text-danger" (click)="deleteNotification(notification.id)">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="notification">
-      <div class="avatar">
-          <img src="images/user-1.png" alt="Avatar">
-      </div>
-      <div class="content">
-          <h4>Elena gelbert <span class="timestamp">- 1 day ago</span></h4>
-          <p>Shared a new post"</p>
-      </div>
-    </div>
-
-    <div class="notification" style="background-color: #ddd;">
-      <div class="avatar">
-          <img src="images/user-1.png" alt="Avatar">
-      </div>
-      <div class="content">
-          <h4> Kelwa<span class="timestamp">- 1 day ago</span></h4>
-          <p>Liked Your comment"</p>
-      </div>
-    </div>
-
-    <div class="notification">
-      <div class="avatar">
-          <img src="images/user-1.png" alt="Avatar">
-      </div>
-      <div class="content">
-          <h4>Stefan Salvatore<span class="timestamp">- 3 day ago</span></h4>
-          <p>Sent you a friend request"</p>
-      </div>
-    </div>
-
-    <div class="notification">
-      <div class="avatar">
-          <img src="images/user-1.png" alt="Avatar">
-      </div>
-      <div class="content">
-          <h4>Shahd Mostafa<span class="timestamp">- 4 day ago</span></h4>
-          <p>Reacted To a post you shared"</p>
-      </div>
-    </div>
-
-    <div class="notification">
-      <div class="avatar">
-          <img src="images/user-1.png" alt="Avatar">
-      </div>
-      <div class="content">
-          <h4>Rick Grimes <span class="timestamp">- Last week </span></h4>
-          <p>Shared your post"</p>
-      </div>
-    </div>
-
+  </div>
+</div>

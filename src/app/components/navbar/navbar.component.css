@@ -119,6 +119,7 @@ input:focus{
   justify-content: center;
 }
 
+
 .btn-gradient:hover {
   transform: scale(1.05);
 }

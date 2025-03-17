@@ -173,8 +173,8 @@
 .comment-box {
   width: 100%;
   background-color: #fff;
+  border: 1px solid #000000;
   border-radius: 30px;
-  border: 1px solid rgb(125, 125, 125);
   display: flex;
   align-items: center;
   padding: 8px;
@@ -289,7 +289,11 @@ margin-top: 20px;}
 .risaide::-webkit-scrollbar {
   display: none;
 }
+.post-img {
+  width: 100%;
+  max-height: 600px;
 
+}
 /* Navigation Buttons */
 .navigation-buttons button {
   background-color: rgba(255, 255, 255, 0.8);
@@ -380,7 +384,6 @@ margin-top: 20px;}
 
 
 .comment-content{
-  border: #000 1px solid;
   border-radius:15px ;
   padding: 5px 10px;
   display: flex;
@@ -537,11 +540,6 @@ cursor: pointer;
   }
 }
 @media screen and (max-width: 600px) {
-
-
-  .cat-container{
-
-  }
   /* Category Section */
   .category-item {
     gap: 5px;
@@ -597,4 +595,409 @@ cursor: pointer;
     z-index: -1;
   }
 
+}
+
+/* Ensure the container can scroll and hide the scrollbar */
+.container-fluid {
+  overflow-y: auto;
+  height: 100vh;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.container-fluid::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+/* Main Layout */
+.container-fluid {
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding: 0;
+}
+
+.row {
+  margin: 0;
+  min-height: calc(100vh - 60px);
+}
+
+/* Sidebars */
+.sid {
+  position: sticky;
+  top: 0;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  padding: 1rem;
+  background: #fff;
+  z-index: 100;
+}
+
+.risaide {
+  position: sticky;
+  top: 0;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  padding: 1rem;
+  background: #fff;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  max-width: 100%;
+}
+
+/* Scrollable Content */
+.scrollable-content {
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* Images */
+.trending-img {
+  width: 130px;
+  height: 100px;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.trending-img:hover {
+  transform: scale(1.05);
+}
+
+/* User Suggestions */
+.suggestion-item {
+  padding: 0.5rem;
+  transition: background-color 0.2s ease;
+  border-radius: 8px;
+}
+
+.suggestion-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .trending-img {
+    width: 110px;
+    height: 85px;
+  }
+  
+  .risaide, .sid {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .row {
+    flex-direction: column;
+  }
+
+  .sid, .risaide {
+    position: relative;
+    height: auto;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .main-content {
+    order: 2;
+    margin: 1rem 0;
+  }
+
+  .scrollable-content {
+    height: auto;
+    max-height: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 0.5rem;
+  }
+
+  .trending-img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+  }
+
+  .suggestion-item img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .comment-box {
+    flex-wrap: wrap;
+  }
+
+  .comment-input {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+
+  .icons {
+    width: 100%;
+    justify-content: space-around;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Utility Classes */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Reactions and Comments Styles */
+.profile-pic-sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.reaction-users-popup {
+  position: absolute;
+  width: 300px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.reaction-user-item:hover {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.comment-bubble {
+  background-color: #f8f9fa;
+  border-radius: 15px;
+}
+
+.comment-actions {
+  font-size: 0.875rem;
+}
+
+.reply-btn {
+  color: #6c757d;
+  transition: color 0.2s;
+}
+
+.reply-btn:hover {
+  color: #0d6efd;
+}
+
+.liked-by-popup {
+  width: 250px;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.liked-by-item {
+  padding: 6px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.liked-by-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Share Modal Styles */
+.modal-content.bg-dark {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header.border-secondary {
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Compact Share Preview */
+.share-preview {
+  background: rgba(33, 37, 41, 0.95) !important;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.share-preview .profile-pic {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.share-preview p {
+  line-height: 1.4;
+  max-height: 2.8em;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.share-preview .border-bottom {
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.share-preview .badge {
+  font-size: 0.7rem;
+  padding: 0.25em 0.5em;
+}
+
+.share-preview .badge.bg-dark {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(4px);
+}
+
+.share-preview .image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, 
+    rgba(0,0,0,0) 0%, 
+    rgba(0,0,0,0.2) 50%,
+    rgba(0,0,0,0.4) 100%
+  );
+  transition: all 0.3s ease;
+}
+
+.share-preview img {
+  transition: transform 0.3s ease;
+}
+
+.share-preview:hover img {
+  transform: scale(1.02);
+}
+
+/* Share Buttons */
+.share-btn {
+  min-width: 110px;
+  min-height: 110px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-width: 2px;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.share-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.share-btn:active {
+  transform: translateY(-1px);
+}
+
+.share-btn i {
+  transition: all 0.3s ease;
+}
+
+.share-btn:hover i {
+  transform: scale(1.1);
+}
+
+/* Copy Link Section */
+.copy-link-section .input-group {
+  border-radius: 0.3rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.copy-link-section .form-control {
+  border-right: none;
+  background: rgba(33, 37, 41, 0.95) !important;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.copy-link-section .form-control:focus {
+  box-shadow: none;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.copy-link-section .btn {
+  border-left: none;
+  padding: 0.5rem 1.25rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.copy-link-section .btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.copy-link-section .btn.copied {
+  background-color: rgba(25, 135, 84, 0.1);
+  border-color: #198754;
+  color: #198754;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+  .share-btn {
+    min-width: 90px;
+    min-height: 90px;
+    padding: 0.75rem !important;
+  }
+  
+  .share-btn i {
+    font-size: 1.5rem !important;
+  }
+  
+  .share-btn span {
+    font-size: 0.875rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .share-preview {
+    margin-bottom: 1rem !important;
+  }
+  
+  .share-preview .profile-pic {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  
+  .share-preview p {
+    font-size: 0.75rem !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .share-preview .badge {
+    font-size: 0.65rem;
+  }
+}
+
+/* Modal Animation */
+.modal.fade .modal-dialog {
+  transform: scale(0.95);
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.modal.show .modal-dialog {
+  transform: scale(1);
+  opacity: 1;
 }

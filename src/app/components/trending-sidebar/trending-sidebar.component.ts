@@ -1,58 +1,65 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { User } from '../../user';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
 import { RouterModule } from '@angular/router';
-import { UserService } from '../services/User.service';
+import { User } from '../../interfaces/user';
 
 @Component({
   selector: 'app-trending-sidebar',
   standalone: true,
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './trending-sidebar.component.html',
   styleUrls: ['./trending-sidebar.component.css']
 })
 export class TrendingSidebarComponent implements OnInit {
-  profileImageUrl = 'https://randomuser.me/api/portraits/men/1.jpg'; // Sample profile image
+  followingCount: number = 0;
+  
   user: User[] = [
     {
-      username: 'Taha Mahmoud ',
+      username: 'Taha Mahmoud',
       type: 'Markter',
       profileImageUrl: 'images/user-1.png',
-      status: 'online',
+      status: 'Online',
     }
   ];
 
-  activeLink: string = 'feed';
-
-  constructor(private router: Router, private userService: UserService) {}
-
-
-  setActiveLink(link: string) {
-    this.activeLink = link;
+  ngOnInit() {
+    // Initialize following count based on actual followed users
+    this.initializeFollowingCount();
   }
 
-  userType: string = 'customer'; // القيمة الافتراضية
+  private initializeFollowingCount() {
+    // Get initial count from localStorage if available
+    const savedCount = localStorage.getItem('followingCount');
+    this.followingCount = savedCount ? parseInt(savedCount, 10) : 5;
+  }
 
-  ngOnInit() {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
-      if (event.urlAfterRedirects.includes('/feed')) {
-        this.activeLink = 'feed';
-      } else if (event.urlAfterRedirects.includes('/explore')) {
-        this.activeLink = 'explore';
-      } else {
-        this.activeLink = 'feed'; // Default to feed if no match
+  incrementFollowingCount() {
+    this.followingCount++;
+    // Save updated count
+    localStorage.setItem('followingCount', this.followingCount.toString());
+    // Trigger smooth animation for count update
+    const countElement = document.querySelector('.my-following');
+    if (countElement) {
+      countElement.classList.add('count-update');
+      setTimeout(() => countElement.classList.remove('count-update'), 300);
+    }
+  }
+  
+  decrementFollowingCount() {
+    if (this.followingCount > 0) {
+      this.followingCount--;
+      // Save updated count
+      localStorage.setItem('followingCount', this.followingCount.toString());
+      // Trigger smooth animation for count update
+      const countElement = document.querySelector('.my-following');
+      if (countElement) {
+        countElement.classList.add('count-update');
+        setTimeout(() => countElement.classList.remove('count-update'), 300);
       }
-    });
-
-    this.userType = this.userService.getUserType(); // جلب نوع المستخدم من الخدمة
+    }
   }
 
   getUserTypeText(): string {
-    return this.userType === 'marketer' ? 'Marketer' : 'Customer'; // عرض النص المناسب
+    return this.user[0].type === 'Markter' ? 'Marketing Professional' : 'User';
   }
-
 }

@@ -35,7 +35,7 @@
 
     <!-- Right Section -->
     <div class="Rightsection d-flex align-items-center " >
-      <a class="icon position-relative text-dark" href="main" routerlink="main">
+      <a class="icon position-relative text-dark" href="messages" routerlink="messages">
         <i class="bi bi-send fs-5 px-1"></i>
         <span class="badge-dot"></span>
       </a>
@@ -67,23 +67,23 @@
 
 <!-- Bottom Navigation Bar for Mobile -->
 <div class="mobile-bottom-nav ">
-  <a href="feed" class="nav-item">
+  <a href="feed" class="nav-item" routerLink="feed">
     <i class="bi bi-house-door "></i>
     <span>Feed</span>
   </a>
-  <a href="explore" class="nav-item">
+  <a href="explore" class="nav-item" routerLink="explore">
     <i class="bi bi-compass"></i>
     <span>Explore</span>
   </a>
-  <a href="create" class="nav-item">
+  <a href="#" class="nav-item" data-bs-toggle="modal" data-bs-target="#postModal">
     <i class="bi bi-plus-circle"></i>
     <span>Create</span>
   </a>
-  <a href="messages" class="nav-item">
+  <a href="messages" class="nav-item" routerLink="messages">
     <i class="bi bi-chat"></i>
     <span>Msgs</span>
   </a>
-  <a href="notifications" class="nav-item">
+  <a href="notf" class="nav-item">
     <i class="bi bi-bell"></i>
     <span>Notifs</span>
   </a>
