@@ -2,9 +2,9 @@
 <div class="container-fluid">
   <div class="row">
     <!-- Left Sidebar -->
-    <div class="col-md-4">
+    <div class="col-md-4 mt-5">
       <!-- Profile Card -->
-      <div class="profile-card sticky-top">
+      <div class="profile-card sticky-top m-3 mt-5">
         <div class="profile-image-container">
           <img [src]="profileImageUrl" alt="Profile" class="profile-image">
           <button class="edit-profile-btn" (click)="fileInput.click()">
@@ -130,7 +130,7 @@
                   <!-- User Info -->
                   <div class="d-flex align-items-center justify-content-between mb-3">
                     <div class="d-flex align-items-center">
-                      <img [src]="post.profileImageUrl" alt="Profile Picture" class="profile-pic me-3" />
+                      <img [src]="user[0].profileImageUrl" alt="Profile Picture" class="profile-pic me-3" />
                       <div>
                         <h6 class="m-0 fw-medium fs-5">{{ post.username }}</h6>
                         <small class="timepos text-muted">{{ post.timestamp | date: 'short' }}</small>
@@ -308,21 +308,21 @@
     <!-- Right Sidebar -->
     <div class="col-md-3">
       <div class="right-sidebar mt-4">
-        <!-- Suggested Connections -->
-        <div class="card mb-4 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title mb-3 fw-bold">Suggested Connections</h5>
-            <div class="suggested-user mb-3" *ngFor="let user of suggestedUsers">
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center">
-                  <img [src]="user.profileImageUrl" [alt]="user.name" class="profile-pic me-2">
-                  <div>
-                    <h6 class="mb-0 fw-medium">{{user.name}}</h6>
-                    <small class="text-muted">{{user.title}}</small>
-                  </div>
-                </div>
-                <button class="btn btn-sm btn-outline-primary rounded-pill">Connect</button>
+        <!-- Suggested for you -->
+        <div class="suggested-user mb-2 p-3">
+          <h5 class="card-title mb-3 fw-bold">Suggestions for you</h5>
+          <div *ngFor="let user of userFol" class="user-item d-flex align-items-center justify-content-between border-bottom py-1 me-1">
+            <div class=" d-flex align-items-center">
+              <img src="{{user.img}}" class="rounded-circle me-3" alt="User" style="width: 50px; display: block;" />
+              <div class="">
+                <p class="mb-0">{{ user.name }}</p>
+                <small class="text-muted">{{user.title}}</small>
               </div>
+            </div>
+            <div (click)="toggleFollow(user)">
+              <button [class.bg-white]="user.Follow" [class.text-dark]="user.Follow" class="btn btn-sm btn-outline-primary rounded-pill">
+                {{ user.Follow ? 'Following' : 'Follow' }}
+              </button>
             </div>
           </div>
         </div>

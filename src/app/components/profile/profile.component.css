@@ -2,13 +2,17 @@
 .container-fluid {
   padding: 0;
   margin: 0;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 }
 
 /* Left Sidebar */
 .profile-sidebar {
   position: sticky;
-  top: 20px;
+  top: 80px;
   padding: 1rem;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
 }
 
 /* Right Sidebar */
@@ -30,15 +34,64 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.suggested-user {
-  transition: all 0.2s;
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 12px;
+/* Profile Card */
+.profile-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+  top: 0;
 }
 
-.suggested-user:hover {
-  background-color: #f8f9fa;
+.profile-image-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: -100px auto 20px;
+  z-index: 0;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+  position: relative;
+}
+
+/* Navigation Bar (assumed) */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 60px;
+}
+
+/* Suggested Users */
+.suggested-user {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+background-color: white;
+}
+
+.user-item:hover{
+background-color: #dadada;
+}
+.user-item{
+  padding: 0 5px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 .suggested-user:last-child {
@@ -57,6 +110,7 @@
   padding: 4px 12px;
 }
 
+/* Recent Activity */
 .activity-item {
   padding: 10px;
   border-radius: 10px;
@@ -78,6 +132,7 @@
   text-align: center;
 }
 
+/* Progress Bars */
 .progress {
   background-color: #f0f2f5;
   overflow: hidden;
@@ -92,6 +147,7 @@
   font-weight: 500;
 }
 
+/* Navigation Pills */
 .nav-pills .nav-link {
   color: #6c757d;
   border-radius: 10px;
@@ -110,6 +166,89 @@
 
 .nav-pills .nav-link i {
   margin-right: 6px;
+}
+
+/* Posts */
+.post-img {
+  max-height: 500px;
+  object-fit: contain;
+  background-color: #f8f9fa;
+}
+
+.navigation-buttons button {
+  opacity: 0.7;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navigation-buttons button:hover {
+  opacity: 1;
+}
+
+.dots-navigation {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+.dot.active {
+  background-color: white;
+}
+
+.Action-btn {
+  border-top: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+  margin: 0 -1rem;
+}
+
+.Action-btn i {
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+}
+
+.Action-btn div:hover i {
+  transform: scale(1.1);
+}
+
+.like, .comment, .Shares, .Saved {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.reactions-section {
+  margin: 0 -1rem;
+}
+
+.comment-item {
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.comment-item:hover {
+  background-color: #f8f9fa;
+}
+
+.comment-actions button {
+  color: #6c757d;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.comment-actions button:hover {
+  color: #0d6efd;
 }
 
 /* Responsive Design */
@@ -156,13 +295,6 @@
   .right-sidebar {
     width: 100%;
   }
-}
-
-/* Main Container */
-.container-fluid {
-  padding: 0;
-  background-color: #f8f9fa;
-  min-height: 100vh;
 }
 
 /* Cover Section */
@@ -222,33 +354,7 @@
   padding-bottom: 40px;
 }
 
-/* Profile Card */
-.profile-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  padding: 20px;
-  margin-bottom: 20px;
-  position: sticky;
-  top: 20px;
-}
-
-.profile-image-container {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  margin: -100px auto 20px;
-}
-
-.profile-image {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 4px solid #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  object-fit: cover;
-}
-
+/* Status Indicator */
 .status-indicator {
   position: absolute;
   bottom: 8px;
@@ -745,88 +851,6 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-}
-
-.post-img {
-  max-height: 500px;
-  object-fit: contain;
-  background-color: #f8f9fa;
-}
-
-.navigation-buttons button {
-  opacity: 0.7;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.navigation-buttons button:hover {
-  opacity: 1;
-}
-
-.dots-navigation {
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 4px 8px;
-  border-radius: 12px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-}
-
-.dot.active {
-  background-color: white;
-}
-
-.Action-btn {
-  border-top: 1px solid #dee2e6;
-  border-bottom: 1px solid #dee2e6;
-  margin: 0 -1rem;
-}
-
-.Action-btn i {
-  font-size: 1.2rem;
-  transition: transform 0.2s;
-}
-
-.Action-btn div:hover i {
-  transform: scale(1.1);
-}
-
-.like, .comment, .Shares, .Saved {
-  color: #6c757d;
-  font-size: 0.9rem;
-}
-
-.reactions-section {
-  margin: 0 -1rem;
-}
-
-.comment-item {
-  padding: 8px;
-  border-radius: 8px;
-  transition: background-color 0.2s;
-}
-
-.comment-item:hover {
-  background-color: #f8f9fa;
-}
-
-.comment-actions button {
-  color: #6c757d;
-  font-size: 0.8rem;
-  text-decoration: none;
-}
-
-.comment-actions button:hover {
-  color: #0d6efd;
 }
 
 /* Empty State */

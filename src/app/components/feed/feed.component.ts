@@ -63,6 +63,15 @@ interface Comment {
   showLikedBy?: boolean;
 }
 
+// واجهة لـ Trending Feed
+interface TrendingFeed {
+  url: string;
+  alt: string;
+  title?: string; // عنوان اختياري لكل صورة
+  description?: string; // وصف اختياري
+  link?: string; // رابط اختياري عند النقر
+}
+
 @Component({
   selector: 'app-feed',
   standalone: true,
@@ -88,23 +97,23 @@ export class FeedComponent implements OnInit {
   postUrl: string = '';
   linkCopied: boolean = false;
   currentReplyText: string = '';
-  constructor(@Inject(PostService) private postService: PostService) {} // حقن الـ Service
-  ngOnInit() {
-    // الاشتراك في الـ Observable علشان نستقبل البوستات الجديدة
-    this.postService.getPostObservable().subscribe((newPost: Post) => {
-      this.posts.unshift(newPost); // إضافة البوست الجديد في بداية المصفوفة
-    });
 
-    // Set default category to 'All'
+  constructor(@Inject(PostService) private postService: PostService) {}
+
+  ngOnInit() {
+    this.postService.getPostObservable().subscribe((newPost: Post) => {
+      this.posts.unshift(newPost);
+    });
     this.filterPostsByCategory('All');
+    // يمكن إضافة منطق لتحميل Trending Feeds من API هنا
   }
+
   private isDragging = false;
   private startX = 0;
   private scrollLeft = 0;
 
   user: User[] = [
     {
-
       username: 'Taha Mahmoud ',
       type: 'Markter',
       profileImageUrl: 'images/user-1.png',
@@ -112,61 +121,74 @@ export class FeedComponent implements OnInit {
     }
   ];
 
-  subCategories: any[] = []; // لتخزين الأيقونات الفرعية
-  activeSubCategory: string = ''; // لتحديد الأيقونة الفرعية النشطة
-
+  subCategories: any[] = [];
+  activeSubCategory: string = '';
 
   categories = [
-    { name: 'All', icon: 'bi bi-collection' }, // الكل
-    { name: 'Electrical Tools', icon: 'bi bi-tools' }, // الأدوات الكهربائية
-    { name: 'Food', icon: 'bi bi-egg-fried' }, // أكلات
-    { name: 'Medicines', icon: 'bi bi-capsule' }, // الأدوية
-    { name: 'Electronics', icon: 'bi bi-laptop' }, // الإلكترونيات
-    { name: 'Clothing', icon: 'bi bi-person' }, // الملابس (تم تغيير الأيقونة إلى bi-person)
-    { name: 'Fashion', icon: 'bi bi-handbag' }, // الموضة
-    { name: 'Home & Kitchen', icon: 'bi bi-house-door' }, // المنزل والمطبخ
-    { name: 'Beauty & Personal Care', icon: 'bi bi-scissors' }, // الجمال والعناية الشخصية
-    { name: 'Home Appliances', icon: 'bi bi-fan' }, // الأجهزة المنزلية
-    { name: 'Sports & Fitness', icon: 'bi bi-bicycle' }, // الرياضة واللياقة البدنية
-    { name: 'Video Games', icon: 'bi bi-controller' }, // ألعاب الفيديو
-    { name: 'Toys & Hobbies', icon: 'bi bi-joystick' }, // الألعاب والهوايات
-    { name: 'Auto Parts', icon: 'bi bi-car-front' }, // قطع الغيار السيارات والدراجات النارية
-    { name: 'Groceries', icon: 'bi bi-cart' }, // البقالة والمنتجات الغذائية
-    { name: 'Health & Personal Care', icon: 'bi bi-heart-pulse' }, // الصحة والعناية الشخصية
-    { name: 'Books & Media', icon: 'bi bi-book' }, // الكتب والوسائط
-    { name: 'Pet Supplies', icon: 'bi bi-heart' }, // مستلزمات الحيوانات الأليفة
-    { name: 'Perfumes', icon: 'bi bi-flower1' }, // العطور
+    { name: 'All', icon: 'bi bi-collection' },
+    { name: 'Electrical Tools', icon: 'bi bi-tools' },
+    { name: 'Food', icon: 'bi bi-egg-fried' },
+    { name: 'Medicines', icon: 'bi bi-capsule' },
+    { name: 'Electronics', icon: 'bi bi-laptop' },
+    { name: 'Clothing', icon: 'bi bi-person' },
+    { name: 'Fashion', icon: 'bi bi-handbag' },
+    { name: 'Home & Kitchen', icon: 'bi bi-house-door' },
+    { name: 'Beauty & Personal Care', icon: 'bi bi-scissors' },
+    { name: 'Home Appliances', icon: 'bi bi-fan' },
+    { name: 'Sports & Fitness', icon: 'bi bi-bicycle' },
+    { name: 'Video Games', icon: 'bi bi-controller' },
+    { name: 'Toys & Hobbies', icon: 'bi bi-joystick' },
+    { name: 'Auto Parts', icon: 'bi bi-car-front' },
+    { name: 'Groceries', icon: 'bi bi-cart' },
+    { name: 'Health & Personal Care', icon: 'bi bi-heart-pulse' },
+    { name: 'Books & Media', icon: 'bi bi-book' },
+    { name: 'Pet Supplies', icon: 'bi bi-heart' },
+    { name: 'Perfumes', icon: 'bi bi-flower1' },
   ];
 
-  // دالة لتنسيق اسم الفئة
   formatCategoryName(name: string): string {
     return name.replace('&', '<br>&');
   }
 
-
-  suggestedUsers = [
-    { name: 'Alex James', profilePicture: 'images/user-3.png' },
-    { name: 'Maicel David', profilePicture: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
-    { name: 'Wade Warren', profilePicture: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
-    { name: 'Floyd Miles', profilePicture: 'images/user-4.png' },
-    { name: 'Jacob Jones', profilePicture: 'images/user-1.png' },
-    { name: 'Noah Daniel', profilePicture: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg' },
-    { name: 'Bessie Cooper', profilePicture:  'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg'  },
-    { name: 'Brooklyn Simmons', profilePicture: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg'  },
-    { name: 'Courtney Henry', profilePicture: 'https://images.deepai.org/art-image/a769515ed5a643ba96cbb3d5a9f24eba/girl-is-a-mix-between-korean-and-egyptian-fcbde4.jpg'  },
-    { name:'Savannah Nguyen' , profilePicture: 'images/user-2.png' }
-
+  usersFol = [
+    { name: 'Wade Warren', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false },
+    { name: 'Darlene Robertson', title: 'Digital Marketing Specialist', img: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg', Follow: false },
+    { name: 'Floyd Miles', title: 'Digital Marketing Specialist', img: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg', Follow: false },
+    { name: 'Bessie Cooper', title: 'Digital Marketing Specialist', img: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg', Follow: false },
+    { name: 'Savannah Nguyen', title: 'Digital Marketing Specialist', img: 'images/user-2.png', Follow: false },
+    { name: 'Courtney Henry', title: 'Digital Marketing Specialist', img: 'images/user-3.png', Follow: false },
+    { name: 'Brooklyn Simmons', title: 'Digital Marketing Specialist', img: 'images/user-4.png', Follow: false },
+    { name: 'Jacob Jones', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false },
   ];
 
-  usersFol = [
-    { name: 'Wade Warren', location: 'Assiut, Egypt', img: 'images/user-1.png', Follow: false },
-    { name: 'Darlene Robertson', location: 'Assiut, Egypt', img: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg', Follow: false },
-    { name: 'Floyd Miles', location: 'Assiut, Egypt', img: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg', Follow: false },
-    { name: 'Bessie Cooper', location: 'Assiut, Egypt', img: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg', Follow: false },
-    { name: 'Savannah Nguyen', location: 'Assiut, Egypt', img: 'images/user-2.png', Follow: false },
-    { name: 'Courtney Henry', location: 'Assiut, Egypt', img: 'images/user-3.png', Follow: false },
-    { name: 'Brooklyn Simmons', location: 'Assiut, Egypt', img: 'images/user-4.png', Follow: false },
-    { name: 'Jacob Jones', location: 'Assiut, Egypt', img: 'images/user-1.png', Follow: false },
+  // مصفوفة Trending Feeds مع ميزات إضافية
+  trendingFeeds: TrendingFeed[] = [
+    { 
+      url: 'https://images.deepai.org/art-image/fca7454eeb5b41f18f1f1dd7f5d31e74/a-small-closed-room-with-a-small-bed-that-can_gH54Ii2.jpg', 
+      alt: 'Feed 1', 
+      title: 'Cozy Room', 
+      link: 'https://example.com/feed1' 
+    },
+    { 
+      url: 'https://images.deepai.org/art-image/d9f992e2353d4652b8e5e3a419935d50/a-small-closed-room-with-a-small-bed-that-can_XL2tHnl.jpg', 
+      alt: 'Feed 2', 
+      title: 'Minimalist Design', 
+      link: 'https://example.com/feed2' 
+    },
+    { 
+      url: 'https://images.deepai.org/art-image/3a07efb0d73b46728bad3e1db4c74ffe/a-small-closed-room-with-a-small-bed-that-can_cNnH96r.jpg', 
+      alt: 'Feed 3', 
+      title: 'Modern Bedroom', 
+      description: 'A modern take on small spaces.', 
+      link: 'https://example.com/feed3' 
+    },
+    { 
+      url: 'https://images.deepai.org/art-image/7e55e370ca7646f59074e58d698eb026/a-small-closed-room-with-a-small-bed-that-can_vANQe8W.jpg', 
+      alt: 'Feed 4', 
+      title: 'Compact Living', 
+      description: 'Efficient use of space.', 
+      link: 'https://example.com/feed4' 
+    }
   ];
 
   followUser(user: any) {
@@ -179,26 +201,25 @@ export class FeedComponent implements OnInit {
   }
 
   toggleFollow(userFol: any) {
-    this.followUser(userFol); // Reuse the followUser method for consistency
+    this.followUser(userFol);
   }
 
   filteredPosts: Post[] = [];
 
-  // دالة لتصفية المنشورات بناءً على الفئة
   filterPostsByCategory(categoryName: string) {
-    this.activeCategory = categoryName; // تعيين الفئة النشطة
+    this.activeCategory = categoryName;
     if (categoryName === 'All') {
-      this.filteredPosts = this.posts; // عرض جميع المنشورات إذا كانت الفئة "All"
+      this.filteredPosts = this.posts;
     } else {
       this.filteredPosts = this.posts.filter(post => post.category === categoryName);
     }
   }
 
-
   filterPostsBySubCategory(subCategoryName: string) {
-    this.activeSubCategory = subCategoryName; // تعيين الفئة الفرعية النشطة
+    this.activeSubCategory = subCategoryName;
     this.filteredPosts = this.posts.filter(post => post.subCategory === subCategoryName);
   }
+
   posts: Post[] = [
     {
       username: 'Taha Mahmoud',
@@ -246,456 +267,39 @@ export class FeedComponent implements OnInit {
         }
       ]
     },
-    {
-      username: 'Sara Smith',
-      profileImageUrl: 'https://randomuser.me/api/portraits/women/2.jpg',
-      timestamp: new Date(),
-      content: 'Another post about food!',
-      category: 'Food',
-      images: [
-        'images/post-image-4.png',
-        'images/post-image-5.png',
-      ],
-      currentImageIndex: 0,
-      likes: 8,
-      Shares: 165,
-      Saves: 20,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { 
-          id: 'comment2',
-          username: 'Tom', 
-          text: 'Nice one!', 
-          likes: 1, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg' 
-        },
-        { 
-          id: 'comment3',
-          username: 'Emma', 
-          text: 'Very inspiring.', 
-          likes: 0, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/4.jpg' 
-        },
-      ],
-    },
-    {
-      username: 'Rashwan Mahmoud',
-      profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg',
-      timestamp: new Date(),
-      content: 'Post about sports and fitness!',
-      category: 'Sports & Fitness',
-      images: [
-        'images/post-image-6.png',
-      ],
-      currentImageIndex: 0,
-      likes: 8,
-      Shares: 5,
-      Saves: 7,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { 
-          id: 'comment4',
-          username: 'Tom', 
-          text: 'Nice one!', 
-          likes: 1, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/3.jpg' 
-        },
-        { 
-          id: 'comment5',
-          username: 'Emma', 
-          text: 'Very inspiring.', 
-          likes: 0, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/4.jpg' 
-        },
-      ],
-    },
-    {
-      username: 'Alex James',
-      profileImageUrl: 'https://randomuser.me/api/portraits/men/4.jpg',
-      timestamp: new Date(),
-      content: 'Post about beauty and personal care!',
-      category: 'Beauty & Personal Care',
-      images: [
-        'images/post-image-7.png',
-      ],
-      currentImageIndex: 0,
-      likes: 12,
-      Shares: 10,
-      Saves: 3,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { 
-          id: 'comment6',
-          username: 'Anna', 
-          text: 'Lovely!', 
-          likes: 3, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/5.jpg' 
-        },
-        { 
-          id: 'comment7',
-          username: 'John', 
-          text: 'Great tips.', 
-          likes: 1, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/6.jpg' 
-        },
-      ],
-    },
-    {
-      username: 'Emily Clark',
-      profileImageUrl: 'https://randomuser.me/api/portraits/women/6.jpg',
-      timestamp: new Date(),
-      content: 'Post about home appliances!',
-      category: 'Home Appliances',
-      images: [
-        'images/post-image-8.png',
-      ],
-      currentImageIndex: 0,
-      likes: 20,
-      Shares: 25,
-      Saves: 10,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { 
-          id: 'comment8',
-          username: 'Chris', 
-          text: 'Very useful!', 
-          likes: 5, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/7.jpg' 
-        },
-        { 
-          id: 'comment9',
-          username: 'Sophia', 
-          text: 'Thanks for sharing.', 
-          likes: 2, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/8.jpg' 
-        },
-      ],
-    },
-    {
-      username: 'John Doe',
-      profileImageUrl: 'https://randomuser.me/api/portraits/men/5.jpg',
-      timestamp: new Date(),
-      content: 'Post about clothing and fashion!',
-      category: 'Clothing',
-      images: [
-        'images/post-image-9.png',
-      ],
-      currentImageIndex: 0,
-      likes: 10,
-      Shares: 15,
-      Saves: 2,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { 
-          id: 'comment10',
-          username: 'Alice', 
-          text: 'Nice outfit!', 
-          likes: 1, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/9.jpg' 
-        },
-        { 
-          id: 'comment11',
-          username: 'Bob', 
-          text: 'Looking good!', 
-          likes: 0, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/10.jpg' 
-        },
-      ],
-    },
-    {
-      username: 'Jane Doe',
-      profileImageUrl: 'https://randomuser.me/api/portraits/women/7.jpg',
-      timestamp: new Date(),
-      content: 'Post about video games!',
-      category: 'Video Games',
-      images: [
-        'https://s.alicdn.com/@sc04/kf/He134ce4e88ff4f99883e5dcc7b8e280dk.jpg_720x720q50',
-        'https://s.alicdn.com/@sc04/kf/H1ee0efef84d747768d35729e69885b9ee.jpg?avif=close',
-      ],
-      currentImageIndex: 0,
-      likes: 18,
-      Shares: 22,
-      Saves: 6,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { 
-          id: 'comment12',
-          username: 'Charlie', 
-          text: 'Awesome game!', 
-          likes: 2, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/11.jpg' 
-        },
-        { 
-          id: 'comment13',
-          username: 'Diana', 
-          text: 'I love this game!', 
-          likes: 1, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/12.jpg' 
-        },
-      ],
-    },
-    {
-      username: 'Michael Brown',
-      profileImageUrl: 'https://randomuser.me/api/portraits/men/6.jpg',
-      timestamp: new Date(),
-      content: 'Post about groceries!',
-      category: 'Groceries',
-      images: [
-        'images/post-image-11.png',
-      ],
-      currentImageIndex: 0,
-      likes: 7,
-      Shares: 12,
-      Saves: 4,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { 
-          id: 'comment14',
-          username: 'Eva', 
-          text: 'Great deals!', 
-          likes: 1, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/13.jpg' 
-        },
-        { 
-          id: 'comment15',
-          username: 'Frank', 
-          text: 'Thanks for sharing!', 
-          likes: 0, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/14.jpg' 
-        },
-      ],
-    },
-    {
-      username: 'Sophia White',
-      profileImageUrl: 'https://randomuser.me/api/portraits/women/8.jpg',
-      timestamp: new Date(),
-      content: 'Post about health and personal care!',
-      category: 'Health & Personal Care',
-      images: [
-        'images/post-image-12.png',
-      ],
-      currentImageIndex: 0,
-      likes: 14,
-      Shares: 18,
-      Saves: 5,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { 
-          id: 'comment16',
-          username: 'George', 
-          text: 'Very helpful!', 
-          likes: 3, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/15.jpg' 
-        },
-        { 
-          id: 'comment17',
-          username: 'Hannah', 
-          text: 'Great advice!', 
-          likes: 1, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/16.jpg' 
-        },
-      ],
-    },
-    {
-      username: 'Oliver Green',
-      profileImageUrl: 'https://randomuser.me/api/portraits/men/7.jpg',
-      timestamp: new Date(),
-      content: 'Post about books and media!',
-      category: 'Books & Media',
-      images: [
-        'images/post-image-13.png',
-      ],
-      currentImageIndex: 0,
-      likes: 9,
-      Shares: 11,
-      Saves: 3,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { 
-          id: 'comment18',
-          username: 'Isabella', 
-          text: 'Great book!', 
-          likes: 2, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/17.jpg' 
-        },
-        { 
-          id: 'comment19',
-          username: 'Jack', 
-          text: 'I enjoyed reading it!', 
-          likes: 1, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/18.jpg' 
-        },
-      ],
-    },
-    {
-      username: 'Emma Black',
-      profileImageUrl: 'https://randomuser.me/api/portraits/women/9.jpg',
-      timestamp: new Date(),
-      content: 'Post about pet supplies!',
-      category: 'Pet Supplies',
-      images: [
-        'images/post-image-14.png',
-      ],
-      currentImageIndex: 0,
-      likes: 11,
-      Shares: 14,
-      Saves: 4,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { 
-          id: 'comment20',
-          username: 'Kevin', 
-          text: 'My pet loves this!', 
-          likes: 2, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/19.jpg' 
-        },
-        { 
-          id: 'comment21',
-          username: 'Laura', 
-          text: 'Great product!', 
-          likes: 1, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/20.jpg' 
-        },
-      ],
-    },
-    {
-      username: 'Liam Brown',
-      profileImageUrl: 'https://randomuser.me/api/portraits/men/8.jpg',
-      timestamp: new Date(),
-      content: 'Post about perfumes!',
-      category: 'Perfumes',
-      images: [
-
-      ],
-      currentImageIndex: 0,
-      likes: 13,
-      Shares: 17,
-      Saves: 6,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      comments: [
-        { 
-          id: 'comment22',
-          username: 'Mia', 
-          text: 'Lovely scent!', 
-          likes: 3, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/women/21.jpg' 
-        },
-        { 
-          id: 'comment23',
-          username: 'Noah', 
-          text: 'Great choice!', 
-          likes: 1, 
-          likedBy: [], 
-          timestamp: new Date(), 
-          profileImageUrl: 'https://randomuser.me/api/portraits/men/22.jpg' 
-        },
-      ],
-    },
   ];
-  addNewPost(newPost: Post) {
-    this.posts.unshift(newPost); // إضافة البوست الجديد في بداية المصفوفة
+
+  getBentoItemClass(index: number): string {
+    const pattern = [
+      'bento-large', 'bento-small', 'bento-small', 'bento-medium',
+      'bento-medium', 'bento-small', 'bento-small', 'bento-large'
+    ];
+    return pattern[index % pattern.length];
   }
-  // Toggle dropdown menu
+
   toggleDropdown() {
     this.isDropdownVisible = !this.isDropdownVisible;
   }
- addFriend(user: any) {
+
+  addFriend(user: any) {
     console.log('Friend request sent to', user.name);
   }
 
-  // دالة لإخفاء المنشور
-hidePost(post: Post) {
-  const index = this.filteredPosts.indexOf(post);
-  if (index > -1) {
-    this.filteredPosts.splice(index, 1);
+  hidePost(post: Post) {
+    const index = this.filteredPosts.indexOf(post);
+    if (index > -1) {
+      this.filteredPosts.splice(index, 1);
+    }
   }
-}
 
-// دالة لإيقاف المستخدم مؤقتًا
-snoozeUser(post: Post, days: number) {
-  alert(`Snoozed ${post.username} for ${days} days`);
-}
+  snoozeUser(post: Post, days: number) {
+    alert(`Snoozed ${post.username} for ${days} days`);
+  }
 
-// دالة لحظر المستخدم
-blockUser(post: Post) {
-  alert(`Blocked ${post.username}`);
-}
-  // Like a post
+  blockUser(post: Post) {
+    alert(`Blocked ${post.username}`);
+  }
+
   likePost(post: Post) {
     if (post.liked) {
       post.likes--;
@@ -705,12 +309,10 @@ blockUser(post: Post) {
     post.liked = !post.liked;
   }
 
-  // Toggle comments visibility
   toggleComments(post: Post) {
     post.showComments = !post.showComments;
   }
 
-  // Share a post
   sharePost(post: Post) {
     this.selectedPost = post;
     const postId = post.id || Date.now().toString();
@@ -720,36 +322,29 @@ blockUser(post: Post) {
       const bootstrapModal = new bootstrap.Modal(modal);
       bootstrapModal.show();
     }
-    // Increment share count
     post.Shares++;
   }
 
-  // Toggle edit mode
   toggleEdit(post: Post) {
     post.isEditing = !post.isEditing;
   }
 
-  // Save edited post
   savePost(post: Post) {
     post.isEditing = false;
   }
 
-  // Method to toggle the emoji picker
   toggleEmojiPicker() {
     this.showEmojiPicker = !this.showEmojiPicker;
   }
 
-  // Method to add emoji to the comment
   addEmoji(event: any) {
     this.newComment += event.emoji.native;
   }
 
-  // Method to trigger file input click
   triggerFileInput() {
     this.fileInput.nativeElement.click();
   }
 
-  // Method to handle file selection
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -761,16 +356,15 @@ blockUser(post: Post) {
     }
   }
 
-  // Add a new post
   addPost() {
     if (this.postContent.trim()) {
       const newPost: Post = {
-        username: this.user[0].username, // Use profile's username
-        profileImageUrl: this.user[0].profileImageUrl, // Use profile's profile picture
+        username: this.user[0].username,
+        profileImageUrl: this.user[0].profileImageUrl,
         timestamp: new Date(),
         content: this.postContent,
-        category: 'General', // Add a default category
-        images: [], // No images for simplicity
+        category: 'General',
+        images: [],
         currentImageIndex: 0,
         likes: 0,
         Shares: 0,
@@ -781,8 +375,8 @@ blockUser(post: Post) {
         saved: false,
         comments: [],
       };
-      this.posts.unshift(newPost); // Add new post to the top
-      this.postContent = ''; // Clear input field
+      this.posts.unshift(newPost);
+      this.postContent = '';
     }
   }
 
@@ -807,7 +401,7 @@ blockUser(post: Post) {
     if (!this.isDragging) return;
     event.preventDefault();
     const x = event.pageX - (event.currentTarget as HTMLElement).offsetLeft;
-    const walk = (x - this.startX) * 2; // Scroll-fast
+    const walk = (x - this.startX) * 2;
     (event.currentTarget as HTMLElement).scrollLeft = this.scrollLeft - walk;
   }
 
@@ -825,21 +419,18 @@ blockUser(post: Post) {
     post.Saves += post.saved ? 1 : -1;
   }
 
-  // التنقل إلى الصورة التالية
   nextImage(post: Post) {
     if (post.currentImageIndex < post.images.length - 1) {
       post.currentImageIndex++;
     }
   }
 
-  // التنقل إلى الصورة السابقة
   prevImage(post: Post) {
     if (post.currentImageIndex > 0) {
       post.currentImageIndex--;
     }
   }
 
-  // دالة لحذف التعليق
   deleteComment(post: Post, commentIndex: number) {
     if (post.comments[commentIndex].username === this.currentUser) {
       post.comments.splice(commentIndex, 1);
@@ -848,7 +439,6 @@ blockUser(post: Post) {
     }
   }
 
-  // دالة لتعديل التعليق
   editComment(post: Post, comment: Comment) {
     const newCommentText = prompt('Edit your comment:', comment.text);
     if (newCommentText !== null) {
@@ -856,7 +446,6 @@ blockUser(post: Post) {
     }
   }
 
-  // دالة لإضافة تعليق جديد
   addComment(post: Post, commentText: string): void {
     if (commentText.trim() || this.newCommentImageUrl) {
       const imageUrl = typeof this.newCommentImageUrl === 'string' ? this.newCommentImageUrl : undefined;
@@ -875,7 +464,6 @@ blockUser(post: Post) {
     }
   }
 
-  // دالة لإضافة تفاعل (إعجاب) على التعليق
   toggleCommentLike(comment: Comment) {
     const currentUser = {
       username: this.currentUser,
@@ -892,7 +480,6 @@ blockUser(post: Post) {
     }
   }
 
-  // Close emoji picker when clicking outside
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
@@ -902,12 +489,10 @@ blockUser(post: Post) {
   }
 
   editPost(post: Post) {
-    // Logic to edit the post
     post.isEditing = true;
   }
 
   deletePost(post: Post) {
-    // Logic to delete the post
     const index = this.filteredPosts.indexOf(post);
     if (index > -1) {
       this.filteredPosts.splice(index, 1);
@@ -921,6 +506,7 @@ blockUser(post: Post) {
   unfollow(post: Post) {
     alert(`Unfollowed ${post.username}`);
   }
+
   goBackToCategories() {
     this.activeCategory = 'All';
     this.activeSubCategory = '';
@@ -928,15 +514,14 @@ blockUser(post: Post) {
     this.filterPostsByCategory('All');
   }
 
-
   showSubCategories(category: any) {
-    this.activeCategory = category.name; // تعيين الفئة النشطة
-    this.subCategories = this.getSubCategories(category.name); // جلب الأيقونات الفرعية
+    this.activeCategory = category.name;
+    this.subCategories = this.getSubCategories(category.name);
   }
 
   getSubCategories(categoryName: string): any[] {
     const subCategories = [
-        { name: 'All', icon: 'bi bi-collection' } // Add "All" option to each subcategory list
+      { name: 'All', icon: 'bi bi-collection' }
     ];
     switch (categoryName) {
       case 'Food':
@@ -1053,11 +638,9 @@ blockUser(post: Post) {
     }
   }
 
-  // New methods for enhanced post interaction
   pinPost(post: Post) {
     post.isPinned = !post.isPinned;
     if (post.isPinned) {
-      // Move post to top of feed
       const index = this.posts.indexOf(post);
       if (index > -1) {
         this.posts.splice(index, 1);
@@ -1068,7 +651,6 @@ blockUser(post: Post) {
   }
 
   shareViaMessage(post: Post) {
-    // Implementation for direct message sharing
     console.log('Sharing via message:', post);
   }
 
@@ -1081,13 +663,11 @@ blockUser(post: Post) {
         this.linkCopied = false;
       }, 2000);
     } else {
-      // Handle Post type
       const dummyUrl = `https://yoursite.com/post/${Date.now()}`;
       navigator.clipboard.writeText(dummyUrl);
     }
   }
 
-  // Enhanced post filtering
   filterByTrending() {
     this.filteredPosts = this.posts
       .sort((a, b) => (b.likes + b.comments.length + b.Shares) - (a.likes + a.comments.length + a.Shares));
@@ -1098,7 +678,6 @@ blockUser(post: Post) {
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }
 
-  // Enhanced sharing functionality
   shareToFacebook() {
     if (this.selectedPost) {
       const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(this.postUrl)}`;
@@ -1129,7 +708,6 @@ blockUser(post: Post) {
     }
   }
 
-  // Add post reaction feature
   addReaction(post: Post, reaction: string) {
     if (!post.reactions) {
       post.reactions = {};
@@ -1138,7 +716,6 @@ blockUser(post: Post) {
       post.reactions[reaction] = 0;
     }
     post.reactions[reaction]++;
-    // Update UI to show reaction
     this.updateReactionUI(post);
   }
 
@@ -1157,12 +734,10 @@ blockUser(post: Post) {
     comment.showLikedBy = !comment.showLikedBy;
   }
 
-  // Generate a unique ID for comments
   private generateCommentId(): string {
     return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
 
-  // Toggle reply input for a comment
   toggleReplyInput(comment: Comment) {
     comment.showReplyInput = !comment.showReplyInput;
     if (!comment.showReplyInput) {
@@ -1170,7 +745,6 @@ blockUser(post: Post) {
     }
   }
 
-  // Add a reply to a comment
   addReply(comment: Comment, replyText: string) {
     if (!replyText.trim()) return;
 
@@ -1191,5 +765,15 @@ blockUser(post: Post) {
     comment.replies.push(reply);
     this.currentReplyText = '';
     comment.showReplyInput = false;
+  }
+
+  // دالة للتعامل مع النقر على Trending Feed
+  onTrendingFeedClick(feed: TrendingFeed) {
+    if (feed.link) {
+      window.open(feed.link, '_blank'); // فتح الرابط في نافذة جديدة
+    } else {
+      console.log('Clicked on trending feed:', feed.title);
+      // يمكنك إضافة منطق آخر هنا، مثل فتح نافذة تفاصيل
+    }
   }
 }

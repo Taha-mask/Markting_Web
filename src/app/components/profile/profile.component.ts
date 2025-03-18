@@ -1,10 +1,11 @@
-import { Component, HostListener, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, HostListener, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { User } from '../../interfaces/user';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { PostService } from '../services/post.service';
 
 interface ReactionCount {
   reaction: string;
@@ -70,7 +71,7 @@ interface Post {
     ])
   ]
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild('coverImageInput') coverImageInput!: ElementRef;
   
@@ -86,7 +87,7 @@ export class ProfileComponent implements OnInit {
   posts: Post[] = [
     {
       username: 'Taha Mahmoud',
-      profileImageUrl: 'public/images/user-1.png',
+      profileImageUrl: '',
       timestamp: new Date(),
       content: 'Just launched a successful social media campaign that increased engagement by 150%! 🚀 #DigitalMarketing #Success',
       category: 'Marketing',
@@ -118,8 +119,8 @@ export class ProfileComponent implements OnInit {
     },
     {
       username: 'Taha Mahmoud',
-      profileImageUrl: 'public/images/user-1.png',
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+      profileImageUrl: '',
+      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
       content: 'Sharing my latest insights on email marketing strategies that convert. Check out the full article on my blog!',
       category: 'Marketing',
       subCategory: 'Email Marketing',
@@ -190,10 +191,10 @@ export class ProfileComponent implements OnInit {
 
   user: User[] = [
     {
-      username: 'Taha Mahmoud Ahmed',
+      username: 'Taha Mahmoud ',
       type: 'Markter',
-      profileImageUrl: 'images/user-1.jpg',
-      status: 'online',
+      profileImageUrl: 'images/user-1.png',
+      status: 'Online',
     }
   ];
 
@@ -258,23 +259,16 @@ export class ProfileComponent implements OnInit {
   showAnalytics: boolean = false;
   showTestimonials: boolean = true;
   portfolioView: 'grid' | 'list' = 'grid';
-
-  suggestedUsers: any[] = [
-    {
-      name: 'Sarah Johnson',
-      title: 'Digital Marketing Specialist',
-      profileImageUrl: 'images/user-3.jpg'
-    },
-    {
-      name: 'Mike Chen',
-      title: 'Content Strategist',
-      profileImageUrl: 'images/user-2.jpg'
-    },
-    {
-      name: 'Emma Davis',
-      title: 'Social Media Manager',
-      profileImageUrl: 'images/user-1.jpg'
-    }
+  
+  userFol = [
+    { name: 'Wade Warren', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false },
+    { name: 'Darlene Robertson', title: 'Digital Marketing Specialist', img: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg', Follow: false },
+    { name: 'Floyd Miles', title: 'Digital Marketing Specialist', img: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg', Follow: false },
+    { name: 'Bessie Cooper', title: 'Digital Marketing Specialist', img: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg', Follow: false },
+    { name: 'Savannah Nguyen', title: 'Digital Marketing Specialist', img: 'images/user-2.png', Follow: false },
+    { name: 'Courtney Henry', title: 'Digital Marketing Specialist', img: 'images/user-3.png', Follow: false },
+    { name: 'Brooklyn Simmons', title: 'Digital Marketing Specialist', img: 'images/user-4.png', Follow: false },
+    { name: 'Jacob Jones', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false },
   ];
 
   recentActivities: any[] = [
@@ -295,7 +289,9 @@ export class ProfileComponent implements OnInit {
     }
   ];
 
-  constructor() {
+  private postSubscription: any;
+
+  constructor(private postService: PostService) {
     this.loadUserData();
     this.initializePortfolio();
     this.initializeCertifications();
@@ -305,6 +301,21 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
     this.initializeProfile();
     this.startAnalyticsTracking();
+    this.posts.forEach(post => {
+      post.profileImageUrl = this.user[0].profileImageUrl;
+    });
+
+    this.postSubscription = this.postService.getPostObservable().subscribe((newPost: Post) => {
+      newPost.profileImageUrl = this.user[0].profileImageUrl;
+      this.posts.unshift(newPost);
+      this.stats.posts = this.posts.length;
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.postSubscription) {
+      this.postSubscription.unsubscribe();
+    }
   }
 
   private initializeProfile() {
@@ -312,10 +323,10 @@ export class ProfileComponent implements OnInit {
     this.calculateStats();
     this.setupEventListeners();
     this.loadAnalytics();
+    this.profileImageUrl = this.user[0].profileImageUrl;
   }
 
   private loadPosts() {
-    // In a real app, this would be an API call
     this.stats.posts = this.posts.length;
   }
 
@@ -323,7 +334,6 @@ export class ProfileComponent implements OnInit {
     post.liked = !post.liked;
     post.likes += post.liked ? 1 : -1;
     
-    // Update reactions
     if (post.reactions) {
       post.reactions['👍'] = (post.reactions['👍'] || 0) + (post.liked ? 1 : -1);
     }
@@ -386,7 +396,6 @@ export class ProfileComponent implements OnInit {
     ];
   }
 
-  // Post Management Methods
   deletePost(post: Post) {
     const index = this.posts.indexOf(post);
     if (index > -1) {
@@ -397,7 +406,6 @@ export class ProfileComponent implements OnInit {
   pinPost(post: Post) {
     post.isPinned = !post.isPinned;
     if (post.isPinned) {
-      // Move to top of posts list
       const index = this.posts.indexOf(post);
       if (index > -1) {
         this.posts.splice(index, 1);
@@ -406,7 +414,6 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  // Portfolio Methods
   addPortfolioItem(item: any) {
     this.portfolioItems.push(item);
   }
@@ -422,13 +429,11 @@ export class ProfileComponent implements OnInit {
   private loadUserData() {
     this.isLoading = true;
     setTimeout(() => {
-      // Load data here
       this.isLoading = false;
     }, 1000);
   }
 
   private calculateStats() {
-    // Update stats based on actual data
     this.stats = {
       ...this.stats,
       views: this.analytics.profileViews,
@@ -446,7 +451,6 @@ export class ProfileComponent implements OnInit {
   }
 
   private loadAnalytics() {
-    // Simulated analytics data
     this.analytics = {
       profileViews: 1250,
       postEngagement: 85,
@@ -457,11 +461,10 @@ export class ProfileComponent implements OnInit {
   }
 
   private startAnalyticsTracking() {
-    // Simulated analytics tracking
     setInterval(() => {
       this.analytics.profileViews += Math.floor(Math.random() * 5);
       this.calculateStats();
-    }, 60000); // Update every minute
+    }, 60000);
   }
 
   private initializeCertifications() {
@@ -500,19 +503,35 @@ export class ProfileComponent implements OnInit {
     ];
   }
 
-  // Profile Image Methods
   onProfileImageChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.profileImageUrl = e.target?.result as string;
+        const newImageUrl = e.target?.result as string;
+        this.profileImageUrl = newImageUrl;
+        this.user[0].profileImageUrl = newImageUrl;
+        this.posts.forEach(post => {
+          post.profileImageUrl = newImageUrl;
+        });
       };
       reader.readAsDataURL(file);
     }
   }
 
-  // Cover Image Methods
+  followUser(user: any) {
+    user.Follow = !user.Follow;
+    if (user.Follow) {
+      this.stats.following += 1; // زيادة عدد الـ Following في الـ Left Sidebar
+    } else {
+      this.stats.following -= 1; // تقليل عدد الـ Following في الـ Left Sidebar
+    }
+  }
+
+  toggleFollow(userFol: any) {
+    this.followUser(userFol);
+  }
+
   onCoverImageChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
@@ -524,17 +543,14 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  // Bio Methods
   toggleBioEdit() {
     this.isEditingBio = !this.isEditingBio;
   }
 
   saveBio() {
     this.isEditingBio = false;
-    // Here you would typically save to backend
   }
 
-  // Certification Methods
   addCertification(cert: any) {
     this.certifications.push(cert);
   }
@@ -543,7 +559,6 @@ export class ProfileComponent implements OnInit {
     this.certifications.splice(index, 1);
   }
 
-  // Testimonial Methods
   addTestimonial(testimonial: any) {
     this.testimonials.push(testimonial);
     this.updateAverageRating();
@@ -554,7 +569,6 @@ export class ProfileComponent implements OnInit {
     this.analytics.averageRating = total / this.testimonials.length;
   }
 
-  // Availability Methods
   updateAvailability(newStatus: string) {
     this.availability.status = newStatus;
   }
@@ -565,15 +579,12 @@ export class ProfileComponent implements OnInit {
 
   saveAvailability() {
     this.isEditingAvailability = false;
-    // Save to backend
   }
 
-  // Analytics Methods
   toggleAnalytics() {
     this.showAnalytics = !this.showAnalytics;
   }
 
-  // Helper Methods
   get fullStars(): number[] {
     return Array(Math.floor(this.rating)).fill(0);
   }
@@ -596,7 +607,6 @@ export class ProfileComponent implements OnInit {
     return num.toString();
   }
 
-  // Skills Methods
   addSkill(skill: string) {
     if (skill && !this.skills.includes(skill)) {
       this.skills.push(skill);
@@ -607,7 +617,6 @@ export class ProfileComponent implements OnInit {
     this.skills.splice(index, 1);
   }
 
-  // Achievement Methods
   addAchievement(achievement: { 
     title: string;
     date: string;

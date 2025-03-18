@@ -43,16 +43,14 @@
           </div>
         </div>
         
-        <!-- No Results Message -->
         <div *ngIf="filteredChatList.length === 0" class="no-results">
           <i class="bi bi-search mb-2 d-block"></i>
           <p class="mb-0">No chats found</p>
           <small class="text-muted d-block mt-1">Try searching with a different term</small>
         </div>
       </div>
-
+    </div>
     
-  </div>
     <div class="col-md-9 rightside">
       <div class="chat-header d-flex align-items-center p-3 border-bottom" *ngIf="selectedChat">
         <div class="d-flex align-items-center">
@@ -68,9 +66,11 @@
       </div>
 
       <div class="chat-messages p-3" #chatbox>
-        <div *ngFor="let message of messages; let i = index" class="message mb-3" [class.message-sent]="message.sender === 'me'" [class.message-received]="message.sender === 'other'">
+        <div *ngFor="let message of messages; let i = index" 
+             class="message mb-3" 
+             [class.message-sent]="message.sender === 'me'" 
+             [class.message-received]="message.sender === 'other'">
           <div class="message-content position-relative">
-            <!-- Reply content -->
             <div *ngIf="message.replyTo" class="reply-content">
               <div class="reply-text">
                 <small class="reply-sender">{{ message.replyTo.sender === 'me' ? 'You' : 'Them' }}</small>
@@ -86,24 +86,47 @@
             </div>
             <div class="message-footer">
               <small class="time">{{ message.timestamp | date:'shortTime' }}</small>
-              <div class="message-actions">
-                <button class="btn btn-sm action-btn" (click)="replyToMessage(message, i)">
-                  <i class="fas fa-reply"></i>
+              <span *ngIf="message.sender === 'me'" class="seen-indicator">
+                <i *ngIf="message.seen" class="fas fa-check-double seen-icon" title="Seen"></i>
+                <i *ngIf="!message.seen" class="fas fa-check seen-icon" title="Sent"></i>
+              </span>
+            </div>
+            
+            <!-- نقل الأيقونات لتكون بجانب الرسالة -->
+            <div class="message-actions">
+              <button class="btn btn-sm action-btn" (click)="replyToMessage(message, i)">
+                <i class="fas fa-reply"></i>
+              </button>
+              <button class="btn btn-sm reaction-btn" (click)="toggleQuickReactions(i, $event)">
+                <i class="fas fa-smile"></i>
+              </button>
+              <!-- زر الثلاث نقاط -->
+              <button class="btn btn-sm more-options-btn" (click)="toggleMoreOptions(i, $event)">
+                <i class="fas fa-ellipsis-v"></i>
+              </button>
+            </div>
+
+            <!-- القائمة المنسدلة (ثلاث نقاط) -->
+            <div *ngIf="showMoreOptions && selectedMoreOptionsIndex === i" class="more-options-menu">
+              <div class="list-group">
+                <button class="list-group-item" (click)="forwardMessage(message)">
+                  Forward
                 </button>
-                <button class="btn btn-sm reaction-btn" (click)="toggleQuickReactions(i, $event)">
-                  <i class="fas fa-smile"></i>
+                <button class="list-group-item" (click)="copyMessage(message)">
+                  Copy
+                </button>
+                <button class="list-group-item danger" (click)="unsendMessage(i)" *ngIf="message.sender === 'me'">
+                  Unsend
                 </button>
               </div>
             </div>
             
-            <!-- Quick Reactions -->
             <div *ngIf="showReactionPicker && selectedMessageIndex === i" class="quick-reactions">
               <button class="reaction-option" [class.active]="message.reactions?.includes('❤️')" (click)="addReaction(i, '❤️')">❤️</button>
               <button class="reaction-option" [class.active]="message.reactions?.includes('👍')" (click)="addReaction(i, '👍')">👍</button>
               <button class="reaction-option" [class.active]="message.reactions?.includes('🫡')" (click)="addReaction(i, '🫡')">🫡</button>
             </div>
             
-            <!-- Reactions display -->
             <div *ngIf="message.reactions && message.reactions.length > 0" class="reactions-container">
               <span class="reaction" (click)="addReaction(i, message.reactions[0])">{{ message.reactions[0] }}</span>
             </div>
@@ -111,7 +134,6 @@
         </div>
       </div>
 
-      <!-- Reply preview -->
       <div *ngIf="replyingTo" class="reply-preview">
         <div class="reply-preview-content">
           <div>
@@ -144,10 +166,10 @@
         <div *ngIf="showEmojiPicker" class="overlay"></div>
         <div class="emoji-picker" *ngIf="showEmojiPicker">
           <emoji-mart [darkMode]="false" 
-                     [enableSearch]="true"
-                     [showPreview]="true"
-                     [emojiSize]="20"
-                     (emojiSelect)="addEmoji($event)"></emoji-mart>
+                      [enableSearch]="true"
+                      [showPreview]="true"
+                      [emojiSize]="20"
+                      (emojiSelect)="addEmoji($event)"></emoji-mart>
         </div>
 
         <div class="attachment-menu position-absolute" *ngIf="isMenuVisible">

@@ -11,7 +11,6 @@
   width: 95%;
 }
 
-/* Scrollbar Styles */
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -139,7 +138,6 @@
   max-width: 200px;
 }
 
-/* Chat header status */
 .chat-header .status-text {
   font-size: 0.75rem;
   text-transform: capitalize;
@@ -156,7 +154,6 @@
   border: none;
 }
 
-/* Chat styles */
 .chat-header {
   background-color: #f8f9fa;
 }
@@ -172,17 +169,6 @@
   display: flex;
   margin-bottom: 15px;
   animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .message-sent {
@@ -212,7 +198,7 @@
 }
 
 .message-text {
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 }
 
 .message-footer {
@@ -230,33 +216,85 @@
   opacity: 0.7;
 }
 
-/* Reaction Styles */
-.reaction-btn {
-  padding: 0;
-  background: none;
-  border: none;
-  color: inherit;
+/* تعديل أنماط الأيقونات لتظهر بجانب الرسالة */
+.message-actions {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   opacity: 0;
-  transition: opacity 0.2s, transform 0.2s;
-  font-size: 14px;
-  margin: 0 5px;
+  transition: opacity 0.2s;
 }
 
-.message-sent .reaction-btn {
-  color: rgba(255, 255, 255, 0.8);
+.message-sent .message-actions {
+  left: -80px; /* وضع الأيقونات على يسار الرسالة المرسلة */
 }
 
-.message-received .reaction-btn {
-  color: #666;
+.message-received .message-actions {
+  right: -80px; /* وضع الأيقونات على يمين الرسالة المستلمة */
 }
 
-.message-content:hover .reaction-btn {
+.message:hover .message-actions {
   opacity: 1;
 }
 
-.reaction-btn:hover {
-  color: #ffd700;
+.action-btn,
+.reaction-btn,
+.more-options-btn {
+  padding: 0;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  margin: 0 5px;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.message-sent .action-btn,
+.message-sent .reaction-btn,
+.message-sent .more-options-btn {
+  color: #666;
+}
+
+.action-btn:hover,
+.reaction-btn:hover,
+.more-options-btn:hover {
+  color: #007bff;
   transform: scale(1.1);
+}
+
+/* أنماط القائمة المنسدلة (ثلاث نقاط) */
+.more-options-menu {
+  position: absolute;
+  top: -100px; /* وضع القائمة أعلى الأيقونة */
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 150px;
+}
+
+.message-received .more-options-menu {
+  right: auto;
+  left: 0;
+}
+
+.more-options-menu .list-group-item {
+  padding: 8px 15px;
+  font-size: 14px;
+  color: #333;
+  border: none;
+  cursor: pointer;
+}
+
+.more-options-menu .list-group-item:hover {
+  background-color: #f8f9fa;
+}
+
+.more-options-menu .list-group-item.danger {
+  color: #dc3545;
 }
 
 .reactions-container {
@@ -369,45 +407,6 @@
   text-align: center;
 }
 
-.message-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.action-btn,
-.reaction-btn {
-  padding: 0;
-  background: none;
-  border: none;
-  color: inherit;
-  opacity: 0;
-  transition: opacity 0.2s, transform 0.2s;
-  font-size: 14px;
-  margin: 0 5px;
-}
-
-.message-sent .action-btn,
-.message-sent .reaction-btn {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.message-received .action-btn,
-.message-received .reaction-btn {
-  color: #666;
-}
-
-.message-content:hover .action-btn,
-.message-content:hover .reaction-btn {
-  opacity: 1;
-}
-
-.action-btn:hover,
-.reaction-btn:hover {
-  color: #ffd700;
-  transform: scale(1.1);
-}
-
-/* Reply styles */
 .reply-content {
   padding: 8px;
   margin-bottom: 8px;
@@ -497,7 +496,6 @@
   transform: scale(1.1);
 }
 
-/* Search Styles */
 .search-input {
   background-color: #f5f5f5;
   border: none;
@@ -510,7 +508,6 @@
   outline: none;
 }
 
-/* Highlight Styles */
 .highlight {
   background-color: rgba(255, 193, 7, 0.3);
   padding: 0 2px;
@@ -518,7 +515,6 @@
   font-weight: 500;
 }
 
-/* Empty Results */
 .no-results {
   color: #6c757d;
   padding: 2rem;
@@ -534,9 +530,27 @@
   color: #adb5bd;
 }
 
-/* Unread Badge */
 .unread-badge {
   color: #0d6efd;
   font-size: 0.8rem;
   margin-left: 0.5rem;
+}
+
+.message-footer .seen-indicator {
+  margin-left: 5px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.message-sent .seen-indicator {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.message-received .seen-indicator {
+  color: #666;
+}
+
+.seen-icon {
+  font-size: 12px;
+  vertical-align: middle;
 }
