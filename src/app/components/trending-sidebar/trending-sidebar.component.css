@@ -136,6 +136,8 @@
   overflow-y: auto;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
+  background-color: #F8F9FA;
+
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

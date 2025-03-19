@@ -69,7 +69,7 @@ export class NotificationComponent implements OnInit {
     this.notifications = [
       {
         id: 1,
-        avatar: 'assets/images/user-1.png',
+        avatar: 'images/user-1.png',
         username: 'John Doe',
         timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 minutes ago
         type: 'like',
@@ -79,7 +79,7 @@ export class NotificationComponent implements OnInit {
       },
       {
         id: 2,
-        avatar: 'assets/images/user-3.png',
+        avatar: 'images/user-2.png',
         username: 'Alex Johnson',
         timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
         content: 'Shared your Post "Top 10 Marketing Tricks"',
@@ -89,7 +89,7 @@ export class NotificationComponent implements OnInit {
       },
       {
         id: 3,
-        avatar: 'assets/images/user-4.png',
+        avatar: 'images/user-3.png',
         username: 'Daimon Salvatore',
         timestamp: new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(), // 7 hours ago
         content: 'mentioned you in a comment: "Hey @user, great insights!"',
