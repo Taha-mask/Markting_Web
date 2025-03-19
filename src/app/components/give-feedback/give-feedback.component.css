@@ -5,20 +5,13 @@
     font-family: sans-serif;
 }
 body .container{
-    max-width: 600px;
+  width: 600px;
    text-align: center;
-
-
-}
-
-body{
-    background: grey;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+align-items: center;
 
 }
+
+ 
 
 .feedback-form{
     background: #fff;
@@ -105,3 +98,11 @@ z-index: -1;
     margin: 0 5px;
     transition: color 0.2s; /* تأثير ناعم لتغيير اللون */
   }
+
+
+
+  
+/* Media Queries for Mobile Devices */
+
+  
+ 

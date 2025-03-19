@@ -1,29 +1,27 @@
 
-*{
-
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family:'poppins',sans-serif;
-
+    font-family: 'poppins', sans-serif;
 }
 
-.container{
+.container {
     display: flex;
-justify-content: center;
-align-items: center;
-margin-left: 100px;
-margin-top: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-left: 100px;
+    margin-top: 10px;
 }
 
-
-.login-box{
-display: flex;
-justify-content: center;
-flex-direction: column;
-width: 440px;
-height: 480px;
-padding: 30px;
+/* تحسين عرض الـ login-box */
+.login-box {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 440px;
+    height: 480px;
+    padding: 30px;
 }
 
 .login-header{
@@ -157,4 +155,26 @@ input:focus {
   border: none;
   outline: none;
   box-shadow: none;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-left: 0; /* إزالة الهامش الأيسر */
+        width: 100%; /* اجعل العنصر يمتد على الشاشة بالكامل */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .login-box {
+        width: 100%; /* جعل النموذج يمتد بالكامل */
+        max-width: 350px; /* تحديد أقصى عرض */
+        height: auto; /* السماح بالتمدد بناءً على المحتوى */
+        padding: 20px;
+    }
+
+    /* إخفاء الصورة إذا كانت جزءًا من التصميم */
+    .login-img {
+        display: none;
+    }
 }
