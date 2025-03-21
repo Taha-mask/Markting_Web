@@ -554,3 +554,52 @@
   font-size: 12px;
   vertical-align: middle;
 }
+/* إضافة تنسيقات للهاتف */
+@media (max-width: 767px) {
+  .leftside {
+    width: 100%;
+    padding-right: 0;
+    border-right: none;
+    display: block; /* نعرض قائمة المستخدمين افتراضياً */
+  }
+
+  .rightside {
+    display: none; /* نُخفي الدردشة افتراضياً */
+    width: 100%;
+    padding-left: 0;
+  }
+
+  /* عندما يتم اختيار دردشة، نعكس العرض */
+  .leftside.hide-on-mobile {
+    display: none;
+  }
+
+  .rightside.show-on-mobile {
+    display: block;
+  }
+
+  .row {
+    height: auto; /* نلغي الارتفاع الثابت ليتناسب مع المحتوى */
+  }
+
+  .chat-messages {
+    height: calc(100vh - 200px); /* نضبط ارتفاع الرسائل بناءً على الشاشة */
+  }
+ 
+  .container {
+   
+    padding: 10px;
+    margin: 20px auto;
+    max-width: 1400px;
+    width: 95%;
+    height: 85vh;
+  }
+.chat-input {
+  background-color: #fff;
+  padding: 15px;
+  position: relative;
+  height: 100px;
+  margin-bottom: 60px;
+
+}
+}

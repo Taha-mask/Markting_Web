@@ -1,6 +1,6 @@
 <div class="container">
   <div class="row">
-    <div class="col-md-3 leftside">
+    <div class="col-md-3 leftside" [ngClass]="{'hide-on-mobile': isChatSelected}">
       <div class="search-container p-2">
         <div class="position-relative">
           <input class="search-input px-3 py-2 w-100" 
@@ -51,8 +51,11 @@
       </div>
     </div>
     
-    <div class="col-md-9 rightside">
+    <div class="col-md-9 rightside" [ngClass]="{'show-on-mobile': isChatSelected}">
       <div class="chat-header d-flex align-items-center p-3 border-bottom" *ngIf="selectedChat">
+        <button class="btn btn-light me-2" (click)="goBackToChatList()" *ngIf="isChatSelected">
+          <i class="fas fa-arrow-left"></i>
+        </button>
         <div class="d-flex align-items-center">
           <img [src]="selectedChat.image" alt="User Avatar" class="rounded-circle" width="40" height="40">
           <div class="ms-2">
@@ -92,7 +95,7 @@
               </span>
             </div>
             
-            <!-- نقل الأيقونات لتكون بجانب الرسالة -->
+            <!-- أيقونات التفاعل بجانب الرسالة -->
             <div class="message-actions">
               <button class="btn btn-sm action-btn" (click)="replyToMessage(message, i)">
                 <i class="fas fa-reply"></i>
@@ -121,12 +124,14 @@
               </div>
             </div>
             
+            <!-- قائمة التفاعلات السريعة -->
             <div *ngIf="showReactionPicker && selectedMessageIndex === i" class="quick-reactions">
               <button class="reaction-option" [class.active]="message.reactions?.includes('❤️')" (click)="addReaction(i, '❤️')">❤️</button>
               <button class="reaction-option" [class.active]="message.reactions?.includes('👍')" (click)="addReaction(i, '👍')">👍</button>
               <button class="reaction-option" [class.active]="message.reactions?.includes('🫡')" (click)="addReaction(i, '🫡')">🫡</button>
             </div>
             
+            <!-- عرض التفاعلات الموجودة -->
             <div *ngIf="message.reactions && message.reactions.length > 0" class="reactions-container">
               <span class="reaction" (click)="addReaction(i, message.reactions[0])">{{ message.reactions[0] }}</span>
             </div>
@@ -134,6 +139,7 @@
         </div>
       </div>
 
+      <!-- معاينة الرد -->
       <div *ngIf="replyingTo" class="reply-preview">
         <div class="reply-preview-content">
           <div>
@@ -146,6 +152,7 @@
         </div>
       </div>
 
+      <!-- حقل إدخال الرسالة -->
       <div class="chat-input border-top p-3">
         <div class="d-flex align-items-center">
           <div class="input-group">
@@ -163,6 +170,7 @@
           </div>
         </div>
 
+        <!-- قائمة الإيموجي -->
         <div *ngIf="showEmojiPicker" class="overlay"></div>
         <div class="emoji-picker" *ngIf="showEmojiPicker">
           <emoji-mart [darkMode]="false" 
@@ -172,6 +180,7 @@
                       (emojiSelect)="addEmoji($event)"></emoji-mart>
         </div>
 
+        <!-- قائمة المرفقات -->
         <div class="attachment-menu position-absolute" *ngIf="isMenuVisible">
           <div class="list-group">
             <button class="list-group-item" (click)="attachDocument()">

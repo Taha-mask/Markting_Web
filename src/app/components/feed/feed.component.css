@@ -805,8 +805,8 @@ body {
 }
 
 @media (max-width: 768px) {
-  .container-fluid {
-    padding: 0.5rem;
+  .container {
+    padding-bottom: 60px; /* لضمان أن المحتوى داخل app-message لا يتداخل */
   }
 
   .trending-img {
