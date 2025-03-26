@@ -2,11 +2,13 @@
   width: 30%;
   background-color: #ffffff;
   border-right: 1px solid #ddd;
-  height: 100vh;
+  height: 100vh; /* Full viewport height */
+  max-height: 100vh;
   padding-left: 20px;
+  position: sticky;
+  top: 0;
+  overflow-y: auto; /* Allow scrolling if content is too long */
 }
-
-
 
 .sidebar-line {
   position: absolute;
@@ -141,28 +143,25 @@
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
-.sid::-webkit-scrollbar {
+.sid::-webkit-scrollbar,
+.leftside::-webkit-scrollbar,
+.sidebar-container::-webkit-scrollbar {
   display: none;
 }
 
-@media screen and (max-width: 991px) {
-  .sid {
-    max-width: 280px;
-    .leftside,
-  .sidebar-container {
-    display: none;
-  }
-  }
-}
-
-@media screen and (max-width: 1154px) {
-  .leftside,
-  .sidebar-container {
-    display: none;
-  }
+/* Hide scrollbar for IE, Edge and Firefox */
+.leftside,
+.sidebar-container {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100vh;
+  overflow-y: auto; /* Allow scrolling while hiding scrollbar */
   background-color: #ffffff;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -228,10 +227,17 @@
 
 /* Responsive Adjustments */
 @media (max-width: 992px) {
+  .leftside {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
   .sidebar-container {
-    position: relative;
-    top: 0;
-    margin: 0.5rem;
+    max-height: none;
   }
 }
 
@@ -323,5 +329,22 @@
 @media (max-width: 768px) {
   .sidebar-container {
     padding: 0 5px;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .sid {
+    max-width: 280px;
+    .leftside,
+  .sidebar-container {
+    display: none;
+  }
+  }
+}
+
+@media screen and (max-width: 1154px) {
+  .leftside,
+  .sidebar-container {
+    display: none;
   }
 }

@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewChild, ElementRef, OnInit, Inject } from '@angular/core';
+import { Component, HostListener, ViewChild, ElementRef, OnInit, Inject, OnDestroy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { PostService } from '../services/post.service';
 import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.component';
 import { User } from '../../interfaces/user';
+import { Subscription } from 'rxjs';
 
 declare var bootstrap: any;
 
@@ -80,7 +81,7 @@ interface TrendingFeed {
   styleUrls: ['./feed.component.css'],
   providers: [DatePipe, PostService],
 })
-export class FeedComponent implements OnInit {
+export class FeedComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild(TrendingSidebarComponent) trendingSidebar!: TrendingSidebarComponent;
   isDropdownVisible = false;
@@ -101,10 +102,19 @@ export class FeedComponent implements OnInit {
   constructor(@Inject(PostService) private postService: PostService) {}
 
   ngOnInit() {
-    this.postService.getPostObservable().subscribe((newPost: Post) => {
-      this.posts.unshift(newPost);
+    this.postService.getPosts().subscribe((updatedPosts: Post[]) => {
+      this.posts = updatedPosts;
     });
     this.filterPostsByCategory('All');
+    // Subscribe to posts from the service
+    this.postSubscription = this.postService.getPosts().subscribe(
+      (updatedPosts: Post[]) => {
+        this.posts = updatedPosts;
+      },
+      (error) => {
+        console.error('Error fetching posts', error);
+      }
+    );
     // يمكن إضافة منطق لتحميل Trending Feeds من API هنا
   }
 
@@ -774,6 +784,15 @@ export class FeedComponent implements OnInit {
     } else {
       console.log('Clicked on trending feed:', feed.title);
       // يمكنك إضافة منطق آخر هنا، مثل فتح نافذة تفاصيل
+    }
+  }
+
+  private postSubscription: Subscription | null = null;
+
+  ngOnDestroy() {
+    // Unsubscribe to prevent memory leaks
+    if (this.postSubscription) {
+      this.postSubscription.unsubscribe();
     }
   }
 }

@@ -628,12 +628,13 @@ body {
   }
 
   .main-content {
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
+    margin: 0;
+    padding: 0;
   }
-
+.card{
+  width: 100%;
+  margin: 0;
+}
   .comment,
   .like,
   .Shares,
@@ -753,10 +754,9 @@ body {
   flex: 1;
   padding: 1rem;
   overflow-y: auto;
+ padding: 0px;
+ 
   max-width: 100%;
-}
-.main-content{
-  
 }
 
 /* Scrollable Content */

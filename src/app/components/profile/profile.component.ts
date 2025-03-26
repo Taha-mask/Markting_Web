@@ -301,13 +301,25 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initializeProfile();
     this.startAnalyticsTracking();
+    
+    // Update existing posts with profile image
     this.posts.forEach(post => {
       post.profileImageUrl = this.user[0].profileImageUrl;
     });
 
-    this.postSubscription = this.postService.getPostObservable().subscribe((newPost: Post) => {
-      newPost.profileImageUrl = this.user[0].profileImageUrl;
-      this.posts.unshift(newPost);
+    // Subscribe to posts from the service
+    this.postSubscription = this.postService.getPosts().subscribe((updatedPosts: Post[]) => {
+      // Update profile image for all posts
+      updatedPosts.forEach(post => {
+        post.profileImageUrl = this.user[0].profileImageUrl;
+      });
+
+      // Filter posts for the current user (assuming username match)
+      this.posts = updatedPosts.filter(post => 
+        post.username === this.user[0].username
+      );
+
+      // Update post count in stats
       this.stats.posts = this.posts.length;
     });
   }

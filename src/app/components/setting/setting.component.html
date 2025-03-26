@@ -1,0 +1,269 @@
+<!-- d:\programing\Graduation project IT\Angular js\Markting_Web\src\app\components\setting\setting.component.html -->
+<div class="settings-container">
+  <!-- Sidebar Navigation -->
+  <div class="settings-sidebar">
+    <div class="sidebar-header">
+      <h2>Settings</h2>
+    </div>
+    <nav class="settings-menu">
+      <ul>
+        <li 
+          (click)="setActiveSection('profile')" 
+          [class.active]="activeSection === 'profile'"
+        >
+          <i class="fas fa-user"></i> Profile
+        </li>
+        <li 
+          (click)="setActiveSection('account')" 
+          [class.active]="activeSection === 'account'"
+        >
+          <i class="fas fa-lock"></i> Account
+        </li>
+        <li 
+          (click)="setActiveSection('notifications')" 
+          [class.active]="activeSection === 'notifications'"
+        >
+          <i class="fas fa-bell"></i> Notifications
+        </li>
+        <li 
+          (click)="setActiveSection('privacy')" 
+          [class.active]="activeSection === 'privacy'"
+        >
+          <i class="fas fa-shield-alt"></i> Privacy
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="settings-content">
+    <!-- Profile Settings -->
+    <div *ngIf="activeSection === 'profile'" class="settings-section">
+      <h2>Profile Settings</h2>
+      <form (ngSubmit)="saveProfileSettings()">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input 
+            type="text" 
+            [(ngModel)]="profileSettings.fullName" 
+            name="fullName" 
+            placeholder="Enter your full name"
+          >
+        </div>
+        <div class="form-group">
+          <label>Username</label>
+          <input 
+            type="text" 
+            [(ngModel)]="profileSettings.username" 
+            name="username" 
+            placeholder="Choose a username"
+          >
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input 
+            type="email" 
+            [(ngModel)]="profileSettings.email" 
+            name="email" 
+            placeholder="Enter your email"
+          >
+        </div>
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea 
+            [(ngModel)]="profileSettings.bio" 
+            name="bio" 
+            placeholder="Tell us about yourself"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Profile Picture</label>
+          <input 
+            type="file" 
+            (change)="onProfilePictureChange($event)" 
+            accept="image/*"
+          >
+        </div>
+        <button type="submit" class="btn-save">Save Profile</button>
+      </form>
+    </div>
+
+    <!-- Account Settings -->
+    <div *ngIf="activeSection === 'account'" class="settings-section">
+      <h2>Account Settings</h2>
+      <form (ngSubmit)="saveAccountSettings()">
+        <div class="form-group">
+          <label>Current Password</label>
+          <input 
+            type="password" 
+            [(ngModel)]="accountSettings.currentPassword" 
+            name="currentPassword" 
+            placeholder="Enter current password"
+          >
+        </div>
+        <div class="form-group">
+          <label>New Password</label>
+          <input 
+            type="password" 
+            [(ngModel)]="accountSettings.newPassword" 
+            name="newPassword" 
+            placeholder="Enter new password"
+          >
+        </div>
+        <div class="form-group">
+          <label>Confirm New Password</label>
+          <input 
+            type="password" 
+            [(ngModel)]="accountSettings.confirmPassword" 
+            name="confirmPassword" 
+            placeholder="Confirm new password"
+          >
+        </div>
+        <div class="form-group toggle">
+          <label>
+            <input 
+              type="checkbox" 
+              [(ngModel)]="accountSettings.twoFactorAuth" 
+              name="twoFactorAuth"
+            >
+            Enable Two-Factor Authentication
+          </label>
+        </div>
+        <button type="submit" class="btn-save">Update Account</button>
+      </form>
+    </div>
+
+    <!-- Notification Settings -->
+    <div *ngIf="activeSection === 'notifications'" class="settings-section">
+      <h2>Notification Preferences</h2>
+      <form (ngSubmit)="saveNotificationSettings()">
+        <div class="notification-group">
+          <h3>Email Notifications</h3>
+          <div class="toggle-group">
+            <label>
+              <input 
+                type="checkbox" 
+                [(ngModel)]="notificationSettings.email.comments" 
+                name="emailComments"
+              >
+              Comments on my posts
+            </label>
+            <label>
+              <input 
+                type="checkbox" 
+                [(ngModel)]="notificationSettings.email.likes" 
+                name="emailLikes"
+              >
+              Likes and reactions
+            </label>
+            <label>
+              <input 
+                type="checkbox" 
+                [(ngModel)]="notificationSettings.email.newFollowers" 
+                name="emailFollowers"
+              >
+              New followers
+            </label>
+          </div>
+        </div>
+        <div class="notification-group">
+          <h3>Push Notifications</h3>
+          <div class="toggle-group">
+            <label>
+              <input 
+                type="checkbox" 
+                [(ngModel)]="notificationSettings.push.messages" 
+                name="pushMessages"
+              >
+              Direct messages
+            </label>
+            <label>
+              <input 
+                type="checkbox" 
+                [(ngModel)]="notificationSettings.push.updates" 
+                name="pushUpdates"
+              >
+              App updates
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn-save">Save Notification Settings</button>
+      </form>
+    </div>
+
+    <!-- Privacy Settings -->
+    <div *ngIf="activeSection === 'privacy'" class="settings-section">
+      <h2>Privacy Controls</h2>
+      <form (ngSubmit)="savePrivacySettings()">
+        <div class="privacy-group">
+          <h3>Profile Visibility</h3>
+          <div class="radio-group">
+            <label>
+              <input 
+                type="radio" 
+                [(ngModel)]="privacySettings.profileVisibility" 
+                name="profileVisibility" 
+                value="public"
+              >
+              Public (Anyone can view my profile)
+            </label>
+            <label>
+              <input 
+                type="radio" 
+                [(ngModel)]="privacySettings.profileVisibility" 
+                name="profileVisibility" 
+                value="friends"
+              >
+              Friends Only
+            </label>
+            <label>
+              <input 
+                type="radio" 
+                [(ngModel)]="privacySettings.profileVisibility" 
+                name="profileVisibility" 
+                value="private"
+              >
+              Private (Only me)
+            </label>
+          </div>
+        </div>
+        <div class="privacy-group">
+          <h3>Post Visibility</h3>
+          <div class="form-group">
+            <label>Who can see my posts?</label>
+            <select 
+              [(ngModel)]="privacySettings.postPrivacy.whoCanSee" 
+              name="postVisibility"
+            >
+              <option value="everyone">Everyone</option>
+              <option value="friends">Friends Only</option>
+              <option value="private">Only Me</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Who can comment on my posts?</label>
+            <select 
+              [(ngModel)]="privacySettings.postPrivacy.whoCanComment" 
+              name="postComments"
+            >
+              <option value="everyone">Everyone</option>
+              <option value="friends">Friends Only</option>
+              <option value="off">No One</option>
+            </select>
+          </div>
+        </div>
+        <div class="privacy-group toggle">
+          <label>
+            <input 
+              type="checkbox" 
+              [(ngModel)]="privacySettings.dataSharing" 
+              name="dataSharing"
+            >
+            Allow anonymous usage data collection
+          </label>
+        </div>
+        <button type="submit" class="btn-save">Save Privacy Settings</button>
+      </form>
+    </div>
+  </div>
+</div>

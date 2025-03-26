@@ -1,42 +1,83 @@
 <head>
-    <!-- ...existing code... -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- ...existing code... -->
 </head>
 <div class="container text-align-center">
     <div class="login-img">
-        <img src="/images/signin-image.png" alt="error" class="img">
+        <img src="/images/signin-image.png" alt="Sign In" class="img">
         <div class="sign-up-link">
             <p><a href="TypeAccount">Create an account</a></p>
         </div>
     </div>
-
+    
     <div class="login-box">
         <div class="login-header">
             <header>Sign in</header>
         </div>
-        <form (ngSubmit)="onSubmit()">
+        
+        <div class="oauth-login">
+            <button class="google-login" (click)="loginWithGoogle()">
+                <i class="fab fa-google"></i> Sign in with Google
+            </button>
+            <button class="facebook-login" (click)="loginWithFacebook()">
+                <i class="fab fa-facebook"></i> Sign in with Facebook
+            </button>
+            <div class="divider">
+                <span>or</span>
+            </div>
+        </div>
+        
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <div class="input-box">
-                <input type="text" class="input-field" placeholder="Email" autocomplete="off" required [(ngModel)]="email" name="email">
+                <input type="text" class="input-field" placeholder="Email" formControlName="email" autocomplete="off" required>
+                <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                    Please enter a valid email address.
+                </div>
             </div>
+            
             <div class="input-box position-relative">
-                <input type="password" class="input-field" placeholder="Password" autocomplete="off" required id="password" [(ngModel)]="password" name="password">
-                <i class="fa fa-eye position-absolute" id="togglePassword" style="cursor: pointer; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                <input [type]="showPassword ? 'text' : 'password'" 
+                       class="input-field" 
+                       placeholder="Password" 
+                       formControlName="password" 
+                       autocomplete="off" 
+                       required 
+                       id="password">
+                <i [class]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'" 
+                   id="togglePassword" 
+                   (click)="togglePasswordVisibility()"></i>
+                
+                <div class="password-strength-meter">
+                    <div class="strength-bar" [style.width.%]="passwordStrength"></div>
+                </div>
+                
+                <div class="error-message" *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">
+                    Password is required.
+                </div>
+                <div class="error-message" *ngIf="loginForm.get('password')?.hasError('weakPassword')">
+                    Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters.
+                </div>
             </div>
+            
+            <div class="error-message" *ngIf="loginError">{{ loginError }}</div>
+            
             <div class="forgot">
                 <section>
-                    <input type="checkbox" id="check">
+                    <input type="checkbox" id="check" formControlName="rememberMe">
                     <label for="check">Remember me</label>
                 </section>
                 <section>
                     <a href="#">Forgot password</a>
                 </section>
             </div>
+            
             <div class="input-submit">
-                <button type="submit" class="submit-btn">Log in</button>
+                <button type="submit" 
+                        class="submit-btn" 
+                        [disabled]="loginForm.invalid || isLoading">
+                    <span *ngIf="isLoading" class="spinner"></span>
+                    {{ isLoading ? 'Logging in...' : 'Log in' }}
+                </button>
             </div>
         </form>
     </div>
 </div>
-
-
