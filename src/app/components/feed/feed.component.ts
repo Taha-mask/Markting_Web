@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewChild, ElementRef, OnInit, Inject, OnDestroy } from '@angular/core';
+import { Component, HostListener, ViewChild, ElementRef, OnInit, Inject, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -62,15 +62,19 @@ interface Comment {
   parentId?: string;
   replyText?: string;
   showLikedBy?: boolean;
+  isEditing?: boolean;
+  editText?: string;
+  editHistory?: { text: string; editedBy: string; timestamp: Date }[];
+  lastEditedBy?: string;
+  isLikedByCurrentUser?: boolean;
 }
 
-// واجهة لـ Trending Feed
 interface TrendingFeed {
   url: string;
   alt: string;
-  title?: string; // عنوان اختياري لكل صورة
-  description?: string; // وصف اختياري
-  link?: string; // رابط اختياري عند النقر
+  title?: string;
+  description?: string;
+  link?: string;
 }
 
 @Component({
@@ -84,6 +88,7 @@ interface TrendingFeed {
 export class FeedComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild(TrendingSidebarComponent) trendingSidebar!: TrendingSidebarComponent;
+  @ViewChildren('commentContainer') commentContainers!: QueryList<ElementRef>;
   isDropdownVisible = false;
   newComment: string = '';
   newCommentImageUrl: string | ArrayBuffer | null = null;
@@ -106,7 +111,6 @@ export class FeedComponent implements OnInit, OnDestroy {
       this.posts = updatedPosts;
     });
     this.filterPostsByCategory('All');
-    // Subscribe to posts from the service
     this.postSubscription = this.postService.getPosts().subscribe(
       (updatedPosts: Post[]) => {
         this.posts = updatedPosts;
@@ -115,7 +119,6 @@ export class FeedComponent implements OnInit, OnDestroy {
         console.error('Error fetching posts', error);
       }
     );
-    // يمكن إضافة منطق لتحميل Trending Feeds من API هنا
   }
 
   private isDragging = false;
@@ -171,7 +174,6 @@ export class FeedComponent implements OnInit, OnDestroy {
     { name: 'Jacob Jones', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false },
   ];
 
-  // مصفوفة Trending Feeds مع ميزات إضافية
   trendingFeeds: TrendingFeed[] = [
     { 
       url: 'https://images.deepai.org/art-image/fca7454eeb5b41f18f1f1dd7f5d31e74/a-small-closed-room-with-a-small-bed-that-can_gH54Ii2.jpg', 
@@ -449,45 +451,97 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
   }
 
-  editComment(post: Post, comment: Comment) {
-    const newCommentText = prompt('Edit your comment:', comment.text);
-    if (newCommentText !== null) {
-      comment.text = newCommentText;
+  editComment(comment: Comment) {
+    this.resetAllEditingStates();
+    comment.isEditing = true;
+    comment.editText = comment.text;
+  }
+
+  saveCommentEdit(comment: Comment) {
+    if (comment.editText && comment.editText.trim()) {
+      if (!comment.editHistory) {
+        comment.editHistory = [];
+      }
+      if (comment.editText.trim() !== comment.text) {
+        comment.editHistory.push({
+          text: comment.text,
+          editedBy: this.currentUser,
+          timestamp: new Date()
+        });
+        if (comment.editHistory.length > 5) {
+          comment.editHistory.shift();
+        }
+        comment.text = comment.editText.trim();
+        comment.lastEditedBy = this.currentUser;
+      }
+    }
+    comment.isEditing = false;
+    comment.editText = undefined;
+  }
+
+  cancelCommentEdit(comment: Comment) {
+    comment.isEditing = false;
+    comment.editText = undefined;
+  }
+
+  restoreCommentVersion(comment: Comment, event: Event) {
+    const target = event.target as HTMLSelectElement;
+    if (!target) {
+      console.warn('Event target is null');
+      return;
+    }
+
+    const versionIndex = parseInt(target.value, 10);
+
+    if (
+      comment.editHistory &&
+      !isNaN(versionIndex) &&
+      versionIndex >= 0 &&
+      versionIndex < comment.editHistory.length
+    ) {
+      const restoredVersion = comment.editHistory[versionIndex];
+      comment.text = restoredVersion.text;
+      comment.isEditing = false;
     }
   }
 
-  addComment(post: Post, commentText: string): void {
-    if (commentText.trim() || this.newCommentImageUrl) {
-      const imageUrl = typeof this.newCommentImageUrl === 'string' ? this.newCommentImageUrl : undefined;
-      post.comments.push({
-        id: this.generateCommentId(),
-        username: this.currentUser,
-        text: commentText,
-        imageUrl,
-        likes: 0,
-        likedBy: [],
-        timestamp: new Date(),
-        profileImageUrl: this.user[0].profileImageUrl
+  private resetAllEditingStates() {
+    this.posts.forEach((post: Post) => {
+      post.comments.forEach((c: Comment) => {
+        c.isEditing = false;
+        c.editText = undefined;
+        c.replies?.forEach((reply: Comment) => {
+          reply.isEditing = false;
+          reply.editText = undefined;
+        });
       });
-      this.newComment = '';
-      this.newCommentImageUrl = null;
+    });
+  }
+
+  editReply(reply: Comment) {
+    reply.isEditing = true;
+    reply.editText = reply.text;
+  }
+
+  saveReplyEdit(reply: Comment) {
+    if (reply.editText && reply.editText.trim()) {
+      reply.text = reply.editText.trim();
     }
+    reply.isEditing = false;
+  }
+
+  cancelReplyEdit(reply: Comment) {
+    reply.isEditing = false;
+    reply.editText = undefined;
   }
 
   toggleCommentLike(comment: Comment) {
-    const currentUser = {
-      username: this.currentUser,
-      profileImageUrl: this.user[0].profileImageUrl
-    };
+    comment.isLikedByCurrentUser = !comment.isLikedByCurrentUser;
+    comment.likes += comment.isLikedByCurrentUser ? 1 : -1;
+  }
 
-    const userIndex = comment.likedBy.findIndex(user => user.username === currentUser.username);
-    if (userIndex === -1) {
-      comment.likes++;
-      comment.likedBy.push(currentUser);
-    } else {
-      comment.likes--;
-      comment.likedBy.splice(userIndex, 1);
-    }
+  isCommentLikedByCurrentUser(comment: Comment): boolean {
+    return comment.isLikedByCurrentUser || false;
   }
 
   @HostListener('document:click', ['$event'])
@@ -744,8 +798,69 @@ export class FeedComponent implements OnInit, OnDestroy {
     comment.showLikedBy = !comment.showLikedBy;
   }
 
-  private generateCommentId(): string {
-    return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  private generateUniqueId(): string {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }
+
+  addComment(post: Post, commentText: string) {
+    if (!commentText || commentText.trim() === '') return;
+
+    const newComment: Comment = {
+      id: this.generateUniqueId(),
+      username: this.currentUser,
+      profileImageUrl: this.user[0].profileImageUrl,
+      text: commentText.trim(),
+      timestamp: new Date(),
+      likes: 0,
+      likedBy: [],
+      replies: []
+    };
+
+    // Add the comment to the post
+    if (!post.comments) {
+      post.comments = [];
+    }
+    post.comments.push(newComment);
+
+    // Reset comment input
+    this.newComment = '';
+
+    // Scroll to the newly added comment
+    this.scrollToLastComment(post);
+  }
+
+  scrollToLastComment(post: Post) {
+    // Use setTimeout to ensure DOM has updated
+    setTimeout(() => {
+      try {
+        // Find the last comment in this post's comments
+        const lastCommentIndex = post.comments.length - 1;
+        const lastCommentElement = document.querySelector(
+          `.comment-item:nth-child(${lastCommentIndex + 1})`
+        );
+
+        if (lastCommentElement) {
+          lastCommentElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }
+      } catch (error) {
+        console.error('Error scrolling to comment:', error);
+      }
+    }, 100);
+  }
+
+  focusNextCommentInput(currentPost: Post) {
+    // Find the index of the current post
+    const postIndex = this.posts.findIndex(p => p.id === currentPost.id);
+    
+    // If there's a next post, attempt to focus its comment input
+    if (postIndex < this.posts.length - 1) {
+      const nextPost = this.posts[postIndex + 1];
+      // You might need to implement a method to programmatically focus the next comment input
+      console.log('Focusing next post comment input');
+    }
   }
 
   toggleReplyInput(comment: Comment) {
@@ -759,7 +874,7 @@ export class FeedComponent implements OnInit, OnDestroy {
     if (!replyText.trim()) return;
 
     const reply: Comment = {
-      id: this.generateCommentId(),
+      id: this.generateUniqueId(),
       username: this.currentUser,
       text: replyText,
       likes: 0,
@@ -777,20 +892,23 @@ export class FeedComponent implements OnInit, OnDestroy {
     comment.showReplyInput = false;
   }
 
-  // دالة للتعامل مع النقر على Trending Feed
   onTrendingFeedClick(feed: TrendingFeed) {
     if (feed.link) {
-      window.open(feed.link, '_blank'); // فتح الرابط في نافذة جديدة
+      window.open(feed.link, '_blank');
     } else {
       console.log('Clicked on trending feed:', feed.title);
-      // يمكنك إضافة منطق آخر هنا، مثل فتح نافذة تفاصيل
+    }
+  }
+
+  deleteReply(comment: Comment, replyIndex: number) {
+    if (comment.replies) {
+      comment.replies.splice(replyIndex, 1);
     }
   }
 
   private postSubscription: Subscription | null = null;
 
   ngOnDestroy() {
-    // Unsubscribe to prevent memory leaks
     if (this.postSubscription) {
       this.postSubscription.unsubscribe();
     }
