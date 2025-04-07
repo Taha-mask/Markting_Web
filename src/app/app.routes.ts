@@ -15,6 +15,10 @@ import { InnerStoryComponent } from './components/inner-story/inner-story.compon
 import { ExplorepageComponent } from './components/explorepage/explorepage.component';
 import { AccountCenterComponent } from './components/account-center/account-center.component';
 import { RightsideComponent } from './components/rightside/rightside.component';
+import { StatusComponent } from './components/status/status.component';
+import { Error404Component } from './components/erorr404/error404.component';
+import { Error500Component } from './components/error500/error500.component';
+import { LoadingComponent } from './components/loading/loading.component';
 
 export const routes: Routes = [
   {path: 'explore' , component : ExplorepageComponent},
@@ -34,8 +38,11 @@ export const routes: Routes = [
   { path: 'signup-marketer', component: SignupMarketerComponent },
   { path: 'type-account', component: TypeAccountComponent },
   {path: 'account-center', component: AccountCenterComponent},
+  {path: 'status', component: StatusComponent},
+  {path: '500', component: Error500Component},
+  {path:'loading',component:LoadingComponent},
   {
-    path: 'right-sidebar', 
+    path: 'right-sidebar',
     component: RightsideComponent,
     title: 'Right Sidebar'
   },
@@ -43,5 +50,6 @@ export const routes: Routes = [
     path: '',
     pathMatch : 'full',
     redirectTo : '/login'
-  }
+  },
+  {path:"**", component: Error404Component}
 ];
