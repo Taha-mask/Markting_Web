@@ -7,6 +7,8 @@ import { RouterModule } from '@angular/router';
 import { PostService } from '../services/post.service';
 import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.component';
 import { User } from '../../interfaces/user';
+import { Post } from '../../interfaces/post';
+import { PostComment } from '../../interfaces/Comment';
 import { Subscription } from 'rxjs';
 
 declare var bootstrap: any;
@@ -21,48 +23,6 @@ interface ReactionUser {
   profileImageUrl: string;
   reactionType: string;
   timestamp: Date;
-}
-
-interface Comment {
-  id: string;
-  username: string;
-  text: string;
-  imageUrl?: string;
-  likes: number;
-  likedBy: { username: string; profileImageUrl: string; }[];
-  timestamp: Date;
-  profileImageUrl: string;
-  replies?: Comment[];
-  showReplyInput?: boolean;
-  parentId?: string;
-  replyText?: string;
-  showLikedBy?: boolean;
-}
-
-interface Post {
-  id?: string;
-  username: string;
-  profileImageUrl: string;
-  timestamp: Date;
-  content: string;
-  category: string;
-  subCategory?: string;
-  images: string[];
-  currentImageIndex: number;
-  likes: number;
-  Shares: number;
-  Saves: number;
-  showComments: boolean;
-  isEditing: boolean;
-  liked: boolean;
-  saved: boolean;
-  comments: Comment[];
-  reactions?: { [key: string]: number };
-  topReactions?: ReactionCount[];
-  reactionUsers?: ReactionUser[];
-  isPinned?: boolean;
-  showReactionUsers?: boolean;
-  isFollowing?: boolean; 
 }
 
 interface TrendingFeed {
@@ -123,6 +83,7 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
       isEditing: false,
       liked: false,
       saved: false,
+      isFollowing: false, 
       comments: [
         {
           id: 'comment1',
@@ -208,10 +169,30 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     }
   ];
 
-  subCategories: any[] = [];
+  subCategories: { [key: string]: string[] } = {
+    'Electrical Tools': ['All', 'Power Tools', 'Hand Tools', 'Measuring Tools', 'Safety Equipment'],
+    'Food': ['All', 'Snacks', 'Beverages', 'Dairy', 'Bakery', 'Canned Foods'],
+    'Medicines': ['All', 'Prescription', 'Over-the-Counter', 'First Aid', 'Vitamins'],
+    'Electronics': ['All', 'Smartphones', 'Laptops', 'Tablets', 'Accessories'],
+    'Clothing': ['All', 'Men', 'Women', 'Children', 'Accessories'],
+    'Fashion': ['All', 'Shoes', 'Bags', 'Jewelry', 'Watches'],
+    'Home & Kitchen': ['All', 'Appliances', 'Cookware', 'Storage', 'Cleaning'],
+    'Beauty & Personal Care': ['All', 'Skincare', 'Haircare', 'Makeup', 'Fragrances'],
+    'Home Appliances': ['All', 'Kitchen', 'Laundry', 'Cleaning', 'Climate Control'],
+    'Sports & Fitness': ['All', 'Equipment', 'Clothing', 'Accessories', 'Supplements'],
+    'Video Games': ['All', 'Consoles', 'Games', 'Accessories', 'Digital Content'],
+    'Toys & Hobbies': ['All', 'Action Figures', 'Board Games', 'Outdoor Toys', 'Arts & Crafts'],
+    'Auto Parts': ['All', 'Engine', 'Exterior', 'Interior', 'Accessories'],
+    'Groceries': ['All', 'Fresh Food', 'Pantry', 'Beverages', 'Household'],
+    'Health & Personal Care': ['All', 'Personal Care', 'Health Care', 'Baby Care', 'Elderly Care'],
+    'Books & Media': ['All', 'Books', 'Movies', 'Music', 'Magazines'],
+    'Pet Supplies': ['All', 'Food', 'Accessories', 'Health Care', 'Grooming'],
+    'Perfumes': ['All', 'Men', 'Women', 'Unisex', 'Gift Sets']
+  };
+
   activeSubCategory: string = '';
 
-  categories = [
+  categories: { name: string, icon: string }[] = [
     { name: 'All', icon: 'bi bi-collection' },
     { name: 'Electrical Tools', icon: 'bi bi-tools' },
     { name: 'Food', icon: 'bi bi-egg-fried' },
@@ -230,7 +211,7 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     { name: 'Health & Personal Care', icon: 'bi bi-heart-pulse' },
     { name: 'Books & Media', icon: 'bi bi-book' },
     { name: 'Pet Supplies', icon: 'bi bi-heart' },
-    { name: 'Perfumes', icon: 'bi bi-flower1' },
+    { name: 'Perfumes', icon: 'bi bi-flower1' }
   ];
 
   formatCategoryName(name: string): string {
@@ -351,7 +332,11 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
 
   filterPostsBySubCategory(subCategoryName: string) {
     this.activeSubCategory = subCategoryName;
-    this.filteredPosts = this.posts.filter(post => post.subCategory === subCategoryName);
+    if (subCategoryName === 'All') {
+      this.filterPostsByCategory(this.activeCategory);
+    } else {
+      this.posts = this.postService.filterBySubCategory(this.activeCategory, subCategoryName);
+    }
   }
 
   getBentoItemClass(index: number): string {
@@ -441,46 +426,37 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     }
   }
 
-  createPost() {
-    // Check if post content is not empty
-    if (!this.postContent.trim()) {
-      console.warn('Post content cannot be empty');
-      return;
+  addPost() {
+    if (this.postContent.trim()) {
+      const newPost = {
+        username: this.user[0].username,
+        profileImageUrl: this.user[0].profileImageUrl,
+        timestamp: new Date(),
+        content: this.postContent,
+        category: this.activeCategory,
+        subCategory: this.activeSubCategory,
+        images: this.newCommentImageUrl ? [this.newCommentImageUrl.toString()] : [],
+        currentImageIndex: 0,
+        likes: 0,
+        Shares: 0,
+        Saves: 0,
+        showComments: false,
+        isEditing: false,
+        liked: false,
+        saved: false,
+        isFollowing: false,
+        comments: []
+      };
+
+      this.postService.addPost(newPost);
+      this.resetForm();
     }
+  }
 
-    // Create a new post object
-    const newPost: Post = {
-      username: this.currentUser,
-      profileImageUrl: 'images/user-1.jpg', // Replace with actual user profile image
-      timestamp: new Date(),
-      content: this.postContent,
-      category: 'General', // You can modify this based on user selection
-      subCategory: 'General',
-      images: [],
-      currentImageIndex: 0,
-      likes: 0,
-      Shares: 0,
-      Saves: 0,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      isFollowing: false,
-      comments: []
-    };
-
-    // Add post to explore page
-    this.posts.unshift(newPost);
-
-    // Add post to feed using PostService
-    this.postService.addPost(newPost);
-
-    // Reset post creation form
+  private resetForm() {
     this.postContent = '';
     this.newCommentImageUrl = null;
-
-    // Close any open modals or reset UI states
-    this.isShareModalVisible = false;
+    this.showEmojiPicker = false;
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -542,7 +518,7 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     }
   }
 
-  editComment(post: Post, comment: Comment) {
+  editComment(post: Post, comment: PostComment) {
     const newCommentText = prompt('Edit your comment:', comment.text);
     if (newCommentText !== null) {
       comment.text = newCommentText;
@@ -567,7 +543,7 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleCommentLike(comment: Comment) {
+  toggleCommentLike(comment: PostComment) {
     const currentUser = {
       username: this.currentUser,
       profileImageUrl: this.user[0].profileImageUrl
@@ -613,131 +589,24 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
   goBackToCategories() {
     this.activeCategory = 'All';
     this.activeSubCategory = '';
-    this.subCategories = [];
+    this.subCategories = {};
     this.filterPostsByCategory('All');
   }
 
-  showSubCategories(category: any) {
-    this.activeCategory = category.name;
-    this.subCategories = this.getSubCategories(category.name);
+  getSubCategories(categoryName: string): string[] {
+    return this.subCategories[categoryName] || [];
   }
 
-  getSubCategories(categoryName: string): any[] {
-    const subCategories = [
-      { name: 'All', icon: 'bi bi-collection' }
-    ];
-    switch (categoryName) {
-      case 'Food':
-        return subCategories.concat([
-          { name: 'Drinks', icon: 'bi bi-cup' },
-          { name: 'Candy', icon: 'bi bi-candy' },
-          { name: 'Snacks', icon: 'bi bi-basket' },
-          { name: 'Desserts', icon: 'bi bi-cake' }
-        ]);
-      case 'Electronics':
-        return subCategories.concat([
-          { name: 'Phones', icon: 'bi bi-phone' },
-          { name: 'Laptops', icon: 'bi bi-laptop' },
-          { name: 'Accessories', icon: 'bi bi-headphones' }
-        ]);
-      case 'Electrical Tools':
-        return subCategories.concat([
-          { name: 'Power Tools', icon: 'bi bi-lightning' },
-          { name: 'Hand Tools', icon: 'bi bi-wrench' },
-          { name: 'Measurement Tools', icon: 'bi bi-ruler' }
-        ]);
-      case 'Medicines':
-        return subCategories.concat([
-          { name: 'Prescription', icon: 'bi bi-file-medical' },
-          { name: 'Over-the-Counter', icon: 'bi bi-capsule' },
-          { name: 'Supplements', icon: 'bi bi-pills' }
-        ]);
-      case 'Clothing':
-        return subCategories.concat([
-          { name: 'Men', icon: 'bi bi-person' },
-          { name: 'Women', icon: 'bi bi-person-fill' },
-          { name: 'Kids', icon: 'bi bi-person-badge' }
-        ]);
-      case 'Fashion':
-        return subCategories.concat([
-          { name: 'Accessories', icon: 'bi bi-handbag' },
-          { name: 'Jewelry', icon: 'bi bi-gem' },
-          { name: 'Shoes', icon: 'bi bi-shoe' }
-        ]);
-      case 'Home & Kitchen':
-        return subCategories.concat([
-          { name: 'Furniture', icon: 'bi bi-house' },
-          { name: 'Appliances', icon: 'bi bi-fan' },
-          { name: 'Decor', icon: 'bi bi-paint-bucket' }
-        ]);
-      case 'Beauty & Personal Care':
-        return subCategories.concat([
-          { name: 'Skincare', icon: 'bi bi-droplet' },
-          { name: 'Haircare', icon: 'bi bi-scissors' },
-          { name: 'Makeup', icon: 'bi bi-brush' }
-        ]);
-      case 'Home Appliances':
-        return subCategories.concat([
-          { name: 'Kitchen', icon: 'bi bi-fridge' },
-          { name: 'Laundry', icon: 'bi bi-washing-machine' },
-          { name: 'Cleaning', icon: 'bi bi-vacuum' }
-        ]);
-      case 'Sports & Fitness':
-        return subCategories.concat([
-          { name: 'Equipment', icon: 'bi bi-dumbbell' },
-          { name: 'Clothing', icon: 'bi bi-tshirt' },
-          { name: 'Accessories', icon: 'bi bi-watch' }
-        ]);
-      case 'Video Games':
-        return subCategories.concat([
-          { name: 'Consoles', icon: 'bi bi-controller' },
-          { name: 'Games', icon: 'bi bi-gamepad' },
-          { name: 'Accessories', icon: 'bi bi-headset' }
-        ]);
-      case 'Toys & Hobbies':
-        return subCategories.concat([
-          { name: 'Action Figures', icon: 'bi bi-robot' },
-          { name: 'Board Games', icon: 'bi bi-grid' },
-          { name: 'Puzzles', icon: 'bi bi-puzzle' }
-        ]);
-      case 'Auto Parts':
-        return subCategories.concat([
-          { name: 'Engine', icon: 'bi bi-gear' },
-          { name: 'Body', icon: 'bi bi-car-front' },
-          { name: 'Interior', icon: 'bi bi-steering-wheel' }
-        ]);
-      case 'Groceries':
-        return subCategories.concat([
-          { name: 'Fruits', icon: 'bi bi-apple' },
-          { name: 'Vegetables', icon: 'bi bi-carrot' },
-          { name: 'Dairy', icon: 'bi bi-milk' }
-        ]);
-      case 'Health & Personal Care':
-        return subCategories.concat([
-          { name: 'Medical Supplies', icon: 'bi bi-first-aid' },
-          { name: 'Personal Hygiene', icon: 'bi bi-hand-sanitizer' },
-          { name: 'Fitness', icon: 'bi bi-heart-pulse' }
-        ]);
-      case 'Books & Media':
-        return subCategories.concat([
-          { name: 'Books', icon: 'bi bi-book' },
-          { name: 'Magazines', icon: 'bi bi-journal' },
-          { name: 'Music', icon: 'bi bi-music-note' }
-        ]);
-      case 'Pet Supplies':
-        return subCategories.concat([
-          { name: 'Food', icon: 'bi bi-bone' },
-          { name: 'Toys', icon: 'bi bi-ball' },
-          { name: 'Grooming', icon: 'bi bi-scissors' }
-        ]);
-      case 'Perfumes':
-        return subCategories.concat([
-          { name: 'Men', icon: 'bi bi-bottle' },
-          { name: 'Women', icon: 'bi bi-bottle-fill' },
-          { name: 'Unisex', icon: 'bi bi-bottle-half' }
-        ]);
-      default:
-        return subCategories;
+  showSubCategories(category: { name: string, icon: string }) {
+    this.activeCategory = category.name;
+    if (this.activeCategory === 'All') {
+      this.filterPostsByCategory('All');
+    } else {
+      this.filterPostsByCategory(category.name);
+      if (this.subCategories[category.name]) {
+        this.activeSubCategory = 'All';
+        this.filterPostsBySubCategory('All');
+      }
     }
   }
 
@@ -833,7 +702,7 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     post.showReactionUsers = !post.showReactionUsers;
   }
 
-  showCommentLikes(comment: Comment) {
+  showCommentLikes(comment: PostComment) {
     comment.showLikedBy = !comment.showLikedBy;
   }
 
@@ -841,17 +710,17 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
 
-  toggleReplyInput(comment: Comment) {
+  toggleReplyInput(comment: PostComment) {
     comment.showReplyInput = !comment.showReplyInput;
     if (!comment.showReplyInput) {
       this.currentReplyText = '';
     }
   }
 
-  addReply(comment: Comment, replyText: string) {
+  addReply(comment: PostComment, replyText: string) {
     if (!replyText.trim()) return;
 
-    const reply: Comment = {
+    const reply: PostComment = {
       id: this.generateCommentId(),
       username: this.currentUser,
       text: replyText,
