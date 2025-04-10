@@ -1,79 +1,55 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-
-interface Post {
-  id?: string;
-  username: string;
-  profileImageUrl: string;
-  timestamp: Date;
-  content: string;
-  category: string;
-  subCategory?: string;
-  images: string[];
-  currentImageIndex: number;
-  likes: number;
-  Shares: number;
-  Saves: number;
-  showComments: boolean;
-  isEditing: boolean;
-  liked: boolean;
-  saved: boolean;
-  comments: any[];
-}
+import { Observable } from 'rxjs';
+import { FirebaseService } from '../../services/firebase.service';
+import { Post } from '../../interfaces/post';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService {
-  private posts: Post[] = [];
-  private postsSubject = new BehaviorSubject<Post[]>([]);
+  constructor(private firebaseService: FirebaseService) {}
 
-  constructor() {
-    // Initialize with some sample posts if needed
-    this.posts = this.getSamplePosts();
-    this.postsSubject.next(this.posts);
-  }
-
-  // Method to get posts as an Observable
   getPosts(): Observable<Post[]> {
-    return this.postsSubject.asObservable();
+    return this.firebaseService.getPosts();
   }
 
-  // Method to add a new post
-  addPost(newPost: Post) {
-    // Generate a unique ID (you might want to use a more robust method)
-    newPost.id = `post_${Date.now()}`;
-    
-    // Add the new post to the beginning of the array
-    this.posts.unshift(newPost);
-    
-    // Emit the updated posts
-    this.postsSubject.next(this.posts);
+  getTrendingPosts(): Observable<Post[]> {
+    return this.firebaseService.getTrendingPosts();
   }
 
-  // Method to get sample posts (can be replaced with API call)
-  private getSamplePosts(): Post[] {
-    return [
-      {
-        id: 'sample1',
-        username: 'Taha Mahmoud',
-        profileImageUrl: 'assets/images/user-1.png',
-        timestamp: new Date(),
-        content: 'Welcome to our marketing platform!',
-        category: 'All',
-        images: [],
-        currentImageIndex: 0,
-        likes: 0,
-        Shares: 0,
-        Saves: 0,
-        showComments: false,
-        isEditing: false,
-        liked: false,
-        saved: false,
-        comments: []
-      }
-    ];
+  getPostsByCategory(category: string): Observable<Post[]> {
+    return this.firebaseService.getPostsByCategory(category);
   }
 
-  // Additional methods like deletePost, updatePost can be added here
+  async createPost(post: Post): Promise<string> {
+    return await this.firebaseService.addPost(post);
+  }
+
+  async updatePost(postId: string, data: Partial<Post>): Promise<void> {
+    await this.firebaseService.updatePost(postId, data);
+  }
+
+  async deletePost(postId: string): Promise<void> {
+    await this.firebaseService.deletePost(postId);
+  }
+
+  async uploadImage(file: File): Promise<string> {
+    return await this.firebaseService.uploadImage(file);
+  }
+
+  async addComment(postId: string, comment: any): Promise<string> {
+    return await this.firebaseService.addComment(postId, comment);
+  }
+
+  getComments(postId: string): Observable<any[]> {
+    return this.firebaseService.getComments(postId);
+  }
+
+  async addReaction(postId: string, userId: string, reactionType: string): Promise<void> {
+    await this.firebaseService.addReaction(postId, userId, reactionType);
+  }
+
+  getReactions(postId: string): Observable<any[]> {
+    return this.firebaseService.getReactions(postId);
+  }
 }
