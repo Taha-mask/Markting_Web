@@ -6,42 +6,12 @@ import { User } from '../../interfaces/user';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { PostService } from '../services/post.service';
+import { Post } from '../../interfaces/post';
+import { PostComment } from '../../interfaces/Comment';
 
 interface ReactionCount {
   reaction: string;
   count: number;
-}
-
-interface Comment {
-  username: string;
-  text: string;
-  imageUrl?: string;
-  likes: number;
-  likedBy: string[];
-  timestamp: Date;
-  profileImageUrl: string;
-}
-
-interface Post {
-  username: string;
-  profileImageUrl: string;
-  timestamp: Date;
-  content: string;
-  category: string;
-  subCategory?: string;
-  images: string[];
-  currentImageIndex: number;
-  likes: number;
-  Shares: number;
-  Saves: number;
-  showComments: boolean;
-  isEditing: boolean;
-  liked: boolean;
-  saved: boolean;
-  comments: Comment[];
-  reactions?: { [key: string]: number };
-  topReactions?: ReactionCount[];
-  isPinned?: boolean;
 }
 
 @Component({
@@ -101,12 +71,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
       isEditing: false,
       liked: false,
       saved: false,
+      isFollowing: false,
       comments: [
         {
+          id: '1',
           username: 'John Doe',
           text: 'Amazing results! Would love to hear more about your strategy.',
           likes: 5,
-          likedBy: [],
+          likedBy: [{ username: 'John Doe', profileImageUrl: 'public/images/user-2.png' }],
           timestamp: new Date(),
           profileImageUrl: 'public/images/user-2.png'
         }
@@ -133,6 +105,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       isEditing: false,
       liked: true,
       saved: false,
+      isFollowing: false,
       comments: [],
       reactions: {
         '👍': 35,

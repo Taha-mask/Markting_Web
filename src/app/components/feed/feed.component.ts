@@ -3,11 +3,14 @@ import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { Post } from '../../interfaces/post';
+import { PostComment } from '../../interfaces/Comment';
 import { RouterModule } from '@angular/router';
 import { PostService } from '../services/post.service';
 import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.component';
 import { User } from '../../interfaces/user';
 import { Subscription } from 'rxjs';
+import { Dropdown } from 'bootstrap';
 
 declare var bootstrap: any;
 
@@ -21,52 +24,6 @@ interface ReactionUser {
   profileImageUrl: string;
   reactionType: string;
   timestamp: Date;
-}
-
-interface Post {
-  id?: string;
-  username: string;
-  profileImageUrl: string;
-  timestamp: Date;
-  content: string;
-  category: string;
-  subCategory?: string;
-  images: string[];
-  currentImageIndex: number;
-  likes: number;
-  Shares: number;
-  Saves: number;
-  showComments: boolean;
-  isEditing: boolean;
-  liked: boolean;
-  saved: boolean;
-  comments: Comment[];
-  reactions?: { [key: string]: number };
-  topReactions?: ReactionCount[];
-  reactionUsers?: ReactionUser[];
-  isPinned?: boolean;
-  showReactionUsers?: boolean;
-}
-
-interface Comment {
-  id: string;
-  username: string;
-  text: string;
-  imageUrl?: string;
-  likes: number;
-  likedBy: { username: string; profileImageUrl: string; }[];
-  timestamp: Date;
-  profileImageUrl: string;
-  replies?: Comment[];
-  showReplyInput?: boolean;
-  parentId?: string;
-  replyText?: string;
-  showLikedBy?: boolean;
-  isEditing?: boolean;
-  editText?: string;
-  editHistory?: { text: string; editedBy: string; timestamp: Date }[];
-  lastEditedBy?: string;
-  isLikedByCurrentUser?: boolean;
 }
 
 interface TrendingFeed {
@@ -83,59 +40,37 @@ interface TrendingFeed {
   imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.css'],
-  providers: [DatePipe, PostService],
+  providers: [DatePipe]
 })
 export class FeedComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild(TrendingSidebarComponent) trendingSidebar!: TrendingSidebarComponent;
   @ViewChildren('commentContainer') commentContainers!: QueryList<ElementRef>;
   isDropdownVisible = false;
-  newComment: string = '';
-  newCommentImageUrl: string | ArrayBuffer | null = null;
   postContent: string = '';
+  filteredPosts: any[] = [];
+  user: any[] = [
+    {
+      username: 'Taha Mahmoud',
+      profileImageUrl: 'assets/images/profile.jpg'
+    }
+  ];
   currentUser = 'Taha Mahmoud';
-  showEmojiPicker = false;
   activeCategory: string = 'All';
+  activeSubCategory: string = '';
+  subCategories: any[] = [];
   navbarVisible = true;
   lastScrollTop = 0;
-  isShareModalVisible = false;
-  selectedPost: Post | null = null;
+  private startX = 0;
+  private scrollLeft = 0;
+  private isDragging = false;
+  selectedPost: any;
   postUrl: string = '';
   linkCopied: boolean = false;
   currentReplyText: string = '';
-
-  constructor(@Inject(PostService) private postService: PostService) {}
-
-  ngOnInit() {
-    this.postService.getPosts().subscribe((updatedPosts: Post[]) => {
-      this.posts = updatedPosts;
-    });
-    this.filterPostsByCategory('All');
-    this.postSubscription = this.postService.getPosts().subscribe(
-      (updatedPosts: Post[]) => {
-        this.posts = updatedPosts;
-      },
-      (error) => {
-        console.error('Error fetching posts', error);
-      }
-    );
-  }
-
-  private isDragging = false;
-  private startX = 0;
-  private scrollLeft = 0;
-
-  user: User[] = [
-    {
-      username: 'Taha Mahmoud ',
-      type: 'Markter',
-      profileImageUrl: 'images/user-1.png',
-      status: 'Online',
-    }
-  ];
-
-  subCategories: any[] = [];
-  activeSubCategory: string = '';
+  showEmojiPicker: boolean = false;
+  newComment: string = '';
+  private postSubscription: Subscription | null = null;
 
   categories = [
     { name: 'All', icon: 'bi bi-collection' },
@@ -158,10 +93,6 @@ export class FeedComponent implements OnInit, OnDestroy {
     { name: 'Pet Supplies', icon: 'bi bi-heart' },
     { name: 'Perfumes', icon: 'bi bi-flower1' },
   ];
-
-  formatCategoryName(name: string): string {
-    return name.replace('&', '<br>&');
-  }
 
   usersFol = [
     { name: 'Wade Warren', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false },
@@ -203,6 +134,10 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
   ];
 
+  formatCategoryName(name: string): string {
+    return name.replace('&', '<br>&');
+  }
+
   followUser(user: any) {
     user.Follow = !user.Follow;
     if (user.Follow) {
@@ -216,23 +151,103 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.followUser(userFol);
   }
 
-  filteredPosts: Post[] = [];
+  showSubCategories(category: any) {
+    this.activeCategory = category.name;
+    if (category.name === 'All') {
+      this.filterPostsByCategory('All');
+    } else {
+      this.subCategories = this.getSubCategories(category.name);
+      this.filterPostsByCategory(category.name);
+    }
+  }
+
+  getSubCategories(categoryName: string): any[] {
+    const subCategoriesMap: { [key: string]: string[] } = {
+      'Electronics': ['Phones', 'Laptops', 'Tablets', 'Accessories'],
+      'Food': ['Restaurants', 'Recipes', 'Groceries', 'Delivery'],
+      'Medicines': ['Prescription', 'Over-the-counter', 'Supplements'],
+      'Clothing': ['Men', 'Women', 'Kids', 'Accessories'],
+      'Fashion': ['Trends', 'Accessories', 'Shoes', 'Bags'],
+      'Home & Kitchen': ['Appliances', 'Furniture', 'Decor', 'Cookware'],
+      'Beauty & Personal Care': ['Skincare', 'Makeup', 'Hair Care', 'Fragrance'],
+      'Sports & Fitness': ['Equipment', 'Apparel', 'Supplements', 'Training'],
+      'Books & Media': ['Books', 'Movies', 'Music', 'Games'],
+      // Add more subcategories as needed
+    };
+
+    return (subCategoriesMap[categoryName] || []).map(name => ({
+      name,
+      icon: this.getIconForSubCategory(name)
+    }));
+  }
+
+  getIconForSubCategory(name: string): string {
+    const iconMap: { [key: string]: string } = {
+      'Phones': 'bi bi-phone',
+      'Laptops': 'bi bi-laptop',
+      'Tablets': 'bi bi-tablet',
+      'Accessories': 'bi bi-headphones',
+      'Restaurants': 'bi bi-shop',
+      'Recipes': 'bi bi-journal-text',
+      'Groceries': 'bi bi-cart',
+      'Delivery': 'bi bi-truck',
+      'Men': 'bi bi-gender-male',
+      'Women': 'bi bi-gender-female',
+      'Kids': 'bi bi-people',
+      'Trends': 'bi bi-graph-up',
+      'Shoes': 'bi bi-boot',
+      'Bags': 'bi bi-handbag',
+      'Appliances': 'bi bi-fan',
+      'Furniture': 'bi bi-lamp',
+      'Decor': 'bi bi-house-heart',
+      'Cookware': 'bi bi-cup-hot',
+      'Skincare': 'bi bi-droplet',
+      'Makeup': 'bi bi-brush',
+      'Hair Care': 'bi bi-scissors',
+      'Fragrance': 'bi bi-flower1',
+      'Equipment': 'bi bi-gear',
+      'Apparel': 'bi bi-person-workspace',
+      'Training': 'bi bi-person-walking',
+      'Books': 'bi bi-book',
+      'Movies': 'bi bi-film',
+      'Music': 'bi bi-music-note',
+      'Games': 'bi bi-controller'
+    };
+    return iconMap[name] || 'bi bi-tag';
+  }
 
   filterPostsByCategory(categoryName: string) {
+    console.log('Filtering by category:', categoryName); // Debug log
+    console.log('Current posts:', this.samplePosts); // Debug log
+    
     this.activeCategory = categoryName;
     if (categoryName === 'All') {
-      this.filteredPosts = this.posts;
+      this.filteredPosts = [...this.samplePosts].sort((a, b) => 
+        (b.timestamp as any) - (a.timestamp as any)
+      );
     } else {
-      this.filteredPosts = this.posts.filter(post => post.category === categoryName);
+      this.filteredPosts = this.samplePosts
+        .filter(post => post.category === categoryName)
+        .sort((a, b) => (b.timestamp as any) - (a.timestamp as any));
     }
+    
+    console.log('Filtered posts:', this.filteredPosts); // Debug log
   }
 
   filterPostsBySubCategory(subCategoryName: string) {
     this.activeSubCategory = subCategoryName;
-    this.filteredPosts = this.posts.filter(post => post.subCategory === subCategoryName);
+    if (this.activeCategory === 'All') {
+      this.filteredPosts = [...this.samplePosts];
+    } else {
+      this.filteredPosts = this.samplePosts.filter(post => 
+        post.category === this.activeCategory && 
+        (!subCategoryName || post.subCategory === subCategoryName)
+      ).sort((a, b) => (b.timestamp as any) - (a.timestamp as any));
+    }
   }
 
-  posts: Post[] = [
+  // Sample posts data
+  samplePosts: any[] = [
     {
       username: 'Taha Mahmoud',
       profileImageUrl: 'images/user-1.jpg',
@@ -253,6 +268,7 @@ export class FeedComponent implements OnInit, OnDestroy {
       isEditing: false,
       liked: false,
       saved: false,
+      isFollowing: false,
       comments: [
         {
           id: 'comment1',
@@ -297,22 +313,22 @@ export class FeedComponent implements OnInit, OnDestroy {
     console.log('Friend request sent to', user.name);
   }
 
-  hidePost(post: Post) {
+  hidePost(post: any) {
     const index = this.filteredPosts.indexOf(post);
     if (index > -1) {
       this.filteredPosts.splice(index, 1);
     }
   }
 
-  snoozeUser(post: Post, days: number) {
+  snoozeUser(post: any, days: number) {
     alert(`Snoozed ${post.username} for ${days} days`);
   }
 
-  blockUser(post: Post) {
+  blockUser(post: any) {
     alert(`Blocked ${post.username}`);
   }
 
-  likePost(post: Post) {
+  likePost(post: any) {
     if (post.liked) {
       post.likes--;
     } else {
@@ -321,11 +337,11 @@ export class FeedComponent implements OnInit, OnDestroy {
     post.liked = !post.liked;
   }
 
-  toggleComments(post: Post) {
+  toggleComments(post: any) {
     post.showComments = !post.showComments;
   }
 
-  sharePost(post: Post) {
+  sharePost(post: any) {
     this.selectedPost = post;
     const postId = post.id || Date.now().toString();
     this.postUrl = `${window.location.origin}/post/${postId}`;
@@ -337,11 +353,11 @@ export class FeedComponent implements OnInit, OnDestroy {
     post.Shares++;
   }
 
-  toggleEdit(post: Post) {
+  toggleEdit(post: any) {
     post.isEditing = !post.isEditing;
   }
 
-  savePost(post: Post) {
+  savePost(post: any) {
     post.isEditing = false;
   }
 
@@ -350,7 +366,8 @@ export class FeedComponent implements OnInit, OnDestroy {
   }
 
   addEmoji(event: any) {
-    this.newComment += event.emoji.native;
+    this.postContent += event.emoji.native;
+    this.showEmojiPicker = false;
   }
 
   triggerFileInput() {
@@ -362,7 +379,9 @@ export class FeedComponent implements OnInit, OnDestroy {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.newCommentImageUrl = e.target?.result ?? null;
+        if (e.target?.result) {
+          // Add the image to the post when it's created
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -370,12 +389,13 @@ export class FeedComponent implements OnInit, OnDestroy {
 
   addPost() {
     if (this.postContent.trim()) {
-      const newPost: Post = {
-        username: this.user[0].username,
+      const newPost: any = {
+        username: this.currentUser,
         profileImageUrl: this.user[0].profileImageUrl,
         timestamp: new Date(),
         content: this.postContent,
-        category: 'General',
+        category: this.activeCategory,
+        subCategory: this.activeSubCategory,
         images: [],
         currentImageIndex: 0,
         likes: 0,
@@ -385,10 +405,12 @@ export class FeedComponent implements OnInit, OnDestroy {
         isEditing: false,
         liked: false,
         saved: false,
-        comments: [],
+        isFollowing: false,
+        comments: []
       };
-      this.posts.unshift(newPost);
+      this.samplePosts.unshift(newPost);
       this.postContent = '';
+      this.filterPostsByCategory(this.activeCategory);
     }
   }
 
@@ -421,96 +443,81 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.isDragging = false;
   }
 
-  toggleLike(post: Post) {
+  toggleLike(post: any) {
     post.liked = !post.liked;
     post.likes += post.liked ? 1 : -1;
   }
 
-  toggleSave(post: Post) {
+  toggleSave(post: any) {
     post.saved = !post.saved;
     post.Saves += post.saved ? 1 : -1;
   }
 
-  nextImage(post: Post) {
+  nextImage(post: any) {
     if (post.currentImageIndex < post.images.length - 1) {
       post.currentImageIndex++;
     }
   }
 
-  prevImage(post: Post) {
+  prevImage(post: any) {
     if (post.currentImageIndex > 0) {
       post.currentImageIndex--;
     }
   }
 
-  deleteComment(post: Post, commentIndex: number) {
-    if (post.comments[commentIndex].username === this.currentUser) {
-      post.comments.splice(commentIndex, 1);
-    } else {
-      alert('You can only delete your own comments.');
-    }
+  deleteComment(post: any, commentIndex: number) {
+    post.comments.splice(commentIndex, 1);
   }
 
-  editComment(comment: Comment) {
+  editComment(comment: any) {
     this.resetAllEditingStates();
     comment.isEditing = true;
     comment.editText = comment.text;
   }
 
-  saveCommentEdit(comment: Comment) {
+  saveCommentEdit(comment: any) {
     if (comment.editText && comment.editText.trim()) {
       if (!comment.editHistory) {
         comment.editHistory = [];
       }
-      if (comment.editText.trim() !== comment.text) {
-        comment.editHistory.push({
-          text: comment.text,
-          editedBy: this.currentUser,
-          timestamp: new Date()
-        });
-        if (comment.editHistory.length > 5) {
-          comment.editHistory.shift();
-        }
-        comment.text = comment.editText.trim();
-        comment.lastEditedBy = this.currentUser;
-      }
+      comment.editHistory.push({
+        text: comment.text,
+        editedBy: this.currentUser,
+        timestamp: new Date()
+      });
+      comment.text = comment.editText.trim();
+      comment.lastEditedBy = this.currentUser;
     }
     comment.isEditing = false;
     comment.editText = undefined;
   }
 
-  cancelCommentEdit(comment: Comment) {
+  cancelCommentEdit(comment: any) {
     comment.isEditing = false;
     comment.editText = undefined;
   }
 
-  restoreCommentVersion(comment: Comment, event: Event) {
+  restoreCommentVersion(comment: any, event: Event) {
     const target = event.target as HTMLSelectElement;
     if (!target) {
       console.warn('Event target is null');
       return;
     }
-
-    const versionIndex = parseInt(target.value, 10);
-
-    if (
-      comment.editHistory &&
-      !isNaN(versionIndex) &&
-      versionIndex >= 0 &&
-      versionIndex < comment.editHistory.length
-    ) {
-      const restoredVersion = comment.editHistory[versionIndex];
-      comment.text = restoredVersion.text;
-      comment.isEditing = false;
+    const selectedIndex = parseInt(target.value);
+    if (comment.editHistory && selectedIndex >= 0 && selectedIndex < comment.editHistory.length) {
+      const selectedVersion = comment.editHistory[selectedIndex];
+      comment.text = selectedVersion.text;
+      comment.lastEditedBy = selectedVersion.editedBy;
     }
+    comment.isEditing = false;
   }
 
   private resetAllEditingStates() {
-    this.posts.forEach((post: Post) => {
-      post.comments.forEach((c: Comment) => {
+    this.samplePosts.forEach((post: any) => {
+      post.comments.forEach((c: any) => {
         c.isEditing = false;
         c.editText = undefined;
-        c.replies?.forEach((reply: Comment) => {
+        c.replies?.forEach((reply: any) => {
           reply.isEditing = false;
           reply.editText = undefined;
         });
@@ -518,29 +525,29 @@ export class FeedComponent implements OnInit, OnDestroy {
     });
   }
 
-  editReply(reply: Comment) {
+  editReply(reply: any) {
     reply.isEditing = true;
     reply.editText = reply.text;
   }
 
-  saveReplyEdit(reply: Comment) {
+  saveReplyEdit(reply: any) {
     if (reply.editText && reply.editText.trim()) {
       reply.text = reply.editText.trim();
     }
     reply.isEditing = false;
   }
 
-  cancelReplyEdit(reply: Comment) {
+  cancelReplyEdit(reply: any) {
     reply.isEditing = false;
     reply.editText = undefined;
   }
 
-  toggleCommentLike(comment: Comment) {
+  toggleCommentLike(comment: any) {
     comment.isLikedByCurrentUser = !comment.isLikedByCurrentUser;
     comment.likes += comment.isLikedByCurrentUser ? 1 : -1;
   }
 
-  isCommentLikedByCurrentUser(comment: Comment): boolean {
+  isCommentLikedByCurrentUser(comment: any): boolean {
     return comment.isLikedByCurrentUser || false;
   }
 
@@ -552,22 +559,22 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
   }
 
-  editPost(post: Post) {
+  editPost(post: any) {
     post.isEditing = true;
   }
 
-  deletePost(post: Post) {
+  deletePost(post: any) {
     const index = this.filteredPosts.indexOf(post);
     if (index > -1) {
       this.filteredPosts.splice(index, 1);
     }
   }
 
-  reportPost(post: Post) {
+  reportPost(post: any) {
     alert(`Reported post by ${post.username}`);
   }
 
-  unfollow(post: Post) {
+  unfollow(post: any) {
     alert(`Unfollowed ${post.username}`);
   }
 
@@ -578,147 +585,11 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.filterPostsByCategory('All');
   }
 
-  showSubCategories(category: any) {
-    this.activeCategory = category.name;
-    this.subCategories = this.getSubCategories(category.name);
-  }
-
-  getSubCategories(categoryName: string): any[] {
-    const subCategories = [
-      { name: 'All', icon: 'bi bi-collection' }
-    ];
-    switch (categoryName) {
-      case 'Food':
-        return subCategories.concat([
-          { name: 'Drinks', icon: 'bi bi-cup' },
-          { name: 'Candy', icon: 'bi bi-candy' },
-          { name: 'Snacks', icon: 'bi bi-basket' },
-          { name: 'Desserts', icon: 'bi bi-cake' }
-        ]);
-      case 'Electronics':
-        return subCategories.concat([
-          { name: 'Phones', icon: 'bi bi-phone' },
-          { name: 'Laptops', icon: 'bi bi-laptop' },
-          { name: 'Accessories', icon: 'bi bi-headphones' }
-        ]);
-      case 'Electrical Tools':
-        return subCategories.concat([
-          { name: 'Power Tools', icon: 'bi bi-lightning' },
-          { name: 'Hand Tools', icon: 'bi bi-wrench' },
-          { name: 'Measurement Tools', icon: 'bi bi-ruler' }
-        ]);
-      case 'Medicines':
-        return subCategories.concat([
-          { name: 'Prescription', icon: 'bi bi-file-medical' },
-          { name: 'Over-the-Counter', icon: 'bi bi-capsule' },
-          { name: 'Supplements', icon: 'bi bi-pills' }
-        ]);
-      case 'Clothing':
-        return subCategories.concat([
-          { name: 'Men', icon: 'bi bi-person' },
-          { name: 'Women', icon: 'bi bi-person-fill' },
-          { name: 'Kids', icon: 'bi bi-person-badge' }
-        ]);
-      case 'Fashion':
-        return subCategories.concat([
-          { name: 'Accessories', icon: 'bi bi-handbag' },
-          { name: 'Jewelry', icon: 'bi bi-gem' },
-          { name: 'Shoes', icon: 'bi bi-shoe' }
-        ]);
-      case 'Home & Kitchen':
-        return subCategories.concat([
-          { name: 'Furniture', icon: 'bi bi-house' },
-          { name: 'Appliances', icon: 'bi bi-fan' },
-          { name: 'Decor', icon: 'bi bi-paint-bucket' }
-        ]);
-      case 'Beauty & Personal Care':
-        return subCategories.concat([
-          { name: 'Skincare', icon: 'bi bi-droplet' },
-          { name: 'Haircare', icon: 'bi bi-scissors' },
-          { name: 'Makeup', icon: 'bi bi-brush' }
-        ]);
-      case 'Home Appliances':
-        return subCategories.concat([
-          { name: 'Kitchen', icon: 'bi bi-fridge' },
-          { name: 'Laundry', icon: 'bi bi-washing-machine' },
-          { name: 'Cleaning', icon: 'bi bi-vacuum' }
-        ]);
-      case 'Sports & Fitness':
-        return subCategories.concat([
-          { name: 'Equipment', icon: 'bi bi-dumbbell' },
-          { name: 'Clothing', icon: 'bi bi-tshirt' },
-          { name: 'Accessories', icon: 'bi bi-watch' }
-        ]);
-      case 'Video Games':
-        return subCategories.concat([
-          { name: 'Consoles', icon: 'bi bi-controller' },
-          { name: 'Games', icon: 'bi bi-gamepad' },
-          { name: 'Accessories', icon: 'bi bi-headset' }
-        ]);
-      case 'Toys & Hobbies':
-        return subCategories.concat([
-          { name: 'Action Figures', icon: 'bi bi-robot' },
-          { name: 'Board Games', icon: 'bi bi-grid' },
-          { name: 'Puzzles', icon: 'bi bi-puzzle' }
-        ]);
-      case 'Auto Parts':
-        return subCategories.concat([
-          { name: 'Engine', icon: 'bi bi-gear' },
-          { name: 'Body', icon: 'bi bi-car-front' },
-          { name: 'Interior', icon: 'bi bi-steering-wheel' }
-        ]);
-      case 'Groceries':
-        return subCategories.concat([
-          { name: 'Fruits', icon: 'bi bi-apple' },
-          { name: 'Vegetables', icon: 'bi bi-carrot' },
-          { name: 'Dairy', icon: 'bi bi-milk' }
-        ]);
-      case 'Health & Personal Care':
-        return subCategories.concat([
-          { name: 'Medical Supplies', icon: 'bi bi-first-aid' },
-          { name: 'Personal Hygiene', icon: 'bi bi-hand-sanitizer' },
-          { name: 'Fitness', icon: 'bi bi-heart-pulse' }
-        ]);
-      case 'Books & Media':
-        return subCategories.concat([
-          { name: 'Books', icon: 'bi bi-book' },
-          { name: 'Magazines', icon: 'bi bi-journal' },
-          { name: 'Music', icon: 'bi bi-music-note' }
-        ]);
-      case 'Pet Supplies':
-        return subCategories.concat([
-          { name: 'Food', icon: 'bi bi-bone' },
-          { name: 'Toys', icon: 'bi bi-ball' },
-          { name: 'Grooming', icon: 'bi bi-scissors' }
-        ]);
-      case 'Perfumes':
-        return subCategories.concat([
-          { name: 'Men', icon: 'bi bi-bottle' },
-          { name: 'Women', icon: 'bi bi-bottle-fill' },
-          { name: 'Unisex', icon: 'bi bi-bottle-half' }
-        ]);
-      default:
-        return subCategories;
-    }
-  }
-
-  pinPost(post: Post) {
-    post.isPinned = !post.isPinned;
-    if (post.isPinned) {
-      const index = this.posts.indexOf(post);
-      if (index > -1) {
-        this.posts.splice(index, 1);
-        this.posts.unshift(post);
-      }
-    }
-    this.filterPostsByCategory(this.activeCategory);
-  }
-
-  shareViaMessage(post: Post) {
+  shareViaMessage(post: any) {
     console.log('Sharing via message:', post);
   }
 
-  copyLink(input: HTMLInputElement | Post) {
+  copyLink(input: HTMLInputElement | any) {
     if (input instanceof HTMLInputElement) {
       input.select();
       document.execCommand('copy');
@@ -733,12 +604,12 @@ export class FeedComponent implements OnInit, OnDestroy {
   }
 
   filterByTrending() {
-    this.filteredPosts = this.posts
+    this.filteredPosts = this.samplePosts
       .sort((a, b) => (b.likes + b.comments.length + b.Shares) - (a.likes + a.comments.length + a.Shares));
   }
 
   filterByRecent() {
-    this.filteredPosts = this.posts
+    this.filteredPosts = this.samplePosts
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }
 
@@ -772,7 +643,7 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
   }
 
-  addReaction(post: Post, reaction: string) {
+  addReaction(post: any, reaction: string) {
     if (!post.reactions) {
       post.reactions = {};
     }
@@ -783,18 +654,18 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.updateReactionUI(post);
   }
 
-  private updateReactionUI(post: Post) {
+  private updateReactionUI(post: any) {
     post.topReactions = Object.entries(post.reactions || {})
-      .map(([reaction, count]) => ({ reaction, count }))
+      .map(([reaction, count]): ReactionCount => ({ reaction, count: count as number }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
   }
 
-  showReactionUsers(post: Post) {
+  showReactionUsers(post: any) {
     post.showReactionUsers = !post.showReactionUsers;
   }
 
-  showCommentLikes(comment: Comment) {
+  showCommentLikes(comment: any) {
     comment.showLikedBy = !comment.showLikedBy;
   }
 
@@ -802,10 +673,10 @@ export class FeedComponent implements OnInit, OnDestroy {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
 
-  addComment(post: Post, commentText: string) {
+  addComment(post: any, commentText: string) {
     if (!commentText || commentText.trim() === '') return;
 
-    const newComment: Comment = {
+    const newComment: any = {
       id: this.generateUniqueId(),
       username: this.currentUser,
       profileImageUrl: this.user[0].profileImageUrl,
@@ -829,7 +700,7 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.scrollToLastComment(post);
   }
 
-  scrollToLastComment(post: Post) {
+  scrollToLastComment(post: any) {
     // Use setTimeout to ensure DOM has updated
     setTimeout(() => {
       try {
@@ -851,29 +722,29 @@ export class FeedComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  focusNextCommentInput(currentPost: Post) {
+  focusNextCommentInput(currentPost: any) {
     // Find the index of the current post
-    const postIndex = this.posts.findIndex(p => p.id === currentPost.id);
+    const postIndex = this.samplePosts.findIndex(p => p.id === currentPost.id);
     
     // If there's a next post, attempt to focus its comment input
-    if (postIndex < this.posts.length - 1) {
-      const nextPost = this.posts[postIndex + 1];
+    if (postIndex < this.samplePosts.length - 1) {
+      const nextPost = this.samplePosts[postIndex + 1];
       // You might need to implement a method to programmatically focus the next comment input
       console.log('Focusing next post comment input');
     }
   }
 
-  toggleReplyInput(comment: Comment) {
+  toggleReplyInput(comment: any) {
     comment.showReplyInput = !comment.showReplyInput;
     if (!comment.showReplyInput) {
       this.currentReplyText = '';
     }
   }
 
-  addReply(comment: Comment, replyText: string) {
+  addReply(comment: any, replyText: string) {
     if (!replyText.trim()) return;
 
-    const reply: Comment = {
+    const reply: any = {
       id: this.generateUniqueId(),
       username: this.currentUser,
       text: replyText,
@@ -900,13 +771,40 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteReply(comment: Comment, replyIndex: number) {
+  deleteReply(comment: any, replyIndex: number) {
     if (comment.replies) {
       comment.replies.splice(replyIndex, 1);
     }
   }
 
-  private postSubscription: Subscription | null = null;
+  pinPost(post: any) {
+    post.isPinned = !post.isPinned;
+    if (post.isPinned) {
+      const index = this.samplePosts.indexOf(post);
+      if (index > -1) {
+        this.samplePosts.splice(index, 1);
+        this.samplePosts.unshift(post);
+      }
+    }
+    this.filterPostsByCategory(this.activeCategory);
+  }
+
+  constructor(private postService: PostService) {}
+
+  ngOnInit() {
+    this.postSubscription = this.postService.getPosts().subscribe(posts => {
+      this.samplePosts = posts;
+      this.filterPostsByCategory(this.activeCategory);
+      
+      // Initialize dropdowns after posts are loaded
+      setTimeout(() => {
+        const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+        dropdownElements.forEach(element => {
+          new Dropdown(element);
+        });
+      }, 0);
+    });
+  }
 
   ngOnDestroy() {
     if (this.postSubscription) {

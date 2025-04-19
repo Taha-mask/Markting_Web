@@ -1,0 +1,67 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  color: aliceblue;
+  box-sizing: border-box;
+  background-color: black;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  position: relative;
+  background-color: white;
+}
+
+.ring {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  animation: ring 2s linear infinite;
+}
+
+@keyframes ring {
+  0% {
+      transform: rotate(0deg);
+      box-shadow: 0px 5px 25px #5FAAFF; /* لون أزرق أكثر إشراقًا */
+  }
+  50% {
+      transform: rotate(180deg);
+      box-shadow: 0px 5px 25px #2178FF; /* لون أزرق مشرق */
+  }
+  100% {
+      transform: rotate(360deg);
+      box-shadow: 0px 5px 25px #004FCC; /* لون أزرق أعمق ولكن واضح */
+  }
+}
+
+.ring::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+span {
+  position: absolute;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: white; /* تغيير اللون إلى الأبيض */
+  animation: text 3s ease-in-out infinite;
+}
+
+@keyframes text {
+  50% {
+      color: white; /* الحفاظ على اللون الأبيض للنص */
+  }
+}

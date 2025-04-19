@@ -1,15 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { NavbarComponent } from "./components/navbar/navbar.component";
-import { InnerStoryComponent } from "./components/inner-story/inner-story.component";
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { PostService, Post } from './components/services/post.service';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterModule, NavbarComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  imports: [CommonModule, FormsModule, RouterModule, NavbarComponent],
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppComponent {
-  title = 'My Angular App';
 }
