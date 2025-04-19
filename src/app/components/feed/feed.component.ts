@@ -913,4 +913,16 @@ export class FeedComponent implements OnInit, OnDestroy {
       this.postSubscription.unsubscribe();
     }
   }
-}
+
+
+
+  toggleMenu() {
+    const menu = document.getElementById('menuList');
+    if (menu) {
+      menu.toggleAttribute('hidden');
+    }
+  }
+
+ 
+  }
+

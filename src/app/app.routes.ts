@@ -15,6 +15,10 @@ import { InnerStoryComponent } from './components/inner-story/inner-story.compon
 import { ExplorepageComponent } from './components/explorepage/explorepage.component';
 import { AccountCenterComponent } from './components/account-center/account-center.component';
 import { RightsideComponent } from './components/rightside/rightside.component';
+import { OrdersComponent } from './orders/orders.component';
+import { BlogComponent } from './blog/blog.component';
+import { SupportComponent } from './support/support.component';
+import { PromotionsComponent } from './promotions/promotions.component';
 
 export const routes: Routes = [
   {path: 'explore' , component : ExplorepageComponent},
@@ -24,6 +28,10 @@ export const routes: Routes = [
   {path: 'notf' , component : NotificationComponent},
   {path: 'TypeAccount' , component : TypeAccountComponent},
   {path: 'givefeedback' , component : GiveFeedbackComponent},
+  {path: 'orders' , component : OrdersComponent},
+  {path: 'blog' , component : BlogComponent},
+  {path: 'promotions' , component : PromotionsComponent},
+  {path: 'support' , component : SupportComponent},
   {path: 'login' , component : LoginFormComponent},
   {path: 'about' , component : AboutComponent},
   {path: 'Story' , component : InnerStoryComponent},
