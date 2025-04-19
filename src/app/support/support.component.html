@@ -1,0 +1,40 @@
+<div class="support-container">
+  <header class="support-header">
+    <h1>Support and Help</h1>
+    <p>How can we assist you today?</p>
+  </header>
+
+  <div class="alert" id="messageAlert">
+    Your message has been sent successfully!
+  </div>
+
+  <section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <h3>How do I reset my password?</h3>
+      <p>Click on "Forgot Password" on the login screen and follow the instructions.</p>
+    </div>
+
+    <div class="faq-item">
+      <h3>How do I contact support?</h3>
+      <p>Use the contact form below or email us at support</p>
+    </div>
+  </section>
+
+  <section class="contact-form">
+    <h2>Contact Us</h2>
+    <form (submit)="onSubmit($event)">
+      <label for="name">Your Name</label>
+      <input id="name" type="text" name="name" required />
+
+      <label for="email">Your Email</label>
+      <input id="email" type="email" name="email" required />
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="4" required></textarea>
+
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+</div>

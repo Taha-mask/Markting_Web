@@ -1,12 +1,9 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> 8148079b180250d0bca48214da621ca2b89d5e1a
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-<<<<<<< HEAD
+
     font-family: 'poppins', sans-serif;
 }
 
@@ -41,7 +38,7 @@ font-weight: 600;
 }
 
 .input-box .input-field{
-=======
+
     font-family: 'Poppins', sans-serif;
   }
   
@@ -68,7 +65,7 @@ font-weight: 600;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 30px;
->>>>>>> 8148079b180250d0bca48214da621ca2b89d5e1a
+
     width: 100%;
     max-width: 400px;
   }
@@ -294,7 +291,7 @@ font-weight: 600;
   .sign-up-link a {
     color: #000;
     font-weight: 600;
-<<<<<<< HEAD
+
 
 }
 
@@ -303,6 +300,7 @@ input:focus {
   outline: none;
   box-shadow: none;
 }
+
 
 @media (max-width: 768px) {
     .container {
@@ -325,12 +323,12 @@ input:focus {
         display: none;
     }
 }
-=======
-  }
+
+
+  
   
   input:focus {
     border: none;
     outline: none;
     box-shadow: none;
   }
->>>>>>> 8148079b180250d0bca48214da621ca2b89d5e1a
