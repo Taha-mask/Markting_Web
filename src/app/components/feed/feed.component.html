@@ -90,6 +90,7 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postOptionsDropdown">
                   <li><a class="dropdown-item" (click)="reportPost(post)"><i class="bi bi-flag me-2"></i>Report post</a></li>
+                  <li><a class="dropdown-item"  ><i class="bi bi-bag-check me-2"></i>New order</a></li>
                   <li><a class="dropdown-item" (click)="deletePost(post)"><i class="bi bi-trash me-2"></i>Delete</a></li>
                   <li><a class="dropdown-item" (click)="unfollow(post)"><i class="bi bi-person-x me-2"></i>Unfollow</a></li>
                   <li><a class="dropdown-item" (click)="hidePost(post)"><i class="bi bi-eye-slash me-2"></i>Hide post</a></li>
@@ -104,12 +105,10 @@
                 </ul>
               </div>
             </div>
-
             <!-- Post Content -->
             <div *ngIf="!post.isEditing">
               <p>{{ post.content }}</p>
             </div>
-
             <!-- Post Images/Videos -->
             <div *ngIf="post.images && post.images.length > 0" class=" mb-3 position-relative ">
               <ng-container *ngIf="post.images[post.currentImageIndex].includes('video'); else imageTemplate">
