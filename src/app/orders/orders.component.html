@@ -1,0 +1,54 @@
+<div class="orders-container">
+    <h1 class="title">Orders</h1>
+  
+    <div class="controls">
+      <input
+        type="text"
+        placeholder="Search..."
+        class="search-input"
+        id="searchInput"
+        (keyup)="filterOrders()"
+      />
+      <button class="new-order-button" (click)="toggleForm()">
+        {{ showFormText }}
+      </button>
+    </div>
+  
+    <!-- نموذج الطلب الجديد -->
+    <div id="orderFormContainer" class="new-order-form" hidden>
+      <h3>Add New Order</h3>
+      <form (submit)="addOrder($event)">
+        <div class="mb-3">
+          <label>Customer Name</label>
+          <input id="customerInput" type="text" class="form-control" required />
+        </div>
+        <div class="mb-3">
+          <label>Amount</label>
+          <input id="amountInput" type="number" class="form-control" required />
+        </div>
+        <div class="mb-3">
+          <label>Status</label>
+          <select id="statusInput" class="form-select" required>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+    </div>
+  
+    <!-- جدول الطلبات -->
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Date</th>
+          <th>Customer</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="ordersTableBody"></tbody>
+    </table>
+  </div>

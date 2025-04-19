@@ -253,6 +253,17 @@
   .sign-up-link a {
     color: #000;
     font-weight: 600;
+<<<<<<< HEAD
+
+}
+
+input:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+=======
   }
   
   input:focus {
@@ -260,3 +271,4 @@
     outline: none;
     box-shadow: none;
   }
+>>>>>>> 8148079b180250d0bca48214da621ca2b89d5e1a
