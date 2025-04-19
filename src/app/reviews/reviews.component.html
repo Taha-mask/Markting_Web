@@ -1,0 +1,34 @@
+<div class="reviews-container">
+  <div class="header">
+    <h1 class="re">Reviews</h1>
+    <div class="average-rating">
+      4.8
+      <span class="stars">★★★★★</span>
+      (105)
+    </div>
+  </div>
+
+  <div class="review-form">
+    <textarea id="reviewText" placeholder="Write your review..." #reviewText></textarea>
+    <button (click)="addReview()">Submit Review</button>
+  </div>
+
+  <div class="reviews" #reviewsList>
+    
+    <div class="review-card">
+      <div class="name">Shahd</div>
+      <div class="stars">★★★★★</div>
+      <p>I recently had the pleasure of experiencing the services, and it exceeded my expectations...</p>
+    </div>
+    <div class="review-card">
+      <div class="name">gojo</div>
+      <div class="stars">★★★★★</div>
+      <p>The team was friendly and knowledgeable, answering all my questions with patience...</p>
+    </div>
+    <div class="review-card">
+      <div class="name">kelwa</div>
+      <div class="stars">★★★★★</div>
+      <p>I was thoroughly impressed by the professionalism and dedication of the staff...</p>
+    </div>
+  </div>
+</div>
