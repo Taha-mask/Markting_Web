@@ -14,4 +14,4 @@ import { PostService, Post } from './components/services/post.service';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppComponent {
- }
+}

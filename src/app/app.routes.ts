@@ -19,6 +19,10 @@ import { StatusComponent } from './components/status/status.component';
 import { Error404Component } from './components/erorr404/error404.component';
 import { Error500Component } from './components/error500/error500.component';
 import { LoadingComponent } from './components/loading/loading.component';
+import { LocationComponent } from './location/location.component';
+import  {ReviewsComponent} from './reviews/reviews.component';
+import {CartComponent} from './cart/cart.component';
+import {SavedPostComponent} from './saved-post/saved-post.component'
 
 export const routes: Routes = [
   {path: 'explore' , component : ExplorepageComponent},
@@ -39,8 +43,13 @@ export const routes: Routes = [
   { path: 'type-account', component: TypeAccountComponent },
   {path: 'account-center', component: AccountCenterComponent},
   {path: 'status', component: StatusComponent},
-  {path: '500', component: Error500Component},
-  {path:'loading',component:LoadingComponent},
+  {path: 'error500', component: Error500Component},
+  {path:'location',component: LocationComponent},
+  {path:'loading',component: LoadingComponent},
+  {path:'reviews',component: ReviewsComponent},
+  {path:'cart',component: CartComponent},
+  {path:'saved-post',component:SavedPostComponent},
+  
   {
     path: 'right-sidebar',
     component: RightsideComponent,
