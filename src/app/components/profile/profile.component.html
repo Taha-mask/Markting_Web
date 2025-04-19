@@ -79,7 +79,7 @@
 
           <!-- Action Buttons -->
           <div class="profile-actions">
-            <button class="btn btn-primary btn-block">
+            <button class="btn btn-primary btn-block" [routerLink]="['/messages']">
               <i class="bi bi-chat-dots"></i> Message
             </button>
             <button class="btn btn-outline-primary btn-block">
@@ -137,7 +137,7 @@
                       </div>
                     </div>
                     <div class="dropdown ms-auto">
-                      <button class="btn btn-link dropdown-toggle" type="button" id="postOptionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                      <button class="btn btn-link dropdown text-dark" type="button" id="postOptionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-three-dots fs-4"></i>
                       </button>
                       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postOptionsDropdown">

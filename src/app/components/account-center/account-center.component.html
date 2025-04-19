@@ -1,0 +1,1084 @@
+<div class="container-fluid account-center">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-12 col-md-3 sidebar">
+        <!-- Toggle button for small screens -->
+        <button class="btn btn-primary d-md-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-expanded="false" aria-controls="sidebarMenu">
+          <i class="bi bi-list"></i> Menu
+        </button>
+        <div class="collapse d-md-block" id="sidebarMenu">
+          <div class="user-info mb-4">
+            <div class="d-flex align-items-center">
+              <img [src]="currentUserAvatar" class="rounded-circle me-2" style="width: 50px; height: 50px; object-fit: cover;" alt="User Avatar">
+              <div>
+                <strong>{{ currentUser }}</strong>
+                <p class="text-muted mb-0">{{ currentUserEmail }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="nav flex-column nav-pills" role="tablist">
+            <a class="nav-link" data-bs-toggle="pill" href="#profile">
+              <i class="bi bi-person me-2"></i> Profile
+            </a>
+            <a class="nav-link active" data-bs-toggle="pill" href="#password-security">
+              <i class="bi bi-shield-lock me-2"></i> Security
+            </a>
+            <a class="nav-link" data-bs-toggle="pill" href="#connected-experiences">
+              <i class="bi bi-globe me-2"></i> Connected Experiences
+            </a>
+            <a class="nav-link" data-bs-toggle="pill" href="#notifications">
+              <i class="bi bi-bell me-2"></i> Notifications
+            </a>
+            <a class="nav-link" data-bs-toggle="pill" href="#privacy">
+              <i class="bi bi-lock me-2"></i> Privacy
+            </a>
+            <a class="nav-link" data-bs-toggle="pill" href="#billing">
+              <i class="bi bi-credit-card me-2"></i> Billing
+            </a>
+            <div class="nav-item mt-3">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="darkMode" (change)="toggleDarkMode()">
+                <label class="form-check-label" for="darkMode">Dark Mode</label>
+              </div>
+            </div>
+            <a class="nav-link mt-2" (click)="logout()">
+              <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Main Content -->
+      <div class="col-md-9 tab-content">
+        <!-- Password & Security Tab -->
+        <div id="password-security" class="tab-pane fade show active">
+          <h2>Password & Security</h2>
+          <p class="text-muted mb-4">Manage your password, login, security, and recovery methods.</p>
+  
+          <!-- Login & Recovery Section -->
+          <div class="mb-5">
+            <h4>Login & Recovery</h4>
+            <div class="list-group">
+              <!-- Change Password -->
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>Change Password</strong>
+                </div>
+                <button class="btn btn-link" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+  
+              <!-- Two-Factor Authentication -->
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>Two-Factor Authentication</strong>
+                  <p class="text-muted mb-0">{{ twoFactorEnabled ? 'Enabled' : 'Disabled' }}</p>
+                </div>
+                <div class="form-check form-switch">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="twoFactorSwitch"
+                    [checked]="twoFactorEnabled"
+                    (change)="toggleTwoFactor()"
+                  >
+                </div>
+              </div>
+  
+              <!-- Saved Login -->
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>Saved Login</strong>
+                  <p class="text-muted mb-0">Manage saved login information</p>
+                </div>
+                <button class="btn btn-link">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Security Checks Section -->
+          <div>
+            <h4>Security Checks</h4>
+            <div class="list-group">
+              <!-- Where You're Logged In -->
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>Where You're Logged In</strong>
+                  <p class="text-muted mb-0">View and manage active sessions</p>
+                </div>
+                <button class="btn btn-link" data-bs-toggle="pill" href="#devices">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+  
+              <!-- Login Alerts -->
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>Login Alerts</strong>
+                  <p class="text-muted mb-0">{{ loginAlerts ? 'Enabled' : 'Disabled' }}</p>
+                </div>
+                <div class="form-check form-switch">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="loginAlertsSwitch"
+                    [checked]="loginAlerts"
+                    (change)="toggleLoginAlerts()"
+                  >
+                </div>
+              </div>
+  
+              <!-- Recent Emails -->
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>Recent Emails</strong>
+                  <p class="text-muted mb-0">View recent security emails</p>
+                </div>
+                <button class="btn btn-link">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Devices Tab -->
+        <div id="devices" class="tab-pane fade">
+          <h2>Connected Devices</h2>
+          <div class="list-group">
+            <div *ngFor="let device of connectedDevices" class="list-group-item d-flex justify-content-between">
+              <div>
+                <strong>{{ device.type }}</strong> - {{ device.browser }}
+                <small class="text-muted d-block">Last active: {{ device.lastActive | date }}</small>
+              </div>
+              <button 
+                class="btn btn-sm btn-outline-danger" 
+                (click)="removeDevice(device)"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Security Activity Tab -->
+        <div id="activity" class="tab-pane fade">
+          <h2>Security Activity</h2>
+          <div class="list-group">
+            <div *ngFor="let activity of securityActivities" class="list-group-item">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ activity.type | titlecase }}</h5>
+                <small 
+                  [ngClass]="{
+                    'text-success': activity.severity === 'low',
+                    'text-warning': activity.severity === 'medium',
+                    'text-danger': activity.severity === 'high'
+                  }"
+                >
+                  {{ activity.severity | titlecase }} Severity
+                </small>
+              </div>
+              <p class="mb-1">
+                <span *ngIf="activity.details.location">
+                  Location: {{ activity.details.location }}
+                </span>
+                <span *ngIf="activity.details.device" class="d-block">
+                  Device: {{ activity.details.device }}
+                </span>
+                <span *ngIf="activity.details.ip" class="d-block">
+                  IP: {{ activity.details.ip }}
+                </span>
+              </p>
+              <small class="text-muted">
+                {{ activity.timestamp | date:'medium' }}
+              </small>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Connected Experiences Tab -->
+        <div id="connected-experiences" class="tab-pane fade">
+          <h2>Connected Experiences</h2>
+          <p class="text-muted mb-4">Manage your connected platforms and their permissions.</p>
+          
+          <div class="list-group">
+            <div *ngFor="let experience of connectedExperiences" class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ experience.platform }}</strong>
+                <p class="mb-1 text-muted">
+                  Status: 
+                  <span 
+                    [ngClass]="{
+                      'text-success': experience.connectionStatus === 'connected',
+                      'text-warning': experience.connectionStatus === 'disconnected'
+                    }"
+                  >
+                    {{ experience.connectionStatus | titlecase }}
+                  </span>
+                </p>
+                <small class="text-muted">
+                  Connected on: {{ experience.connectedAt | date:'mediumDate' }}
+                </small>
+              </div>
+              <div class="d-flex align-items-center">
+                <div *ngIf="experience.permissions.length > 0" class="me-3">
+                  <button 
+                    class="btn btn-sm btn-outline-info" 
+                    data-bs-toggle="tooltip" 
+                    title="Permissions: {{ experience.permissions.join(', ') }}"
+                  >
+                    Permissions
+                  </button>
+                </div>
+                <button 
+                  class="btn btn-sm" 
+                  [ngClass]="{
+                    'btn-danger': experience.connectionStatus === 'connected',
+                    'btn-success': experience.connectionStatus === 'disconnected'
+                  }"
+                  (click)="connectPlatform(experience.platform)"
+                >
+                  {{ experience.connectionStatus === 'connected' ? 'Disconnect' : 'Connect' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <h4>About Connected Experiences</h4>
+            <p class="text-muted">
+              Connected Experiences allow you to link your account with various platforms. 
+              This helps you streamline your login process, share information, and enhance 
+              your social connectivity.
+            </p>
+            <div class="alert alert-info">
+              <strong>Privacy Note:</strong> You can control what information is shared 
+              with each connected platform. Always review permissions before connecting.
+            </div>
+          </div>
+        </div>
+  
+        <!-- Notifications Tab -->
+        <div id="notifications" class="tab-pane fade">
+          <h2>Notification Settings</h2>
+          <p class="text-muted mb-4">Customize how and when you receive notifications.</p>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">General Notifications</h5>
+                <div class="form-check form-switch">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="generalNotificationsSwitch"
+                    [checked]="notificationSettings.generalNotifications"
+                    (change)="updateNotificationSettings({ generalNotifications: !notificationSettings.generalNotifications })"
+                  >
+                </div>
+              </div>
+              <p class="text-muted">Enable or disable all notifications</p>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Privacy Mode</h5>
+              <div class="btn-group" role="group" aria-label="Privacy Mode">
+                <button 
+                  type="button" 
+                  class="btn" 
+                  [ngClass]="{
+                    'btn-primary': notificationSettings.privacyMode === 'all',
+                    'btn-outline-secondary': notificationSettings.privacyMode !== 'all'
+                  }"
+                  (click)="updateNotificationSettings({ privacyMode: 'all' })"
+                >
+                  All Users
+                </button>
+                <button 
+                  type="button" 
+                  class="btn" 
+                  [ngClass]="{
+                    'btn-primary': notificationSettings.privacyMode === 'following',
+                    'btn-outline-secondary': notificationSettings.privacyMode !== 'following'
+                  }"
+                  (click)="updateNotificationSettings({ privacyMode: 'following' })"
+                >
+                  Following Only
+                </button>
+                <button 
+                  type="button" 
+                  class="btn" 
+                  [ngClass]="{
+                    'btn-primary': notificationSettings.privacyMode === 'none',
+                    'btn-outline-secondary': notificationSettings.privacyMode !== 'none'
+                  }"
+                  (click)="updateNotificationSettings({ privacyMode: 'none' })"
+                >
+                  None
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Notification Preferences</h5>
+              <div class="list-group">
+                <div 
+                  *ngFor="let preference of notificationSettings.preferences" 
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <strong>{{ preference.type | titlecase }}</strong>
+                    <p class="text-muted mb-0">
+                      {{ preference.enabled ? 'Enabled' : 'Disabled' }}
+                    </p>
+                  </div>
+                  <div class="d-flex align-items-center">
+                    <div class="form-check form-switch me-3">
+                      <input 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        [checked]="preference.enabled"
+                        (change)="toggleNotificationPreference(preference.type)"
+                      >
+                    </div>
+                    <div class="btn-group" role="group">
+                      <button 
+                        type="button" 
+                        class="btn btn-sm" 
+                        [ngClass]="{
+                          'btn-outline-primary': preference.channels.email,
+                          'btn-outline-secondary': !preference.channels.email
+                        }"
+                        (click)="toggleNotificationChannel(preference.type, 'email')"
+                      >
+                        Email
+                      </button>
+                      <button 
+                        type="button" 
+                        class="btn btn-sm" 
+                        [ngClass]="{
+                          'btn-outline-primary': preference.channels.push,
+                          'btn-outline-secondary': !preference.channels.push
+                        }"
+                        (click)="toggleNotificationChannel(preference.type, 'push')"
+                      >
+                        Push
+                      </button>
+                      <button 
+                        type="button" 
+                        class="btn btn-sm" 
+                        [ngClass]="{
+                          'btn-outline-primary': preference.channels.sms,
+                          'btn-outline-secondary': !preference.channels.sms
+                        }"
+                        (click)="toggleNotificationChannel(preference.type, 'sms')"
+                      >
+                        SMS
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 class="card-title mb-1">Quiet Hours</h5>
+                  <p class="text-muted">Pause all notifications during specified hours</p>
+                </div>
+                <div class="form-check form-switch">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="quietHoursSwitch"
+                    [checked]="notificationSettings.quietHoursEnabled"
+                    (change)="toggleQuietHours()"
+                  >
+                </div>
+              </div>
+              
+              <div *ngIf="notificationSettings.quietHoursEnabled" class="mt-3">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="quietHoursStart" class="form-label">Start Time</label>
+                    <input 
+                      type="time" 
+                      class="form-control" 
+                      id="quietHoursStart"
+                      name="quietHoursStart"
+                      [(ngModel)]="notificationSettings.quietHoursStart"
+                      (ngModelChange)="updateQuietHoursStart($event)"
+                    >
+                  </div>
+                  <div class="col-md-6">
+                    <label for="quietHoursEnd" class="form-label">End Time</label>
+                    <input 
+                      type="time" 
+                      class="form-control" 
+                      id="quietHoursEnd"
+                      name="quietHoursEnd"
+                      [(ngModel)]="notificationSettings.quietHoursEnd"
+                      (ngModelChange)="updateQuietHoursEnd($event)"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-info">
+            <strong>Privacy Note:</strong> You can always adjust these settings to control 
+            how and when you receive notifications. Your preferences help us provide a 
+            personalized experience.
+          </div>
+        </div>
+  
+        <!-- Profile Tab -->
+        <div id="profile" class="tab-pane fade">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card mb-4">
+                <div class="card-body text-center">
+                  <input 
+                    type="file" 
+                    id="profilePictureUpload" 
+                    (change)="updateProfilePicture($event)" 
+                    class="d-none"
+                  >
+                  <label for="profilePictureUpload" class="position-relative">
+                    <img 
+                      [src]="userProfile.profilePicture" 
+                      class="rounded-circle img-fluid" 
+                      style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;"
+                      alt="Profile Picture"
+                    >
+                    <div class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-1">
+                      <i class="fas fa-camera"></i>
+                    </div>
+                  </label>
+                  <h5 class="my-3">{{ userProfile.fullName }}</h5>
+                  <p class="text-muted mb-1">{{ userProfile.bio }}</p>
+                  <p class="text-muted">{{ userProfile.location }}</p>
+                </div>
+              </div>
+
+              <div class="card mb-4">
+                <div class="card-body">
+                  <h5 class="card-title">Social Links</h5>
+                  <div class="d-flex justify-content-center mb-2">
+                    <a *ngIf="userProfile.socialLinks && userProfile.socialLinks.linkedin" 
+                       [href]="userProfile.socialLinks.linkedin" 
+                       target="_blank" 
+                       class="btn btn-outline-primary me-2">
+                      <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a *ngIf="userProfile.socialLinks && userProfile.socialLinks.twitter" 
+                       [href]="userProfile.socialLinks.twitter" 
+                       target="_blank" 
+                       class="btn btn-outline-info me-2">
+                      <i class="fab fa-twitter"></i>
+                    </a>
+                    <a *ngIf="userProfile.socialLinks && userProfile.socialLinks.github" 
+                       [href]="userProfile.socialLinks.github" 
+                       target="_blank" 
+                       class="btn btn-outline-dark me-2">
+                      <i class="fab fa-github"></i>
+                    </a>
+                    <a *ngIf="userProfile.socialLinks && userProfile.socialLinks.website" 
+                       [href]="userProfile.socialLinks.website" 
+                       target="_blank" 
+                       class="btn btn-outline-secondary">
+                      <i class="fas fa-globe"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-8">
+              <div class="card mb-4">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Full Name</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{ userProfile.fullName }}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Email</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{ userProfile.email }}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Phone</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{ userProfile.phoneNumber || 'Not provided' }}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Location</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{ userProfile.location || 'Not specified' }}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Member Since</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{ userProfile.joinDate | date:'mediumDate' }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <h5 class="card-title">Interests</h5>
+                      <div class="d-flex flex-wrap">
+                        <span 
+                          *ngFor="let interest of userProfile.interests" 
+                          class="badge bg-primary me-2 mb-2"
+                        >
+                          {{ interest }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <h5 class="card-title">Skills</h5>
+                      <div class="d-flex flex-wrap">
+                        <span 
+                          *ngFor="let skill of userProfile.skills" 
+                          class="badge bg-info me-2 mb-2"
+                        >
+                          {{ skill }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Privacy Tab -->
+        <div id="privacy" class="tab-pane fade">
+          <h2>Privacy Settings</h2>
+          <p class="text-muted mb-4">Control your data, visibility, and account privacy.</p>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Privacy Controls</h5>
+              <div class="list-group">
+                <div 
+                  *ngFor="let control of privacySettings.controls" 
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <strong>{{ control.type | titlecase | replace:'_':' ' }}</strong>
+                    <p class="text-muted mb-0">
+                      Current Level: {{ getPrivacyControlLevel(control.type) | titlecase }}
+                    </p>
+                  </div>
+                  <div class="btn-group" role="group">
+                    <button 
+                      type="button" 
+                      class="btn btn-sm" 
+                      [ngClass]="{
+                        'btn-primary': getPrivacyControlLevel(control.type) === 'public',
+                        'btn-outline-secondary': getPrivacyControlLevel(control.type) !== 'public'
+                      }"
+                      (click)="togglePrivacyControl(control.type, 'public')"
+                    >
+                      Public
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm" 
+                      [ngClass]="{
+                        'btn-primary': getPrivacyControlLevel(control.type) === 'friends',
+                        'btn-outline-secondary': getPrivacyControlLevel(control.type) !== 'friends'
+                      }"
+                      (click)="togglePrivacyControl(control.type, 'friends')"
+                    >
+                      Friends
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm" 
+                      [ngClass]="{
+                        'btn-primary': getPrivacyControlLevel(control.type) === 'private',
+                        'btn-outline-secondary': getPrivacyControlLevel(control.type) !== 'private'
+                      }"
+                      (click)="togglePrivacyControl(control.type, 'private')"
+                    >
+                      Private
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Data Privacy</h5>
+              <div class="list-group">
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>Allow Data Collection</strong>
+                    <p class="text-muted mb-0">
+                      {{ privacySettings.dataPrivacy.allowDataCollection ? 'Enabled' : 'Disabled' }}
+                    </p>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      [checked]="privacySettings.dataPrivacy.allowDataCollection"
+                      (change)="toggleDataPrivacy('allowDataCollection')"
+                    >
+                  </div>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>Personalized Ads</strong>
+                    <p class="text-muted mb-0">
+                      {{ privacySettings.dataPrivacy.allowPersonalizedAds ? 'Enabled' : 'Disabled' }}
+                    </p>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      [checked]="privacySettings.dataPrivacy.allowPersonalizedAds"
+                      (change)="toggleDataPrivacy('allowPersonalizedAds')"
+                    >
+                  </div>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>Share with Third Parties</strong>
+                    <p class="text-muted mb-0">
+                      {{ privacySettings.dataPrivacy.shareDataWithThirdParties ? 'Enabled' : 'Disabled' }}
+                    </p>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      [checked]="privacySettings.dataPrivacy.shareDataWithThirdParties"
+                      (change)="toggleDataPrivacy('shareDataWithThirdParties')"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Account Privacy</h5>
+              <div class="list-group">
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>Profile Lock</strong>
+                    <p class="text-muted mb-0">
+                      {{ privacySettings.accountPrivacy.profileLock ? 'Locked' : 'Unlocked' }}
+                    </p>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      [checked]="privacySettings.accountPrivacy.profileLock"
+                      (change)="toggleAccountPrivacy('profileLock')"
+                    >
+                  </div>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>Active Status</strong>
+                    <p class="text-muted mb-0">
+                      {{ privacySettings.accountPrivacy.activeStatus | titlecase }} Users
+                    </p>
+                  </div>
+                  <div class="btn-group" role="group">
+                    <button 
+                      type="button" 
+                      class="btn btn-sm" 
+                      [ngClass]="{
+                        'btn-primary': privacySettings.accountPrivacy.activeStatus === 'all',
+                        'btn-outline-secondary': privacySettings.accountPrivacy.activeStatus !== 'all'
+                      }"
+                      (click)="updateAccountPrivacyStatus('all')"
+                    >
+                      All
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm" 
+                      [ngClass]="{
+                        'btn-primary': privacySettings.accountPrivacy.activeStatus === 'contacts',
+                        'btn-outline-secondary': privacySettings.accountPrivacy.activeStatus !== 'contacts'
+                      }"
+                      (click)="updateAccountPrivacyStatus('contacts')"
+                    >
+                      Contacts
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm" 
+                      [ngClass]="{
+                        'btn-primary': privacySettings.accountPrivacy.activeStatus === 'none',
+                        'btn-outline-secondary': privacySettings.accountPrivacy.activeStatus !== 'none'
+                      }"
+                      (click)="updateAccountPrivacyStatus('none')"
+                    >
+                      None
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Blocked Users</h5>
+              <div *ngIf="privacySettings.blockedUsers.length > 0; else noBlockedUsers" class="list-group">
+                <div 
+                  *ngFor="let user of privacySettings.blockedUsers" 
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <strong>{{ user.username }}</strong>
+                    <p class="text-muted mb-0">
+                      Blocked on: {{ user.blockedAt | date:'mediumDate' }}
+                    </p>
+                  </div>
+                  <button 
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="unblockUser(user.id)"
+                  >
+                    Unblock
+                  </button>
+                </div>
+              </div>
+              <ng-template #noBlockedUsers>
+                <p class="text-muted">No users are currently blocked.</p>
+              </ng-template>
+            </div>
+          </div>
+
+          <div class="alert alert-info">
+            <strong>Privacy Note:</strong> Your privacy is important to us. 
+            These settings help you control your data, visibility, and account interactions. 
+            You can modify these settings at any time.
+          </div>
+        </div>
+        <!-- Billing Tab -->
+        <div id="billing" class="tab-pane fade">
+          <h2>Billing & Subscription</h2>
+          <p class="text-muted mb-4">Manage your subscription, payment methods, and billing history.</p>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Current Subscription</h5>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ billingSettings.currentSubscription.type | titlecase }} Tier</strong>
+                  <p class="text-muted mb-0">
+                    Status: {{ billingSettings.currentSubscription.status | titlecase }}
+                  </p>
+                  <p class="text-muted mb-0">
+                    Active from {{ billingSettings.currentSubscription.startDate | date:'mediumDate' }} 
+                    to {{ billingSettings.currentSubscription.endDate | date:'mediumDate' }}
+                  </p>
+                </div>
+                <div>
+                  <button 
+                    class="btn btn-outline-primary" 
+                    (click)="upgradeSubscription('pro')"
+                  >
+                    Upgrade
+                  </button>
+                </div>
+              </div>
+              <div class="mt-3">
+                <h6>Features:</h6>
+                <ul class="list-unstyled">
+                  <li 
+                    *ngFor="let feature of billingSettings.currentSubscription.features"
+                    class="mb-1"
+                  >
+                    <i class="bi bi-check-circle text-success me-2"></i>
+                    {{ feature }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Billing Email</h5>
+              <div class="input-group">
+                <input 
+                  type="email" 
+                  class="form-control" 
+                  [(ngModel)]="billingSettings.billingEmail"
+                  (ngModelChange)="updateBillingEmail($event)"
+                >
+                <button 
+                  class="btn btn-outline-secondary" 
+                  type="button"
+                >
+                  Update
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Auto Renewal</h5>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>Automatic Subscription Renewal</strong>
+                  <p class="text-muted mb-0">
+                    {{ billingSettings.autoRenew ? 'Enabled' : 'Disabled' }}
+                  </p>
+                </div>
+                <div class="form-check form-switch">
+                  <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    [checked]="billingSettings.autoRenew"
+                    (change)="toggleAutoRenew()"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title">Payment Methods</h5>
+              <div 
+                *ngFor="let method of billingSettings.paymentMethods" 
+                class="list-group-item d-flex justify-content-between align-items-center mb-2"
+              >
+                <div>
+                  <strong>
+                    {{ method.type | titlecase }} 
+                    {{ method.cardType ? '- ' + (method.cardType | titlecase) : '' }}
+                  </strong>
+                  <p class="text-muted mb-0">
+                    **** **** **** {{ method.lastFourDigits }}
+                    <span 
+                      *ngIf="method.isDefault" 
+                      class="badge bg-primary ms-2"
+                    >
+                      Default
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <button 
+                    class="btn btn-sm btn-outline-danger me-2"
+                    (click)="removePaymentMethod(method.id)"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+              <button 
+                class="btn btn-outline-primary mt-3"
+                data-bs-toggle="modal" 
+                data-bs-target="#addPaymentMethodModal"
+              >
+                Add Payment Method
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Billing History</h5>
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Description</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let invoice of billingSettings.billingHistory">
+                      <td>{{ invoice.date | date:'shortDate' }}</td>
+                      <td>{{ invoice.description }}</td>
+                      <td>{{ invoice.amount | currency }}</td>
+                      <td>
+                        <span 
+                          class="badge" 
+                          [ngClass]="{
+                            'bg-success': invoice.status === 'paid',
+                            'bg-warning': invoice.status === 'pending',
+                            'bg-danger': invoice.status === 'failed'
+                          }"
+                        >
+                          {{ invoice.status | titlecase }}
+                        </span>
+                      </td>
+                      <td>
+                        <button 
+                          *ngIf="invoice.invoiceUrl"
+                          class="btn btn-sm btn-outline-primary"
+                          (click)="downloadInvoice(invoice.id)"
+                        >
+                          Download
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-info mt-4">
+            <strong>Billing Information:</strong> 
+            Your billing and subscription details are securely managed. 
+            For any questions, please contact our support team.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div 
+    class="modal fade" 
+    id="changePasswordModal" 
+    tabindex="-1" 
+    aria-labelledby="changePasswordModalLabel" 
+    aria-hidden="true"
+    #changePasswordModal
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+            <div class="mb-3">
+              <label for="currentPassword" class="form-label">Current Password</label>
+              <div class="input-group">
+                <input 
+                  [type]="showCurrentPassword ? 'text' : 'password'"
+                  class="form-control" 
+                  formControlName="currentPassword"
+                  id="currentPassword"
+                >
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary" 
+                  (click)="togglePasswordVisibility('current')"
+                >
+                  {{ showCurrentPassword ? 'Hide' : 'Show' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">New Password</label>
+              <div class="input-group">
+                <input 
+                  [type]="showNewPassword ? 'text' : 'password'"
+                  class="form-control" 
+                  formControlName="newPassword"
+                  id="newPassword"
+                >
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary" 
+                  (click)="togglePasswordVisibility('new')"
+                >
+                  {{ showNewPassword ? 'Hide' : 'Show' }}
+                </button>
+              </div>
+              <small class="text-muted">
+                Password must be 12+ characters with uppercase, lowercase, number, and special character
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <div class="input-group">
+                <input 
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  class="form-control" 
+                  formControlName="confirmPassword"
+                  id="confirmPassword"
+                >
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary" 
+                  (click)="togglePasswordVisibility('confirm')"
+                >
+                  {{ showConfirmPassword ? 'Hide' : 'Show' }}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button 
+            type="button" 
+            class="btn btn-primary" 
+            (click)="changePassword()"
+            [disabled]="passwordForm.invalid"
+          >
+            Change Password
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

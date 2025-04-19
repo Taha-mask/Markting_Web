@@ -3,14 +3,17 @@
   background-color: #f8f9fa;
   min-height: 100vh;
   padding: 24px;
-  width: 60%;
+  width: 71%;
 }
 
 .notifications-wrapper {
   width: 100%;
   margin: 0;
 }
+.sid{
+  background-color: #F8F9FA;
 
+}
 /* Header Styles */
 .notification-header {
   background: #fff;
@@ -216,9 +219,14 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+
   .notifications {
-    padding: 16px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding: 24px;
+    width: 100%;
   }
+
 
   .notification-header {
     padding: 16px;
@@ -237,6 +245,7 @@
 
   .notification {
     padding: 12px;
+    width: 100%;
   }
 
   .avatar {
@@ -251,6 +260,10 @@
   }
 }
 
+@media (max-width: 468px) {
+
+
+}
 /* Animation Classes */
 @keyframes fadeInUp {
   from {

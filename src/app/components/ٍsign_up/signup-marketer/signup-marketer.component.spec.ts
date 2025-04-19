@@ -1,134 +1,66 @@
-import { JsonPipe, NgFor, CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import {
-  FormArray,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { NavbarComponent } from "../../navbar/navbar.component";
+// src/app/components/signup-marketer/signup-marketer.component.spec.ts
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { SignupMarketerComponent } from './signup-marketer.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
+import { UserService } from '../../services/User.service';
+import { of, throwError } from 'rxjs';
 
-@Component({
-  selector: 'app-signup-marketer',
-  standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterModule, NgFor, CommonModule],
-  templateUrl: './signup-marketer.component.html',
-  styleUrls: ['./signup-marketer.component.css'],
-})
-export class SignupMarketerComponent implements OnInit {
-  marketerRegisterForm: FormGroup;
-  countries: string[] = [];
+describe('SignupMarketerComponent', () => {
+  let component: SignupMarketerComponent;
+  let fixture: ComponentFixture<SignupMarketerComponent>;
+  let userService: jasmine.SpyObj<UserService>;
 
-  constructor(private http: HttpClient) {
-    this.marketerRegisterForm = new FormGroup({
-      firstName: new FormControl('', [
-        Validators.required,
-        Validators.pattern('^[a-zA-Z]{3,10}$'),
-      ]),
-      secondName: new FormControl('', [Validators.required]),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-      confirmPassword: new FormControl('', [Validators.required]),
+  beforeEach(async () => {
+    const userServiceSpy = jasmine.createSpyObj('UserService', ['registerMarketer']);
 
-      idNumber: new FormControl('', [
-        Validators.required,
-        Validators.pattern('^[0-9]{10,15}$'),
-      ]),
+    await TestBed.configureTestingModule({
+      imports: [SignupMarketerComponent, ReactiveFormsModule, RouterTestingModule],
+      providers: [{ provide: UserService, useValue: userServiceSpy }],
+    }).compileComponents();
 
-      idImage: new FormControl(null, [Validators.required]),
+    fixture = TestBed.createComponent(SignupMarketerComponent);
+    component = fixture.componentInstance;
+    userService = TestBed.inject(UserService) as jasmine.SpyObj<UserService>;
+    fixture.detectChanges();
+  });
 
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 
-      country: new FormControl('', [Validators.required]),
+  it('should submit form successfully when valid', fakeAsync(() => {
+    // Mock response must match RegistrationResponse
+    userService.registerMarketer.and.returnValue(of({ success: true, message: 'Marketer registered successfully' }));
 
-      address: new FormGroup({
-        city: new FormControl('', [Validators.required]),
-        street: new FormControl('', [Validators.required]),
-      }),
-
-      primaryPhone: new FormControl('', [
-        Validators.required,
-        Validators.pattern('^[0-9]{10,15}$'),
-      ]),
-      secondaryPhone: new FormControl('', [
-        Validators.pattern('^[0-9]{10,15}$'),
-      ]),
-
-      shops: new FormArray([
-        new FormGroup({
-          shopName: new FormControl('', [Validators.required]),
-          shopLocation: new FormControl('', [Validators.required]),
-        }),
-      ]),
+    component.marketerRegisterForm.patchValue({
+      email: 'marketer@example.com',
+      password: 'password123',
+      // Add other required fields as per your form
     });
-  }
 
-  ngOnInit() {
-    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe(
-      (data) => {
-        this.countries = data.map((country) => country.name.common).sort();
-      },
-      (error) => {
-        console.error('Error fetching countries:', error);
-      }
-    );
-  }
+    fixture.detectChanges();
+    component.onSubmit();
+    tick();
 
-  get Shops() {
-    return this.marketerRegisterForm.get('shops') as FormArray;
-  }
+    expect(userService.registerMarketer).toHaveBeenCalled();
+    expect(component.isLoading).toBeFalse();
+  }));
 
-  createShop(): FormGroup {
-    return new FormGroup({
-      shopName: new FormControl('', [Validators.required]),
-      shopLocation: new FormControl('', [Validators.required]),
+  it('should handle registration error', fakeAsync(() => {
+    userService.registerMarketer.and.returnValue(throwError(() => ({ status: 400, message: 'Registration failed' })));
+
+    component.marketerRegisterForm.patchValue({
+      email: 'marketer@example.com',
+      password: 'password123',
     });
-  }
 
-  addNewShop() {
-    if (this.Shops.length < 5) {
-      this.Shops.push(this.createShop());
-    }
-  }
+    fixture.detectChanges();
+    component.onSubmit();
+    tick();
 
-  deleteShop(index: number) {
-    if (this.Shops.length > 1) {
-      this.Shops.removeAt(index);
-    }
-  }
-
-  onFileChange(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.marketerRegisterForm.patchValue({ idImage: file });
-    }
-  }
-
-  isFormValid(): boolean {
-    return this.marketerRegisterForm.valid;
-  }
-
-  register() {
-    if (this.marketerRegisterForm.valid) {
-      const formData = new FormData();
-
-      Object.keys(this.marketerRegisterForm.value).forEach((key) => {
-        if (key === 'shops') {
-          formData.append(key, JSON.stringify(this.marketerRegisterForm.value[key]));
-        } else if (key === 'idImage') {
-          formData.append(key, this.marketerRegisterForm.value[key]);
-        } else {
-          formData.append(key, this.marketerRegisterForm.value[key]);
-        }
-      });
-
-      console.log('Form Data:', formData);
-      alert('Form submitted successfully!');
-    } else {
-      alert('Form is invalid!');
-    }
-  }
-}
+    expect(userService.registerMarketer).toHaveBeenCalled();
+    expect(component.isLoading).toBeFalse();
+    // Add expectation for error handling if applicable, e.g., alert or error message
+  }));
+});

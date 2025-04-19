@@ -1,10 +1,10 @@
 <div class="container-fluid p-0">
   <div class="row g-0">
     <!-- Left Sidebar -->
-    <app-trending-sidebar class="sid col-md-3 col-12 position-relative mt-4 d-flex ms-3"></app-trending-sidebar>
+    <app-trending-sidebar class="sid col-md-3  mt-4 ms-3 "></app-trending-sidebar>
 
     <!-- Main Content (Notifications) -->
-    <div class="notifications col-md-8 col-12 d-flex flex-column">
+    <div class="notifications col-md-7 col-12 d-flex flex-column">
       <div class="notifications-wrapper flex-grow-1">
         <!-- Header -->
         <div class="notification-header">
@@ -59,23 +59,29 @@
               </div>
 
               <!-- Content -->
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <div>
-                    <span class="username">{{ notification.username }}</span>
-                    <p class="notification-text">{{ notification.content }}</p>
-                  </div>
-                  <small class="timestamp text-muted">{{ getTimeAgo(notification.timestamp) }}</small>
-                </div>
+              <div class="flex-grow-1 d-flex justify-content-between">
+             <div class=" "> 
 
-                <!-- Link -->
-                <div class="notification-link" *ngIf="notification.link">
-                  <a href="javascript:void(0)" (click)="navigateToContent(notification.link)">
-                    View {{ notification.type === 'like' ? 'post' : notification.type }}
-                    <i class="bi bi-arrow-right"></i>
-                  </a>
-                </div>
 
+                <div class="d-flex justify-content-end">
+
+              <div>
+                <div class="d-flex  gap-5">
+                <span class="username">{{ notification.username }}</span>
+                <small class="timestamp text-muted">{{ getTimeAgo(notification.timestamp) }}</small>
+</div>
+                <p class="notification-text">{{ notification.content }}</p>
+              </div>
+            </div>
+
+            <!-- Link -->
+            <div class="notification-link" *ngIf="notification.link">
+              <a href="javascript:void(0)" (click)="navigateToContent(notification.link)">
+                View {{ notification.type === 'like' ? 'post' : notification.type }}
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+</div>
                 <!-- Actions -->
                 <div class="notification-actions">
                   <button class="btn btn-link" (click)="markAsRead(notification)" *ngIf="!notification.isRead">

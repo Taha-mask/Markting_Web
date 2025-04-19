@@ -15,4 +15,7 @@ export interface Post {
   liked: boolean;
   saved: boolean;
   comments: Comment[];
+  isFollowing: boolean;
+  isPro?: boolean;
+  isProcessing?: boolean;
 }

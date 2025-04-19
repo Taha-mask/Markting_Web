@@ -37,10 +37,16 @@ export class MessageComponent implements AfterViewChecked {
     }
   }
 
+  
+
   @ViewChild('chatbox') private chatbox!: ElementRef;
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild('searchBar') searchBar!: ElementRef;
 
+
+
+
+  
   chatList: any[] = [
     { 
       id: 1, 
@@ -282,9 +288,12 @@ export class MessageComponent implements AfterViewChecked {
     this.isMenuVisible = !this.isMenuVisible;
   }
 
+  isChatSelected: boolean = false; // متغير جديد لتتبع حالة اختيار الدردشة
+
   selectChat(chat: any) {
     this.selectedChat = chat;
     this.messages = chat.messages;
+    this.isChatSelected = true; // عند اختيار دردشة، ننتقل إلى شاشة الدردشة
     
     this.messages.forEach((message: Message) => {
       if (message.sender === 'other') {
@@ -302,6 +311,10 @@ export class MessageComponent implements AfterViewChecked {
     }
 
     this.scrollToBottom();
+  }
+
+  goBackToChatList() {
+    this.isChatSelected = false; // العودة إلى قائمة المستخدمين
   }
 
   attachDocument() {

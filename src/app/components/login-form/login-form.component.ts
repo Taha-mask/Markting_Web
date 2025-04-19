@@ -1,39 +1,169 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { UserService } from '../services/User.service';
+import { LoginResponse, ApiError } from '../models/auth.model';
+import { CommonModule } from '@angular/common';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+interface OAuthResponse {
+  token: string;
+  userId: string;
+}
 
 @Component({
   selector: 'app-login-form',
   standalone: true,
-  imports: [FormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login-form.component.html',
-  styleUrls: ['./login-form.component.css']
+  styleUrls: ['./login-form.component.css'],
 })
-export class LoginFormComponent implements AfterViewInit {
-  email: string = '';
-  password: string = '';
+export class LoginFormComponent implements OnInit, OnDestroy {
+  loginForm: FormGroup;
+  showPassword = false;
+  isLoading = false;
+  loginError: string | null = null;
+  passwordStrength = 0;
+  private destroy$ = new Subject<void>();
 
-  constructor(private router: Router) {}
-
-  login() {
-    // منطق تسجيل الدخول هنا
-    this.router.navigate(['/feed']); // توجيه إلى صفحة Feed
-  }
-  ngAfterViewInit() {
-    const togglePassword = document.querySelector('#togglePassword');
-    const password = document.querySelector('#password') as HTMLInputElement;
-
-    togglePassword?.addEventListener('click', () => {
-      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-      password.setAttribute('type', type);
-      togglePassword.classList.toggle('fa-eye-slash');
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private userService: UserService
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [
+        Validators.required, 
+        Validators.minLength(8),
+        this.passwordStrengthValidator
+      ]],
+      rememberMe: [false],
     });
+
+    // Password strength tracking
+    this.loginForm.get('password')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(password => {
+        this.passwordStrength = this.calculatePasswordStrength(password);
+      });
+  }
+
+  ngOnInit() {
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    if (rememberedEmail) {
+      this.loginForm.patchValue({
+        email: rememberedEmail,
+        rememberMe: true,
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  // Custom password strength validator
+  passwordStrengthValidator(control: any) {
+    const password = control.value;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+    
+    const valid = hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar && password.length >= 8;
+    return valid ? null : { weakPassword: true };
+  }
+
+  // Calculate password strength percentage
+  calculatePasswordStrength(password: string): number {
+    let strength = 0;
+    if (password.length >= 8) strength += 25;
+    if (/[A-Z]/.test(password)) strength += 25;
+    if (/[a-z]/.test(password)) strength += 25;
+    if (/[0-9]/.test(password)) strength += 15;
+    if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) strength += 10;
+    return Math.min(strength, 100);
+  }
+
+  // OAuth login methods with proper type annotations
+  loginWithGoogle() {
+    this.isLoading = true;
+    this.loginError = null;
+
+    // Simulated Google login method - replace with actual implementation
+    this.userService.loginWithGoogle()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: OAuthResponse) => {
+          this.isLoading = false;
+          localStorage.setItem('token', response.token);
+          this.router.navigate(['/feed']);
+        },
+        error: (error: ApiError) => {
+          this.isLoading = false;
+          this.loginError = error.message || 'Google login failed. Please try again.';
+        }
+      });
+  }
+
+  loginWithFacebook() {
+    this.isLoading = true;
+    this.loginError = null;
+
+    // Simulated Facebook login method - replace with actual implementation
+    this.userService.loginWithFacebook()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: OAuthResponse) => {
+          this.isLoading = false;
+          localStorage.setItem('token', response.token);
+          this.router.navigate(['/feed']);
+        },
+        error: (error: ApiError) => {
+          this.isLoading = false;
+          this.loginError = error.message || 'Facebook login failed. Please try again.';
+        }
+      });
   }
 
   onSubmit() {
-    // Perform login logic here (e.g., authentication)
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
-    // Navigate to the feed page
-    this.router.navigate(['/feed']);
+    this.isLoading = true;
+    this.loginError = null;
+
+    const { email, password, rememberMe } = this.loginForm.value;
+
+    if (rememberMe) {
+      localStorage.setItem('rememberedEmail', email);
+    } else {
+      localStorage.removeItem('rememberedEmail');
+    }
+
+    this.userService.login(email, password)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: LoginResponse) => {
+          console.log('Login successful:', response.token);
+          this.isLoading = false;
+          localStorage.setItem('token', response.token);
+          this.router.navigate(['/feed']);
+        },
+        error: (error: ApiError) => {
+          console.error('Login failed:', error.message);
+          this.isLoading = false;
+          this.loginError = error.message || 'Invalid email or password. Please try again.';
+        },
+      });
   }
 }
