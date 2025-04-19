@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/package.json",
   "name": "angular",
   "version": "0.0.0",
   "scripts": {
@@ -8,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "gh-pages -d dist/Markting_Web/browser"
+    "deploy": "ng build --configuration production --base-href /Markting_Web/ && npx angular-cli-ghpages --dir=dist/angular/browser"
   },
   "private": true,
   "dependencies": {
@@ -20,9 +19,12 @@
     "@angular/platform-browser": "^18.2.0",
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
+    "@ctrl/ngx-emoji-mart": "^9.2.0",
     "@fortawesome/fontawesome-free": "^6.6.0",
+    "boostrap": "^2.0.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "flag-icons": "^7.3.2",
     "jquery": "^3.7.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -30,17 +32,29 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.11",
+    "@angular-eslint/eslint-plugin": "^18.0.0",
+    "@angular-eslint/eslint-plugin-template": "^18.0.0",
     "@angular/cli": "^18.2.11",
     "@angular/compiler-cli": "^18.2.0",
     "@types/bootstrap": "^5.2.10",
     "@types/jasmine": "~5.1.0",
-    "gh-pages": "^6.3.0",
+    "angular-cli-ghpages": "^1.0.0",
+    "eslint": "^8.56.0",
+    "husky": "^8.0.3",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.4",
     "typescript": "~5.5.2"
+  },
+  "lint-staged": {
+    "*.{ts,html,scss}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

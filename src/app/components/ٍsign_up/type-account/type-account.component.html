@@ -1,36 +1,30 @@
-
+<!-- src/app/type-account/type-account.component.html -->
 <div class="container text-center mt-5">
-        <h2 class="mb-4">Choose Your Account Type</h2>
+  <h2 class="mb-4">Choose Your Account Type</h2>
 
-        <div class="row justify-content-center">
-            <!-- User Account Card -->
-            <div class="col-md-5">
-                <div class="card shadow-lg account-card">
-                    <div class="card-body">
-                        <h5 class="card-title">User Account</h5>
-                        <img class="imgtype" src="/images/user.jpg" alt="">
-                        <p class="card-text">Sign up as a regular user and start exploring.</p>
-                        <a class="botton w-100 text-decoration-none d-block " href="SignupUser" routerlink="SignupUser" >Choose</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Marketer Account Card -->
-            <div class="col-md-5">
-                <div class="card shadow-lg account-card">
-                    <div class="card-body">
-                        <h5 class="card-title">Marketer Account</h5>
-                        <img class="imgtype" src="/images/marketer.jpg" alt="">
-                        <p class="card-text">Create a marketer account to promote products.</p>
-                        <a class="botton w-100 text-decoration-none d-block " href="SignupMarkter"  routerlink ="routerlink" >Choose</a>
-                    </div>
-                </div>
-            </div>
+  <div class="row justify-content-center">
+    <!-- User Account Card -->
+    <div class="col-md-5">
+      <div class="card shadow-lg account-card">
+        <div class="card-body">
+          <h5 class="card-title">User Account</h5>
+          <img class="imgtype" src="/images/user.jpg" alt="" />
+          <p class="card-text">Sign up as a regular user and start exploring.</p>
+          <button class="botton w-100 text-decoration-none d-block" (click)="selectAccountType('customer')">Choose</button>
         </div>
+      </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Custom JS -->
-    <script src="script.js"></script>
+    <!-- Marketer Account Card -->
+    <div class="col-md-5">
+      <div class="card shadow-lg account-card">
+        <div class="card-body">
+          <h5 class="card-title">Marketer Account</h5>
+          <img class="imgtype" src="/images/marketer.jpg" alt="" />
+          <p class="card-text">Create a marketer account to promote products.</p>
+          <button class="botton w-100 text-decoration-none d-block" (click)="selectAccountType('marketer')">Choose</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

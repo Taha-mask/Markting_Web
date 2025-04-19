@@ -1,164 +1,442 @@
+<div class="container-fluid ms-0 pe-0" (scroll)="onScroll($event)">
+  <div class="row ms-0 pe-0">
+    <!-- Left Sidebar -->
+    <app-trending-sidebar class="sid col-md-3 col-12 position-relative mt-4 d-flex ms-3"></app-trending-sidebar>
 
+    <!-- Main Content (Feed) -->
+    <div class="main-content col-md-6 col-12 scrollable-content d-flex mt-2">
+      <div class="cat-container mb-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3 ms-3">
+          <h5 class="fw-bold">{{ activeCategory === 'All' ? 'Categories' : activeCategory }}</h5>
+          <button *ngIf="activeCategory !== 'All'" class="btn btn-link" (click)="goBackToCategories()">
+            <i class="bi bi-arrow-left"></i> Back
+          </button>
+        </div>
 
+        <!-- Main Categories Section -->
+        <div *ngIf="activeCategory === 'All'" class="categories-container d-flex align-items-center overflow-auto hide-scrollbar no-select"
+             (mousedown)="onMouseDown($event)"
+             (mousemove)="onMouseMove($event)"
+             (mouseup)="onMouseUp()"
+             (mouseleave)="onMouseUp()">
 
-
-
-
-
-
-
-<div class="container-fluid ms-0 pe-0">
-    <div class="row ms-0 pe-0">
-      <!-- Left Sidebar -->
-      <app-trending-sidebar class="col-md-3 col-12 position-relative mt-4 d-flex"></app-trending-sidebar>
-  
-      <!-- Main Content (Feed) -->
-      <div class="col-md-6 col-12 scrollable-content d-flex">
-        <div class="container mt-4 mb-4">
-
-          
-            <h3>People You May Know</h3>
-            <div class="users-list">
-              <div class="user-card" *ngFor="let user of suggestedUsers">
-                <img [src]="user.profilePicture" alt="Profile" class="profile-pic">
-                <div class="user-info">
-                  <h4>{{ user.name }}</h4>
-                  <button  style="width: 80px;" (click)="addFriend(user)">Follow</button>
-                </div>
+          <div *ngFor="let category of categories"
+               class="text-center me-3 category-item"
+               [ngClass]="{'active': activeCategory === category.name}"
+               (click)="showSubCategories(category)">
+            <div class="category-icon">
+              <div class="rounded-circle story-frame d-flex justify-content-center align-items-center"
+                   [ngClass]="{'active': activeCategory === category.name}">
+                <i [class]="category.icon" class="fs-2" style="cursor: pointer;"></i>
               </div>
             </div>
-        <br>
-
-          <!-- Header -->
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="fw-bold" style="margin-bottom: -20px;">Suggestions for you </h5>
+            <small class="d-block mt-1 category-text" [innerHTML]="formatCategoryName(category.name)"></small>
           </div>
         </div>
-            <!--addaion button-->
-  
-        <!-- new postes-->
-        <div class="card mb-4 " *ngFor="let post of posts">
-          <div class="card-body my-4">
-  
-            <!-- User Info -->
-            <div class="d-flex align-items-center mb-3">
-              
-              <img [src]="post.profileImageUrl" alt="Profile Picture" class="profile-pic me-3" />
-              
-              <div>
-              
-                <h6 class="m-0 fw-medium  fs-5">{{ post.username }}</h6>
-              
-                <small class="text-muted">{{ post.timestamp | date: 'short' }}</small>
-                <button   class="buttonpost"  (click)="follow(post)">Follow</button>
+
+        <!-- Sub Categories Section -->
+        <div *ngIf="activeCategory !== 'All'" class="categories-container d-flex align-items-center overflow-auto hide-scrollbar no-select"
+             (mousedown)="onMouseDown($event)"
+             (mousemove)="onMouseMove($event)"
+             (mouseup)="onMouseUp()"
+             (mouseleave)="onMouseUp()">
+
+          <div *ngFor="let subCategory of subCategories"
+               class="text-center me-3 category-item"
+               [ngClass]="{'active': activeSubCategory === subCategory.name}"
+               (click)="filterPostsBySubCategory(subCategory.name)">
+            <div class="category-icon">
+              <div class="rounded-circle story-frame d-flex justify-content-center align-items-center"
+                   [ngClass]="{'active': activeSubCategory === subCategory.name}">
+                <i [class]="subCategory.icon" class="fs-2" style="cursor: pointer;"></i>
               </div>
             </div>
-  
+            <small class="d-block mt-1 category-text" [innerHTML]="formatCategoryName(subCategory.name)"></small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Controls -->
+      <div class="filter-controls mb-3 d-flex justify-content-end gap-2">
+        <button class="btn btn-outline-primary" (click)="filterByTrending()">
+          <i class="bi bi-graph-up"></i> Trending
+        </button>
+        <button class="btn btn-outline-primary" (click)="filterByRecent()">
+          <i class="bi bi-clock"></i> Recent
+        </button>
+      </div>
+
+      <!-- Posts Section -->
+      <div *ngFor="let post of filteredPosts; let i = index">
+        <div class="card mb-2" [class.border-primary]="post.isPinned">
+          <!-- Pin Indicator -->
+          <div *ngIf="post.isPinned" class="position-absolute top-0 end-0 m-2">
+            <i class="bi bi-pin-angle-fill text-primary"></i>
+          </div>
+          <div class="card-body my-1 ">
+            <!-- User Info -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="d-flex align-items-center">
+                <img [src]="post.profileImageUrl" alt="Profile Picture" class="profile-pic me-3" />
+                <div class="d-flex align-items-center">
+                  <div>
+                    <h6 class="m-0 fw-medium fs-5">{{ post.username }}</h6>
+                    <small class="timepos text-muted">{{ post.timestamp | date: 'short' }}</small>
+                  </div>
+                  <!-- Follow Button -->
+                  <button class="btn btn-sm rounded-pill ms-3" 
+                          [ngClass]="{'btn-primary': !post.isFollowing, 'btn-outline-primary': post.isFollowing}"
+                          (click)="toggleFollow(post)">
+                    <i class="bi" [ngClass]="{'bi-person-plus': !post.isFollowing, 'bi-person-check-fill': post.isFollowing}"></i>
+                    <span class="ms-1">{{ post.isFollowing ? 'Following' : 'Follow' }}</span>
+                  </button>
+                </div>
+              </div>
+              <div class="dropdown">
+                <button class="btn btn-link dropdown-toggle" type="button" id="postOptionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots fs-4"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postOptionsDropdown">
+                  <li><a class="dropdown-item" (click)="reportPost(post)"><i class="bi bi-flag me-2"></i>Report post</a></li>
+                  <li><a class="dropdown-item" (click)="deletePost(post)"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                  <li><a class="dropdown-item" (click)="unfollow(post)"><i class="bi bi-person-x me-2"></i>Unfollow</a></li>
+                  <li><a class="dropdown-item" (click)="hidePost(post)"><i class="bi bi-eye-slash me-2"></i>Hide post</a></li>
+                  <li><a class="dropdown-item" (click)="snoozeUser(post, 30)"><i class="bi bi-clock me-2"></i>Snooze for 30 days</a></li>
+                  <li><a class="dropdown-item" (click)="blockUser(post)"><i class="bi bi-person-x-fill me-2"></i>Block user</a></li>
+                  <li><a class="dropdown-item" (click)="pinPost(post)">
+                    <i [class]="post.isPinned ? 'bi bi-pin-angle-fill' : 'bi bi-pin-angle'" class="me-2"></i>
+                    {{ post.isPinned ? 'Unpin post' : 'Pin post' }}
+                  </a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" (click)="sharePost(post)"><i class="bi bi-share-fill me-2"></i>Share post</a></li>
+                </ul>
+              </div>
+            </div>
+
             <!-- Post Content -->
             <div *ngIf="!post.isEditing">
-              
               <p>{{ post.content }}</p>
             </div>
-  
-            <!-- Post Image -->
-            <div *ngIf="post.imageUrl" class="mb-3">
-              
-              <img [src]="post.imageUrl" alt="Post Image" class="img-fluid rounded" />
+
+            <!-- Post Images/Videos -->
+            <div *ngIf="post.images && post.images.length > 0" class=" mb-3 position-relative ">
+              <ng-container *ngIf="post.images[post.currentImageIndex].includes('video'); else imageTemplate">
+                <video [src]="post.images[post.currentImageIndex]" controls class="img-fluid rounded w-100 post-img"></video>
+              </ng-container>
+              <ng-template #imageTemplate>
+                <img [src]="post.images[post.currentImageIndex]" alt="Post Image" class="img-fluid rounded w-100 post-img" />
+              </ng-template>
+
+              <!-- Navigation Buttons -->
+              <div class="navigation-buttons position-absolute top-50 start-0 end-0 d-flex justify-content-between px-3">
+                <button class="btn btn-light rounded-circle" (click)="prevImage(post)" [disabled]="post.currentImageIndex === 0">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="btn btn-light rounded-circle" (click)="nextImage(post)" [disabled]="post.currentImageIndex === post.images.length - 1">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+
+              <!-- Dots Navigation -->
+              <div class="dots-navigation position-absolute bottom-0 start-50 translate-middle-x d-flex gap-1 mb-2">
+                <div
+                  *ngFor="let image of post.images; let j = index"
+                  class="dot"
+                  [ngClass]="{'active': post.currentImageIndex === j}"
+                  (click)="post.currentImageIndex = j"
+                ></div>
+              </div>
             </div>
-  <hr>
+
             <!-- Action Buttons -->
-            <div class="p-3 d-flex justify-content-between text-center">
+            <div class="Action-btn p-3 d-flex justify-content-between text-center">
               <div (click)="toggleLike(post)" class="d-flex align-items-center" style="cursor: pointer;">
                 <i [class.bi-heart-fill]="post.liked" [class.bi-heart]="!post.liked" [class.text-danger]="post.liked"></i>
-                <span class="ms-1" style="user-select: none;">{{ post.likes }} Likes</span>
+                <span class="ms-1" style="user-select: none;">{{ post.likes }} <span class="like">Likes </span></span>
               </div>
               <div (click)="toggleComments(post)" class="d-flex align-items-center" style="cursor: pointer;">
                 <i class="bi bi-chat-dots-fill text-secondary"></i>
-                <span class="ms-1" style="user-select: none;">{{ post.comments.length }} Comments</span>
+                <span class="ms-1" style="user-select: none;">{{ post.comments.length }} <span class="comment">Comments</span>  </span>
               </div>
               <div (click)="sharePost(post)" class="d-flex align-items-center" style="cursor: pointer;">
                 <i class="bi bi-share-fill text-primary"></i>
-                <span class="ms-1" style="user-select: none;">165 Shares</span>
+                <span class="ms-1" style="user-select: none;">{{post.Shares}} <span class="Shares">Shares</span></span>
               </div>
               <div (click)="toggleSave(post)" class="d-flex align-items-center" style="cursor: pointer;">
                 <i [class.bi-bookmark-fill]="post.saved" [class.bi-bookmark]="!post.saved" [class.text-warning]="post.saved"></i>
-                <span class="ms-1" style="user-select: none;">24 Saved</span>
+                <span class="ms-1" style="user-select: none;">{{post.Saves}} <span class="Saved">{{ post.saved ? 'Saved' : 'Save' }}</span></span>
               </div>
             </div>
-  
-  
+
+            <!-- Reactions Section -->
+            <div class="reactions-section px-3 mb-2">
+              <div class="d-flex align-items-center gap-2">
+                <div *ngIf="post.topReactions?.length" class="d-flex gap-1">
+                  <span *ngFor="let reactionItem of post.topReactions" 
+                        class="badge bg-light text-dark"
+                        style="cursor: pointer;"
+                        (click)="showReactionUsers(post)">
+                    {{reactionItem.reaction}} {{reactionItem.count}}
+                  </span>
+                </div>
+                <div *ngIf="post.showReactionUsers" class="reaction-users-popup card shadow-sm">
+                  <div class="card-body p-2">
+                    <h6 class="fw-bold mb-2">Reactions</h6>
+                    <div class="reaction-user-list">
+                      <div *ngFor="let user of post.reactionUsers" class="reaction-user-item d-flex align-items-center mb-2">
+                        <img [src]="user.profileImageUrl" [alt]="user.username" class="profile-pic-sm me-2">
+                        <div>
+                          <span class="fw-medium">{{user.username}}</span>
+                          <span class="ms-2">{{user.reactionType}}</span>
+                          <small class="text-muted d-block">{{user.timestamp | date:'short'}}</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Comments Section -->
             <div *ngIf="post.showComments" class="mt-3">
               <hr>
-              <h5 class="fw-bold mb-3 ">Comments</h5>
-              <div  *ngFor="let comment of post.comments" class="mb-2 ms-4">
-                <strong *ngFor="let use of user" >{{ use.username}}</strong>: {{ comment.text }}
+              <h5 class="fw-bold mb-3">Comments</h5>
+              <div class="comments-list">
+                <div *ngFor="let comment of post.comments" class="comment-item mb-3">
+                  <!-- Main Comment -->
+                  <div class="d-flex">
+                    <img [src]="comment.profileImageUrl" [alt]="comment.username" class="profile-pic-sm me-2">
+                    <div class="comment-content flex-grow-1">
+                      <div class="comment-bubble p-2 rounded">
+                        <h6 class="fw-medium mb-1">{{comment.username}}</h6>
+                        <p class="mb-1">{{comment.text}}</p>
+                        <img *ngIf="comment.imageUrl" [src]="comment.imageUrl" alt="Comment image" class="img-fluid rounded mt-2">
+                      </div>
+                      <div class="comment-actions d-flex align-items-center mt-1 gap-3">
+                        <small class="text-muted">{{comment.timestamp | date:'short'}}</small>
+                        <div class="d-flex align-items-center gap-1" style="cursor: pointer;" (click)="showCommentLikes(comment)">
+                          <i class="bi bi-heart-fill text-danger"></i>
+                          <small>{{comment.likes}}</small>
+                        </div>
+                        <small class="reply-btn" style="cursor: pointer;" (click)="toggleReplyInput(comment)">Reply</small>
+                      </div>
+
+                      <!-- Reply Input -->
+                      <div *ngIf="comment.showReplyInput" class="reply-input mt-2">
+                        <div class="d-flex gap-2">
+                          <img [src]="user[0].profileImageUrl" [alt]="currentUser" class="profile-pic-sm">
+                          <div class="flex-grow-1">
+                            <input type="text" class="form-control form-control-sm" 
+                                   placeholder="Write a reply..." 
+                                   [(ngModel)]="currentReplyText"
+                                   (keyup.enter)="addReply(comment, currentReplyText)">
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Comment Likes Popup -->
+                      <div *ngIf="comment.showLikedBy" class="liked-by-popup card shadow-sm mt-2">
+                        <div class="card-body p-2">
+                          <h6 class="fw-bold mb-2">Liked by</h6>
+                          <div class="liked-by-list">
+                            <div *ngFor="let user of comment.likedBy" class="liked-by-item d-flex align-items-center mb-2">
+                              <img [src]="user.profileImageUrl" [alt]="user.username" class="profile-pic-sm me-2">
+                              <span class="fw-medium">{{user.username}}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Replies -->
+                      <div *ngIf="comment.replies?.length" class="replies-section mt-2 ms-4">
+                        <div *ngFor="let reply of comment.replies" class="reply-item mb-2">
+                          <div class="d-flex">
+                            <img [src]="reply.profileImageUrl" [alt]="reply.username" class="profile-pic-sm me-2">
+                            <div class="comment-content flex-grow-1">
+                              <div class="comment-bubble p-2 rounded">
+                                <h6 class="fw-medium mb-1">{{reply.username}}</h6>
+                                <p class="mb-1">{{reply.text}}</p>
+                              </div>
+                              <div class="comment-actions d-flex align-items-center mt-1 gap-3">
+                                <small class="text-muted">{{reply.timestamp | date:'short'}}</small>
+                                <div class="d-flex align-items-center gap-1" style="cursor: pointer;" (click)="showCommentLikes(reply)">
+                                  <i class="bi bi-heart-fill text-danger"></i>
+                                  <small>{{reply.likes}}</small>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div *ngFor="let use of user" class="comment-box d-flex align-items-center p-2  ">
-                <!-- User Avatar -->
-                <img
-                  [src]="use.profileImageUrl"
-                  alt="User Avatar"
-                  class="rounded-circle avatar"
-                />
-                <!-- Input Field -->
-                <input
-                  type="text"
-                  [(ngModel)]="newComment"
-                  class="form-control mx-2 comment-input"
-                  placeholder="Write your comment..."
-                />
-                <!-- Action Icons -->
+              <div *ngFor="let use of user" class="comment-box d-flex align-items-center p-2 ">
+                <img [src]="use.profileImageUrl" alt="User Avatar" class="rounded-circle avatar" />
+                <input type="text" [(ngModel)]="newComment" class="form-control mx-2 comment-input" placeholder="Write your comment..." (keydown.enter)="addComment(post, newComment)" />
                 <div class="icons d-flex align-items-center">
-                  <i class="bi bi-paperclip mx-2"></i>
-                  <i class="bi bi-image mx-2"></i>
-                  <i class="bi bi-emoji-smile mx-2"></i>
-                  <i class="bi bi-send mx-2" (click)="addComment(post, newComment)"></i>
-  
+                  <i class="bi bi-image mx-2" (click)="triggerFileInput()"></i>
+                  <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;" />
+                  <i class="bi bi-emoji-smile mx-2" (click)="toggleEmojiPicker()"></i>
+                  <div *ngIf="showEmojiPicker" class="emoji-picker-container">
+                    <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
+                  </div>
+                  <button 
+                    class="btn btn-primary post-btn" 
+                    (click)="createPost()"
+                    [disabled]="!postContent.trim()">
+                    Post
+                  </button>
                 </div>
-                <!-- Submit Icon -->
               </div>
             </div>
-  
           </div>
-  
         </div>
-  
-  
       </div>
-  
-      <!-- Right Sidebar -->
-      <div class="risaide col-md-2 col-12 p-0 mt-5 ms-1">
-        <div class="position-sticky" style="top: 20px;">
-          <!-- Trending Feeds Section -->
-          <h5 >Trending Feeds</h5>
-          <div class="mb-4 ms-4">
-  
-            <div class="d-flex justify-content-start flex-wrap" >
-              <img src="https://images.deepai.org/art-image/fca7454eeb5b41f18f1f1dd7f5d31e74/a-small-closed-room-with-a-small-bed-that-can_gH54Ii2.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
-              <img src="https://images.deepai.org/art-image/d9f992e2353d4652b8e5e3a419935d50/a-small-closed-room-with-a-small-bed-that-can_XL2tHnl.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
-              <img src="https://images.deepai.org/art-image/3a07efb0d73b46728bad3e1db4c74ffe/a-small-closed-room-with-a-small-bed-that-can_cNnH96r.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
-              <img src="https://images.deepai.org/art-image/7e55e370ca7646f59074e58d698eb026/a-small-closed-room-with-a-small-bed-that-can_vANQe8W.jpg" class="rounded me-2 mb-2 " alt="Feed 1" style="width: 100px; height: 100px;" />
-  
-            </div>
+      <div class="suggested-user h-50">
+      <h3>People You May Know</h3>
+      <div class="users-list ">
+        <div class="user-card" *ngFor="let user of suggestedUsers">
+          <img [src]="user.profilePicture || user.img" alt="{{ user.name }}" class="suggested-user-img" />
+          <div class="user-info">
+            <h6 class="user-name">{{ user.name }}</h6>
+            <small class="text-muted">{{ user.title }}</small>
           </div>
-  
-          <!-- Suggestions for You Section -->
-          <div>
-            <h5>Suggestions for you</h5>
-            <div *ngFor="let user of usersFol"  class="d-flex align-items-center justify-content-between border-bottom py-1">
-              <div  class="d-flex align-items-center">
-                <img src="{{user.img}}" class="rounded-circle me-3 " alt="User" style="width: 50px; display: block;" />
-                <div>
-                  <p class="mb-0">{{ user.name }}</p>
-                  <small class="text-muted">{{ user.location }}</small>
+          <button class="btn btn-sm rounded-pill" 
+                  [ngClass]="{'btn-primary': !user.Follow, 'btn-outline-primary': user.Follow}"
+                  (click)="toggleFollow(user)">
+            <i class="bi" [ngClass]="{'bi-person-plus': !user.Follow, 'bi-person-check-fill': user.Follow}"></i>
+            <span class="ms-1">{{ user.Follow ? 'Following' : 'Follow' }}</span>
+          </button>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="risaide col-md-2 col-12 p-0 mt-5 ms-2">
+      <div class="position-sticky ris" style="top: 20px;">
+        <!-- Trending Feeds Section -->
+        <div class="trending me-3">
+          <h5 class="card-title mb-3 fw-bold">Trending Feeds</h5>
+          <div class="w-100">
+            <div class="d-flex justify-content-start flex-wrap">
+              <div *ngFor="let feed of trendingFeeds" class="trending-item ">
+                <img [src]="feed.url" 
+                     [alt]="feed.alt" 
+                     class=" trending-img" 
+                     (click)="onTrendingFeedClick(feed)">
+                <div class="trending-overlay">
                 </div>
               </div>
-              <button class="btn btn-primary btn-sm ms-0"  (click)="followUser(user)">Follow</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suggestions for You Section -->
+        <div class="suggested-user me-3">
+          <h5 class="card-title mb-3 fw-bold">Suggestions for you</h5>
+          <div *ngFor="let user of usersFol" class="user-item d-flex align-items-center justify-content-between border-bottom py-1 me-1">
+            <div class="d-flex align-items-center">
+              <img src="{{user.img}}" class="rounded-circle me-3" alt="User" style="width: 50px; display: block;" />
+              <div class="">
+                <p class="mb-0">{{ user.name }}</p>
+                <small class="text-muted">{{user.title}}</small>
+              </div>
+            </div >
+            <div (click)="toggleFollow(user)">
+              <button class="btn btn-sm rounded-pill" 
+                      [ngClass]="{'btn-primary': !user.Follow, 'btn-outline-primary': user.Follow}"
+                      (click)="toggleFollow(user)">
+                <i class="bi" [ngClass]="{'bi-person-plus': !user.Follow, 'bi-person-check-fill': user.Follow}"></i>
+                <span class="ms-1">{{ user.Follow ? 'Following' : 'Follow' }}</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
+</div>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title fw-bold text-white" id="shareModalLabel">
+          <i class="bi bi-share-fill me-2 text-primary"></i>Share Post
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body bg-dark text-white">
+        <ng-container *ngIf="selectedPost as post">
+          <!-- Compact Post Preview -->
+          <div class="share-preview mb-4 rounded-3 bg-dark border border-secondary">
+            <div class="d-flex align-items-center p-2 border-bottom border-secondary">
+              <img [src]="post.profileImageUrl" alt="Profile" class="profile-pic me-2 rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+              <div class="flex-grow-1">
+                <div class="d-flex align-items-center">
+                  <h6 class="mb-0 text-white small">{{post.username}}</h6>
+                  <span class="badge bg-primary ms-2" style="font-size: 0.65rem;" *ngIf="post.isPinned">Pinned</span>
+                </div>
+                <small class="text-secondary" style="font-size: 0.75rem;">{{post.timestamp | date:'MMM d, h:mm a'}}</small>
+              </div>
+            </div>
+            <div class="p-2">
+              <p class="mb-2 text-white-50 small" style="line-height: 1.4;">{{post.content}}</p>
+              <ng-container *ngIf="post.images?.length">
+                <div class="position-relative rounded-2 overflow-hidden" style="max-height: 120px;">
+                  <img [src]="post.images[0]" class="img-fluid w-100" style="object-fit: cover; height: 120px;">
+                  <div class="image-overlay"></div>
+                  <div class="position-absolute bottom-0 end-0 p-2 d-flex gap-2">
+                    <span class="badge bg-dark" *ngIf="post.images.length > 1">
+                      <i class="bi bi-images me-1"></i>{{post.images.length}}
+                    </span>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+
+          <!-- Share Options -->
+          <div class="share-options">
+            <h6 class="text-white-50 text-center mb-4">Share to Social Media</h6>
+            <div class="d-flex flex-wrap justify-content-center gap-4 mb-4">
+              <button class="btn btn-outline-primary d-flex flex-column align-items-center p-3 share-btn" (click)="shareToFacebook()">
+                <i class="bi bi-facebook fs-3"></i>
+                <span class="mt-2">Facebook</span>
+              </button>
+              <button class="btn btn-outline-info d-flex flex-column align-items-center p-3 share-btn" (click)="shareToTwitter()">
+                <i class="bi bi-twitter fs-3"></i>
+                <span class="mt-2">Twitter</span>
+              </button>
+              <button class="btn btn-outline-success d-flex flex-column align-items-center p-3 share-btn" (click)="shareToWhatsApp()">
+                <i class="bi bi-whatsapp fs-3"></i>
+                <span class="mt-2">WhatsApp</span>
+              </button>
+              <button class="btn btn-outline-primary d-flex flex-column align-items-center p-3 share-btn" (click)="shareToLinkedIn()">
+                <i class="bi bi-linkedin fs-3"></i>
+                <span class="mt-2">LinkedIn</span>
+              </button>
+            </div>
+
+            <!-- Copy Link Section -->
+            <div class="copy-link-section mt-4">
+              <h6 class="text-white-50 text-center mb-3">Or Copy Link</h6>
+              <div class="input-group">
+                <input type="text" class="form-control bg-dark text-white border-secondary" [value]="postUrl" readonly #linkInput>
+                <button class="btn btn-outline-light d-flex align-items-center gap-2" [class.copied]="linkCopied" (click)="copyLink(linkInput)">
+                  <i class="bi" [ngClass]="{'bi-clipboard': !linkCopied, 'bi-clipboard-check text-success': linkCopied}"></i>
+                  <span>{{linkCopied ? 'Copied!' : 'Copy'}}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

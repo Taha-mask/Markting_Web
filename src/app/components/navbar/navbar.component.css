@@ -2,27 +2,63 @@
 .navbar {
   width: 100%;
   border-bottom: 1px solid #ddd;
-  height: 70px; /* لضبط ارتفاع الشريط */
+  height: 70px;
   padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
+input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  width: 300px;
+  border-radius: 15px;
+}
+
+.li-pro:hover {
+  background-color: hsl(0, 0%, 51%);
+}
+
+.user-info img {
+  width: 50px;
+  border-radius: 50%;
+  margin-right: 0px;
+}
+
+.user-info h3 {
+  font-weight: 500;
+}
+
+.profile-menu hr {
+  border: 0;
+  height: 1px;
+  width: 100%;
+  background: #fff;
+}
+
+.profile-menu-link span {
+  font-size: 10px;
+}
+
 /* Brand Logo and Name Styling */
 .navbar-brand {
-  font-family: 'Sirin Stencil', sans-serif; /* تطبيق خط مشابه */
-  font-size: 20px; /* حجم مناسب */
-  font-weight: 700; /* خط عريض */
-  color: #333; /* لون متناسق */
-  letter-spacing: 0.5px; /* تعديل التباعد بين الحروف */
+  font-family: 'Sirin Stencil', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+  letter-spacing: 0.5px;
   margin-left: 5%;
   display: flex;
   align-items: center;
 }
 
 .navbar-brand img {
-  height: 30px; /* لضبط حجم الشعار */
+  height: 30px;
 }
 
 .brand-name {
@@ -35,15 +71,12 @@
   display: flex;
   align-items: center;
   border: 1px solid #ddd;
-  border-radius: 20px;
   padding: 5px 0px;
   flex-grow: 1;
-  width: 400px;
   max-width: 600px;
   margin: 0 0px;
-  padding: 20px;
-
-
+  width: 500px;
+  border-radius: 34px;
 }
 
 .search-container input {
@@ -52,7 +85,8 @@
   flex-grow: 1;
   margin-left: 10px;
 }
- .search-container input:focus{
+
+.search-container input:focus {
   border: none;
   outline: none;
 }
@@ -61,14 +95,15 @@
   font-size: 1.2rem;
   color: #888;
   cursor: pointer;
-
 }
 
-.Rightsection{
+/* Right Section Styling */
+.Rightsection {
   display: flex;
   align-items: center;
   gap: 20px;
 }
+
 /* Gradient Button Styling */
 .btn-gradient {
   background: linear-gradient(to right, #D16BA5, #86A8E7, #5FFBF1);
@@ -76,7 +111,7 @@
   border: none;
   font-size: 13px;
   transition: 0.3s ease-in-out;
-  width: 150px;
+  width: 180px;
   height: 48px;
   border-radius: 24px;
   display: flex;
@@ -109,110 +144,118 @@
   border-radius: 50%;
 }
 
-/* Right Section Styling */
-.right-section {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-
 /* Media Queries for Mobile Devices */
-
-@media  (max-width: 1027px) {
-
-.Create{
-  display: none;
-
-}
-.btn-gradient{
-  max-width: 100px;
-}
-.search-container{
-  max-width: 200px;
-}
- @media screen and (max-width: 777px) {
-  .bi-mic {
+@media (max-width: 1027px) {
+  .Create {
     display: none;
   }
+  .btn-gradient {
+    max-width: 100px;
+  }
+  .search-container {
+    max-width: 200px;
+  }
+}
+.mobile-bottom-nav{
+  display: none;
+}
+@media screen and (max-width: 777px) {
   .navbar {
     padding: 10px;
     height: 70px;
-    }
+  }
   .brand-name {
     display: none;
   }
-  .search-container{
-        max-width: 200px;
-  }
-.Create{
-  display: none;
 }
-.btn-gradient {
-    max-width: 100px;
+
+@media screen and (max-width: 600px) {
+  .search-container .bi-search {
+    font-size: 14px;
+  }
+
+  .search-container .bi-mic {
+    font-size: 14px;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    padding-bottom: 60px; /* إضافة padding لتجنب التداخل */
+  }
+
+  .desktop-text {
+    display: none;
+  }
+
+  .icon {
+    display: none;
+  }
+
+  .Rightsection {
+    display: none;
+  }
+
+  .search-container {
+    height: 35px;
+  }
+
+  .bi-list {
+    height: 35px;
+    font-size: 18px;
+    width: 35px;
+    padding: 3px 5px;
+  }
+
+  .search-container input {
+    font-size: 14px;
+    background-color: transparent;
+  }
+
+  .btn-gradient {
+    display: none;
+  }
+
+  .navbar {
+    padding: 10px;
+    height: 60px;
+    gap: 0px;
+    margin: 0;
+  }
+
+  .navbar-brand {
+    margin-right: 0%;
+    margin-left: 0;
+  }
+
+  /* Bottom Navigation Bar for Mobile */
+  .mobile-bottom-nav {
     display: flex;
-    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    z-index: 1000;
+    padding: 10px;
     justify-content: center;
+    align-items: center;
+    gap: 38px;
+    height: 60px; /* ارتفاع ثابت */
   }
- }
 
-}
- @media screen and (max-width: 600px){
-.desktop-text{
-  display: none;
-}
-.search-container{
-  border-radius: 100%;
-width: 40px;
-height: 40px;
-text-align: center;
-margin-left: 0;
-border: none;
-padding-left: 0;
-display: none;
-}
-.bi-mic{
-  display: none;
+  .mobile-bottom-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    font-size: 12px;
+  }
 
-}
-.search-container input{
-  display: none;
-}
-.bi-search {
-  position: relative;
-  cursor: pointer;
-  border: 1px solid #959595;
-  border-radius: 50%;
-  padding: 5px;
-  margin-left: 10px;
-  padding: 5px 10px ;
-  margin: 10px 0
-}
-.Rightsection{
-  display: inline;
-  align-items: center;
-  gap: 1px;
-  margin-left: 0;
-}
-.btn-gradient{
-  position: relative;
-  cursor: pointer;
-  border: 1px solid #959595;
-  border-radius: 50%;
-  padding: 5px ;
-  width: 40px;
-  height: 40px;
-font-size: 25px;
-text-align: center;
-}
- .navbar{
-  padding: 10px;
-  height: 70px;
-  gap: 0px ;
-  margin:0;
- }
- .navbar-brand{
-  margin-right: 0%;
-  margin-left: 0;
- }
+  .mobile-bottom-nav .nav-item i {
+    font-size: 23px;
+  }
 }

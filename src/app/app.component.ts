@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NavbarComponent } from "./components/navbar/navbar.component";
-
+import { InnerStoryComponent } from "./components/inner-story/inner-story.component";
 
 @Component({
   selector: 'app-root',

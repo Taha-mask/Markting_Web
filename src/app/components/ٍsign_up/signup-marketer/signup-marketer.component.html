@@ -1,225 +1,280 @@
-<section>
+<section class="signup-section">
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-lg-8 col-md-10 col-12">
         <!-- Form Header -->
         <div class="form-header text-center mb-4">
-          <h2>Sign Up</h2>
+          <h2>Marketer Sign Up</h2>
+          <p class="text-muted">Create your marketer account to start promoting products</p>
         </div>
-
-        <!-- <h1>{{ marketerRegisterForm.value | json }}</h1> -->
 
         <!-- Form Container -->
         <div class="form-container p-4 border rounded shadow-sm bg-white">
-          <form [formGroup]="marketerRegisterForm" (ngSubmit)="register()">
-            <!-- First Name and Second Name -->
+          <form [formGroup]="marketerRegisterForm" (ngSubmit)="onSubmit()" class="needs-validation">
             <div class="row">
-              <div class="col-md-6 mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Your First Name"
-                  formControlName="firstName"
-                  required
-                  maxlength="10"
-                />
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Your Second Name"
-                  formControlName="secondName"
-                  required
-                  maxlength="10"
-                />
-              </div>
-            </div>
-
-            <!-- ID Number & ID Image Upload -->
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Your ID Number"
-                  formControlName="idNumber"
-                  required
-                  maxlength="15"
-                />
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <input
-                  type="file"
-                  class="form-control"
-                  (change)="onFileChange($event)"
-                  accept="image/*"
-                />
-              </div>
-            </div>
-
-            <!-- Shop Name & Location (Dynamic Fields) -->
-            <div class="row mb-3 align-items-center" *ngFor="let shop of Shops.controls; let i = index">
-              <div class="col-md-6">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Shop Name"
-                  [formControlName]="i + '.shopName'"
-                  required
-                  maxlength="20"
-                />
-              </div>
-
-              <div class="col-md-4">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Shop Location"
-                  [formControlName]="i + '.shopLocation'"
-                  required
-                  maxlength="20"
-                />
-              </div>
-
-              <div class="col-md-1">
-                <button
-                  type="button"
-                  class="btn btn-danger btn-sm"
-                  (click)="deleteShop(i)"
-                  [disabled]="Shops.length === 1"
-                >
-                  <i class="fa-solid fa-minus"></i>
-                </button>
-              </div>
-
-              <div class="col-md-1">
-                <button
-                  type="button"
-                  class="btn btn-success btn-sm"
-                  (click)="addNewShop()"
-                  [disabled]="Shops.length >= 5"
-                >
-                  <i class="fa-solid fa-plus"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- Email Address -->
-            <div class="row">
-              <div class="col-md-12 mb-3">
-                <input
-                  type="email"
-                  class="form-control"
-                  placeholder="Your Email Address"
-                  formControlName="email"
-                  required
-                  maxlength="30"
-                />
-              </div>
-            </div>
-
-            <!-- Password & Confirm Password -->
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <input
-                  type="password"
-                  class="form-control"
-                  placeholder="Your Password"
-                  formControlName="password"
-                  required
-                  maxlength="30"
-                />
-              </div>
-              <div class="col-md-6 mb-3">
-                <input
-                  type="password"
-                  class="form-control"
-                  placeholder="Confirm Your Password"
-                  formControlName="confirmPassword"
-                  required
-                  maxlength="30"
-                />
-              </div>
-            </div>
-
-            <!-- Address -->
-            <div formGroupName="address">
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Your City"
-                    formControlName="city"
-                    required
-                    maxlength="30"
-                  />
-                </div>
-                <div class="col-md-6 mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Your Street"
-                    formControlName="street"
-                    required
-                    maxlength="30"
-                  />
+              <!-- Profile Image Upload -->
+              <div class="col-12 text-center mb-4">
+                <div class="profile-image-container">
+                  <img [src]="getImageUrl(selectedProfileImage)" 
+                       alt="Profile Preview" class="profile-preview mb-2">
+                  <div class="upload-overlay">
+                    <button type="button" 
+                            class="btn btn-primary" 
+                            (click)="triggerProfileImageUpload()">
+                      <i class="fas fa-camera"></i> Choose Profile Photo
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Phone Numbers -->
-            <div class="row">
+              <!-- Personal Information -->
               <div class="col-md-6 mb-3">
-                <input
-                  type="number"
-                  class="form-control"
-                  placeholder="Primary Phone"
-                  formControlName="primaryPhone"
-                  required
-                  maxlength="15"
-                />
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="firstName" 
+                       formControlName="firstName" 
+                       [class.is-invalid]="marketerRegisterForm.get('firstName')?.invalid && 
+                                          marketerRegisterForm.get('firstName')?.touched">
+                <div class="invalid-feedback">
+                  Please enter your first name (minimum 2 characters).
+                </div>
               </div>
-              <div class="col-md-6 mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Secondary Phone"
-                  formControlName="secondaryPhone"
-                  maxlength="15"
-                />
-              </div>
-            </div>
 
-            <!-- Country Selection -->
-            <div class="row">
-              <div class="col-md-12 mb-3">
-                <select class="form-control" formControlName="country" required>
-                  <option value="">-- Select Your Country --</option>
-                  <option *ngFor="let country of countries" [value]="country">
-                    {{ country }}
-                  </option>
+              <div class="col-md-6 mb-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="lastName" 
+                       formControlName="lastName" 
+                       [class.is-invalid]="marketerRegisterForm.get('lastName')?.invalid && 
+                                          marketerRegisterForm.get('lastName')?.touched">
+                <div class="invalid-feedback">
+                  Please enter your last name (minimum 2 characters).
+                </div>
+              </div>
+
+              <!-- Gender Field -->
+              <div class="col-md-6 mb-3">
+                <label for="gender" class="form-label">Gender</label>
+                <select class="form-select" 
+                        id="gender" 
+                        formControlName="gender" 
+                        [class.is-invalid]="marketerRegisterForm.get('gender')?.invalid && 
+                                           marketerRegisterForm.get('gender')?.touched">
+                  <option value="" disabled selected>Select your gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
                 </select>
+                <div class="invalid-feedback">
+                  Please select your gender.
+                </div>
               </div>
-            </div>
 
-            <!-- Submit Button -->
-            <div class="d-grid">
-              <button
-                type="submit"
-                class="btn btn-primary"
-                [disabled]="marketerRegisterForm.invalid"
-              >
-                Sign Up
-              </button>
-            </div>
+              <!-- Birth Date Field -->
+              <div class="col-md-6 mb-3">
+                <label for="birthDate" class="form-label">Birth Date</label>
+                <input type="date" 
+                       class="form-control" 
+                       id="birthDate" 
+                       formControlName="birthDate" 
+                       [max]="getMaxDate()"
+                       [class.is-invalid]="marketerRegisterForm.get('birthDate')?.invalid && 
+                                          marketerRegisterForm.get('birthDate')?.touched">
+                <div class="invalid-feedback">
+                  Please enter a valid birth date (must be 18 or older).
+                </div>
+              </div>
 
-            <!-- Link to Sign In -->
-            <div class="mt-3 text-center">
-              <a href="login">Already have an account? Sign in</a>
+              <!-- Contact Information -->
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" 
+                       class="form-control" 
+                       id="email" 
+                       formControlName="email" 
+                       [class.is-invalid]="marketerRegisterForm.get('email')?.invalid && 
+                                          marketerRegisterForm.get('email')?.touched">
+                <div class="invalid-feedback">
+                  Please enter a valid email address.
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">Phone Number</label>
+                <div class="input-group phone-input-group">
+                  <div class="input-group-prepend h-100">
+                    <span class="input-group-text" (click)="toggleCountryDropdown()">
+                      <span *ngIf="marketerRegisterForm.get('country')?.value" 
+                            class="flag-icon flag-icon-{{ getSelectedCountryFlagCode() }}"></span>
+                      {{ marketerRegisterForm.get('country')?.value || '' }}
+                      <i class="fas fa-chevron-down"></i>
+                    </span>
+                  </div>
+                  <input type="tel" 
+                         class="form-control phone-number" 
+                         id="phone" 
+                         formControlName="phone" 
+                         [placeholder]="getPhonePlaceholder()"
+                         [class.is-invalid]="marketerRegisterForm.get('phone')?.invalid && 
+                                            marketerRegisterForm.get('phone')?.touched">
+                  <!-- Custom Dropdown -->
+                  <div class="country-dropdown" *ngIf="showCountryDropdown">
+                    <div class="country-list">
+                      <div *ngFor="let country of countries" 
+                           class="country-item" 
+                           (click)="selectCountry(country)">
+                        <span class="flag-icon flag-icon-{{ country.flagCode }}"></span>
+                        {{ country.name }} ({{ country.code }})
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="invalid-feedback" *ngIf="marketerRegisterForm.get('country')?.invalid">
+                  Please select your country.
+                </div>
+                <div class="invalid-feedback" *ngIf="marketerRegisterForm.get('phone')?.invalid">
+                  Please enter a valid phone number for the selected country.
+                </div>
+              </div>
+
+              <!-- ID Document Upload -->
+              <div class="col-12 mb-3">
+                <label for="idImage" class="form-label">Upload ID Document</label>
+                <input type="file" 
+                       class="form-control" 
+                       id="idImage" 
+                       accept="image/*" 
+                       (change)="onIdImageSelect($event)" 
+                       [class.is-invalid]="!selectedIdImage && marketerRegisterForm.touched">
+                <div class="invalid-feedback">
+                  Please upload a valid ID document.
+                </div>
+              </div>
+
+              <!-- Password Section -->
+              <div class="col-md-6 mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" 
+                       class="form-control" 
+                       id="password" 
+                       formControlName="password" 
+                       (input)="checkPasswordStrength($event)" 
+                       [class.is-invalid]="marketerRegisterForm.get('password')?.invalid && 
+                                          marketerRegisterForm.get('password')?.touched">
+                
+                <!-- Password Strength Indicator -->
+                <div class="progress mt-2" style="height: 5px;">
+                  <div class="progress-bar" 
+                       [style.width.%]="passwordStrength"
+                       [class.bg-danger]="passwordStrength <= 20"
+                       [class.bg-warning]="passwordStrength > 20 && passwordStrength <= 40"
+                       [class.bg-info]="passwordStrength > 40 && passwordStrength <= 60"
+                       [class.bg-primary]="passwordStrength > 60 && passwordStrength <= 80"
+                       [class.bg-success]="passwordStrength > 80"></div>
+                </div>
+                
+                <div class="password-strength-text mt-1">
+                  <small [class.text-danger]="passwordStrength <= 20">Very Weak</small>
+                  <small [class.text-warning]="passwordStrength > 20 && passwordStrength <= 40">Weak</small>
+                  <small [class.text-info]="passwordStrength > 40 && passwordStrength <= 60">Medium</small>
+                  <small [class.text-primary]="passwordStrength > 60 && passwordStrength <= 80">Strong</small>
+                  <small [class.text-success]="passwordStrength > 80">Very Strong</small>
+                </div>
+
+                <div class="invalid-feedback">
+                  Password must be at least 8 characters and meet strength requirements.
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" 
+                       class="form-control" 
+                       id="confirmPassword" 
+                       formControlName="confirmPassword" 
+                       [class.is-invalid]="marketerRegisterForm.get('confirmPassword')?.invalid && 
+                                          marketerRegisterForm.get('confirmPassword')?.touched">
+                <div class="invalid-feedback">
+                  Passwords do not match.
+                </div>
+              </div>
+
+              <!-- Company Information -->
+              <div class="col-md-6 mb-3">
+                <label for="companyName" class="form-label">Company Name</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="companyName" 
+                       formControlName="companyName" 
+                       [class.is-invalid]="marketerRegisterForm.get('companyName')?.invalid && 
+                                          marketerRegisterForm.get('companyName')?.touched">
+                <div class="invalid-feedback">
+                  Please enter your company name (minimum 2 characters).
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="companyWebsite" class="form-label">Company Website (Optional)</label>
+                <input type="url" 
+                       class="form-control" 
+                       id="companyWebsite" 
+                       formControlName="companyWebsite" 
+                       [class.is-invalid]="marketerRegisterForm.get('companyWebsite')?.invalid && 
+                                          marketerRegisterForm.get('companyWebsite')?.touched">
+                <div class="invalid-feedback">
+                  Please enter a valid website URL (e.g., https://example.com).
+                </div>
+              </div>
+
+              <div class="col-12 mb-3">
+                <label for="companyDescription" class="form-label">Company Description</label>
+                <textarea class="form-control" 
+                          id="companyDescription" 
+                          formControlName="companyDescription" 
+                          rows="3" 
+                          [class.is-invalid]="marketerRegisterForm.get('companyDescription')?.invalid && 
+                                             marketerRegisterForm.get('companyDescription')?.touched"></textarea>
+                <div class="invalid-feedback">
+                  Please provide a company description (minimum 20 characters).
+                </div>
+              </div>
+
+              <!-- Terms and Conditions -->
+              <div class="col-12 mb-3">
+                <div class="form-check">
+                  <input type="checkbox" 
+                         class="form-check-input" 
+                         id="termsAccepted" 
+                         formControlName="termsAccepted" 
+                         [class.is-invalid]="marketerRegisterForm.get('termsAccepted')?.invalid && 
+                                            marketerRegisterForm.get('termsAccepted')?.touched">
+                  <label class="form-check-label" for="termsAccepted">
+                    I accept the terms and conditions
+                  </label>
+                  <div class="invalid-feedback">
+                    You must accept the terms and conditions to proceed.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="col-12">
+                <button type="submit" 
+                        class="btn btn-primary w-100" 
+                        [disabled]="marketerRegisterForm.invalid || isLoading">
+                  <span *ngIf="!isLoading">Register as Marketer</span>
+                  <span *ngIf="isLoading">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Processing...
+                  </span>
+                </button>
+              </div>
+
+              <div class="mt-3 text-center">
+                <a [routerLink]="['/login']">Already have an account? Sign in</a>
+              </div>
             </div>
           </form>
         </div>
