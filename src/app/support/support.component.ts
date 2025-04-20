@@ -8,29 +8,43 @@ import { Component } from '@angular/core';
   styleUrl: './support.component.css'
 })
 export class SupportComponent {
-  onSubmit(event: Event): void {
+  sendMessage(event: Event): void {
     event.preventDefault();
 
-    const form = event.target as HTMLFormElement;
-    const formData = new FormData(form);
+    const form = document.getElementById('contactForm') as HTMLFormElement;
+    const alertBox = document.getElementById('alertBox') as HTMLElement;
+    const messageInput = form.querySelector('textarea[name="message]') as HTMLTextAreaElement;
 
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-    const message = formData.get('message') as string;
+    const message = (form.elements.namedItem('message') as HTMLTextAreaElement).value;
 
-    if (name && email && message) {
-      const alertBox = document.getElementById('messageAlert');
-      if (alertBox) {
-        alertBox.classList.add('show');
+    // Store message
+    const oldMessages = JSON.parse(localStorage.getItem('supportMessages') || '[]');
+    oldMessages.push(message);
+    localStorage.setItem('supportMessages', JSON.stringify(oldMessages));
 
-        // Hide after 3 seconds
-        setTimeout(() => {
-          alertBox.classList.remove('show');
-        }, 3000);
+    alertBox.classList.add('show');
+    form.reset();
+
+    setTimeout(() => {
+      alertBox.classList.remove('show');
+    }, 3000);
+  }
+
+  showPreviousMessages(): void {
+    const messageWindow = document.getElementById('messageWindow') as HTMLElement;
+    const messages = JSON.parse(localStorage.getItem('supportMessages') || '[]');
+
+    messageWindow.innerHTML = '';
+    if (messages.length === 0) {
+      messageWindow.innerHTML = '<p>No previous messages.</p>';
+    } else {
+      for (let i = 0; i < messages.length; i++) {
+        const p = document.createElement('p');
+        p.textContent = messages[i];
+        messageWindow.appendChild(p);
       }
-
-      // Reset form
-      form.reset();
     }
+
+    messageWindow.style.display = 'block';
   }
 }

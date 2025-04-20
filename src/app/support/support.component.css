@@ -1,118 +1,113 @@
-.support-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #f0f8ff;
-    color: #003366;
-  }
-  
-  .support-header {
-    background-color: #007bff;
-    color: white;
-    padding: 30px;
-    text-align: center;
-    border-radius: 12px;
-    margin-bottom: 30px;
-  }
-  
-  .faq-section {
-    margin-bottom: 40px;
-  }
-  
-  .faq-section h2 {
-    color: #004080;
-    margin-bottom: 20px;
-  }
-  
-  .faq-item {
-    background-color: white;
-    padding: 15px;
-    border-left: 4px solid #007bff;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  }
-  
-  .contact-form {
-    background-color: #e6f2ff;
-    padding: 25px;
-    border-radius: 12px;
-  }
-  
-  .contact-form form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .contact-form label {
-    margin-top: 15px;
-    margin-bottom: 5px;
-  }
-  
-  .contact-form input,
-  .contact-form textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-  }
-  
-  .contact-form button {
-    margin-top: 20px;
-    background-color: #007bff;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-  }
-  
-  .contact-form button:hover {
-    background-color: #007bff;
-  }
 
-  .alert {
-    display: none;
-    background-color: #bcd4e0;
-    color: #1b79a4;
-    padding: 15px;
-    margin: 20px 0;
-    border: 1px solid #bcd4e0;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: bold;
-  }
-  .alert.show {
-    display: block;
-  }
-
-
-@media (max-width: 768px) {
-  .support-container {
-    padding: 15px;
-  }
-
-  input,
-  textarea,
-  button {
-    font-size: 15px;
-  }
+.support-page {
+  max-width: 1100px; /* أكبر من 500px */
+  margin: auto;
+  padding: 40px;
+  background: #e6f0ff;
+  border-radius: 20px;
+  font-family: sans-serif;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 480px) {
-  h1 {
-    font-size: 24px;
-  }
+.header {
+  background-color: #3390ff;
+  border-radius: 20px 20px 0 0;
+  padding: 30px;
+  color: white;
+  text-align: center;
+  font-size: 28px;
+}
 
-  input,
-  textarea {
-    font-size: 14px;
-  }
+.header .icon {
+  font-size: 40px;
+  background: white;
+  color: #3390ff;
+  border-radius: 10px;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  font-weight: bold;
+}
 
-  button {
-    font-size: 15px;
-    padding: 10px;
-  }
+.faq {
+  background-color: white;
+  padding: 30px;
+  margin-top: 15px;
+  border-radius: 15px;
+  font-size: 18px;
+}
+
+.faq h2 {
+  text-align: center;
+  color: #003366;
+  margin-bottom: 20px;
+}
+
+.question h3 {
+  color: #003366;
+  margin-top: 10px;
+}
+
+.form-container {
+  background-color: #3390ff;
+  padding: 30px;
+  border-radius: 15px;
+  margin-top: 20px;
+  color: white;
+  font-size: 18px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 15px;
+  margin: 12px 0;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background-color: #003366;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.alert {
+  display: none;
+  background-color: #d1e7dd;
+  color: #0f5132;
+  padding: 12px;
+  margin: 20px 0;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.alert.show {
+  display: block;
+}
+
+.message-window {
+  background: white;
+  color: #003366;
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  display: none;
+  font-size: 16px;
+}
+
+.show-btn {
+  background-color: #004080;
+  margin-top: 15px;
 }

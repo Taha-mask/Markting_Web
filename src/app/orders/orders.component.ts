@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component , OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-orders',
@@ -7,12 +7,21 @@ import { Component } from '@angular/core';
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.css'
 })
-export class OrdersComponent {
+export class OrdersComponent implements OnInit {
   idCounter = 1;
   showFormText = '+ New Order';
 
-  ngAfterViewInit() {
-    // ممكن نستخدمه في حال أردت إعداد شيء بعد ظهور العناصر
+  ngOnInit() {
+    this.loadOrdersFromStorage();
+  }
+
+  // عرض الطلبات المحفوظة من localStorage
+  loadOrdersFromStorage() {
+    const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    for (const order of savedOrders) {
+      this.addOrderToTable(order);
+    }
+    this.idCounter = savedOrders.length + 1;
   }
 
   toggleForm() {
@@ -40,45 +49,56 @@ export class OrdersComponent {
     const amount = amountInput.value;
     const status = statusInput.value;
 
-    // إذا كانت الحالة "Cancelled"، لا نضيف الطلب
-    if (status === 'cancelled') {
-      this.toggleForm();
-      return; // لا نضيف الطلب في حالة الإلغاء
-    }
-
     if (!customer || !amount || !status) return;
 
-    const today = new Date().toISOString().slice(0, 10);
-    const tbody = document.getElementById('ordersTableBody');
-
-    if (tbody) {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>#${this.idCounter}</td>
-        <td>${today}</td>
-        <td>${this.escapeHtml(customer)}</td>
-        <td>$${amount}</td>
-        <td><span class="status ${status}">${status}</span></td>
-      `;
-      tbody.appendChild(row);
-      this.idCounter++;
+    if (status === 'cancelled') {
+      this.toggleForm();
+      return; // لا يتم الحفظ إذا كانت الحالة "cancelled"
     }
 
-    // Clear inputs manually
+    const today = new Date().toISOString().slice(0, 10);
+    const newOrder = {
+      id: this.idCounter,
+      date: today,
+      customer,
+      amount,
+      status
+    };
+
+    this.addOrderToTable(newOrder);
+    this.saveOrderToLocalStorage(newOrder);
+
+    this.idCounter++;
     customerInput.value = '';
     amountInput.value = '';
     statusInput.value = 'pending';
-
     this.toggleForm();
   }
 
-  escapeHtml(text: string): string {
-    const div = document.createElement('div');
-    div.innerText = text;
-    return div.innerHTML;
+  // يضيف الطلب إلى الجدول
+  addOrderToTable(order: any) {
+    const tbody = document.getElementById('ordersTableBody');
+    if (!tbody) return;
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>#${order.id}</td>
+      <td>${order.date}</td>
+      <td>${this.escapeHtml(order.customer)}</td>
+      <td>$${order.amount}</td>
+      <td><span class="status ${order.status}">${order.status}</span></td>
+    `;
+    tbody.appendChild(row);
   }
 
-  // البحث داخل الجدول
+  // حفظ الطلب في localStorage
+  saveOrderToLocalStorage(order: any) {
+    const currentOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    currentOrders.push(order);
+    localStorage.setItem('orders', JSON.stringify(currentOrders));
+  }
+
+  // فلترة الجدول
   filterOrders() {
     const input = <HTMLInputElement>document.getElementById('searchInput');
     const filter = input.value.toLowerCase();
@@ -90,5 +110,12 @@ export class OrdersComponent {
       const rowText = rows[i].innerText.toLowerCase();
       rows[i].style.display = rowText.includes(filter) ? '' : 'none';
     }
+  }
+
+  // حماية من إدخال HTML
+  escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.innerText = text;
+    return div.innerHTML;
   }
 }

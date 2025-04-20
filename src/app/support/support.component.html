@@ -1,40 +1,33 @@
-<div class="support-container">
-  <header class="support-header">
+<div class="support-page">
+  <div class="header">
+    <div class="icon">?</div>
     <h1>Support and Help</h1>
-    <p>How can we assist you today?</p>
-  </header>
-
-  <div class="alert" id="messageAlert">
-    Your message has been sent successfully!
   </div>
 
-  <section class="faq-section">
+  <div class="faq">
     <h2>Frequently Asked Questions</h2>
-
-    <div class="faq-item">
+    <div class="question">
       <h3>How do I reset my password?</h3>
-      <p>Click on "Forgot Password" on the login screen and follow the instructions.</p>
+      <p>Lorem Ipsum is simply dummy text used as a primime.</p>
     </div>
-
-    <div class="faq-item">
-      <h3>How do I contact support?</h3>
-      <p>Use the contact form below or email us at support</p>
+    <div class="question">
+      <h3>How do I update my account information?</h3>
+      <p>Lorem Ipsum is simply dummy text used as a primime.</p>
     </div>
-  </section>
+  </div>
 
-  <section class="contact-form">
+  <div id="alertBox" class="alert">Your message has been sent successfully!</div>
+
+  <div class="form-container">
     <h2>Contact Us</h2>
-    <form (submit)="onSubmit($event)">
-      <label for="name">Your Name</label>
-      <input id="name" type="text" name="name" required />
-
-      <label for="email">Your Email</label>
-      <input id="email" type="email" name="email" required />
-
-      <label for="message">Message</label>
-      <textarea id="message" name="message" rows="4" required></textarea>
-
-      <button type="submit">Send Message</button>
+    <form id="contactForm" (submit)="sendMessage($event)">
+      <input type="text" name="name" placeholder="Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <textarea name="message" placeholder="Message" required></textarea>
+      <button type="submit">Send</button>
     </form>
-  </section>
+
+    <button class="show-btn" (click)="showPreviousMessages()">Show Previous Messages</button>
+    <div id="messageWindow" class="message-window"></div>
+  </div>
 </div>

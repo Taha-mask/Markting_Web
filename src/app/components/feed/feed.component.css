@@ -656,6 +656,61 @@ body {
   margin-right: 5px;
 }
 
+
+
+
+
+
+
+
+
+
+.popup-form {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  background-color: #f8f9fa;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.popup-form h3 {
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.popup-form .btn {
+  width: 100%;
+}
+
+.btn-btn-primary{
+  width: 150px;
+  background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    white-space: nowrap;
+    margin-left: 900px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Share Modal */
 .modal-content.bg-dark {
   background-color: #212529 !important;
