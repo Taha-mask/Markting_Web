@@ -68,7 +68,8 @@
       </div>
 
       <!-- Posts Section -->
-      <div *ngIf="filteredPosts.length > 0; else emptyState">
+      <div *ngIf="filteredPosts.length > 0; ">
+        
         <div *ngFor="let post of filteredPosts; let i = index">
           <div class="card mb-2" [class.border-primary]="post.isPinned">
             <!-- Pin Indicator -->
@@ -106,9 +107,102 @@
                 </div>
               </div>
 
+              <div class="dropdown ms-auto">
+                <button class="btn btn-link dropdown-toggle" type="button" id="postOptionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots fs-4"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postOptionsDropdown">
+                  <li><a class="dropdown-item" (click)="reportPost(post)"><i class="bi bi-flag me-2"></i>Report post</a></li>
+                  <li><a class="dropdown-item"  ><i class="bi bi-bag-check me-2"></i>New order</a></li>
+                  <li><a class="dropdown-item" (click)="deletePost(post)"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                  <li><a class="dropdown-item" (click)="unfollow(post)"><i class="bi bi-person-x me-2"></i>Unfollow</a></li>
+                  <li><a class="dropdown-item" (click)="hidePost(post)"><i class="bi bi-eye-slash me-2"></i>Hide post</a></li>
+                  <li><a class="dropdown-item" (click)="snoozeUser(post, 30)"><i class="bi bi-clock me-2"></i>Snooze for 30 days</a></li>
+                  <li><a class="dropdown-item" (click)="blockUser(post)"><i class="bi bi-person-x-fill me-2"></i>Block user</a></li>
+                  <li><a class="dropdown-item" (click)="pinPost(post)">
+                    <i [class]="post.isPinned ? 'bi bi-pin-angle-fill' : 'bi bi-pin-angle'" class="me-2"></i>
+                    {{ post.isPinned ? 'Unpin post' : 'Pin post' }}
+                  </a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" (click)="sharePost(post)"><i class="bi bi-share-fill me-2"></i>Share post</a></li>
+                </ul>
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+
+          
+<button class="btn-btn-primary" (click)="toggleForm()" >+ New Order</button>
+
+<!-- الفورم المنبثق -->
+<div id="popupForm" class="popup-form" style="display: none;">
+  <h3>Add New Order</h3>
+  <form (submit)="submitOrder($event)">
+    <div class="mb-3">
+      <label>Customer Name</label>
+      <input id="popupCustomer" type="text" class="form-control" required />
+    </div>
+    <div class="mb-3">
+      <label>Amount</label>
+      <input id="popupAmount" type="number" class="form-control" required />
+    </div>
+    <div class="mb-3">
+      <label>Status</label>
+      <select id="popupStatus" class="form-select" required>
+        <option value="completed">Completed</option>
+        <option value="pending">Pending</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+  </form>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!-- Post Content -->
+            <div *ngIf="!post.isEditing">
+              <p>{{ post.content }}</p>
+            </div>
+            <!-- Post Images/Videos -->
+            <div *ngIf="post.images && post.images.length > 0" class=" mb-3 position-relative ">
+              <ng-container *ngIf="post.images[post.currentImageIndex].includes('video'); else imageTemplate">
+                <video [src]="post.images[post.currentImageIndex]" controls class="img-fluid rounded w-100 post-img"></video>
+              </ng-container>
+              <ng-template #imageTemplate>
+                <img [src]="post.images[post.currentImageIndex]" alt="Post Image" class="img-fluid rounded w-100 post-img" />
+              </ng-template>
+
+              <!-- Navigation Buttons -->
+              <div class="navigation-buttons position-absolute top-50 start-0 end-0 d-flex justify-content-between px-3">
+                <button class="btn btn-light rounded-circle" (click)="prevImage(post)" [disabled]="post.currentImageIndex === 0">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="btn btn-light rounded-circle" (click)="nextImage(post)" [disabled]="post.currentImageIndex === post.images.length - 1">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+=======
+
               <!-- Post Content -->
               <div *ngIf="!post.isEditing">
                 <p>{{ post.content }}</p>
+
               </div>
 
               <!-- Post Images/Videos -->
@@ -303,8 +397,7 @@
           </button>
         </div>
       </ng-template>
-    </div>
-
+   
     <!-- Right Sidebar -->
     <div class="risaide col-md-2 col-12 p-0 mt-5 ms-2">
       <div class="position-sticky ris" style="top: 20px;">

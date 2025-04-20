@@ -12,6 +12,8 @@ import { User } from '../../interfaces/user';
 import { Subscription } from 'rxjs';
 import { Dropdown } from 'bootstrap';
 
+import { Router } from '@angular/router';
+
 declare var bootstrap: any;
 
 interface ReactionCount {
@@ -789,7 +791,7 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.filterPostsByCategory(this.activeCategory);
   }
 
-  constructor(private postService: PostService) {}
+  constructor(private postService: PostService , private router : Router) {}
 
   ngOnInit() {
     this.postSubscription = this.postService.getPosts().subscribe(posts => {
@@ -810,5 +812,71 @@ export class FeedComponent implements OnInit, OnDestroy {
     if (this.postSubscription) {
       this.postSubscription.unsubscribe();
     }
+  }
+
+
+
+  toggleMenu() {
+    const menu = document.getElementById('menuList');
+    if (menu) {
+      menu.toggleAttribute('hidden');
+    }
+  }
+
+
+
+
+
+
+ 
+
+  toggleForm() {
+    const form = document.getElementById('popupForm');
+    if (form) {
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+  }
+
+  submitOrder(event: Event) {
+    event.preventDefault();
+
+    const customerInput = document.getElementById('popupCustomer') as HTMLInputElement;
+    const amountInput = document.getElementById('popupAmount') as HTMLInputElement;
+    const statusSelect = document.getElementById('popupStatus') as HTMLSelectElement;
+
+    const customer = customerInput.value.trim();
+    const amount = amountInput.value;
+    const status = statusSelect.value;
+
+    if (!customer || !amount || !status) return;
+
+    if (status === 'cancelled') {
+      this.toggleForm();
+      return; // لا يتم الحفظ إذا تم اختيار cancelled
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    const newOrder = {
+      id: Date.now(),
+      date: today,
+      customer,
+      amount,
+      status
+    };
+
+    const existingOrders = localStorage.getItem('orders');
+    const orders = existingOrders ? JSON.parse(existingOrders) : [];
+
+    orders.push(newOrder);
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    // إخفاء الفورم وتفريغ الحقول
+    customerInput.value = '';
+    amountInput.value = '';
+    statusSelect.value = 'pending';
+    this.toggleForm();
+
+    // يمكننا إعادة التوجيه لصفحة الطلبات
+    this.router.navigate(['/orders']);
   }
 }

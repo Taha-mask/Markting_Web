@@ -15,6 +15,11 @@ import { InnerStoryComponent } from './components/inner-story/inner-story.compon
 import { ExplorepageComponent } from './components/explorepage/explorepage.component';
 import { AccountCenterComponent } from './components/account-center/account-center.component';
 import { RightsideComponent } from './components/rightside/rightside.component';
+
+import { OrdersComponent } from './orders/orders.component';
+import { BlogComponent } from './blog/blog.component';
+import { SupportComponent } from './support/support.component';
+import { PromotionsComponent } from './promotions/promotions.component';
 import { StatusComponent } from './components/status/status.component';
 import { Error404Component } from './components/erorr404/error404.component';
 import { Error500Component } from './components/error500/error500.component';
@@ -24,6 +29,7 @@ import  {ReviewsComponent} from './reviews/reviews.component';
 import {CartComponent} from './cart/cart.component';
 import {SavedPostComponent} from './saved-post/saved-post.component'
 
+
 export const routes: Routes = [
   {path: 'explore' , component : ExplorepageComponent},
   {path: 'messages' , component : MessageComponent},
@@ -32,6 +38,10 @@ export const routes: Routes = [
   {path: 'notf' , component : NotificationComponent},
   {path: 'TypeAccount' , component : TypeAccountComponent},
   {path: 'givefeedback' , component : GiveFeedbackComponent},
+  {path: 'orders' , component : OrdersComponent},
+  {path: 'blog' , component : BlogComponent},
+  {path: 'promotions' , component : PromotionsComponent},
+  {path: 'support' , component : SupportComponent},
   {path: 'login' , component : LoginFormComponent},
   {path: 'about' , component : AboutComponent},
   {path: 'Story' , component : InnerStoryComponent},

@@ -1,3 +1,4 @@
+
 // src/app/models/auth.model.ts
 export interface LoginResponse {
     token: string;
@@ -18,4 +19,5 @@ export interface RegistrationResponse {
 export interface ApiError {
     status: number;
     message: string;
+
 }
