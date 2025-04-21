@@ -17,7 +17,7 @@
         <div class="profile-info">
           <h2 class="user-name">{{user[0].username}}</h2>
           <p class="user-title">{{user[0].type}}</p>
-          
+
           <!-- Bio -->
           <div class="bio-section">
             <p *ngIf="!isEditingBio" (click)="toggleBioEdit()" class="bio-text">
@@ -79,11 +79,11 @@
 
           <!-- Action Buttons -->
           <div class="profile-actions">
-            <button class="btn btn-primary btn-block" [routerLink]="['/messages']">
-              <i class="bi bi-chat-dots"></i> Message
+            <button class="btn btn-primary btn-block" (click)="openEditProfileModal()">
+              <i class="bi bi-pencil-square"></i> Edit Profile
             </button>
-            <button class="btn btn-outline-primary btn-block">
-              <i class="bi bi-person-plus"></i> Follow
+            <button class="btn btn-outline-primary btn-block" (click)="previewPublicProfile()">
+              <i class="bi bi-eye"></i> View as Visitor
             </button>
           </div>
         </div>
@@ -112,12 +112,35 @@
             <span>Achievements</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#testimonials" data-bs-toggle="tab">
+            <i class="bi bi-star"></i>
+            <span>Testimonials</span>
+          </a>
+        </li>
       </ul>
 
       <!-- Tab Content -->
       <div class="tab-content">
         <!-- Posts Tab -->
         <div class="tab-pane fade show active" id="posts">
+          <!-- Create Post -->
+          <div class="create-post-card mb-4">
+            <div class="post-input-area">
+              <img [src]="user[0].profileImageUrl" alt="Profile" class="post-avatar">
+              <textarea [(ngModel)]="newPostContent" class="form-control" placeholder="Share your latest project or insights..." rows="3"></textarea>
+            </div>
+            <div class="post-actions">
+              <div class="post-attachments">
+                <button class="btn btn-outline-secondary btn-sm" (click)="postImageInput.click()">
+                  <i class="bi bi-image"></i> Photo/Video
+                </button>
+                <input #postImageInput type="file" (change)="onPostImageChange($event)" accept="image/*,video/*" hidden multiple>
+              </div>
+              <button class="btn btn-primary btn-sm" (click)="createPost()">Post</button>
+            </div>
+          </div>
+
           <!-- Posts List -->
           <div class="posts-container">
             <div *ngFor="let post of posts; let i = index">
@@ -137,10 +160,11 @@
                       </div>
                     </div>
                     <div class="dropdown ms-auto">
-                      <button class="btn btn-link dropdown text-dark" type="button" id="postOptionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                      <button class="btn btn-link dropdown text-dark" type="button" id="postOptionsDropdown{{i}}" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-three-dots fs-4"></i>
                       </button>
-                      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postOptionsDropdown">
+                      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postOptionsDropdown{{i}}">
+                        <li><a class="dropdown-item" (click)="editPost(post)"><i class="bi bi-pencil me-2"></i>Edit</a></li>
                         <li><a class="dropdown-item" (click)="deletePost(post)"><i class="bi bi-trash me-2"></i>Delete</a></li>
                         <li><a class="dropdown-item" (click)="pinPost(post)">
                           <i [class]="post.isPinned ? 'bi bi-pin-angle-fill' : 'bi bi-pin-angle'" class="me-2"></i>
@@ -155,6 +179,13 @@
                   <!-- Post Content -->
                   <div *ngIf="!post.isEditing">
                     <p>{{ post.content }}</p>
+                  </div>
+                  <div *ngIf="post.isEditing">
+                    <textarea [(ngModel)]="post.content" class="form-control mb-2" rows="4"></textarea>
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-primary btn-sm" (click)="savePostEdit(post)">Save</button>
+                      <button class="btn btn-outline-secondary btn-sm" (click)="cancelPostEdit(post)">Cancel</button>
+                    </div>
                   </div>
 
                   <!-- Post Images/Videos -->
@@ -209,7 +240,6 @@
 
                   <!-- Reactions Section -->
                   <div class="reactions-section px-3 mb-2">
-                    <!-- Top Reactions Display -->
                     <div *ngIf="post.topReactions?.length" class="mt-2 d-flex gap-1">
                       <span *ngFor="let reactionItem of post.topReactions" class="badge bg-light text-dark">
                         {{reactionItem.reaction}} {{reactionItem.count}}
@@ -259,9 +289,14 @@
                 <button class="btn btn-filter" [class.active]="selectedPortfolioCategory === 'Social Media'" (click)="filterPortfolio('Social Media')">Social Media</button>
                 <button class="btn btn-filter" [class.active]="selectedPortfolioCategory === 'Content'" (click)="filterPortfolio('Content')">Content</button>
               </div>
-              <button class="btn btn-outline-primary btn-sm" (click)="togglePortfolioView()">
-                <i class="bi" [class.bi-grid]="portfolioView === 'list'" [class.bi-list]="portfolioView === 'grid'"></i>
-              </button>
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary btn-sm" (click)="openAddPortfolioModal()">
+                  <i class="bi bi-plus"></i> Add Item
+                </button>
+                <button class="btn btn-outline-primary btn-sm" (click)="togglePortfolioView()">
+                  <i class="bi" [class.bi-grid]="portfolioView === 'list'" [class.bi-list]="portfolioView === 'grid'"></i>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -276,6 +311,12 @@
                     <i class="bi bi-link-45deg"></i>
                     View Project
                   </a>
+                  <button class="btn btn-light btn-sm" (click)="editPortfolioItem(item)">
+                    <i class="bi bi-pencil"></i> Edit
+                  </button>
+                  <button class="btn btn-danger btn-sm" (click)="deletePortfolioItem(item)">
+                    <i class="bi bi-trash"></i> Delete
+                  </button>
                 </div>
               </div>
               <div class="portfolio-item-info">
@@ -289,6 +330,11 @@
 
         <!-- Achievements Tab -->
         <div class="tab-pane fade" id="achievements">
+          <div class="achievements-header mb-4">
+            <button class="btn btn-primary btn-sm" (click)="openAddAchievementModal()">
+              <i class="bi bi-plus"></i> Add Achievement
+            </button>
+          </div>
           <div class="achievements-list">
             <div class="achievement-card" *ngFor="let achievement of achievements" [@fadeInOut]>
               <div class="achievement-icon">
@@ -298,6 +344,36 @@
                 <h5>{{achievement.title}}</h5>
                 <p>{{achievement.description}}</p>
                 <span class="achievement-date">{{achievement.date}}</span>
+                <div class="achievement-actions mt-2">
+                  <button class="btn btn-outline-primary btn-sm" (click)="editAchievement(achievement)">
+                    <i class="bi bi-pencil"></i> Edit
+                  </button>
+                  <button class="btn btn-outline-danger btn-sm" (click)="removeAchievement(achievements.indexOf(achievement))">
+                    <i class="bi bi-trash"></i> Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonials Tab -->
+        <div class="tab-pane fade" id="testimonials">
+          <div class="testimonials-header mb-4">
+            <h5 class="fw-bold">Testimonials</h5>
+          </div>
+          <div class="testimonials-list">
+            <div class="testimonial-card" *ngFor="let testimonial of testimonials" [@fadeInOut]>
+              <div class="testimonial-content">
+                <p>{{testimonial.content}}</p>
+                <div class="d-flex align-items-center">
+                  <h6 class="mb-0 me-2">{{testimonial.author}}</h6>
+                  <small class="text-muted">{{testimonial.company}} - {{testimonial.date}}</small>
+                </div>
+                <div class="rating mt-2">
+                  <i class="bi bi-star-fill text-warning" *ngFor="let star of getStars(testimonial.rating)"></i>
+                  <i class="bi bi-star text-warning" *ngFor="let star of getEmptyStars(testimonial.rating)"></i>
+                </div>
               </div>
             </div>
           </div>
@@ -308,11 +384,23 @@
     <!-- Right Sidebar -->
     <div class="col-md-3">
       <div class="right-sidebar mt-4">
+        <!-- Settings Button -->
+        <div class="settings-button mb-3">
+          <button class="btn btn-outline-secondary btn-block" (click)="openSettingsPanel()">
+            <i class="bi bi-gear"></i> Settings
+          </button>
+        </div>
+
         <!-- Suggested for you -->
         <div class="suggested-user mb-2 p-3">
-          <h5 class="card-title mb-3 fw-bold">Suggestions for you</h5>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title fw-bold">Suggestions for you</h5>
+            <button class="btn btn-outline-primary btn-sm" (click)="refreshSuggestions()">
+              <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+          </div>
           <div *ngFor="let user of userFol" class="user-item d-flex align-items-center justify-content-between border-bottom py-1 me-1">
-            <div class=" d-flex align-items-center">
+            <div class="d-flex align-items-center">
               <img src="{{user.img}}" class="rounded-circle me-3" alt="User" style="width: 50px; display: block;" />
               <div class="">
                 <p class="mb-0">{{ user.name }}</p>
@@ -332,14 +420,19 @@
           <div class="card-body">
             <h5 class="card-title mb-3 fw-bold">Recent Activity</h5>
             <div class="activity-item mb-3" *ngFor="let activity of recentActivities">
-              <div class="d-flex align-items-center">
-                <div class="activity-icon me-3">
-                  <i [class]="activity.icon"></i>
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                  <div class="activity-icon me-3">
+                    <i [class]="activity.icon"></i>
+                  </div>
+                  <div>
+                    <p class="mb-1 fw-medium">{{activity.description}}</p>
+                    <small class="text-muted">{{activity.timestamp | date:'short'}}</small>
+                  </div>
                 </div>
-                <div>
-                  <p class="mb-1 fw-medium">{{activity.description}}</p>
-                  <small class="text-muted">{{activity.timestamp | date:'short'}}</small>
-                </div>
+                <button class="btn btn-link text-danger btn-sm" (click)="clearActivity(activity)">
+                  <i class="bi bi-x"></i>
+                </button>
               </div>
             </div>
           </div>
@@ -352,23 +445,217 @@
             <div class="analytics-item mb-3">
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-medium">Profile Views</span>
-                <span class="badge bg-primary rounded-pill">+15%</span>
+                <span class="badge bg-primary rounded-pill">{{analytics.profileViews}}</span>
               </div>
               <div class="progress" style="height: 6px;">
-                <div class="progress-bar bg-primary" role="progressbar" style="width: 75%"></div>
+                <div class="progress-bar bg-primary" role="progressbar" [style.width]="(analytics.profileViews / 2000 * 100) + '%'"></div>
               </div>
             </div>
             <div class="analytics-item mb-3">
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-medium">Post Engagement</span>
-                <span class="badge bg-success rounded-pill">+23%</span>
+                <span class="badge bg-success rounded-pill">{{analytics.postEngagement}}%</span>
               </div>
               <div class="progress" style="height: 6px;">
-                <div class="progress-bar bg-success" role="progressbar" style="width: 65%"></div>
+                <div class="progress-bar bg-success" role="progressbar" [style.width]="analytics.postEngagement + '%'"></div>
+              </div>
+            </div>
+            <div class="analytics-item mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-medium">Follower Growth</span>
+                <span class="badge bg-info rounded-pill">+{{analytics.followerGrowth}}%</span>
+              </div>
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-info" role="progressbar" [style.width]="analytics.followerGrowth + '%'"></div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="fullName" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="fullName" [(ngModel)]="user[0].username" name="fullName">
+          </div>
+          <div class="mb-3">
+            <label for="jobTitle" class="form-label">Job Title</label>
+            <input type="text" class="form-control" id="jobTitle" [(ngModel)]="user[0].type" name="jobTitle">
+          </div>
+          <div class="mb-3">
+            <label for="bio" class="form-label">Bio</label>
+            <textarea class="form-control" id="bio" rows="4" [(ngModel)]="bio" name="bio"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Phone Number</label>
+            <input type="tel" class="form-control" id="phoneNumber" [(ngModel)]="phoneNumber" name="phoneNumber">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="email" [(ngModel)]="email" name="email">
+          </div>
+          <div class="mb-3">
+            <label for="profilePicture" class="form-label">Profile Picture</label>
+            <input type="file" class="form-control" id="profilePicture" (change)="onProfileImageChange($event)" accept="image/*">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveProfileChanges()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Panel -->
+<div class="modal fade" id="settingsPanel" tabindex="-1" aria-labelledby="settingsPanelLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="settingsPanelLabel">Settings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-4">
+          <h6 class="fw-bold">Change Password</h6>
+          <form>
+            <div class="mb-3">
+              <label for="currentPassword" class="form-label">Current Password</label>
+              <input type="password" class="form-control" id="currentPassword" [(ngModel)]="currentPassword" name="currentPassword">
+            </div>
+            <div class="mb-3">
+              <label for="newPassword" class="form-label">New Password</label>
+              <input type="password" class="form-control" id="newPassword" [(ngModel)]="newPassword" name="newPassword">
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" (click)="changePassword()">Update Password</button>
+          </form>
+        </div>
+        <div class="mb-4">
+          <h6 class="fw-bold">Profile Visibility</h6>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="visibility" id="public" [(ngModel)]="profileVisibility" value="Public">
+            <label class="form-check-label" for="public">Public</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="visibility" id="private" [(ngModel)]="profileVisibility" value="Private">
+            <label class="form-check-label" for="private">Private</label>
+          </div>
+        </div>
+        <div>
+          <h6 class="fw-bold">Connect Social Accounts</h6>
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-outline-primary btn-sm" (click)="connectSocialAccount('linkedin')">
+              <i class="bi bi-linkedin"></i> LinkedIn
+            </button>
+            <button class="btn btn-outline-primary btn-sm" (click)="connectSocialAccount('instagram')">
+              <i class="bi bi-instagram"></i> Instagram
+            </button>
+            <button class="btn btn-outline-primary btn-sm" (click)="connectSocialAccount('twitter')">
+              <i class="bi bi-twitter"></i> Twitter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Portfolio Modal -->
+<div class="modal fade" id="addPortfolioModal" tabindex="-1" aria-labelledby="addPortfolioModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addPortfolioModalLabel">Add Portfolio Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="portfolioTitle" class="form-label">Title</label>
+            <input type="text" class="form-control" id="portfolioTitle" [(ngModel)]="newPortfolioItem.title" name="portfolioTitle">
+          </div>
+          <div class="mb-3">
+            <label for="portfolioDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="portfolioDescription" rows="4" [(ngModel)]="newPortfolioItem.description" name="portfolioDescription"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="portfolioCategory" class="form-label">Category</label>
+            <select class="form-select" id="portfolioCategory" [(ngModel)]="newPortfolioItem.category" name="portfolioCategory">
+              <option value="Social Media">Social Media</option>
+              <option value="Content">Content</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="portfolioLink" class="form-label">Project Link (Optional)</label>
+            <input type="url" class="form-control" id="portfolioLink" [(ngModel)]="newPortfolioItem.link" name="portfolioLink">
+          </div>
+          <div class="mb-3">
+            <label for="portfolioImage" class="form-label">Image</label>
+            <input type="file" class="form-control" id="portfolioImage" (change)="onPortfolioImageChange($event)" accept="image/*">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="savePortfolioItem()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Achievement Modal -->
+<div class="modal fade" id="addAchievementModal" tabindex="-1" aria-labelledby="addAchievementModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addAchievementModalLabel">Add Achievement</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="achievementTitle" class="form-label">Title</label>
+            <input type="text" class="form-control" id="achievementTitle" [(ngModel)]="newAchievement.title" name="achievementTitle">
+          </div>
+          <div class="mb-3">
+            <label for="achievementDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="achievementDescription" rows="4" [(ngModel)]="newAchievement.description" name="achievementDescription"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="achievementDate" class="form-label">Date</label>
+            <input type="text" class="form-control" id="achievementDate" [(ngModel)]="newAchievement.date" name="achievementDate" placeholder="e.g., 2024">
+          </div>
+          <div class="mb-3">
+            <label for="achievementIcon" class="form-label">Icon</label>
+            <select class="form-select" id="achievementIcon" [(ngModel)]="newAchievement.icon" name="achievementIcon">
+              <option value="trophy">Trophy</option>
+              <option value="award">Award</option>
+              <option value="star">Star</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="achievementCategory" class="form-label">Category</label>
+            <input type="text" class="form-control" id="achievementCategory" [(ngModel)]="newAchievement.category" name="achievementCategory">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveAchievement()">Save</button>
       </div>
     </div>
   </div>

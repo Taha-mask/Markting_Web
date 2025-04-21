@@ -82,13 +82,14 @@
   border-radius: 15px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s, box-shadow 0.2s;
-background-color: white;
+  background-color: white;
 }
 
-.user-item:hover{
-background-color: #dadada;
+.user-item:hover {
+  background-color: #dadada;
 }
-.user-item{
+
+.user-item {
   padding: 0 5px;
   border-radius: 10px;
   cursor: pointer;
@@ -295,63 +296,6 @@ background-color: #dadada;
   .right-sidebar {
     width: 100%;
   }
-}
-
-/* Cover Section */
-.cover-section {
-  position: relative;
-  height: 300px;
-  overflow: hidden;
-}
-
-.cover-image-container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.cover-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.cover-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
-}
-
-.edit-cover-btn {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 20px;
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  z-index: 2;
-}
-
-.edit-cover-btn:hover {
-  background: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-/* Profile Content */
-.profile-content {
-  margin-top: -60px;
-  position: relative;
-  z-index: 2;
-  padding-bottom: 40px;
 }
 
 /* Status Indicator */
@@ -701,6 +645,7 @@ background-color: #dadada;
   justify-content: center;
   opacity: 0;
   transition: opacity 0.3s ease;
+  gap: 8px;
 }
 
 .portfolio-item:hover .portfolio-item-overlay {
@@ -721,87 +666,31 @@ background-color: #dadada;
   margin-bottom: 12px;
 }
 
-/* Availability Card */
-.availability-card {
+/* Testimonials */
+.testimonial-card {
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  margin-bottom: 24px;
-  overflow: hidden;
-}
-
-.card-header {
+  border-radius: 12px;
   padding: 16px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-header h5 {
-  margin: 0;
-  color: #1a1a1a;
-  font-weight: 600;
-}
-
-.availability-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px;
-  border-radius: 8px;
-  background: #f8f9fa;
   margin-bottom: 16px;
-}
-
-.availability-status.available i { color: #34a853; }
-.availability-status.busy i { color: #ea4335; }
-.availability-status.away i { color: #fbbc05; }
-
-.availability-details {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #666;
-}
-
-.detail-item i {
-  color: #1a73e8;
-}
-
-/* Skills Card */
-.skills-card {
-  background: #fff;
-  border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
 }
 
-.skills-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.testimonial-content p {
+  color: #444;
+  margin-bottom: 12px;
 }
 
-.skill-tag {
-  background: #e8f0fe;
-  color: #1a73e8;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
+/* Modal Styles */
+.modal-content {
+  border-radius: 12px;
 }
 
-.skill-tag:hover {
-  background: #1a73e8;
-  color: #fff;
+.modal-header {
+  border-bottom: 1px solid #eee;
+}
+
+.modal-footer {
+  border-top: 1px solid #eee;
 }
 
 /* Responsive Design */
@@ -809,17 +698,17 @@ background-color: #dadada;
   .profile-card {
     position: static;
   }
-  
+
   .nav-pills {
     overflow-x: auto;
     white-space: nowrap;
     padding: 8px;
   }
-  
+
   .nav-pills .nav-link {
     min-width: 120px;
   }
-  
+
   .portfolio-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
@@ -829,17 +718,17 @@ background-color: #dadada;
   .cover-section {
     height: 200px;
   }
-  
+
   .profile-image-container {
     width: 120px;
     height: 120px;
     margin: -60px auto 16px;
   }
-  
+
   .user-name {
     font-size: 20px;
   }
-  
+
   .portfolio-grid {
     grid-template-columns: 1fr;
   }
