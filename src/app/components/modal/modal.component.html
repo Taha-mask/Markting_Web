@@ -18,14 +18,14 @@
         <!-- Audience Selector -->
         <div class="audience-selector mb-3">
           <div class="dropdown">
-            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" 
+            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"
                     type="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i [class]="getAudienceIcon()"></i>
               {{ selectedAudience | titlecase }}
             </button>
             <ul class="dropdown-menu" style="width: 300px;">
               <li *ngFor="let option of audienceOptions">
-                <button class="dropdown-item d-flex align-items-center gap-2" 
+                <button class="dropdown-item d-flex align-items-center gap-2"
                         (click)="setAudience(option.value)">
                   <i [class]="'bi ' + option.icon"></i>
                   <div>
@@ -102,11 +102,11 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" 
-                (click)="addPost()" 
-                [disabled]="!postTextarea.value.trim() || !selectedCategory || !selectedSubCategory">
-          Post
-        </button>
+        <button type="button" class="btn btn-primary"
+        (click)="addPost()"
+        [disabled]="(!postTextarea.value.trim() && !previewUrls.length) || !selectedCategory || !selectedSubCategory">
+  Post
+</button>
       </div>
     </div>
   </div>

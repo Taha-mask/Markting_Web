@@ -1,8 +1,8 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
-import { PostService } from '../services/post.service'; 
+import { PostService } from '../services/post.service';
 import { Post } from '../../interfaces/post';
 import * as bootstrap from 'bootstrap';
 import { User } from '../../interfaces/user';
@@ -10,7 +10,7 @@ import { User } from '../../interfaces/user';
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, PickerComponent], 
+  imports: [CommonModule, FormsModule, PickerComponent],
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css'],
 })
@@ -64,7 +64,7 @@ export class ModalComponent implements OnInit {
     { username: 'Taha Mahmoud', profileImageUrl: 'images/user-1.png' },
   ];
 
-  constructor(private postService: PostService) {} 
+  constructor(private postService: PostService) {}
 
   ngOnInit(): void {
   }
@@ -87,7 +87,7 @@ export class ModalComponent implements OnInit {
       return;
     }
 
-    if (postContent.trim()) {
+    if (postContent.trim() || this.previewUrls.length > 0) {
       const newPost = {
         username: this.users[0].username,
         profileImageUrl: this.users[0].profileImageUrl,
@@ -111,23 +111,16 @@ export class ModalComponent implements OnInit {
 
       this.postService.addPost(newPost);
       this.clearForm();
-      
-      // إزالة Modal والـ backdrop
-      const modalElement = document.getElementById('postModal');
-      if (modalElement) {
-        const modalInstance = bootstrap.Modal.getInstance(modalElement);
-        if (modalInstance) {
-          modalInstance.hide();
-        }
-        // إزالة backdrop يدوياً
-        const backdrop = document.querySelector('.modal-backdrop');
-        if (backdrop) {
-          backdrop.remove();
-        }
-        document.body.classList.remove('modal-open');
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-      }
+
+      this.closeModal(); // إغلاق المودال بعد إضافة البوست
+    }
+  }
+
+  closeModal() {
+    const modalElement = this.postModal.nativeElement;
+    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+      modalInstance.hide();
     }
   }
 
