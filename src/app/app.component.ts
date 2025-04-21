@@ -7,9 +7,9 @@ import {SavedPostComponent} from './components/saved-post/saved-post.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, SavedPostComponent],
+  imports: [CommonModule, NavbarComponent, SavedPostComponent, RouterOutlet, FooterComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],  
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
   title = 'Markting_Web';

@@ -72,7 +72,7 @@ export const routes: Routes = [
   {path:'loading',component: LoadingComponent},
   {path:'reviews',component: ReviewsComponent},
   {path:'cart',component: CartComponent},
-  {path:'saved-post',component:SavedPostComponent},
+  {path:'Saved-post',component:SavedPostComponent},
 
   {
     path: 'right-sidebar',
