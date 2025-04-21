@@ -4,23 +4,30 @@
     <p>No saved posts yet.</p>
   </div>
   <div *ngFor="let post of savedPosts" class="saved-post-card mb-4 p-3 shadow rounded bg-white">
-    <div class="d-flex align-items-center mb-2">
-      <img [src]="post.userImage" alt="User" class="rounded-circle me-2" style="width: 40px; height: 40px;">
-      <div>
-        <strong>{{ post.username }}</strong>
-        <div class="text-muted" style="font-size:12px">{{ post.timestamp | date:'short' }}</div>
+    <div class="post-content d-flex">
+      
+      <img [src]="post.imageUrl" alt="Post Image" class="post-image me-3">
+      <div class="post-details flex-grow-1">
+        <div class="d-flex align-items-center mb-2">
+          <img [src]="post.userImage" alt="User" class="rounded-circle me-2 avatar">
+          <div>
+            <strong>{{ post.username }}</strong>
+            <div class="text-muted" style="font-size:12px">{{ post.timestamp | date:'short' }}</div>
+          </div>
+        </div>
+        <h5>{{ post.title }}</h5>
+        <p>{{ post.description }}</p>
+        <div class="button-group d-flex justify-content-end gap-2 mt-2">
+          <button class="btn btn-danger btn-sm" (click)="deletePost(post.id)">
+            <i class="bi bi-trash"></i> Delete
+          </button>
+          <button class="btn btn-primary btn-sm" (click)="orderNow(post)">
+            <i class="bi bi-cart"></i> Order Now
+          </button>
+        </div>
       </div>
+   
     </div>
-    <img [src]="post.imageUrl" alt="Post Image" class="img-fluid rounded mb-2" style="max-height:200px;">
-    <h5>{{ post.title }}</h5>
-    <p>{{ post.description }}</p>
-    <div class="d-flex gap-2">
-      <button class="btn btn-danger btn-sm" (click)="deletePost(post.id)">
-        <i class="bi bi-trash"></i> Delete
-      </button>
-      <button class="btn btn-primary btn-sm" (click)="orderNow(post)">
-        <i class="bi bi-cart"></i> Order Now
-      </button>
-    </div>
+   
   </div>
 </div>
