@@ -136,6 +136,14 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
       }
     );
     this.filterPostsByCategory('All');
+
+    // Initialize Bootstrap 5 dropdowns
+    setTimeout(() => {
+      const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+      dropdownElements.forEach(element => {
+        new bootstrap.Dropdown(element);
+      });
+    }, 0);
   }
 
   ngOnDestroy() {

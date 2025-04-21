@@ -810,11 +810,11 @@ export class FeedComponent implements OnInit, OnDestroy {
       this.samplePosts = posts;
       this.filterPostsByCategory(this.activeCategory);
 
-      // Initialize dropdowns after posts are loaded
+      // Initialize Bootstrap 5 dropdowns
       setTimeout(() => {
         const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
         dropdownElements.forEach(element => {
-          new Dropdown(element);
+          new bootstrap.Dropdown(element);
         });
       }, 0);
     });
