@@ -143,6 +143,20 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
       dropdownElements.forEach(element => {
         new bootstrap.Dropdown(element);
       });
+
+      // Add modal close handler
+      const modals = document.querySelectorAll('.modal');
+      modals.forEach(modal => {
+        modal.addEventListener('hidden.bs.modal', () => {
+          const modalBackdrop = document.querySelector('.modal-backdrop');
+          if (modalBackdrop) {
+            modalBackdrop.remove();
+          }
+          document.body.classList.remove('modal-open');
+          document.body.style.overflow = '';
+          document.body.style.paddingRight = '';
+        });
+      });
     }, 0);
   }
 
@@ -458,6 +472,15 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
 
       this.postService.addPost(newPost);
       this.resetForm();
+
+      // Cleanup modal backdrop
+      const modalBackdrop = document.querySelector('.modal-backdrop');
+      if (modalBackdrop) {
+        modalBackdrop.remove();
+      }
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
     }
   }
 
