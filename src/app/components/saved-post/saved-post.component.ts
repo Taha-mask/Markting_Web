@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.component';
 
 interface SavedPost {
   id: number;
@@ -14,7 +15,7 @@ interface SavedPost {
 @Component({
   standalone: true,
   selector: 'app-saved-post',
-  imports: [CommonModule],
+  imports: [CommonModule, TrendingSidebarComponent],
   templateUrl: './saved-post.component.html',
   styleUrls: ['./saved-post.component.css']
 })
