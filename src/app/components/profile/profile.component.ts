@@ -44,7 +44,7 @@ interface ReactionCount {
 export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild('coverImageInput') coverImageInput!: ElementRef;
-  
+
   isDropdownVisible = false;
   currentUser = 'Taha Mahmoud';
   showEmojiPicker = false;
@@ -72,6 +72,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       liked: false,
       saved: false,
       isFollowing: false,
+
       comments: [
         {
           id: '1',
@@ -122,7 +123,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     category: string;
     link?: string;
   }> = [];
-  
+
   certifications: Array<{
     name: string;
     issuer: string;
@@ -191,7 +192,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     'Brand Strategy'
   ];
 
-  achievements: Array<{ 
+  achievements: Array<{
     title: string;
     date: string;
     description: string;
@@ -232,7 +233,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   showAnalytics: boolean = false;
   showTestimonials: boolean = true;
   portfolioView: 'grid' | 'list' = 'grid';
-  
+
   userFol = [
     { name: 'Wade Warren', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false },
     { name: 'Darlene Robertson', title: 'Digital Marketing Specialist', img: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg', Follow: false },
@@ -274,7 +275,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initializeProfile();
     this.startAnalyticsTracking();
-    
+
     // Update existing posts with profile image
     this.posts.forEach(post => {
       post.profileImageUrl = this.user[0].profileImageUrl;
@@ -288,7 +289,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       });
 
       // Filter posts for the current user (assuming username match)
-      this.posts = updatedPosts.filter(post => 
+      this.posts = updatedPosts.filter(post =>
         post.username === this.user[0].username
       );
 
@@ -318,7 +319,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   toggleLike(post: Post) {
     post.liked = !post.liked;
     post.likes += post.liked ? 1 : -1;
-    
+
     if (post.reactions) {
       post.reactions['👍'] = (post.reactions['👍'] || 0) + (post.liked ? 1 : -1);
     }
@@ -351,7 +352,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   getTopReactions(post: Post): ReactionCount[] {
     if (!post.reactions) return [];
-    
+
     return Object.entries(post.reactions)
       .map(([reaction, count]) => ({ reaction, count }))
       .sort((a, b) => b.count - a.count)
@@ -602,7 +603,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.skills.splice(index, 1);
   }
 
-  addAchievement(achievement: { 
+  addAchievement(achievement: {
     title: string;
     date: string;
     description: string;

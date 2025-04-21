@@ -656,14 +656,62 @@ body {
   margin-right: 5px;
 }
 
+/* Post Options Dropdown Styles */
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 200px;
+}
 
+.dropdown-item {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
 
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #0d6efd;
+}
 
+.dropdown-item i {
+  font-size: 16px;
+  width: 24px;
+  margin-right: 8px;
+}
 
+.dropdown-divider {
+  margin: 8px 0;
+  border-color: #eee;
+}
 
+/* Three dots button style */
+.btn-link {
+  color: #666;
+  padding: 4px 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
 
+.btn-link:hover {
+  background-color: #f8f9fa;
+  color: #333;
+}
 
+/* Danger actions */
+.dropdown-item.text-danger {
+  color: #dc3545;
+}
 
+.dropdown-item.text-danger:hover {
+  background-color: #fff5f5;
+  color: #dc3545;
+}
 
 .popup-form {
   position: fixed;
@@ -697,19 +745,6 @@ body {
     white-space: nowrap;
     margin-left: 900px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* Share Modal */
 .modal-content.bg-dark {
@@ -1025,7 +1060,7 @@ body {
   padding: 1rem;
   overflow-y: auto;
  padding: 0px;
- 
+
   max-width: 100%;
 }
 
@@ -1115,7 +1150,7 @@ body {
     display: none;
   }
 
-  
+
 
   .comment-box {
     padding: 5px;
@@ -1169,14 +1204,14 @@ body {
     margin: auto;
     box-sizing: border-box;
   }
-  
+
   .title {
     font-size: 24px;
     color: #003366;
     margin-bottom: 20px;
     text-align: center;
   }
-  
+
   .controls {
     display: flex;
     flex-wrap: wrap;
@@ -1185,7 +1220,7 @@ body {
     gap: 10px;
     margin-bottom: 20px;
   }
-  
+
   .search-input {
     flex: 1;
     padding: 8px 12px;
@@ -1193,7 +1228,7 @@ body {
     border-radius: 6px;
     min-width: 200px;
   }
-  
+
   .new-order-button {
     padding: 8px 16px;
     background-color: #007bff;
@@ -1202,7 +1237,7 @@ body {
     border-radius: 6px;
     white-space: nowrap;
   }
-  
+
   .new-order-form {
     background: #f5faff;
     padding: 1rem;
@@ -1210,17 +1245,17 @@ body {
     border-radius: 8px;
     margin-bottom: 1rem;
   }
-  
+
   .new-order-form h3 {
     color: #0d2c54;
     margin-bottom: 1rem;
     text-align: center;
   }
-  
+
   .mb-3 {
     margin-bottom: 1rem;
   }
-  
+
   .form-control,
   .form-select {
     width: 100%;
@@ -1228,79 +1263,79 @@ body {
     border: 1px solid #ccc;
     border-radius: 6px;
   }
-  
+
   .orders-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
   }
-  
+
   .orders-table th,
   .orders-table td {
     padding: 12px;
     border-bottom: 1px solid #ccc;
     text-align: left;
   }
-  
+
   .orders-table th {
     background-color: #e6f0ff;
     color: #003366;
   }
-  
+
   .status.completed {
     color: green;
     font-weight: bold;
   }
-  
+
   .status.pending {
     color: orange;
     font-weight: bold;
   }
-  
+
   .status.cancelled {
     color: red;
     font-weight: bold;
   }
-  
+
   /* ريسبونسيف */
   @media (max-width: 768px) {
     .controls {
       flex-direction: column;
       align-items: stretch;
     }
-  
+
     .new-order-button {
       width: 100%;
     }
-  
+
     .orders-table th,
     .orders-table td {
       font-size: 14px;
       padding: 8px;
     }
-  
+
     .title {
       font-size: 20px;
     }
   }
-  
+
   @media (max-width: 480px) {
     .orders-container {
       padding: 15px;
     }
-  
+
     .form-control,
     .form-select {
       font-size: 14px;
     }
-  
+
     .orders-table {
       font-size: 13px;
     }
   }
 
 
-  
+
 .modal-overlay {
   display: none;
   position: fixed; /* ثابتة على الشاشة */
@@ -1370,5 +1405,5 @@ body {
     width: 90%;
   }
 }
-  
+
 }

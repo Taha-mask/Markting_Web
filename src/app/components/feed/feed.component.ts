@@ -40,7 +40,7 @@ interface TrendingFeed {
   selector: 'app-feed',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent],
-  templateUrl: './feed.component.html',
+  templateUrl:'./feed.component.html',
   styleUrls: ['./feed.component.css'],
   providers: [DatePipe]
 })
@@ -108,31 +108,31 @@ export class FeedComponent implements OnInit, OnDestroy {
   ];
 
   trendingFeeds: TrendingFeed[] = [
-    { 
-      url: 'https://images.deepai.org/art-image/fca7454eeb5b41f18f1f1dd7f5d31e74/a-small-closed-room-with-a-small-bed-that-can_gH54Ii2.jpg', 
-      alt: 'Feed 1', 
-      title: 'Cozy Room', 
-      link: 'https://example.com/feed1' 
+    {
+      url: 'https://images.deepai.org/art-image/fca7454eeb5b41f18f1f1dd7f5d31e74/a-small-closed-room-with-a-small-bed-that-can_gH54Ii2.jpg',
+      alt: 'Feed 1',
+      title: 'Cozy Room',
+      link: 'https://example.com/feed1'
     },
-    { 
-      url: 'https://images.deepai.org/art-image/d9f992e2353d4652b8e5e3a419935d50/a-small-closed-room-with-a-small-bed-that-can_XL2tHnl.jpg', 
-      alt: 'Feed 2', 
-      title: 'Minimalist Design', 
-      link: 'https://example.com/feed2' 
+    {
+      url: 'https://images.deepai.org/art-image/d9f992e2353d4652b8e5e3a419935d50/a-small-closed-room-with-a-small-bed-that-can_XL2tHnl.jpg',
+      alt: 'Feed 2',
+      title: 'Minimalist Design',
+      link: 'https://example.com/feed2'
     },
-    { 
-      url: 'https://images.deepai.org/art-image/3a07efb0d73b46728bad3e1db4c74ffe/a-small-closed-room-with-a-small-bed-that-can_cNnH96r.jpg', 
-      alt: 'Feed 3', 
-      title: 'Modern Bedroom', 
-      description: 'A modern take on small spaces.', 
-      link: 'https://example.com/feed3' 
+    {
+      url: 'https://images.deepai.org/art-image/3a07efb0d73b46728bad3e1db4c74ffe/a-small-closed-room-with-a-small-bed-that-can_cNnH96r.jpg',
+      alt: 'Feed 3',
+      title: 'Modern Bedroom',
+      description: 'A modern take on small spaces.',
+      link: 'https://example.com/feed3'
     },
-    { 
-      url: 'https://images.deepai.org/art-image/7e55e370ca7646f59074e58d698eb026/a-small-closed-room-with-a-small-bed-that-can_vANQe8W.jpg', 
-      alt: 'Feed 4', 
-      title: 'Compact Living', 
-      description: 'Efficient use of space.', 
-      link: 'https://example.com/feed4' 
+    {
+      url: 'https://images.deepai.org/art-image/7e55e370ca7646f59074e58d698eb026/a-small-closed-room-with-a-small-bed-that-can_vANQe8W.jpg',
+      alt: 'Feed 4',
+      title: 'Compact Living',
+      description: 'Efficient use of space.',
+      link: 'https://example.com/feed4'
     }
   ];
 
@@ -221,10 +221,10 @@ export class FeedComponent implements OnInit, OnDestroy {
   filterPostsByCategory(categoryName: string) {
     console.log('Filtering by category:', categoryName); // Debug log
     console.log('Current posts:', this.samplePosts); // Debug log
-    
+
     this.activeCategory = categoryName;
     if (categoryName === 'All') {
-      this.filteredPosts = [...this.samplePosts].sort((a, b) => 
+      this.filteredPosts = [...this.samplePosts].sort((a, b) =>
         (b.timestamp as any) - (a.timestamp as any)
       );
     } else {
@@ -232,7 +232,7 @@ export class FeedComponent implements OnInit, OnDestroy {
         .filter(post => post.category === categoryName)
         .sort((a, b) => (b.timestamp as any) - (a.timestamp as any));
     }
-    
+
     console.log('Filtered posts:', this.filteredPosts); // Debug log
   }
 
@@ -241,8 +241,8 @@ export class FeedComponent implements OnInit, OnDestroy {
     if (this.activeCategory === 'All') {
       this.filteredPosts = [...this.samplePosts];
     } else {
-      this.filteredPosts = this.samplePosts.filter(post => 
-        post.category === this.activeCategory && 
+      this.filteredPosts = this.samplePosts.filter(post =>
+        post.category === this.activeCategory &&
         (!subCategoryName || post.subCategory === subCategoryName)
       ).sort((a, b) => (b.timestamp as any) - (a.timestamp as any));
     }
@@ -713,9 +713,9 @@ export class FeedComponent implements OnInit, OnDestroy {
         );
 
         if (lastCommentElement) {
-          lastCommentElement.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
+          lastCommentElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
           });
         }
       } catch (error) {
@@ -727,7 +727,7 @@ export class FeedComponent implements OnInit, OnDestroy {
   focusNextCommentInput(currentPost: any) {
     // Find the index of the current post
     const postIndex = this.samplePosts.findIndex(p => p.id === currentPost.id);
-    
+
     // If there's a next post, attempt to focus its comment input
     if (postIndex < this.samplePosts.length - 1) {
       const nextPost = this.samplePosts[postIndex + 1];
@@ -791,13 +791,25 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.filterPostsByCategory(this.activeCategory);
   }
 
+  sendOrderRequest(post: any): void {
+    // Example logic: Display an alert or send a request to the backend
+    console.log(`Order request sent for post by ${post.username}`);
+    alert(`Order request sent for post by ${post.username}`);
+
+    // Add your backend API call logic here if needed
+    // Example:
+    // this.http.post('/api/order', { postId: post.id }).subscribe(response => {
+    //   console.log('Order request successful:', response);
+    // });
+  }
+
   constructor(private postService: PostService , private router : Router) {}
 
   ngOnInit() {
     this.postSubscription = this.postService.getPosts().subscribe(posts => {
       this.samplePosts = posts;
       this.filterPostsByCategory(this.activeCategory);
-      
+
       // Initialize dropdowns after posts are loaded
       setTimeout(() => {
         const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
@@ -814,21 +826,12 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
   toggleMenu() {
     const menu = document.getElementById('menuList');
     if (menu) {
       menu.toggleAttribute('hidden');
     }
   }
-
-
-
-
-
-
- 
 
   toggleForm() {
     const form = document.getElementById('popupForm');
@@ -880,3 +883,4 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.router.navigate(['/orders']);
   }
 }
+

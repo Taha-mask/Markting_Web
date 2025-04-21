@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FeedComponent } from './feed.component';
-import { PostService } from '../services/post.service';
+import { PostService } from '../../services/post.service';
 import { of } from 'rxjs';
 
 export class ModalComponent {

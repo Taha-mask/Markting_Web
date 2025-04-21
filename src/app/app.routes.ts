@@ -16,18 +16,18 @@ import { ExplorepageComponent } from './components/explorepage/explorepage.compo
 import { AccountCenterComponent } from './components/account-center/account-center.component';
 import { RightsideComponent } from './components/rightside/rightside.component';
 
-import { OrdersComponent } from './orders/orders.component';
-import { BlogComponent } from './blog/blog.component';
-import { SupportComponent } from './support/support.component';
-import { PromotionsComponent } from './promotions/promotions.component';
+import { OrdersComponent } from './components/orders/orders.component';
+import { BlogComponent } from './components/blog/blog.component';
+import { SupportComponent } from './components/support/support.component';
+import { PromotionsComponent } from './components/promotions/promotions.component';
 import { StatusComponent } from './components/status/status.component';
 import { Error404Component } from './components/erorr404/error404.component';
 import { Error500Component } from './components/error500/error500.component';
 import { LoadingComponent } from './components/loading/loading.component';
-import { LocationComponent } from './location/location.component';
-import  {ReviewsComponent} from './reviews/reviews.component';
-import {CartComponent} from './cart/cart.component';
-import {SavedPostComponent} from './saved-post/saved-post.component'
+import { LocationComponent } from './components/location/location.component';
+import  {ReviewsComponent} from './components/reviews/reviews.component';
+import {CartComponent} from './components/cart/cart.component';
+import {SavedPostComponent} from './components/saved-post/saved-post.component'
 
 
 export const routes: Routes = [
@@ -59,7 +59,7 @@ export const routes: Routes = [
   {path:'reviews',component: ReviewsComponent},
   {path:'cart',component: CartComponent},
   {path:'saved-post',component:SavedPostComponent},
-  
+
   {
     path: 'right-sidebar',
     component: RightsideComponent,

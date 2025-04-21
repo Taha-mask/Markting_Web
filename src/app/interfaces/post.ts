@@ -11,6 +11,7 @@ export interface Post {
   subCategory?: string;
   images: string[];
   currentImageIndex: number;
+
   likes: number;
   Shares: number;
   Saves: number;
@@ -28,3 +29,5 @@ export interface Post {
   isPinned?: boolean;
   showReactionUsers?: boolean;
 }
+
+
