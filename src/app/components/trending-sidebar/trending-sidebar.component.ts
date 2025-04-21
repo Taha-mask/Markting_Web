@@ -15,10 +15,12 @@ export class TrendingSidebarComponent implements OnInit {
   
   user: User[] = [
     {
+      id: '1',
       username: 'Taha Mahmoud',
       type: 'Markter',
       profileImageUrl: 'images/user-1.png',
       status: 'Online',
+      role: 'user'
     }
   ];
 

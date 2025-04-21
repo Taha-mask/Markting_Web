@@ -31,9 +31,24 @@ import {SavedPostComponent} from './components/saved-post/saved-post.component'
 
 
 export const routes: Routes = [
-  {path: 'explore' , component : ExplorepageComponent},
+  {
+    path: '',
+    redirectTo: 'feed',
+    pathMatch: 'full'
+  },
+  {
+    path: 'feed',
+    loadComponent: () => import('./components/feed/feed.component').then(m => m.FeedComponent)
+  },
+  {
+    path: 'explore',
+    loadComponent: () => import('./components/explorepage/explorepage.component').then(m => m.ExplorepageComponent)
+  },
+  {
+    path: 'account-center',
+    loadComponent: () => import('./components/account-center/account-center.component').then(m => m.AccountCenterComponent)
+  },
   {path: 'messages' , component : MessageComponent},
-  {path: 'feed' , component : FeedComponent},
   {path: 'profile' , component : ProfileComponent},
   {path: 'notf' , component : NotificationComponent},
   {path: 'TypeAccount' , component : TypeAccountComponent},
@@ -51,7 +66,6 @@ export const routes: Routes = [
   {path: 'signup-user', component: SignupUserComponent },
   { path: 'signup-marketer', component: SignupMarketerComponent },
   { path: 'type-account', component: TypeAccountComponent },
-  {path: 'account-center', component: AccountCenterComponent},
   {path: 'status', component: StatusComponent},
   {path: 'error500', component: Error500Component},
   {path:'location',component: LocationComponent},
@@ -64,11 +78,6 @@ export const routes: Routes = [
     path: 'right-sidebar',
     component: RightsideComponent,
     title: 'Right Sidebar'
-  },
-  {
-    path: '',
-    pathMatch : 'full',
-    redirectTo : '/login'
   },
   {path:"**", component: Error404Component}
 ];

@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, HostListener, ViewChild, ElementRef, OnInit, OnDestroy, inject } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -8,6 +8,9 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Post } from '../../interfaces/post';
+import { AuthService } from '../../services/auth.service';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import * as bootstrap from 'bootstrap';
 
 @Injectable({
   providedIn: 'root'
@@ -31,9 +34,6 @@ export class PostService {
     // Implementation
   }
 }
-import { AuthService } from '../../services/auth.service';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import * as bootstrap from 'bootstrap';
 
 interface ReactionCount {
   reaction: string;
@@ -48,29 +48,7 @@ interface Comment {
   likedBy: string[];
   timestamp: Date;
   profileImageUrl: string;
-}
-
-interface Post {
-  username: string;
-  profileImageUrl: string;
-  timestamp: Date;
-  content: string;
-  category: string;
-  subCategory?: string;
-  images: string[];
-  currentImageIndex: number;
-  likes: number;
-  Shares: number;
-  Saves: number;
-  showComments: boolean;
-  isEditing: boolean;
-  liked: boolean;
-  saved: boolean;
-  comments: Comment[];
-  reactions?: { [key: string]: number };
-  topReactions?: ReactionCount[];
-  isPinned?: boolean;
-  originalContent?: string;
+  id: string;
 }
 
 @Component({
@@ -119,7 +97,6 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   currentPassword: string = '';
   newPassword: string = '';
   profileVisibility: string = 'Public';
-
   posts: Post[] = [
     {
       username: 'Taha Mahmoud',
@@ -137,8 +114,10 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
       isEditing: false,
       liked: false,
       saved: false,
+      isFollowing: false,
       comments: [
         {
+          id: 'comment-1',
           username: 'John Doe',
           text: 'Amazing results! Would love to hear more about your strategy.',
           likes: 5,
@@ -193,13 +172,14 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
     timezone: 'GMT+2',
     responseTime: '< 24 hours'
   };
-
   user: User[] = [
     {
+      id: '1',
       username: 'Taha Mahmoud',
-      type: 'Marketer',
+      type: 'Marketer', 
       profileImageUrl: 'images/user-1.png',
       status: 'Online',
+      role: 'user'
     }
   ];
 
@@ -275,10 +255,10 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   ];
 
   private postSubscription: any;
+  private authService = inject(AuthService);
 
   constructor(
-    @Inject(PostService) private postService: PostService,
-    private authService: AuthService,
+    private postService: PostService,
     private router: Router
   ) {
     this.loadUserData();
@@ -386,6 +366,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
         profileImageUrl: this.user[0].profileImageUrl,
         timestamp: new Date(),
         content: this.newPostContent,
+        isFollowing: false,
         category: 'Marketing',
         images: [...this.newPostImages],
         currentImageIndex: 0,
@@ -409,7 +390,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
 
   editPost(post: Post) {
     post.isEditing = true;
-    post.originalContent = post.content;
+    post.content = post.content; // Store current content temporarily
   }
 
   savePostEdit(post: Post) {
@@ -419,7 +400,6 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
 
   cancelPostEdit(post: Post) {
     post.isEditing = false;
-    post.content = post.originalContent || post.content;
   }
 
   deletePost(post: Post) {
@@ -776,5 +756,9 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   @HostListener('window:scroll', ['$event'])
   onScroll() {
     // Implement infinite scroll
+  }
+
+  removeAchievement(index: number) {
+    this.achievements.splice(index, 1);
   }
 }

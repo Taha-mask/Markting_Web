@@ -184,10 +184,12 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
 
   user: User[] = [
     {
+      id: '1',
       username: 'Taha Mahmoud ',
       type: 'Markter',
-      profileImageUrl: 'images/user-1.png',
+      profileImageUrl: 'image s/user-1.png',
       status: 'Online',
+      role: 'user'
     }
   ];
 
