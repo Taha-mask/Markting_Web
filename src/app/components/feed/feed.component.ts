@@ -11,6 +11,7 @@ import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.c
 import { User } from '../../interfaces/user';
 import { Subscription } from 'rxjs';
 import { Dropdown } from 'bootstrap';
+import {FooterComponent} from '../footer/footer.component';
 
 import { Router } from '@angular/router';
 
@@ -39,7 +40,7 @@ interface TrendingFeed {
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent],
+  imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent, FooterComponent],
   templateUrl:'./feed.component.html',
   styleUrls: ['./feed.component.css'],
   providers: [DatePipe]
