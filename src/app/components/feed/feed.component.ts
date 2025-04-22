@@ -813,6 +813,13 @@ export class FeedComponent implements OnInit, OnDestroy {
     // });
   }
 
+  sendMessage(user: any): void {
+    // TODO: Implement message functionality
+    console.log('Opening message dialog with user:', user.name);
+    // You can implement the actual messaging functionality here
+    // For example, navigate to a chat page or open a message dialog
+  }
+
   constructor(private postService: PostService , private router : Router) {}
 
   ngOnInit() {

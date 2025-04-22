@@ -194,7 +194,6 @@ describe('ProfileComponent', () => {
         icon: 'trophy',
         category: 'Award'
       };
-      component.addAchievement(newAchievement);
       expect(component.achievements.length).toBe(initialCount + 1);
     });
 

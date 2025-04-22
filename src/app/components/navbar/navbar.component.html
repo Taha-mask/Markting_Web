@@ -2,7 +2,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sirin+Stencil&display=swap" rel="stylesheet">
 
-<nav class="navbar navbar-expand-lg bg-white shadow-sm ">
+<nav class="navbar navbar-expand-lg bg-white shadow-sm" *ngIf="!isMessagesRoute() || !messageComponent?.isChatSelected">
   <div class="container-fluid d-flex align-items-center">
     <!-- Brand Logo -->
     <a class="navbar-brand d-flex align-items-center fw-bold " href="feed" routerlink="feed">
@@ -67,7 +67,7 @@
 </nav>
 
 <!-- Bottom Navigation Bar for Mobile -->
-<div class="mobile-bottom-nav ">
+<div class="mobile-bottom-nav" *ngIf="!isMessagesRoute() || !messageComponent?.isChatSelected">
   <a href="feed" class="nav-item" routerLink="feed">
     <i class="bi bi-house-door "></i>
     <span>Feed</span>
@@ -91,6 +91,6 @@
 </div>
 
 <app-modal></app-modal>
-<app-report ></app-report>
+<app-report></app-report>
 
 

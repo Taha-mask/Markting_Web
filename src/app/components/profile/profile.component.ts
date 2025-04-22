@@ -130,7 +130,12 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
         '👍': 45,
         '🔥': 32,
         '👏': 28
-      }
+      },
+      id: '',
+      title: '',
+      imageUrl: '',
+      author: '',
+      date: new Date()
     }
   ];
 
@@ -378,7 +383,12 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
         liked: false,
         saved: false,
         comments: [],
-        reactions: {}
+        reactions: {},
+        id: '',
+        title: '',
+        imageUrl: '',
+        author: '',
+        date: new Date()
       };
       this.posts.unshift(newPost);
       this.postService.addPost(newPost);

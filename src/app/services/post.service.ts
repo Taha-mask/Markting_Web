@@ -1,80 +1,67 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 import { Post } from '../interfaces/post';
-import { ApiService } from './api.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService {
-  private posts = new BehaviorSubject<Post[]>([]);
-  posts$ = this.posts.asObservable();
+  private apiUrl = `${environment.apiUrl}/posts`;
+  private postsSubject = new BehaviorSubject<Post[]>([]);
+  posts$ = this.postsSubject.asObservable();
 
-  constructor(private apiService: ApiService) {
-    this.loadPosts();
-  }
+  constructor(private http: HttpClient) { }
 
-  private loadPosts() {
-    this.apiService.get<Post[]>('posts').subscribe(
-      posts => this.posts.next(posts),
-      error => console.error('Error loading posts:', error)
+  getPost(id: string): Observable<Post> {
+    return this.http.get<Post>(`${this.apiUrl}/${id}`).pipe(
+      map(post => this.ensurePostProperties(post))
     );
   }
 
   getPosts(): Observable<Post[]> {
-    return this.posts$;
-  }
-
-  addPost(post: Post): Observable<Post> {
-    return this.apiService.post<Post>('posts', post).pipe(
-      map(newPost => {
-        const currentPosts = this.posts.value;
-        this.posts.next([newPost, ...currentPosts]);
-        return newPost;
-      })
+    return this.http.get<Post[]>(this.apiUrl).pipe(
+      map(posts => posts.map(post => this.ensurePostProperties(post)))
     );
   }
 
-  updatePost(id: string, post: Post): Observable<Post> {
-    return this.apiService.put<Post>(`posts/${id}`, post).pipe(
-      map(updatedPost => {
-        const currentPosts = this.posts.value;
-        const index = currentPosts.findIndex(p => p.id === id);
-        if (index !== -1) {
-          currentPosts[index] = updatedPost;
-          this.posts.next([...currentPosts]);
-        }
-        return updatedPost;
-      })
-    );
-  }
-
-  deletePost(id: string): Observable<void> {
-    return this.apiService.delete<void>(`posts/${id}`).pipe(
-      map(() => {
-        const currentPosts = this.posts.value;
-        this.posts.next(currentPosts.filter(post => post.id !== id));
-      })
-    );
-  }
-
-  filterByCategory(category: string): Post[] {
-    if (category === 'All') {
-      return this.posts.value;
-    }
-    return this.posts.value.filter(post => 
-      post.category.toLowerCase() === category.toLowerCase()
-    );
+  addPost(post: Post): void {
+    const currentPosts = this.postsSubject.value;
+    this.postsSubject.next([this.ensurePostProperties(post), ...currentPosts]);
   }
 
   filterBySubCategory(category: string, subCategory: string): Post[] {
-    if (subCategory === 'All') {
-      return this.filterByCategory(category);
-    }
-    return this.posts.value.filter(post => 
-      post.category.toLowerCase() === category.toLowerCase() &&
-      post.subCategory?.toLowerCase() === subCategory.toLowerCase()
-    );
+    const posts = this.postsSubject.value;
+    return posts
+      .map(post => this.ensurePostProperties(post))
+      .filter(post => post.category === category && post.subCategory === subCategory);
+  }
+
+  private ensurePostProperties(post: Partial<Post>): Post {
+    return {
+      id: post.id || '',
+      title: post.title || '',
+      content: post.content || '',
+      imageUrl: post.imageUrl || '',
+      author: post.author || '',
+      date: post.date || new Date(),
+      username: post.username || '',
+      profileImageUrl: post.profileImageUrl || '',
+      timestamp: post.timestamp || new Date(),
+      category: post.category || '',
+      subCategory: post.subCategory || '',
+      images: post.images || [],
+      currentImageIndex: post.currentImageIndex || 0,
+      likes: post.likes || 0,
+      Shares: post.Shares || 0,
+      Saves: post.Saves || 0,
+      showComments: post.showComments || false,
+      isEditing: post.isEditing || false,
+      liked: post.liked || false,
+      saved: post.saved || false,
+      comments: post.comments || [],
+      isFollowing: post.isFollowing || false
+    };
   }
 } 

@@ -25,6 +25,19 @@ interface Message {
   styleUrls: ['./message.component.css']
 })
 export class MessageComponent implements AfterViewChecked {
+  filteredChatList: any[];
+
+  constructor() {
+    this.filteredChatList = this.chatList;
+    // Share this component instance with window for navbar access
+    (window as any).messageComponent = this;
+  }
+
+  ngOnDestroy() {
+    // Clean up when component is destroyed
+    delete (window as any).messageComponent;
+  }
+
   ngAfterViewChecked(): void {
     this.scrollToBottom();
   }
@@ -293,7 +306,7 @@ export class MessageComponent implements AfterViewChecked {
   selectChat(chat: any) {
     this.selectedChat = chat;
     this.messages = chat.messages;
-    this.isChatSelected = true; // عند اختيار دردشة، ننتقل إلى شاشة الدردشة
+    this.isChatSelected = true; // Set to true when entering a chat
     
     this.messages.forEach((message: Message) => {
       if (message.sender === 'other') {
@@ -314,7 +327,7 @@ export class MessageComponent implements AfterViewChecked {
   }
 
   goBackToChatList() {
-    this.isChatSelected = false; // العودة إلى قائمة المستخدمين
+    this.isChatSelected = false; // Set to false when returning to chat list
   }
 
   attachDocument() {
@@ -467,11 +480,6 @@ export class MessageComponent implements AfterViewChecked {
   }
 
   searchQuery: string = '';
-  filteredChatList: any[] = [];
-
-  constructor() {
-    this.filteredChatList = this.chatList;
-  }
 
   searchChats(query: string) {
     this.searchQuery = query.toLowerCase();

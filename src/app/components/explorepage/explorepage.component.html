@@ -1,10 +1,10 @@
 <div class="container-fluid ms-0 pe-0" (scroll)="onScroll($event)">
   <div class="row ms-0 pe-0">
     <!-- Left Sidebar -->
-    <app-trending-sidebar class="sid col-md-3 col-12 position-relative mt-4 d-flex ms-3"></app-trending-sidebar>
+    <app-trending-sidebar class="sid col-md-3 col-12 position-relative mt-4 d-flex ms-1"></app-trending-sidebar>
 
     <!-- Main Content (Feed) -->
-    <div class="main-content col-md-6 col-12 scrollable-content d-flex mt-2">
+    <div class="main-content col-md-6 col-12 scrollable-content d-flex mt-2 ">
       <div class="cat-container mb-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-3 ms-3">
@@ -35,21 +35,104 @@
           </div>
         </div>
 
-        <!-- Subcategories Section -->
-        <div *ngIf="activeCategory !== 'All'" class="subcategories-container">
-          <div class="subcategories-list">
-            <div *ngFor="let subCategory of getSubCategories(activeCategory)"
-                 class="subcategory-item"
-                 [ngClass]="{'active': activeSubCategory === subCategory}"
-                 (click)="filterPostsBySubCategory(subCategory)">
-              {{ subCategory }}
+        <!-- Sub Categories Section -->
+        <div *ngIf="activeCategory !== 'All'" class="categories-container d-flex align-items-center overflow-auto hide-scrollbar no-select"
+             (mousedown)="onMouseDown($event)"
+             (mousemove)="onMouseMove($event)"
+             (mouseup)="onMouseUp()"
+             (mouseleave)="onMouseUp()">
+
+          <div *ngFor="let subCategory of subCategories"
+               class="text-center me-3 category-item"
+               [ngClass]="{'active': activeSubCategory === subCategory.name}"
+               (click)="filterPostsBySubCategory(subCategory.name)">
+            <div class="category-icon">
+              <div class="rounded-circle story-frame d-flex justify-content-center align-items-center"
+                   [ngClass]="{'active': activeSubCategory === subCategory.name}">
+                <i [class]="subCategory.icon" class="fs-2" style="cursor: pointer;"></i>
+              </div>
+            </div>
+            <small class="d-block mt-1 category-text" [innerHTML]="formatCategoryName(subCategory.name)"></small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Suggested Users Section -->
+      <div class="suggested-users-container mb-4">
+        <h5 class="fw-bold ms-3 mb-3">Suggested Users to Follow</h5>
+        <div class="suggested-users-scroll d-flex align-items-center overflow-auto hide-scrollbar"
+             (mousedown)="onMouseDown($event)"
+             (mousemove)="onMouseMove($event)"
+             (mouseup)="onMouseUp()"
+             (mouseleave)="onMouseUp()">
+          <div *ngFor="let user of usersFol" class="suggested-user-card mx-2">
+            <div class="text-center p-3 rounded-3 border">
+              <img [src]="user.img" class="rounded-circle suggested-user-img mb-2" alt="User"/>
+              <h6 class="mb-1">{{ user.name }}</h6>
+              <p class="text-muted small mb-2">{{user.title}}</p>
+              <button class="btn btn-sm w-100" 
+                      [class.btn-primary]="!user.Follow" 
+                      [class.btn-outline-primary]="user.Follow"
+                      (click)="toggleFollow(user)">
+                <i class="bi" [class.bi-person-plus-fill]="!user.Follow" [class.bi-person-check-fill]="user.Follow"></i>
+                {{ user.Follow ? 'Following' : 'Follow' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trending Products Section -->
+      <div class="trending-products-container mb-4">
+        <h5 class="fw-bold ms-3 mb-3">Popular Products</h5>
+        <div class="trending-products-scroll d-flex align-items-center overflow-auto hide-scrollbar"
+             (mousedown)="onMouseDown($event)"
+             (mousemove)="onMouseMove($event)"
+             (mouseup)="onMouseUp()"
+             (mouseleave)="onMouseUp()">
+          <div *ngFor="let product of trendingProducts" class="trending-product-card mx-2">
+            <div class="text-center p-3 rounded-3 border product-card">
+              <div class="product-image-container mb-2">
+                <img [src]="product.imageUrl" class="product-img mb-2" [alt]="product.name"/>
+                <span *ngIf="product.discount" class="discount-badge">-{{product.discount}}%</span>
+              </div>
+              <!-- Seller Information -->
+              <div class="seller-info d-flex align-items-center mb-2">
+                <img [src]="product.seller.profileImage" class="seller-img me-2" [alt]="product.seller.name"/>
+                <div class="seller-details">
+                  <div class="d-flex align-items-center">
+                    <h6 class="seller-name mb-0">{{ product.seller.name }}</h6>
+                    <i *ngIf="product.seller.verified" class="bi bi-patch-check-fill text-primary ms-1"></i>
+                  </div>
+                  <div class="seller-rating">
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <small>{{ product.seller.rating }}</small>
+                  </div>
+                </div>
+              </div>
+              <h6 class="product-name mb-1">{{ product.name }}</h6>
+              <div class="price-container">
+                <span class="current-price">${{ product.currentPrice }}</span>
+                <span *ngIf="product.originalPrice" class="original-price">${{ product.originalPrice }}</span>
+              </div>
+              <div class="product-stats d-flex justify-content-between align-items-center mb-2">
+                <span class="rating">
+                  <i class="bi bi-star-fill text-warning"></i>
+                  {{ product.rating }}
+                </span>
+                <span class="sold">{{ product.soldCount }}+ sold</span>
+              </div>
+              <button class="btn btn-primary btn-sm w-100">
+                <i class="bi bi-cart-plus"></i> Add to Cart
+              </button>
+            </div>
             </div>
           </div>
         </div>
 
         <!-- Filter Controls -->
         <div class="filter-controls mb-3 d-flex justify-content-end gap-2">
-          <button class="btn btn-outline-primary" (click)="filterByTrending()">
+        <button class="btn btn-outline-primary me-2" (click)="filterByTrending()">
             <i class="bi bi-graph-up"></i> Trending
           </button>
           <button class="btn btn-outline-primary" (click)="filterByRecent()">
@@ -58,6 +141,7 @@
         </div>
 
         <!-- Posts Section -->
+      <div *ngIf="filteredPosts.length > 0; else emptyState">
         <div *ngFor="let post of filteredPosts; let i = index">
           <div class="card mb-2" [class.border-primary]="post.isPinned">
             <!-- Pin Indicator -->
@@ -69,38 +153,63 @@
               <div class="d-flex align-items-center justify-content-between mb-3">
                 <div class="d-flex align-items-center">
                   <img [src]="post.profileImageUrl" alt="Profile Picture" class="profile-pic me-3" />
-                  <div class="d-flex align-items-center">
                     <div>
                       <h6 class="m-0 fw-medium fs-5">{{ post.username }}</h6>
                       <small class="timepos text-muted">{{ post.timestamp | date: 'short' }}</small>
-                    </div>
-                    <!-- Follow Button -->
-                    <button class="btn btn-sm rounded-pill ms-3" 
-                            [ngClass]="{'btn-primary': !post.isFollowing, 'btn-outline-primary': post.isFollowing}"
-                            (click)="toggleFollow(post)">
-                      <i class="bi" [ngClass]="{'bi-person-plus': !post.isFollowing, 'bi-person-check-fill': post.isFollowing}"></i>
-                      <span class="ms-1">{{ post.isFollowing ? 'Following' : 'Follow' }}</span>
-                    </button>
                   </div>
                 </div>
-                <div class="dropdown">
-                  <button class="btn btn-link dropdown-toggle" type="button" id="postOptionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-three-dots fs-4"></i>
+                <div class="d-flex align-items-center">
+                  <button class="btn btn-sm me-2" 
+                          [class.btn-primary]="!post.isFollowing" 
+                          [class.btn-outline-primary]="post.isFollowing"
+                          (click)="toggleFollowUser(post)">
+                    <i class="bi" [class.bi-person-plus-fill]="!post.isFollowing" [class.bi-person-check-fill]="post.isFollowing"></i>
+                    {{ post.isFollowing ? 'Following' : 'Follow' }}
                   </button>
-                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postOptionsDropdown">
-                    <li><a class="dropdown-item" (click)="reportPost(post)"><i class="bi bi-flag me-2"></i>Report post</a></li>
-                    <li><a class="dropdown-item" (click)="deletePost(post)"><i class="bi bi-trash me-2"></i>Delete</a></li>
-                    <li><a class="dropdown-item" (click)="unfollow(post)"><i class="bi bi-person-x me-2"></i>Unfollow</a></li>
-                    <li><a class="dropdown-item" (click)="hidePost(post)"><i class="bi bi-eye-slash me-2"></i>Hide post</a></li>
-                    <li><a class="dropdown-item" (click)="snoozeUser(post, 30)"><i class="bi bi-clock me-2"></i>Snooze for 30 days</a></li>
-                    <li><a class="dropdown-item" (click)="blockUser(post)"><i class="bi bi-person-x-fill me-2"></i>Block user</a></li>
-                    <li><a class="dropdown-item" (click)="pinPost(post)">
+                  <div class="dropdown">
+                    <button class="btn btn-link" type="button" [id]="'postOptions' + i" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-three-dots fs-4"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm" [attr.aria-labelledby]="'postOptions' + i">
+                      <!-- Post Actions -->
+                      <li><a class="dropdown-item" href="javascript:void(0)" (click)="pinPost(post)">
                       <i [class]="post.isPinned ? 'bi bi-pin-angle-fill' : 'bi bi-pin-angle'" class="me-2"></i>
                       {{ post.isPinned ? 'Unpin post' : 'Pin post' }}
                     </a></li>
+                      <li><a class="dropdown-item" href="javascript:void(0)" (click)="sharePost(post)">
+                        <i class="bi bi-share-fill me-2"></i>Share post
+                      </a></li>
+                      <li><a class="dropdown-item" href="javascript:void(0)" (click)="copyLink(post)">
+                        <i class="bi bi-link-45deg me-2"></i>Copy link
+                      </a></li>
+
+                      <li><hr class="dropdown-divider"></li>
+
+                      <!-- User Actions -->
+                      <li><a class="dropdown-item" href="javascript:void(0)" (click)="unfollow(post)">
+                        <i class="bi bi-person-x me-2"></i>Unfollow
+                      </a></li>
+                      <li><a class="dropdown-item" href="javascript:void(0)" (click)="snoozeUser(post, 30)">
+                        <i class="bi bi-clock me-2"></i>Snooze for 30 days
+                      </a></li>
+                      <li><a class="dropdown-item" href="javascript:void(0)" (click)="hidePost(post)">
+                        <i class="bi bi-eye-slash me-2"></i>Hide post
+                      </a></li>
+
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" (click)="sharePost(post)"><i class="bi bi-share-fill me-2"></i>Share post</a></li>
+
+                      <!-- Danger Zone -->
+                      <li><a class="dropdown-item text-danger" href="javascript:void(0)" (click)="reportPost(post)">
+                        <i class="bi bi-flag me-2"></i>Report post
+                      </a></li>
+                      <li><a class="dropdown-item text-danger" href="javascript:void(0)" (click)="blockUser(post)">
+                        <i class="bi bi-person-x-fill me-2"></i>Block user
+                      </a></li>
+                      <li><a class="dropdown-item text-danger" href="javascript:void(0)" (click)="deletePost(post)">
+                        <i class="bi bi-trash me-2"></i>Delete
+                      </a></li>
                   </ul>
+                  </div>
                 </div>
               </div>
 
@@ -157,6 +266,10 @@
                   <i [class.bi-bookmark-fill]="post.saved" [class.bi-bookmark]="!post.saved" [class.text-warning]="post.saved"></i>
                   <span class="ms-1" style="user-select: none;">{{post.Saves}} <span class="Saved">{{ post.saved ? 'Saved' : 'Save' }}</span></span>
                 </div>
+                <div (click)="sendOrderRequest(post)" class="d-flex align-items-center" style="cursor: pointer;">
+                  <i class="bi bi-cart-plus-fill text-success"></i>
+                  <span class="ms-1" style="user-select: none;">Order Now</span>
+                </div>
               </div>
 
               <!-- Reactions Section -->
@@ -205,9 +318,9 @@
                         </div>
                         <div class="comment-actions d-flex align-items-center mt-1 gap-3">
                           <small class="text-muted">{{comment.timestamp | date:'short'}}</small>
-                          <div class="d-flex align-items-center gap-1" style="cursor: pointer;" (click)="showCommentLikes(comment)">
-                            <i class="bi bi-heart-fill text-danger"></i>
-                            <small>{{comment.likes}}</small>
+                          <div class="d-flex align-items-center gap-1" style="cursor: pointer;" (click)="toggleCommentLike(comment)">
+                            <i class="bi" [ngClass]="isCommentLikedByCurrentUser(comment) ? 'bi-heart-fill text-danger' : 'bi-heart'"></i>
+                            <small class="ms-1">{{comment.likes || 0}}</small>
                           </div>
                           <small class="reply-btn" style="cursor: pointer;" (click)="toggleReplyInput(comment)">Reply</small>
                         </div>
@@ -216,24 +329,16 @@
                         <div *ngIf="comment.showReplyInput" class="reply-input mt-2">
                           <div class="d-flex gap-2">
                             <img [src]="user[0].profileImageUrl" [alt]="currentUser" class="profile-pic-sm">
-                            <div class="flex-grow-1">
+                            <div class="flex-grow-1 position-relative">
                               <input type="text" class="form-control form-control-sm" 
                                      placeholder="Write a reply..." 
                                      [(ngModel)]="currentReplyText"
                                      (keyup.enter)="addReply(comment, currentReplyText)">
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- Comment Likes Popup -->
-                        <div *ngIf="comment.showLikedBy" class="liked-by-popup card shadow-sm mt-2">
-                          <div class="card-body p-2">
-                            <h6 class="fw-bold mb-2">Liked by</h6>
-                            <div class="liked-by-list">
-                              <div *ngFor="let user of comment.likedBy" class="liked-by-item d-flex align-items-center mb-2">
-                                <img [src]="user.profileImageUrl" [alt]="user.username" class="profile-pic-sm me-2">
-                                <span class="fw-medium">{{user.username}}</span>
-                              </div>
+                              <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y p-0 me-2"
+                                      (click)="addReply(comment, currentReplyText)"
+                                      [disabled]="!currentReplyText.trim()">
+                                <i class="bi bi-send-fill text-primary"></i>
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -250,9 +355,9 @@
                                 </div>
                                 <div class="comment-actions d-flex align-items-center mt-1 gap-3">
                                   <small class="text-muted">{{reply.timestamp | date:'short'}}</small>
-                                  <div class="d-flex align-items-center gap-1" style="cursor: pointer;" (click)="showCommentLikes(reply)">
-                                    <i class="bi bi-heart-fill text-danger"></i>
-                                    <small>{{reply.likes}}</small>
+                                  <div class="d-flex align-items-center gap-1" style="cursor: pointer;" (click)="toggleCommentLike(reply)">
+                                    <i class="bi" [ngClass]="isCommentLikedByCurrentUser(reply) ? 'bi-heart-fill text-danger' : 'bi-heart'"></i>
+                                    <small class="ms-1">{{reply.likes || 0}}</small>
                                   </div>
                                 </div>
                               </div>
@@ -263,11 +368,15 @@
                     </div>
                   </div>
                 </div>
-                <div *ngFor="let use of user" class="comment-box d-flex align-items-center p-2">
+                <div *ngFor="let use of user" class="comment-box d-flex align-items-center p-2 ">
                   <img [src]="use.profileImageUrl" alt="User Avatar" class="rounded-circle avatar" />
-                  <div class="flex-grow-1 d-flex">
-                    <input type="text" [(ngModel)]="newComment" class="form-control mx-2 comment-input" 
-                           placeholder="Write your comment..." (keydown.enter)="addComment(post, newComment)" />
+                  <input
+                    type="text"
+                    [(ngModel)]="newComment"
+                    class="form-control mx-2 comment-input"
+                    placeholder="Write your comment..."
+                    (keydown.enter)="addComment(post, newComment); newComment = ''"
+                  />
                     <div class="icons d-flex align-items-center">
                       <i class="bi bi-image mx-2" (click)="triggerFileInput()"></i>
                       <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;" />
@@ -275,34 +384,28 @@
                       <div *ngIf="showEmojiPicker" class="emoji-picker-container">
                         <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
                       </div>
-                      <button class="btn btn-primary" (click)="addComment(post, newComment)">
-                        Comment
-                      </button>
-                    </div>
+                    <i class="bi bi-send mx-2" (click)="addComment(post, newComment); newComment = ''"></i>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="suggested-user h-50">
-        <h3>People You May Know</h3>
-        <div class="users-list ">
-          <div class="user-card" *ngFor="let user of suggestedUsers">
-            <img [src]="user.profilePicture || user.img" alt="{{ user.name }}" class="suggested-user-img" />
-            <div class="user-info">
-              <h6 class="user-name">{{ user.name }}</h6>
-              <small class="text-muted">{{ user.title }}</small>
             </div>
-            <button class="btn btn-sm rounded-pill" 
-                    [ngClass]="{'btn-primary': !user.Follow, 'btn-outline-primary': user.Follow}"
-                    (click)="toggleFollow(user)">
-              <i class="bi" [ngClass]="{'bi-person-plus': !user.Follow, 'bi-person-check-fill': user.Follow}"></i>
-              <span class="ms-1">{{ user.Follow ? 'Following' : 'Follow' }}</span>
-            </button>
+
+      <!-- Empty State Template -->
+      <ng-template #emptyState>
+        <div class="text-center py-5">
+          <div class="mb-4">
+            <i class="bi bi-inbox fs-1 text-muted"></i>
           </div>
-          </div>
+          <h4 class="text-muted mb-3">No Posts Found</h4>
+          <p class="text-muted mb-4">There are no posts to display in this category right now.</p>
+          <button class="btn btn-primary" (click)="goBackToCategories()">
+            <i class="bi bi-arrow-left me-2"></i>Back to Categories
+          </button>
         </div>
+      </ng-template>
       </div>
 
       <!-- Right Sidebar -->
@@ -337,16 +440,12 @@
                 </div>
               </div >
               <div (click)="toggleFollow(user)">
-                <button class="btn btn-sm rounded-pill" 
-                        [ngClass]="{'btn-primary': !user.Follow, 'btn-outline-primary': user.Follow}"
-                        (click)="toggleFollow(user)">
-                  <i class="bi" [ngClass]="{'bi-person-plus': !user.Follow, 'bi-person-check-fill': user.Follow}"></i>
-                  <span class="ms-1">{{ user.Follow ? 'Following' : 'Follow' }}</span>
-                </button>
-              </div>
+              <button [class.bg-white]="user.Follow" [class.text-dark]="user.Follow"class="btn btn-sm btn-outline-primary rounded-pill">{{ user.Follow ? 'Following' : 'Follow' }}</button>
             </div>
           </div>
+
         </div>
+
       </div>
     </div>
   </div>
@@ -419,7 +518,7 @@
               <h6 class="text-white-50 text-center mb-3">Or Copy Link</h6>
               <div class="input-group">
                 <input type="text" class="form-control bg-dark text-white border-secondary" [value]="postUrl" readonly #linkInput>
-                <button class="btn btn-outline-light d-flex align-items-center gap-2" [class.copied]="linkCopied" (click)="copyLink(linkInput)">
+                <button class="btn btn-outline-light d-flex align-items-center gap-2" [class.copied]="linkCopied" (click)="copyLink(post)">
                   <i class="bi" [ngClass]="{'bi-clipboard': !linkCopied, 'bi-clipboard-check text-success': linkCopied}"></i>
                   <span>{{linkCopied ? 'Copied!' : 'Copy'}}</span>
                 </button>
@@ -427,10 +526,6 @@
             </div>
           </div>
         </ng-container>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="addPost()" data-bs-dismiss="modal">Post</button>
       </div>
     </div>
   </div>

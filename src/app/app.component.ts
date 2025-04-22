@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import {SavedPostComponent} from './components/saved-post/saved-post.component';
+import { PostDetailsComponent } from './components/post-details/post-details.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, SavedPostComponent, RouterOutlet, FooterComponent],
+  imports: [CommonModule, NavbarComponent, SavedPostComponent, RouterOutlet, FooterComponent, PostDetailsComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })

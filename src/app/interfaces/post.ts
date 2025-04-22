@@ -2,16 +2,19 @@
 import { PostComment } from './Comment';
 
 export interface Post {
-  id?: string;
+  id: string;
+  title: string;
+  content: string;
+  imageUrl: string;
+  author: string;
+  date: Date;
   username: string;
   profileImageUrl: string;
   timestamp: Date;
-  content: string;
   category: string;
   subCategory?: string;
   images: string[];
   currentImageIndex: number;
-
   likes: number;
   Shares: number;
   Saves: number;

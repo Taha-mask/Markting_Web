@@ -1,9 +1,9 @@
-import { Component, HostListener, ViewChild, ElementRef, OnInit, Inject, OnDestroy } from '@angular/core';
+import { Component, HostListener, ViewChild, ElementRef, OnInit, Inject, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { PostService } from '../services/post.service';
 import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.component';
 import { User } from '../../interfaces/user';
@@ -43,180 +43,48 @@ interface SuggestedUser {
   isFollowing?: boolean;
 }
 
+// Make sure Post type is consistent
+type PostType = Post;
+
 @Component({
   selector: 'app-explorepage',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent],
-  templateUrl: './explorepage.component.html',
+  templateUrl:'./explorepage.component.html',
   styleUrls: ['./explorepage.component.css'],
   providers: [DatePipe, PostService],
 })
 export class ExplorepageComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild(TrendingSidebarComponent) trendingSidebar!: TrendingSidebarComponent;
-  
+  @ViewChildren('commentContainer') commentContainers!: QueryList<ElementRef>;
   isDropdownVisible = false;
-  newComment: string = '';
-  newCommentImageUrl: string | ArrayBuffer | null = null;
   postContent: string = '';
-  currentUser = 'Taha Mahmoud';
-  showEmojiPicker = false;
-
-  posts: Post[] = [
+  filteredPosts: any[] = [];
+  user: any[] = [
     {
       username: 'Taha Mahmoud',
-      profileImageUrl: 'images/user-1.jpg',
-      timestamp: new Date(),
-      content: 'This is a sample post content about electronics!',
-      category: 'Electronics',
-      subCategory: 'General',
-      images: [
-        'images/post-image-1.png',
-        'images/post-image-2.png',
-        'images/post-image-3.png',
-      ],
-      currentImageIndex: 0,
-      likes: 15,
-      Shares: 30,
-      Saves: 5,
-      showComments: false,
-      isEditing: false,
-      liked: false,
-      saved: false,
-      isFollowing: false, 
-      comments: [
-        {
-          id: 'comment1',
-          username: 'Sarah Johnson',
-          text: 'Great post! Very informative.',
-          likes: 5,
-          likedBy: [
-            { username: 'Mike Chen', profileImageUrl: 'images/user-2.jpg' },
-            { username: 'Emma Davis', profileImageUrl: 'images/user-3.jpg' }
-          ],
-          timestamp: new Date(2025, 2, 15, 14, 30),
-          profileImageUrl: 'images/user-3.jpg',
-          replies: [
-            {
-              id: 'reply1',
-              username: 'Mike Chen',
-              text: 'Totally agree! The insights are valuable.',
-              likes: 2,
-              likedBy: [],
-              timestamp: new Date(2025, 2, 15, 15, 0),
-              profileImageUrl: 'images/user-2.jpg'
-            }
-          ]
-        }
-      ]
-    },
+      profileImageUrl: 'assets/images/profile.jpg'
+    }
   ];
-
-  private postSubscription: Subscription | null = null;
-
+  currentUser = 'Taha Mahmoud';
   activeCategory: string = 'All';
+  activeSubCategory: string = '';
+  subCategories: any[] = [];
   navbarVisible = true;
   lastScrollTop = 0;
-  isShareModalVisible = false;
-  selectedPost: Post | null = null;
+  private startX = 0;
+  private scrollLeft = 0;
+  private isDragging = false;
+  selectedPost: any;
   postUrl: string = '';
   linkCopied: boolean = false;
   currentReplyText: string = '';
+  showEmojiPicker: boolean = false;
+  newComment: string = '';
+  private postSubscription: Subscription | null = null;
 
-  constructor(@Inject(PostService) private postService: PostService) {}
-
-  ngOnInit() {
-    this.postSubscription = this.postService.getPosts().subscribe(
-      (updatedPosts: Post[]) => {
-        this.posts = updatedPosts;
-        this.filterPostsByCategory(this.activeCategory);
-      },
-      (error) => {
-        console.error('Error fetching posts', error);
-      }
-    );
-    this.filterPostsByCategory('All');
-
-    // Initialize Bootstrap 5 dropdowns
-    setTimeout(() => {
-      const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
-      dropdownElements.forEach(element => {
-        new bootstrap.Dropdown(element);
-      });
-
-      // Add modal close handler
-      const modals = document.querySelectorAll('.modal');
-      modals.forEach(modal => {
-        modal.addEventListener('hidden.bs.modal', () => {
-          const modalBackdrop = document.querySelector('.modal-backdrop');
-          if (modalBackdrop) {
-            modalBackdrop.remove();
-          }
-          document.body.classList.remove('modal-open');
-          document.body.style.overflow = '';
-          document.body.style.paddingRight = '';
-        });
-      });
-    }, 0);
-  }
-
-  ngOnDestroy() {
-    if (this.postSubscription) {
-      this.postSubscription.unsubscribe();
-    }
-  }
-
-  filterPostsByCategory(category: string) {
-    this.activeCategory = category;
-    
-    if (category === 'All') {
-      this.posts = this.posts;
-    } else {
-      this.posts = this.posts.filter(post => 
-        post.category.toLowerCase() === category.toLowerCase()
-      );
-    }
-  }
-
-  private isDragging = false;
-  private startX = 0;
-  private scrollLeft = 0;
-
-  user: User[] = [
-    {
-      id: '1',
-      username: 'Taha Mahmoud ',
-      type: 'Markter',
-      profileImageUrl: 'image s/user-1.png',
-      status: 'Online',
-      role: 'user'
-    }
-  ];
-
-  subCategories: { [key: string]: string[] } = {
-    'Electrical Tools': ['All', 'Power Tools', 'Hand Tools', 'Measuring Tools', 'Safety Equipment'],
-    'Food': ['All', 'Snacks', 'Beverages', 'Dairy', 'Bakery', 'Canned Foods'],
-    'Medicines': ['All', 'Prescription', 'Over-the-Counter', 'First Aid', 'Vitamins'],
-    'Electronics': ['All', 'Smartphones', 'Laptops', 'Tablets', 'Accessories'],
-    'Clothing': ['All', 'Men', 'Women', 'Children', 'Accessories'],
-    'Fashion': ['All', 'Shoes', 'Bags', 'Jewelry', 'Watches'],
-    'Home & Kitchen': ['All', 'Appliances', 'Cookware', 'Storage', 'Cleaning'],
-    'Beauty & Personal Care': ['All', 'Skincare', 'Haircare', 'Makeup', 'Fragrances'],
-    'Home Appliances': ['All', 'Kitchen', 'Laundry', 'Cleaning', 'Climate Control'],
-    'Sports & Fitness': ['All', 'Equipment', 'Clothing', 'Accessories', 'Supplements'],
-    'Video Games': ['All', 'Consoles', 'Games', 'Accessories', 'Digital Content'],
-    'Toys & Hobbies': ['All', 'Action Figures', 'Board Games', 'Outdoor Toys', 'Arts & Crafts'],
-    'Auto Parts': ['All', 'Engine', 'Exterior', 'Interior', 'Accessories'],
-    'Groceries': ['All', 'Fresh Food', 'Pantry', 'Beverages', 'Household'],
-    'Health & Personal Care': ['All', 'Personal Care', 'Health Care', 'Baby Care', 'Elderly Care'],
-    'Books & Media': ['All', 'Books', 'Movies', 'Music', 'Magazines'],
-    'Pet Supplies': ['All', 'Food', 'Accessories', 'Health Care', 'Grooming'],
-    'Perfumes': ['All', 'Men', 'Women', 'Unisex', 'Gift Sets']
-  };
-
-  activeSubCategory: string = '';
-
-  categories: { name: string, icon: string }[] = [
+  categories = [
     { name: 'All', icon: 'bi bi-collection' },
     { name: 'Electrical Tools', icon: 'bi bi-tools' },
     { name: 'Food', icon: 'bi bi-egg-fried' },
@@ -235,39 +103,18 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     { name: 'Health & Personal Care', icon: 'bi bi-heart-pulse' },
     { name: 'Books & Media', icon: 'bi bi-book' },
     { name: 'Pet Supplies', icon: 'bi bi-heart' },
-    { name: 'Perfumes', icon: 'bi bi-flower1' }
+    { name: 'Perfumes', icon: 'bi bi-flower1' },
   ];
-
-  formatCategoryName(name: string): string {
-    return name.replace('&', '<br>&');
-  }
 
   usersFol = [
-    { name: 'Wade Warren', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false, isProcessing: false },
-    { name: 'Darlene Robertson', title: 'Digital Marketing Specialist', img: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg', Follow: false, isProcessing: false },
-    { name: 'Floyd Miles', title: 'Digital Marketing Specialist', img: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg', Follow: false, isProcessing: false },
-    { name: 'Bessie Cooper', title: 'Digital Marketing Specialist', img: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg', Follow: false, isProcessing: false },
-    { name: 'Savannah Nguyen', title: 'Digital Marketing Specialist', img: 'images/user-2.png', Follow: false, isProcessing: false },
-    { name: 'Courtney Henry', title: 'Digital Marketing Specialist', img: 'images/user-3.png', Follow: false, isProcessing: false },
-    { name: 'Brooklyn Simmons', title: 'Digital Marketing Specialist', img: 'images/user-4.png', Follow: false, isProcessing: false },
-    { name: 'Jacob Jones', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false, isProcessing: false },
-  ];
-
-  suggestedUsers: SuggestedUser[] = [
-    {
-      name: 'Emma Wilson',
-      title: 'Digital Marketing Specialist',
-      img: 'images/user-2.png',
-      Follow: false,
-      isProcessing: false
-    },
-    {
-      name: 'Jacob Jones',
-      title: 'Content Creator',
-      img: 'images/user-3.png',
-      Follow: false,
-      isProcessing: false
-    }
+    { name: 'Wade Warren', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false },
+    { name: 'Darlene Robertson', title: 'Digital Marketing Specialist', img: 'https://images.deepai.org/art-image/d88e01d440b64c36962339af16625162/girl-is-a-mix-between-korean-and-egyptian-28c5a5.jpg', Follow: false },
+    { name: 'Floyd Miles', title: 'Digital Marketing Specialist', img: 'images/5e6501a0-f969-45e6-9600-413edd76a9f4.jpg', Follow: false },
+    { name: 'Bessie Cooper', title: 'Digital Marketing Specialist', img: 'images/0ef442a5-9622-4c64-af78-d6e557723ec9.jpg', Follow: false },
+    { name: 'Savannah Nguyen', title: 'Digital Marketing Specialist', img: 'images/user-2.png', Follow: false },
+    { name: 'Courtney Henry', title: 'Digital Marketing Specialist', img: 'images/user-3.png', Follow: false },
+    { name: 'Brooklyn Simmons', title: 'Digital Marketing Specialist', img: 'images/user-4.png', Follow: false },
+    { name: 'Jacob Jones', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false },
   ];
 
   trendingFeeds: TrendingFeed[] = [
@@ -299,69 +146,270 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     }
   ];
 
-  followUser(user: any) {
-    user.Follow = !user.Follow;
-    if (this.trendingSidebar) {
-      this.trendingSidebar[user.Follow ? 'incrementFollowingCount' : 'decrementFollowingCount']();
+  trendingProducts = [
+    {
+      name: 'Wireless Noise Cancelling Headphones',
+      imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80',
+      currentPrice: 199.99,
+      originalPrice: 299.99,
+      discount: 33,
+      rating: 4.8,
+      soldCount: 1200,
+      seller: {
+        name: 'Tech World Store',
+        profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80',
+        verified: true,
+        rating: 4.9
+      }
+    },
+    {
+      name: 'Smart Watch Series 5',
+      imageUrl: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500&q=80',
+      currentPrice: 299.99,
+      originalPrice: 399.99,
+      discount: 25,
+      rating: 4.9,
+      soldCount: 3500,
+      seller: {
+        name: 'Digital Hub',
+        profileImage: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&q=80',
+        verified: true,
+        rating: 4.8
+      }
+    },
+    {
+      name: 'Professional Camera DSLR',
+      imageUrl: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500&q=80',
+      currentPrice: 899.99,
+      originalPrice: 1199.99,
+      discount: 25,
+      rating: 4.7,
+      soldCount: 800,
+      seller: {
+        name: 'Camera Pro Shop',
+        profileImage: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&q=80',
+        verified: true,
+        rating: 4.7
+      }
+    },
+    {
+      name: 'Gaming Laptop Pro',
+      imageUrl: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500&q=80',
+      currentPrice: 1499.99,
+      originalPrice: 1799.99,
+      discount: 17,
+      rating: 4.9,
+      soldCount: 650,
+      seller: {
+        name: 'Gaming Paradise',
+        profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80',
+        verified: true,
+        rating: 4.9
+      }
+    },
+    {
+      name: 'Smartphone 13 Pro',
+      imageUrl: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80',
+      currentPrice: 999.99,
+      originalPrice: 1099.99,
+      discount: 9,
+      rating: 4.8,
+      soldCount: 2800,
+      seller: {
+        name: 'Mobile Masters',
+        profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80',
+        verified: true,
+        rating: 4.8
+      }
+    },
+    {
+      name: 'Wireless Earbuds Pro',
+      imageUrl: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=500&q=80',
+      currentPrice: 159.99,
+      originalPrice: 199.99,
+      discount: 20,
+      rating: 4.6,
+      soldCount: 4200,
+      seller: {
+        name: 'Audio Excellence',
+        profileImage: 'https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?w=100&q=80',
+        verified: true,
+        rating: 4.6
+      }
     }
-    const message = user.Follow ? `Following ${user.name}` : `Unfollowed ${user.name}`;
-    console.log(message);
+  ];
+
+  formatCategoryName(name: string): string {
+    return name.replace('&', '<br>&');
   }
 
-  private convertToPost(user: SuggestedUser): Post {
-    return {
-      username: user.name,
-      profileImageUrl: user.img,
+  followUser(user: any) {
+    user.Follow = !user.Follow;
+    if (user.Follow) {
+      this.trendingSidebar.incrementFollowingCount();
+    } else {
+      this.trendingSidebar.decrementFollowingCount();
+    }
+  }
+
+  toggleFollow(userFol: any) {
+    this.followUser(userFol);
+  }
+
+  toggleFollowUser(post: any) {
+      post.isFollowing = !post.isFollowing;
+    if (post.isFollowing) {
+      this.trendingSidebar.incrementFollowingCount();
+    } else {
+      this.trendingSidebar.decrementFollowingCount();
+    }
+  }
+
+  showSubCategories(category: any) {
+    this.activeCategory = category.name;
+    if (category.name === 'All') {
+      this.filterPostsByCategory('All');
+    } else {
+      this.subCategories = this.getSubCategories(category.name);
+      this.filterPostsByCategory(category.name);
+    }
+  }
+
+  getSubCategories(categoryName: string): any[] {
+    const subCategoriesMap: { [key: string]: string[] } = {
+      'Electronics': ['Phones', 'Laptops', 'Tablets', 'Accessories'],
+      'Food': ['Restaurants', 'Recipes', 'Groceries', 'Delivery'],
+      'Medicines': ['Prescription', 'Over-the-counter', 'Supplements'],
+      'Clothing': ['Men', 'Women', 'Kids', 'Accessories'],
+      'Fashion': ['Trends', 'Accessories', 'Shoes', 'Bags'],
+      'Home & Kitchen': ['Appliances', 'Furniture', 'Decor', 'Cookware'],
+      'Beauty & Personal Care': ['Skincare', 'Makeup', 'Hair Care', 'Fragrance'],
+      'Sports & Fitness': ['Equipment', 'Apparel', 'Supplements', 'Training'],
+      'Books & Media': ['Books', 'Movies', 'Music', 'Games'],
+      // Add more subcategories as needed
+    };
+
+    return (subCategoriesMap[categoryName] || []).map(name => ({
+      name,
+      icon: this.getIconForSubCategory(name)
+    }));
+  }
+
+  getIconForSubCategory(name: string): string {
+    const iconMap: { [key: string]: string } = {
+      'Phones': 'bi bi-phone',
+      'Laptops': 'bi bi-laptop',
+      'Tablets': 'bi bi-tablet',
+      'Accessories': 'bi bi-headphones',
+      'Restaurants': 'bi bi-shop',
+      'Recipes': 'bi bi-journal-text',
+      'Groceries': 'bi bi-cart',
+      'Delivery': 'bi bi-truck',
+      'Men': 'bi bi-gender-male',
+      'Women': 'bi bi-gender-female',
+      'Kids': 'bi bi-people',
+      'Trends': 'bi bi-graph-up',
+      'Shoes': 'bi bi-boot',
+      'Bags': 'bi bi-handbag',
+      'Appliances': 'bi bi-fan',
+      'Furniture': 'bi bi-lamp',
+      'Decor': 'bi bi-house-heart',
+      'Cookware': 'bi bi-cup-hot',
+      'Skincare': 'bi bi-droplet',
+      'Makeup': 'bi bi-brush',
+      'Hair Care': 'bi bi-scissors',
+      'Fragrance': 'bi bi-flower1',
+      'Equipment': 'bi bi-gear',
+      'Apparel': 'bi bi-person-workspace',
+      'Training': 'bi bi-person-walking',
+      'Books': 'bi bi-book',
+      'Movies': 'bi bi-film',
+      'Music': 'bi bi-music-note',
+      'Games': 'bi bi-controller'
+    };
+    return iconMap[name] || 'bi bi-tag';
+  }
+
+  filterPostsByCategory(categoryName: string) {
+    console.log('Filtering by category:', categoryName); // Debug log
+    console.log('Current posts:', this.samplePosts); // Debug log
+
+    this.activeCategory = categoryName;
+    if (categoryName === 'All') {
+      this.filteredPosts = [...this.samplePosts].sort((a, b) =>
+        (b.timestamp as any) - (a.timestamp as any)
+      );
+    } else {
+      this.filteredPosts = this.samplePosts
+        .filter(post => post.category === categoryName)
+        .sort((a, b) => (b.timestamp as any) - (a.timestamp as any));
+    }
+
+    console.log('Filtered posts:', this.filteredPosts); // Debug log
+  }
+
+  filterPostsBySubCategory(subCategoryName: string) {
+    this.activeSubCategory = subCategoryName;
+    if (this.activeCategory === 'All') {
+      this.filteredPosts = [...this.samplePosts];
+    } else {
+      this.filteredPosts = this.samplePosts.filter(post =>
+        post.category === this.activeCategory &&
+        (!subCategoryName || post.subCategory === subCategoryName)
+      ).sort((a, b) => (b.timestamp as any) - (a.timestamp as any));
+    }
+  }
+
+  // Sample posts data
+  samplePosts: any[] = [
+    {
+      username: 'Taha Mahmoud',
+      profileImageUrl: 'images/user-1.jpg',
       timestamp: new Date(),
-      content: user.title,
-      category: '',
-      images: [],
+      content: 'This is a sample post content about electronics!',
+      category: 'Electronics',
+      subCategory: 'General',
+      images: [
+        'images/post-image-1.png',
+        'images/post-image-2.png',
+        'images/post-image-3.png',
+      ],
       currentImageIndex: 0,
-      likes: 0,
-      Shares: 0,
-      Saves: 0,
+      likes: 15,
+      Shares: 30,
+      Saves: 5,
       showComments: false,
       isEditing: false,
       liked: false,
       saved: false,
-      isFollowing: user.Follow,
-      comments: []
-    };
-  }
-
-  toggleFollow(input: Post | SuggestedUser) {
-    const isPost = 'username' in input;
-    const isUser = 'name' in input;
-
-    if (isPost) {
-      const post = input as Post;
-      post.isFollowing = !post.isFollowing;
-      
-      const message = post.isFollowing ? 
-        `Following ${post.username}` : 
-        `Unfollowed ${post.username}`;
-      console.log(message);
-    } else if (isUser) {
-      const user = input as SuggestedUser;
-      user.Follow = !user.Follow;
-      
-      const message = user.Follow ? 
-        `Following ${user.name}` : 
-        `Unfollowed ${user.name}`;
-      console.log(message);
-    }
-  }
-
-  filteredPosts: Post[] = [];
-
-  filterPostsBySubCategory(subCategoryName: string) {
-    this.activeSubCategory = subCategoryName;
-    if (subCategoryName === 'All') {
-      this.filterPostsByCategory(this.activeCategory);
-    } else {
-      this.posts = this.postService.filterBySubCategory(this.activeCategory, subCategoryName);
-    }
-  }
+      isFollowing: false,
+      comments: [
+        {
+          id: 'comment1',
+          username: 'Sarah Johnson',
+          text: 'Great post! Very informative.',
+          likes: 5,
+          likedBy: [
+            { username: 'Mike Chen', profileImageUrl: 'images/user-2.jpg' },
+            { username: 'Emma Davis', profileImageUrl: 'images/user-3.jpg' }
+          ],
+          timestamp: new Date(2025, 2, 15, 14, 30),
+          profileImageUrl: 'images/user-3.jpg',
+          replies: [
+            {
+              id: 'reply1',
+              username: 'Mike Chen',
+              text: 'Totally agree! The insights are valuable.',
+              likes: 2,
+              likedBy: [],
+              timestamp: new Date(2025, 2, 15, 15, 0),
+              profileImageUrl: 'images/user-2.jpg'
+            }
+          ]
+        }
+      ]
+    },
+  ];
 
   getBentoItemClass(index: number): string {
     const pattern = [
@@ -379,22 +427,22 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     console.log('Friend request sent to', user.name);
   }
 
-  hidePost(post: Post) {
+  hidePost(post: any) {
     const index = this.filteredPosts.indexOf(post);
     if (index > -1) {
       this.filteredPosts.splice(index, 1);
     }
   }
 
-  snoozeUser(post: Post, days: number) {
+  snoozeUser(post: any, days: number) {
     alert(`Snoozed ${post.username} for ${days} days`);
   }
 
-  blockUser(post: Post) {
+  blockUser(post: any) {
     alert(`Blocked ${post.username}`);
   }
 
-  likePost(post: Post) {
+  likePost(post: any) {
     if (post.liked) {
       post.likes--;
     } else {
@@ -403,11 +451,11 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     post.liked = !post.liked;
   }
 
-  toggleComments(post: Post) {
+  toggleComments(post: any) {
     post.showComments = !post.showComments;
   }
 
-  sharePost(post: Post) {
+  sharePost(post: any) {
     this.selectedPost = post;
     const postId = post.id || Date.now().toString();
     this.postUrl = `${window.location.origin}/post/${postId}`;
@@ -419,11 +467,11 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     post.Shares++;
   }
 
-  toggleEdit(post: Post) {
+  toggleEdit(post: any) {
     post.isEditing = !post.isEditing;
   }
 
-  savePost(post: Post) {
+  savePost(post: any) {
     post.isEditing = false;
   }
 
@@ -432,7 +480,8 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
   }
 
   addEmoji(event: any) {
-    this.newComment += event.emoji.native;
+    this.postContent += event.emoji.native;
+    this.showEmojiPicker = false;
   }
 
   triggerFileInput() {
@@ -444,7 +493,9 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.newCommentImageUrl = e.target?.result ?? null;
+        if (e.target?.result) {
+          // Add the image to the post when it's created
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -452,14 +503,14 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
 
   addPost() {
     if (this.postContent.trim()) {
-      const newPost = {
-        username: this.user[0].username,
+      const newPost: any = {
+        username: this.currentUser,
         profileImageUrl: this.user[0].profileImageUrl,
         timestamp: new Date(),
         content: this.postContent,
         category: this.activeCategory,
         subCategory: this.activeSubCategory,
-        images: this.newCommentImageUrl ? [this.newCommentImageUrl.toString()] : [],
+        images: [],
         currentImageIndex: 0,
         likes: 0,
         Shares: 0,
@@ -471,9 +522,9 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
         isFollowing: false,
         comments: []
       };
-
-      this.postService.addPost(newPost);
-      this.resetForm();
+      this.samplePosts.unshift(newPost);
+      this.postContent = '';
+      this.filterPostsByCategory(this.activeCategory);
 
       // Cleanup modal backdrop
       const modalBackdrop = document.querySelector('.modal-backdrop');
@@ -484,12 +535,6 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
     }
-  }
-
-  private resetForm() {
-    this.postContent = '';
-    this.newCommentImageUrl = null;
-    this.showEmojiPicker = false;
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -521,75 +566,112 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     this.isDragging = false;
   }
 
-  toggleLike(post: Post) {
+  toggleLike(post: any) {
     post.liked = !post.liked;
     post.likes += post.liked ? 1 : -1;
   }
 
-  toggleSave(post: Post) {
+  toggleSave(post: any) {
     post.saved = !post.saved;
     post.Saves += post.saved ? 1 : -1;
   }
 
-  nextImage(post: Post) {
+  nextImage(post: any) {
     if (post.currentImageIndex < post.images.length - 1) {
       post.currentImageIndex++;
     }
   }
 
-  prevImage(post: Post) {
+  prevImage(post: any) {
     if (post.currentImageIndex > 0) {
       post.currentImageIndex--;
     }
   }
 
-  deleteComment(post: Post, commentIndex: number) {
-    if (post.comments[commentIndex].username === this.currentUser) {
+  deleteComment(post: any, commentIndex: number) {
       post.comments.splice(commentIndex, 1);
-    } else {
-      alert('You can only delete your own comments.');
-    }
   }
 
-  editComment(post: Post, comment: PostComment) {
-    const newCommentText = prompt('Edit your comment:', comment.text);
-    if (newCommentText !== null) {
-      comment.text = newCommentText;
-    }
+  editComment(comment: any) {
+    this.resetAllEditingStates();
+    comment.isEditing = true;
+    comment.editText = comment.text;
   }
 
-  addComment(post: Post, commentText: string): void {
-    if (commentText.trim() || this.newCommentImageUrl) {
-      const imageUrl = typeof this.newCommentImageUrl === 'string' ? this.newCommentImageUrl : undefined;
-      post.comments.push({
-        id: this.generateCommentId(),
-        username: this.currentUser,
-        text: commentText,
-        imageUrl,
-        likes: 0,
-        likedBy: [],
-        timestamp: new Date(),
-        profileImageUrl: this.user[0].profileImageUrl
+  saveCommentEdit(comment: any) {
+    if (comment.editText && comment.editText.trim()) {
+      if (!comment.editHistory) {
+        comment.editHistory = [];
+      }
+      comment.editHistory.push({
+        text: comment.text,
+        editedBy: this.currentUser,
+        timestamp: new Date()
       });
-      this.newComment = '';
-      this.newCommentImageUrl = null;
+      comment.text = comment.editText.trim();
+      comment.lastEditedBy = this.currentUser;
     }
+    comment.isEditing = false;
+    comment.editText = undefined;
   }
 
-  toggleCommentLike(comment: PostComment) {
-    const currentUser = {
-      username: this.currentUser,
-      profileImageUrl: this.user[0].profileImageUrl
-    };
+  cancelCommentEdit(comment: any) {
+    comment.isEditing = false;
+    comment.editText = undefined;
+  }
 
-    const userIndex = comment.likedBy.findIndex(user => user.username === currentUser.username);
-    if (userIndex === -1) {
-      comment.likes++;
-      comment.likedBy.push(currentUser);
-    } else {
-      comment.likes--;
-      comment.likedBy.splice(userIndex, 1);
+  restoreCommentVersion(comment: any, event: Event) {
+    const target = event.target as HTMLSelectElement;
+    if (!target) {
+      console.warn('Event target is null');
+      return;
     }
+    const selectedIndex = parseInt(target.value);
+    if (comment.editHistory && selectedIndex >= 0 && selectedIndex < comment.editHistory.length) {
+      const selectedVersion = comment.editHistory[selectedIndex];
+      comment.text = selectedVersion.text;
+      comment.lastEditedBy = selectedVersion.editedBy;
+    }
+    comment.isEditing = false;
+  }
+
+  private resetAllEditingStates() {
+    this.samplePosts.forEach((post: any) => {
+      post.comments.forEach((c: any) => {
+        c.isEditing = false;
+        c.editText = undefined;
+        c.replies?.forEach((reply: any) => {
+          reply.isEditing = false;
+          reply.editText = undefined;
+        });
+      });
+    });
+  }
+
+  editReply(reply: any) {
+    reply.isEditing = true;
+    reply.editText = reply.text;
+  }
+
+  saveReplyEdit(reply: any) {
+    if (reply.editText && reply.editText.trim()) {
+      reply.text = reply.editText.trim();
+    }
+    reply.isEditing = false;
+  }
+
+  cancelReplyEdit(reply: any) {
+    reply.isEditing = false;
+    reply.editText = undefined;
+  }
+
+  toggleCommentLike(comment: any) {
+    comment.isLikedByCurrentUser = !comment.isLikedByCurrentUser;
+    comment.likes += comment.isLikedByCurrentUser ? 1 : -1;
+  }
+
+  isCommentLikedByCurrentUser(comment: any): boolean {
+    return comment.isLikedByCurrentUser || false;
   }
 
   @HostListener('document:click', ['$event'])
@@ -600,66 +682,37 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     }
   }
 
-  editPost(post: Post) {
+  editPost(post: any) {
     post.isEditing = true;
   }
 
-  deletePost(post: Post) {
+  deletePost(post: any) {
     const index = this.filteredPosts.indexOf(post);
     if (index > -1) {
       this.filteredPosts.splice(index, 1);
     }
   }
 
-  reportPost(post: Post) {
+  reportPost(post: any) {
     alert(`Reported post by ${post.username}`);
   }
 
-  unfollow(post: Post) {
+  unfollow(post: any) {
     alert(`Unfollowed ${post.username}`);
   }
 
   goBackToCategories() {
     this.activeCategory = 'All';
     this.activeSubCategory = '';
-    this.subCategories = {};
+    this.subCategories = [];
     this.filterPostsByCategory('All');
   }
 
-  getSubCategories(categoryName: string): string[] {
-    return this.subCategories[categoryName] || [];
-  }
-
-  showSubCategories(category: { name: string, icon: string }) {
-    this.activeCategory = category.name;
-    if (this.activeCategory === 'All') {
-      this.filterPostsByCategory('All');
-    } else {
-      this.filterPostsByCategory(category.name);
-      if (this.subCategories[category.name]) {
-        this.activeSubCategory = 'All';
-        this.filterPostsBySubCategory('All');
-      }
-    }
-  }
-
-  pinPost(post: Post) {
-    post.isPinned = !post.isPinned;
-    if (post.isPinned) {
-      const index = this.posts.indexOf(post);
-      if (index > -1) {
-        this.posts.splice(index, 1);
-        this.posts.unshift(post);
-      }
-    }
-    this.filterPostsByCategory(this.activeCategory);
-  }
-
-  shareViaMessage(post: Post) {
+  shareViaMessage(post: any) {
     console.log('Sharing via message:', post);
   }
 
-  copyLink(input: HTMLInputElement | Post) {
+  copyLink(input: HTMLInputElement | any) {
     if (input instanceof HTMLInputElement) {
       input.select();
       document.execCommand('copy');
@@ -674,12 +727,12 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
   }
 
   filterByTrending() {
-    this.posts = this.posts
+    this.filteredPosts = this.samplePosts
       .sort((a, b) => (b.likes + b.comments.length + b.Shares) - (a.likes + a.comments.length + a.Shares));
   }
 
   filterByRecent() {
-    this.posts = this.posts
+    this.filteredPosts = this.samplePosts
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }
 
@@ -713,7 +766,7 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     }
   }
 
-  addReaction(post: Post, reaction: string) {
+  addReaction(post: any, reaction: string) {
     if (!post.reactions) {
       post.reactions = {};
     }
@@ -724,37 +777,98 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     this.updateReactionUI(post);
   }
 
-  private updateReactionUI(post: Post) {
+  private updateReactionUI(post: any) {
     post.topReactions = Object.entries(post.reactions || {})
-      .map(([reaction, count]) => ({ reaction, count }))
+      .map(([reaction, count]): ReactionCount => ({ reaction, count: count as number }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
   }
 
-  showReactionUsers(post: Post) {
+  showReactionUsers(post: any) {
     post.showReactionUsers = !post.showReactionUsers;
   }
 
-  showCommentLikes(comment: PostComment) {
+  showCommentLikes(comment: any) {
     comment.showLikedBy = !comment.showLikedBy;
   }
 
-  private generateCommentId(): string {
-    return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  private generateUniqueId(): string {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
 
-  toggleReplyInput(comment: PostComment) {
+  addComment(post: any, commentText: string) {
+    if (!commentText || commentText.trim() === '') return;
+
+    const newComment: any = {
+      id: this.generateUniqueId(),
+      username: this.currentUser,
+      profileImageUrl: this.user[0].profileImageUrl,
+      text: commentText.trim(),
+      timestamp: new Date(),
+      likes: 0,
+      likedBy: [],
+      replies: []
+    };
+
+    // Add the comment to the post
+    if (!post.comments) {
+      post.comments = [];
+    }
+    post.comments.push(newComment);
+
+    // Reset comment input
+    this.newComment = '';
+
+    // Scroll to the newly added comment
+    this.scrollToLastComment(post);
+  }
+
+  scrollToLastComment(post: any) {
+    // Use setTimeout to ensure DOM has updated
+    setTimeout(() => {
+      try {
+        // Find the last comment in this post's comments
+        const lastCommentIndex = post.comments.length - 1;
+        const lastCommentElement = document.querySelector(
+          `.comment-item:nth-child(${lastCommentIndex + 1})`
+        );
+
+        if (lastCommentElement) {
+          lastCommentElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+      } catch (error) {
+        console.error('Error scrolling to comment:', error);
+      }
+    }, 100);
+  }
+
+  focusNextCommentInput(currentPost: any) {
+    // Find the index of the current post
+    const postIndex = this.samplePosts.findIndex(p => p.id === currentPost.id);
+
+    // If there's a next post, attempt to focus its comment input
+    if (postIndex < this.samplePosts.length - 1) {
+      const nextPost = this.samplePosts[postIndex + 1];
+      // You might need to implement a method to programmatically focus the next comment input
+      console.log('Focusing next post comment input');
+    }
+  }
+
+  toggleReplyInput(comment: any) {
     comment.showReplyInput = !comment.showReplyInput;
     if (!comment.showReplyInput) {
       this.currentReplyText = '';
     }
   }
 
-  addReply(comment: PostComment, replyText: string) {
+  addReply(comment: any, replyText: string) {
     if (!replyText.trim()) return;
 
-    const reply: PostComment = {
-      id: this.generateCommentId(),
+    const reply: any = {
+      id: this.generateUniqueId(),
       username: this.currentUser,
       text: replyText,
       likes: 0,
@@ -780,38 +894,128 @@ export class ExplorepageComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleFollowSuggested(user: any) {
-    if (user.isProcessing) return;
-    
-    user.isProcessing = true;
-    user.Follow = !user.Follow;
-    
-    const message = user.Follow ? 
-      `Following ${user.name}` : 
-      `Unfollowed ${user.name}`;
-    console.log(message);
-    
-    setTimeout(() => {
-      user.isProcessing = false;
-      
-      if (user.Follow) {
-        setTimeout(() => {
-          this.suggestedUsers = this.suggestedUsers.filter(u => u.name !== user.name);
-          
-          if (this.suggestedUsers.length < 4) {
-            const newUser = {
-              name: 'Sarah Parker',
-              title: 'Digital Strategist',
-              img: 'images/user-2.png',
-              profilePicture: 'images/user-2.png',
-              Follow: false,
-              isFollowing: false,
-              isProcessing: false
-            };
-            this.suggestedUsers.push(newUser);
-          }
-        }, 1000);
+  deleteReply(comment: any, replyIndex: number) {
+    if (comment.replies) {
+      comment.replies.splice(replyIndex, 1);
+    }
+  }
+
+  pinPost(post: any) {
+    post.isPinned = !post.isPinned;
+    if (post.isPinned) {
+      const index = this.samplePosts.indexOf(post);
+      if (index > -1) {
+        this.samplePosts.splice(index, 1);
+        this.samplePosts.unshift(post);
       }
-    }, 500);
+    }
+    this.filterPostsByCategory(this.activeCategory);
+  }
+
+  sendOrderRequest(post: any): void {
+    // Example logic: Display an alert or send a request to the backend
+    console.log(`Order request sent for post by ${post.username}`);
+    alert(`Order request sent for post by ${post.username}`);
+
+    // Add your backend API call logic here if needed
+    // Example:
+    // this.http.post('/api/order', { postId: post.id }).subscribe(response => {
+    //   console.log('Order request successful:', response);
+    // });
+  }
+
+  constructor(private postService: PostService , private router : Router) {}
+
+  ngOnInit() {
+    this.postSubscription = this.postService.getPosts().subscribe(posts => {
+      this.samplePosts = posts;
+      this.filterPostsByCategory(this.activeCategory);
+
+      // Initialize Bootstrap 5 dropdowns
+        setTimeout(() => {
+        const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+        dropdownElements.forEach(element => {
+          new bootstrap.Dropdown(element);
+        });
+
+        // Add modal close handler
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+          modal.addEventListener('hidden.bs.modal', () => {
+            const modalBackdrop = document.querySelector('.modal-backdrop');
+            if (modalBackdrop) {
+              modalBackdrop.remove();
+            }
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+          });
+        });
+      }, 0);
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.postSubscription) {
+      this.postSubscription.unsubscribe();
+    }
+  }
+
+  toggleMenu() {
+    const menu = document.getElementById('menuList');
+    if (menu) {
+      menu.toggleAttribute('hidden');
+    }
+  }
+
+  toggleForm() {
+    const form = document.getElementById('popupForm');
+    if (form) {
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+  }
+
+  submitOrder(event: Event) {
+    event.preventDefault();
+
+    const customerInput = document.getElementById('popupCustomer') as HTMLInputElement;
+    const amountInput = document.getElementById('popupAmount') as HTMLInputElement;
+    const statusSelect = document.getElementById('popupStatus') as HTMLSelectElement;
+
+    const customer = customerInput.value.trim();
+    const amount = amountInput.value;
+    const status = statusSelect.value;
+
+    if (!customer || !amount || !status) return;
+
+    if (status === 'cancelled') {
+      this.toggleForm();
+      return; // لا يتم الحفظ إذا تم اختيار cancelled
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    const newOrder = {
+      id: Date.now(),
+      date: today,
+      customer,
+      amount,
+      status
+    };
+
+    const existingOrders = localStorage.getItem('orders');
+    const orders = existingOrders ? JSON.parse(existingOrders) : [];
+
+    orders.push(newOrder);
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    // إخفاء الفورم وتفريغ الحقول
+    customerInput.value = '';
+    amountInput.value = '';
+    statusSelect.value = 'pending';
+    this.toggleForm();
+
+    // يمكننا إعادة التوجيه لصفحة الطلبات
+    this.router.navigate(['/orders']);
   }
 }
+

@@ -346,9 +346,9 @@
           </div>
         </div>
 
-        <!-- Suggestions for You Section -->
+        <!-- My Network Section -->
         <div class="suggested-user me-3">
-          <h5 class="card-title mb-3 fw-bold">Suggestions for you</h5>
+          <h5 class="card-title mb-3 fw-bold">My Network</h5>
           <div *ngFor="let user of usersFol" class="user-item d-flex align-items-center justify-content-between border-bottom py-1 me-1">
             <div class="d-flex align-items-center">
               <img src="{{user.img}}" class="rounded-circle me-3" alt="User" style="width: 50px; display: block;" />
@@ -356,12 +356,11 @@
                 <p class="mb-0">{{ user.name }}</p>
                 <small class="text-muted">{{user.title}}</small>
               </div>
-            </div >
-            <div (click)="toggleFollow(user)">
-              <button [class.bg-white]="user.Follow" [class.text-dark]="user.Follow"class="btn btn-sm btn-outline-primary rounded-pill">{{ user.Follow ? 'Following' : 'Follow' }}</button>
+            </div>
+            <div (click)="sendMessage(user)">
+              <button class="btn btn-sm btn-outline-primary rounded-pill">Message</button>
             </div>
           </div>
-
         </div>
         <app-footer></app-footer>
 
