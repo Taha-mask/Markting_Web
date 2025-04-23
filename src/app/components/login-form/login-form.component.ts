@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { UserService } from '../services/User.service';
 import { LoginResponse, ApiError } from '../models/auth.model';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { AuthService } from '../../services/auth.service';
+import * as bootstrap from 'bootstrap';
 
 interface OAuthResponse {
   token: string;
@@ -15,7 +17,7 @@ interface OAuthResponse {
 @Component({
   selector: 'app-login-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule],
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css'],
 })
@@ -26,11 +28,18 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   loginError: string | null = null;
   passwordStrength = 0;
   private destroy$ = new Subject<void>();
+  email: string = '';
+  password: string = '';
+  resetEmail: string = '';
+  isResetting: boolean = false;
+  resetSuccess: boolean = false;
+  resetError: string = '';
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -165,5 +174,43 @@ export class LoginFormComponent implements OnInit, OnDestroy {
           this.loginError = error.message || 'Invalid email or password. Please try again.';
         },
       });
+  }
+
+  async resetPassword() {
+    if (!this.resetEmail) return;
+
+    this.isResetting = true;
+    this.resetError = '';
+    this.resetSuccess = false;
+
+    try {
+      // Call your auth service's reset password method
+      await this.authService.sendPasswordResetEmail(this.resetEmail);
+      this.resetSuccess = true;
+      this.resetEmail = '';
+      
+      // Show success message
+      const modalElement = document.getElementById('forgetPasswordModal');
+      if (modalElement) {
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        modal?.hide();
+      }
+      
+      // You can show a success toast or alert here
+      alert('Password reset instructions have been sent to your email.');
+      
+    } catch (error: any) {
+      this.resetError = error.message || 'Failed to send reset instructions. Please try again.';
+    } finally {
+      this.isResetting = false;
+    }
+  }
+
+  closeResetModal() {
+    const modalElement = document.getElementById('forgetPasswordModal');
+    if (modalElement) {
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      modal?.hide();
+    }
   }
 }

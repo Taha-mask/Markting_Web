@@ -166,16 +166,25 @@ export class FeedComponent implements OnInit, OnDestroy {
 
   getSubCategories(categoryName: string): any[] {
     const subCategoriesMap: { [key: string]: string[] } = {
-      'Electronics': ['Phones', 'Laptops', 'Tablets', 'Accessories'],
-      'Food': ['Restaurants', 'Recipes', 'Groceries', 'Delivery'],
-      'Medicines': ['Prescription', 'Over-the-counter', 'Supplements'],
-      'Clothing': ['Men', 'Women', 'Kids', 'Accessories'],
-      'Fashion': ['Trends', 'Accessories', 'Shoes', 'Bags'],
-      'Home & Kitchen': ['Appliances', 'Furniture', 'Decor', 'Cookware'],
-      'Beauty & Personal Care': ['Skincare', 'Makeup', 'Hair Care', 'Fragrance'],
-      'Sports & Fitness': ['Equipment', 'Apparel', 'Supplements', 'Training'],
-      'Books & Media': ['Books', 'Movies', 'Music', 'Games'],
-      // Add more subcategories as needed
+      'All': ['All Categories'],
+      'Electrical Tools': ['All', 'Power Tools', 'Hand Tools', 'Measuring Tools', 'Safety Equipment'],
+      'Food': ['All', 'Restaurants', 'Recipes', 'Groceries', 'Delivery', 'Snacks', 'Beverages'],
+      'Medicines': ['All', 'Prescription', 'Over-the-counter', 'Supplements', 'First Aid', 'Vitamins'],
+      'Electronics': ['All', 'Phones', 'Laptops', 'Tablets', 'Accessories', 'Smart Home', 'Cameras'],
+      'Clothing': ['All', 'Men', 'Women', 'Kids', 'Accessories', 'Sportswear', 'Formal Wear'],
+      'Fashion': ['All', 'Trends', 'Accessories', 'Shoes', 'Bags', 'Jewelry', 'Watches'],
+      'Home & Kitchen': ['All', 'Appliances', 'Furniture', 'Decor', 'Cookware', 'Storage', 'Lighting'],
+      'Beauty & Personal Care': ['All', 'Skincare', 'Makeup', 'Hair Care', 'Fragrance', 'Bath & Body', 'Tools'],
+      'Home Appliances': ['All', 'Kitchen', 'Laundry', 'Cleaning', 'Climate Control', 'Entertainment'],
+      'Sports & Fitness': ['All', 'Equipment', 'Apparel', 'Supplements', 'Training', 'Outdoor', 'Team Sports'],
+      'Video Games': ['All', 'Console Games', 'PC Games', 'Mobile Games', 'Accessories', 'Virtual Reality'],
+      'Toys & Hobbies': ['All', 'Action Figures', 'Board Games', 'Crafts', 'Educational', 'Remote Control'],
+      'Auto Parts': ['All', 'Engine Parts', 'Exterior', 'Interior', 'Accessories', 'Tools', 'Maintenance'],
+      'Groceries': ['All', 'Fresh Food', 'Pantry', 'Beverages', 'Snacks', 'Organic', 'International'],
+      'Health & Personal Care': ['All', 'Vitamins', 'Personal Care', 'Health Monitors', 'First Aid', 'Wellness'],
+      'Books & Media': ['All', 'Books', 'Movies', 'Music', 'Games', 'Magazines', 'Educational'],
+      'Pet Supplies': ['All', 'Dog Supplies', 'Cat Supplies', 'Fish Supplies', 'Bird Supplies', 'Small Pets'],
+      'Perfumes': ['All', 'Women\'s Perfumes', 'Men\'s Perfumes', 'Unisex', 'Gift Sets', 'Luxury']
     };
 
     return (subCategoriesMap[categoryName] || []).map(name => ({
@@ -186,6 +195,8 @@ export class FeedComponent implements OnInit, OnDestroy {
 
   getIconForSubCategory(name: string): string {
     const iconMap: { [key: string]: string } = {
+      'All': 'bi bi-collection',
+      'All Categories': 'bi bi-collection',
       'Phones': 'bi bi-phone',
       'Laptops': 'bi bi-laptop',
       'Tablets': 'bi bi-tablet',
@@ -200,51 +211,86 @@ export class FeedComponent implements OnInit, OnDestroy {
       'Trends': 'bi bi-graph-up',
       'Shoes': 'bi bi-boot',
       'Bags': 'bi bi-handbag',
-      'Appliances': 'bi bi-fan',
-      'Furniture': 'bi bi-lamp',
-      'Decor': 'bi bi-house-heart',
-      'Cookware': 'bi bi-cup-hot',
-      'Skincare': 'bi bi-droplet',
-      'Makeup': 'bi bi-brush',
-      'Hair Care': 'bi bi-scissors',
-      'Fragrance': 'bi bi-flower1',
-      'Equipment': 'bi bi-gear',
-      'Apparel': 'bi bi-person-workspace',
-      'Training': 'bi bi-person-walking',
-      'Books': 'bi bi-book',
-      'Movies': 'bi bi-film',
-      'Music': 'bi bi-music-note',
-      'Games': 'bi bi-controller'
+      'Power Tools': 'bi bi-tools',
+      'Hand Tools': 'bi bi-wrench',
+      'Measuring Tools': 'bi bi-rulers',
+      'Safety Equipment': 'bi bi-shield-check',
+      'Smart Home': 'bi bi-house-gear',
+      'Cameras': 'bi bi-camera',
+      'Sportswear': 'bi bi-person-walking',
+      'Formal Wear': 'bi bi-suit-heart',
+      'Jewelry': 'bi bi-gem',
+      'Watches': 'bi bi-watch',
+      'Storage': 'bi bi-box-seam',
+      'Lighting': 'bi bi-lamp',
+      'Bath & Body': 'bi bi-droplet',
+      'Tools': 'bi bi-tools',
+      'Kitchen': 'bi bi-cup-hot',
+      'Laundry': 'bi bi-water',
+      'Cleaning': 'bi bi-brush',
+      'Climate Control': 'bi bi-thermometer-half',
+      'Entertainment': 'bi bi-tv',
+      'Outdoor': 'bi bi-tree',
+      'Team Sports': 'bi bi-people-fill',
+      'Console Games': 'bi bi-controller',
+      'PC Games': 'bi bi-pc-display',
+      'Mobile Games': 'bi bi-phone-fill',
+      'Virtual Reality': 'bi bi-badge-vr',
+      'Action Figures': 'bi bi-person-arms-up',
+      'Board Games': 'bi bi-dice-6',
+      'Crafts': 'bi bi-palette',
+      'Educational': 'bi bi-book-half',
+      'Remote Control': 'bi bi-robot',
+      'Engine Parts': 'bi bi-gear',
+      'Exterior': 'bi bi-car-front',
+      'Interior': 'bi bi-car-front-fill',
+      'Maintenance': 'bi bi-tools',
+      'Fresh Food': 'bi bi-egg-fried',
+      'Pantry': 'bi bi-basket',
+      'Organic': 'bi bi-flower1',
+      'International': 'bi bi-globe',
+      'Health Monitors': 'bi bi-activity',
+      'Wellness': 'bi bi-heart-pulse',
+      'Magazines': 'bi bi-newspaper',
+      'Dog Supplies': 'bi bi-heart',
+      'Cat Supplies': 'bi bi-heart-fill',
+      'Fish Supplies': 'bi bi-water',
+      'Bird Supplies': 'bi bi-feather',
+      'Small Pets': 'bi bi-heart-half',
+      'Women\'s Perfumes': 'bi bi-flower2',
+      'Men\'s Perfumes': 'bi bi-flower1',
+      'Unisex': 'bi bi-gender-ambiguous',
+      'Gift Sets': 'bi bi-gift'
     };
     return iconMap[name] || 'bi bi-tag';
   }
 
   filterPostsByCategory(categoryName: string) {
-    console.log('Filtering by category:', categoryName); // Debug log
-    console.log('Current posts:', this.samplePosts); // Debug log
-
     this.activeCategory = categoryName;
+    this.activeSubCategory = '';  // Reset sub-category when changing category
+    
     if (categoryName === 'All') {
       this.filteredPosts = [...this.samplePosts].sort((a, b) =>
         (b.timestamp as any) - (a.timestamp as any)
       );
     } else {
+      this.subCategories = this.getSubCategories(categoryName);
       this.filteredPosts = this.samplePosts
         .filter(post => post.category === categoryName)
         .sort((a, b) => (b.timestamp as any) - (a.timestamp as any));
     }
-
-    console.log('Filtered posts:', this.filteredPosts); // Debug log
   }
 
   filterPostsBySubCategory(subCategoryName: string) {
     this.activeSubCategory = subCategoryName;
-    if (this.activeCategory === 'All') {
-      this.filteredPosts = [...this.samplePosts];
+    
+    if (subCategoryName === 'All') {
+      // Show all posts for the current category
+      this.filterPostsByCategory(this.activeCategory);
     } else {
       this.filteredPosts = this.samplePosts.filter(post =>
         post.category === this.activeCategory &&
-        (!subCategoryName || post.subCategory === subCategoryName)
+        post.subCategory === subCategoryName
       ).sort((a, b) => (b.timestamp as any) - (a.timestamp as any));
     }
   }
@@ -466,7 +512,7 @@ export class FeedComponent implements OnInit, OnDestroy {
   }
 
   nextImage(post: any) {
-    if (post.currentImageIndex < post.images.length - 1) {
+    if (post.media && post.currentImageIndex < post.media.length - 1) {
       post.currentImageIndex++;
     }
   }
@@ -912,6 +958,14 @@ export class FeedComponent implements OnInit, OnDestroy {
 
     // يمكننا إعادة التوجيه لصفحة الطلبات
     this.router.navigate(['/orders']);
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 }
 

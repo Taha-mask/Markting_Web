@@ -91,7 +91,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   previewImage: string | ArrayBuffer | null = null;
 
   newPostContent: string = '';
-  newPostImages: string[] = [];
+  newPostImages: { type: 'image' | 'video' | 'document'; url: string }[] = [];
   newPortfolioItem: any = { title: '', description: '', category: 'Social Media', link: '', imageUrl: '' };
   newAchievement: any = { title: '', description: '', date: '', icon: 'trophy', category: '' };
   currentPassword: string = '';
@@ -105,7 +105,8 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
       content: 'Just launched a successful social media campaign that increased engagement by 150%! 🚀 #DigitalMarketing #Success',
       category: 'Marketing',
       subCategory: 'Social Media',
-      images: ['public/images/post-1.jpg'],
+      audience: 'public',
+      media: [{ type: 'image', url: 'public/images/post-1.jpg' }],
       currentImageIndex: 0,
       likes: 124,
       Shares: 30,
@@ -350,7 +351,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   }
 
   nextImage(post: Post) {
-    if (post.currentImageIndex < post.images.length - 1) {
+    if (post.media && post.currentImageIndex < post.media.length - 1) {
       post.currentImageIndex++;
     }
   }
@@ -373,7 +374,9 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
         content: this.newPostContent,
         isFollowing: false,
         category: 'Marketing',
-        images: [...this.newPostImages],
+        subCategory: 'Social Media',
+        audience: 'public',
+        media: this.newPostImages,
         currentImageIndex: 0,
         likes: 0,
         Shares: 0,
@@ -438,7 +441,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
       Array.from(files).forEach(file => {
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.newPostImages.push(e.target?.result as string);
+          this.newPostImages.push({ type: 'image', url: e.target?.result as string });
         };
         reader.readAsDataURL(file);
       });

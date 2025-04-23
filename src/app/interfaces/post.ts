@@ -12,9 +12,17 @@ export interface Post {
   profileImageUrl: string;
   timestamp: Date;
   category: string;
-  subCategory?: string;
-  images: string[];
+  subCategory: string;
+  audience: string;
+  media?: {
+    type: 'image' | 'video' | 'document';
+    url: string;
+    name?: string;
+    size?: number;
+    thumbnailUrl?: string;
+  }[];
   currentImageIndex: number;
+  price?: number | null;
   likes: number;
   Shares: number;
   Saves: number;

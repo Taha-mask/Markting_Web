@@ -1,26 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-
-export interface Post {
-  id?: string;
-  username: string;
-  profileImageUrl: string;
-  timestamp: Date;
-  content: string;
-  category: string;
-  subCategory?: string;
-  images: string[];
-  currentImageIndex: number;
-  likes: number;
-  Shares: number;
-  Saves: number;
-  showComments: boolean;
-  isEditing: boolean;
-  liked: boolean;
-  saved: boolean;
-  isFollowing: boolean;
-  comments: any[];
-}
+import { Post } from '../../interfaces/post';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +20,8 @@ export class PostService {
         content: 'Welcome to our community! 👋',
         category: 'General',
         subCategory: '',
-        images: [],
+        audience: 'public',
+        media: [],
         currentImageIndex: 0,
         likes: 0,
         Shares: 0,
@@ -50,7 +31,11 @@ export class PostService {
         liked: false,
         saved: false,
         isFollowing: false,
-        comments: []
+        comments: [],
+        title: '',
+        imageUrl: '',
+        author: '',
+        date: new Date()
       }
     ]);
   }

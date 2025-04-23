@@ -136,34 +136,66 @@
                 <p>{{ post.content }}</p>
               </div>
 
-              <!-- Post Images/Videos -->
-              <div *ngIf="post.images && post.images.length > 0" class=" mb-3 position-relative ">
-                <ng-container *ngIf="post.images[post.currentImageIndex].includes('video'); else imageTemplate">
-                  <video [src]="post.images[post.currentImageIndex]" controls class="img-fluid rounded w-100 post-img"></video>
-                </ng-container>
-                <ng-template #imageTemplate>
-                  <img [src]="post.images[post.currentImageIndex]" alt="Post Image" class="img-fluid rounded w-100 post-img" />
-                </ng-template>
+              <!-- Media Content -->
+              <div class="media-content" *ngIf="post.media && post.media.length > 0">
+                <div class="position-relative">
+                  <!-- Image -->
+                  <img *ngIf="post.media[post.currentImageIndex].type === 'image'"
+                       [src]="post.media[post.currentImageIndex].url"
+                       class="img-fluid rounded"
+                       alt="Post image">
 
-                <!-- Navigation Buttons -->
-                <div class="navigation-buttons position-absolute top-50 start-0 end-0 d-flex justify-content-between px-3">
-                  <button class="btn btn-light rounded-circle" (click)="prevImage(post)" [disabled]="post.currentImageIndex === 0">
-                    <i class="bi bi-chevron-left"></i>
-                  </button>
-                  <button class="btn btn-light rounded-circle" (click)="nextImage(post)" [disabled]="post.currentImageIndex === post.images.length - 1">
-                    <i class="bi bi-chevron-right"></i>
-                  </button>
+                  <!-- Video -->
+                  <video *ngIf="post.media[post.currentImageIndex].type === 'video'"
+                         [src]="post.media[post.currentImageIndex].url"
+                         class="img-fluid rounded"
+                         controls>
+                  </video>
+
+                  <!-- Document -->
+                  <div *ngIf="post.media[post.currentImageIndex].type === 'document'"
+                       class="document-preview">
+                    <div class="document-icon">
+                      <img [src]="post.media[post.currentImageIndex].thumbnailUrl"
+                           alt="Document icon">
+                    </div>
+                    <div class="document-info">
+                      <h5>{{ post.media[post.currentImageIndex].name }}</h5>
+                      <p>{{ formatFileSize(post.media[post.currentImageIndex].size!) }}</p>
+                      <a [href]="post.media[post.currentImageIndex].url"
+                         class="btn btn-primary btn-sm"
+                         target="_blank">
+                        <i class="bi bi-eye"></i> View Document
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- Navigation Buttons -->
+                  <div class="navigation-buttons" *ngIf="post.media.length > 1">
+                    <button class="btn btn-light btn-sm"
+                            (click)="prevImage(post)"
+                            [disabled]="post.currentImageIndex === 0">
+                      <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-light btn-sm"
+                            (click)="nextImage(post)"
+                            [disabled]="post.currentImageIndex === post.media.length - 1">
+                      <i class="bi bi-chevron-right"></i>
+                    </button>
+                  </div>
                 </div>
 
-                <!-- Dots Navigation -->
-                <div class="dots-navigation position-absolute bottom-0 start-50 translate-middle-x d-flex gap-1 mb-2">
-                  <div
-                    *ngFor="let image of post.images; let j = index"
-                    class="dot"
-                    [ngClass]="{'active': post.currentImageIndex === j}"
-                    (click)="post.currentImageIndex = j"
-                  ></div>
+                <!-- Media Count -->
+                <div class="media-count mt-2" *ngIf="post.media.length > 1">
+                  {{ post.currentImageIndex + 1 }}/{{ post.media.length }}
                 </div>
+              </div>
+
+              <!-- Price Badge -->
+              <div class="price-badge" *ngIf="post.price">
+                <span class="badge bg-primary">
+                  Price: <strong>${{ post.price }}</strong>
+                </span>
               </div>
 
               <!-- Action Buttons -->

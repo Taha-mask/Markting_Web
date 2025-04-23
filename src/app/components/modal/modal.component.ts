@@ -6,6 +6,21 @@ import { PostService } from '../services/post.service';
 import { Post } from '../../interfaces/post';
 import * as bootstrap from 'bootstrap';
 import { User } from '../../interfaces/user';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
+interface ImagePreview {
+  file: File;
+  preview: string;
+}
+
+interface MediaItem {
+  type: 'image' | 'video' | 'document';
+  url: string;
+  name?: string;
+  size?: number;
+  thumbnailUrl?: string;
+}
 
 @Component({
   selector: 'app-modal',
@@ -28,27 +43,46 @@ export class ModalComponent implements OnInit {
   showEmojiPicker: boolean = false;
   categories = [
     { name: 'All', icon: 'bi bi-collection' },
-    { name: 'Electronics', icon: 'bi bi-laptop' },
+    { name: 'Electrical Tools', icon: 'bi bi-tools' },
     { name: 'Food', icon: 'bi bi-egg-fried' },
     { name: 'Medicines', icon: 'bi bi-capsule' },
+    { name: 'Electronics', icon: 'bi bi-laptop' },
     { name: 'Clothing', icon: 'bi bi-person' },
     { name: 'Fashion', icon: 'bi bi-handbag' },
     { name: 'Home & Kitchen', icon: 'bi bi-house-door' },
     { name: 'Beauty & Personal Care', icon: 'bi bi-scissors' },
+    { name: 'Home Appliances', icon: 'bi bi-fan' },
     { name: 'Sports & Fitness', icon: 'bi bi-bicycle' },
-    { name: 'Books & Media', icon: 'bi bi-book' }
+    { name: 'Video Games', icon: 'bi bi-controller' },
+    { name: 'Toys & Hobbies', icon: 'bi bi-joystick' },
+    { name: 'Auto Parts', icon: 'bi bi-car-front' },
+    { name: 'Groceries', icon: 'bi bi-cart' },
+    { name: 'Health & Personal Care', icon: 'bi bi-heart-pulse' },
+    { name: 'Books & Media', icon: 'bi bi-book' },
+    { name: 'Pet Supplies', icon: 'bi bi-heart' },
+    { name: 'Perfumes', icon: 'bi bi-flower1' }
   ];
 
   subCategories: { [key: string]: string[] } = {
-    'Electronics': ['All', 'Phones', 'Laptops', 'Tablets', 'Accessories'],
-    'Food': ['All', 'Restaurants', 'Recipes', 'Groceries', 'Delivery'],
-    'Medicines': ['All', 'Prescription', 'Over-the-counter', 'Supplements'],
-    'Clothing': ['All', 'Men', 'Women', 'Kids', 'Accessories'],
-    'Fashion': ['All', 'Trends', 'Accessories', 'Shoes', 'Bags'],
-    'Home & Kitchen': ['All', 'Appliances', 'Furniture', 'Decor', 'Cookware'],
-    'Beauty & Personal Care': ['All', 'Skincare', 'Makeup', 'Hair Care', 'Fragrance'],
-    'Sports & Fitness': ['All', 'Equipment', 'Apparel', 'Supplements', 'Training'],
-    'Books & Media': ['All', 'Books', 'Movies', 'Music', 'Games']
+    'All': ['All Categories'],
+    'Electrical Tools': ['All', 'Power Tools', 'Hand Tools', 'Measuring Tools', 'Safety Equipment'],
+    'Food': ['All', 'Restaurants', 'Recipes', 'Groceries', 'Delivery', 'Snacks', 'Beverages'],
+    'Medicines': ['All', 'Prescription', 'Over-the-counter', 'Supplements', 'First Aid', 'Vitamins'],
+    'Electronics': ['All', 'Phones', 'Laptops', 'Tablets', 'Accessories', 'Smart Home', 'Cameras'],
+    'Clothing': ['All', 'Men', 'Women', 'Kids', 'Accessories', 'Sportswear', 'Formal Wear'],
+    'Fashion': ['All', 'Trends', 'Accessories', 'Shoes', 'Bags', 'Jewelry', 'Watches'],
+    'Home & Kitchen': ['All', 'Appliances', 'Furniture', 'Decor', 'Cookware', 'Storage', 'Lighting'],
+    'Beauty & Personal Care': ['All', 'Skincare', 'Makeup', 'Hair Care', 'Fragrance', 'Bath & Body', 'Tools'],
+    'Home Appliances': ['All', 'Kitchen', 'Laundry', 'Cleaning', 'Climate Control', 'Entertainment'],
+    'Sports & Fitness': ['All', 'Equipment', 'Apparel', 'Supplements', 'Training', 'Outdoor', 'Team Sports'],
+    'Video Games': ['All', 'Console Games', 'PC Games', 'Mobile Games', 'Accessories', 'Virtual Reality'],
+    'Toys & Hobbies': ['All', 'Action Figures', 'Board Games', 'Crafts', 'Educational', 'Remote Control'],
+    'Auto Parts': ['All', 'Engine Parts', 'Exterior', 'Interior', 'Accessories', 'Tools', 'Maintenance'],
+    'Groceries': ['All', 'Fresh Food', 'Pantry', 'Beverages', 'Snacks', 'Organic', 'International'],
+    'Health & Personal Care': ['All', 'Vitamins', 'Personal Care', 'Health Monitors', 'First Aid', 'Wellness'],
+    'Books & Media': ['All', 'Books', 'Movies', 'Music', 'Games', 'Magazines', 'Educational'],
+    'Pet Supplies': ['All', 'Dog Supplies', 'Cat Supplies', 'Fish Supplies', 'Bird Supplies', 'Small Pets'],
+    'Perfumes': ['All', 'Women\'s Perfumes', 'Men\'s Perfumes', 'Unisex', 'Gift Sets', 'Luxury']
   };
 
   selectedCategory: string = '';
@@ -63,6 +97,11 @@ export class ModalComponent implements OnInit {
   users = [
     { username: 'Taha Mahmoud', profileImageUrl: 'images/user-1.png' },
   ];
+  postPrice: number | null = null;
+
+  mediaItems: MediaItem[] = [];
+  allowedDocumentTypes = '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt';
+  allowedVideoTypes = 'video/*';
 
   constructor(private postService: PostService) {}
 
@@ -80,14 +119,13 @@ export class ModalComponent implements OnInit {
 
   async addPost() {
     const postContent = this.postTextarea.nativeElement.value;
-    const postImages = this.previewUrls;
 
     if (!this.selectedCategory || !this.selectedSubCategory) {
       alert('Please select both category and subcategory before posting.');
       return;
     }
 
-    if (postContent.trim() || this.previewUrls.length > 0) {
+    if (postContent.trim() || this.mediaItems.length > 0) {
       const newPost = {
         username: this.users[0].username,
         profileImageUrl: this.users[0].profileImageUrl,
@@ -96,8 +134,15 @@ export class ModalComponent implements OnInit {
         category: this.selectedCategory,
         subCategory: this.selectedSubCategory,
         audience: this.selectedAudience,
-        images: postImages,
+        media: this.mediaItems.map(item => ({
+          type: item.type,
+          url: item.url,
+          name: item.name,
+          size: item.size,
+          thumbnailUrl: item.thumbnailUrl
+        })),
         currentImageIndex: 0,
+        price: this.postPrice,
         likes: 0,
         Shares: 0,
         Saves: 0,
@@ -109,10 +154,36 @@ export class ModalComponent implements OnInit {
         comments: []
       };
 
-      this.postService.addPost(newPost);
-      this.clearForm();
+      const post: Post = {
+        id: Date.now().toString(), // Generate a temporary ID
+        title: '', // Add empty title if required
+        imageUrl: this.mediaItems[0]?.url || '', // Use first media URL or empty string
+        author: this.users[0].username,
+        date: new Date(),
+        username: newPost.username,
+        profileImageUrl: newPost.profileImageUrl,
+        timestamp: newPost.timestamp,
+        content: newPost.content,
+        category: newPost.category,
+        subCategory: newPost.subCategory,
+        audience: newPost.audience,
+        media: newPost.media,
+        currentImageIndex: newPost.currentImageIndex,
+        price: newPost.price,
+        likes: newPost.likes,
+        Shares: newPost.Shares,
+        Saves: newPost.Saves,
+        showComments: newPost.showComments,
+        isEditing: newPost.isEditing,
+        liked: newPost.liked,
+        saved: newPost.saved,
+        isFollowing: newPost.isFollowing,
+        comments: newPost.comments
+      };
 
-      this.closeModal(); // إغلاق المودال بعد إضافة البوست
+      this.postService.addPost(post);
+      this.clearForm();
+      this.closeModal();
     }
   }
 
@@ -131,6 +202,14 @@ export class ModalComponent implements OnInit {
     this.selectedSubCategory = '';
     this.selectedAudience = 'public';
     this.showEmojiPicker = false;
+    this.postPrice = null;
+    this.mediaItems.forEach(item => {
+      if (item.type === 'video' || item.type === 'document') {
+        URL.revokeObjectURL(item.url);
+      }
+    });
+    this.mediaItems = [];
+    this.currentIndex = 0;
   }
 
   // دالة لتمكين السحب والإفلات
@@ -162,16 +241,75 @@ export class ModalComponent implements OnInit {
   }
 
   readFile(file: File) {
-    if (!file.type.startsWith('image/')) {
-      console.error('Only image files are supported');
-      return;
+    if (file.type.startsWith('image/')) {
+      this.handleImageFile(file);
+    } else if (file.type.startsWith('video/')) {
+      this.handleVideoFile(file);
+    } else if (this.isDocumentFile(file)) {
+      this.handleDocumentFile(file);
+    } else {
+      console.error('Unsupported file type');
     }
+  }
 
+  private handleImageFile(file: File) {
     const reader = new FileReader();
     reader.onload = (e: any) => {
-      this.previewUrls.push(e.target.result);
+      this.mediaItems.push({
+        type: 'image',
+        url: e.target.result,
+        name: file.name,
+        size: file.size
+      });
     };
     reader.readAsDataURL(file);
+  }
+
+  private handleVideoFile(file: File) {
+    const url = URL.createObjectURL(file);
+    this.mediaItems.push({
+      type: 'video',
+      url: url,
+      name: file.name,
+      size: file.size
+    });
+  }
+
+  private handleDocumentFile(file: File) {
+    const url = URL.createObjectURL(file);
+    this.mediaItems.push({
+      type: 'document',
+      url: url,
+      name: file.name,
+      size: file.size,
+      thumbnailUrl: this.getDocumentThumbnail(file.name)
+    });
+  }
+
+  private isDocumentFile(file: File): boolean {
+    const documentExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt'];
+    return documentExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+  }
+
+  private getDocumentThumbnail(fileName: string): string {
+    if (fileName.endsWith('.pdf')) {
+      return 'assets/icons/pdf-icon.png';
+    } else if (fileName.endsWith('.doc') || fileName.endsWith('.docx')) {
+      return 'assets/icons/word-icon.png';
+    } else if (fileName.endsWith('.xls') || fileName.endsWith('.xlsx')) {
+      return 'assets/icons/excel-icon.png';
+    } else if (fileName.endsWith('.ppt') || fileName.endsWith('.pptx')) {
+      return 'assets/icons/powerpoint-icon.png';
+    }
+    return 'assets/icons/document-icon.png';
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   // Image navigation methods
@@ -252,5 +390,23 @@ export class ModalComponent implements OnInit {
   // دالة لتعقب المستخدمين بواسطة اسم المستخدم
   trackByUsername(index: number, user: any): string {
     return user.username;
+  }
+
+  deleteCurrentItem(): void {
+    if (this.mediaItems.length > 0) {
+      // إذا كان العنصر فيديو أو مستند، قم بإلغاء URL
+      const item = this.mediaItems[this.currentIndex];
+      if (item.type === 'video' || item.type === 'document') {
+        URL.revokeObjectURL(item.url);
+      }
+      
+      this.mediaItems.splice(this.currentIndex, 1);
+      if (this.currentIndex >= this.mediaItems.length) {
+        this.currentIndex = this.mediaItems.length - 1;
+      }
+      if (this.mediaItems.length === 0) {
+        this.currentIndex = 0;
+      }
+    }
   }
 }
