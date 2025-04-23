@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import * as bootstrap from 'bootstrap';
+import { FooterComponent } from '../footer/footer.component';
 
 interface OAuthResponse {
   token: string;
@@ -17,7 +18,7 @@ interface OAuthResponse {
 @Component({
   selector: 'app-login-form',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, FooterComponent],
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.css'],
 })
