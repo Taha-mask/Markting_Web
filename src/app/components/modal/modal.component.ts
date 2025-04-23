@@ -22,6 +22,12 @@ interface MediaItem {
   thumbnailUrl?: string;
 }
 
+interface Category {
+  name: string;
+  icon: string;
+  subcategories?: string[];
+}
+
 @Component({
   selector: 'app-modal',
   standalone: true,
@@ -41,52 +47,29 @@ export class ModalComponent implements OnInit {
   selectedAudience: string = 'public';
   selectedAudienceText: string = 'Select audience';
   showEmojiPicker: boolean = false;
-  categories = [
-    { name: 'All', icon: 'bi bi-collection' },
-    { name: 'Electrical Tools', icon: 'bi bi-tools' },
-    { name: 'Food', icon: 'bi bi-egg-fried' },
-    { name: 'Medicines', icon: 'bi bi-capsule' },
-    { name: 'Electronics', icon: 'bi bi-laptop' },
-    { name: 'Clothing', icon: 'bi bi-person' },
-    { name: 'Fashion', icon: 'bi bi-handbag' },
-    { name: 'Home & Kitchen', icon: 'bi bi-house-door' },
-    { name: 'Beauty & Personal Care', icon: 'bi bi-scissors' },
-    { name: 'Home Appliances', icon: 'bi bi-fan' },
-    { name: 'Sports & Fitness', icon: 'bi bi-bicycle' },
-    { name: 'Video Games', icon: 'bi bi-controller' },
-    { name: 'Toys & Hobbies', icon: 'bi bi-joystick' },
-    { name: 'Auto Parts', icon: 'bi bi-car-front' },
-    { name: 'Groceries', icon: 'bi bi-cart' },
-    { name: 'Health & Personal Care', icon: 'bi bi-heart-pulse' },
-    { name: 'Books & Media', icon: 'bi bi-book' },
-    { name: 'Pet Supplies', icon: 'bi bi-heart' },
-    { name: 'Perfumes', icon: 'bi bi-flower1' }
+  categories: Category[] = [
+    { name: 'Electrical Tools', icon: 'fas fa-tools', subcategories: ['Power Tools', 'Hand Tools', 'Measuring Tools'] },
+    { name: 'Food', icon: 'fas fa-utensils', subcategories: ['Restaurants', 'Groceries', 'Beverages'] },
+    { name: 'Medicines', icon: 'fas fa-pills', subcategories: ['Prescription', 'Over-the-counter', 'Supplements'] },
+    { name: 'Electronics', icon: 'fas fa-laptop', subcategories: ['Computers', 'Phones', 'Accessories'] },
+    { name: 'Clothing', icon: 'fas fa-tshirt', subcategories: ['Men', 'Women', 'Kids'] },
+    { name: 'Fashion', icon: 'fas fa-shopping-bag', subcategories: ['Accessories', 'Jewelry', 'Watches'] },
+    { name: 'Home & Kitchen', icon: 'fas fa-home', subcategories: ['Furniture', 'Appliances', 'Decor'] },
+    { name: 'Beauty & Personal Care', icon: 'fas fa-spa', subcategories: ['Skincare', 'Makeup', 'Hair Care'] },
+    { name: 'Home Appliances', icon: 'fas fa-blender', subcategories: ['Kitchen', 'Laundry', 'Cleaning'] },
+    { name: 'Sports & Fitness', icon: 'fas fa-dumbbell', subcategories: ['Equipment', 'Apparel', 'Accessories'] },
+    { name: 'Video Games', icon: 'fas fa-gamepad', subcategories: ['Consoles', 'Games', 'Accessories'] },
+    { name: 'Toys & Hobbies', icon: 'fas fa-puzzle-piece', subcategories: ['Games', 'Collectibles', 'Crafts'] },
+    { name: 'Auto Parts', icon: 'fas fa-car', subcategories: ['Interior', 'Exterior', 'Engine'] },
+    { name: 'Groceries', icon: 'fas fa-shopping-basket', subcategories: ['Fresh Food', 'Pantry', 'Beverages'] },
+    { name: 'Health & Personal Care', icon: 'fas fa-heartbeat', subcategories: ['Vitamins', 'Personal Care', 'Medical Supplies'] },
+    { name: 'Books & Media', icon: 'fas fa-book', subcategories: ['Books', 'Movies', 'Music'] },
+    { name: 'Pet Supplies', icon: 'fas fa-paw', subcategories: ['Food', 'Accessories', 'Health'] },
+    { name: 'Perfumes', icon: 'fas fa-spray-can', subcategories: ['Men', 'Women', 'Unisex'] }
   ];
 
-  subCategories: { [key: string]: string[] } = {
-    'All': ['All Categories'],
-    'Electrical Tools': ['All', 'Power Tools', 'Hand Tools', 'Measuring Tools', 'Safety Equipment'],
-    'Food': ['All', 'Restaurants', 'Recipes', 'Groceries', 'Delivery', 'Snacks', 'Beverages'],
-    'Medicines': ['All', 'Prescription', 'Over-the-counter', 'Supplements', 'First Aid', 'Vitamins'],
-    'Electronics': ['All', 'Phones', 'Laptops', 'Tablets', 'Accessories', 'Smart Home', 'Cameras'],
-    'Clothing': ['All', 'Men', 'Women', 'Kids', 'Accessories', 'Sportswear', 'Formal Wear'],
-    'Fashion': ['All', 'Trends', 'Accessories', 'Shoes', 'Bags', 'Jewelry', 'Watches'],
-    'Home & Kitchen': ['All', 'Appliances', 'Furniture', 'Decor', 'Cookware', 'Storage', 'Lighting'],
-    'Beauty & Personal Care': ['All', 'Skincare', 'Makeup', 'Hair Care', 'Fragrance', 'Bath & Body', 'Tools'],
-    'Home Appliances': ['All', 'Kitchen', 'Laundry', 'Cleaning', 'Climate Control', 'Entertainment'],
-    'Sports & Fitness': ['All', 'Equipment', 'Apparel', 'Supplements', 'Training', 'Outdoor', 'Team Sports'],
-    'Video Games': ['All', 'Console Games', 'PC Games', 'Mobile Games', 'Accessories', 'Virtual Reality'],
-    'Toys & Hobbies': ['All', 'Action Figures', 'Board Games', 'Crafts', 'Educational', 'Remote Control'],
-    'Auto Parts': ['All', 'Engine Parts', 'Exterior', 'Interior', 'Accessories', 'Tools', 'Maintenance'],
-    'Groceries': ['All', 'Fresh Food', 'Pantry', 'Beverages', 'Snacks', 'Organic', 'International'],
-    'Health & Personal Care': ['All', 'Vitamins', 'Personal Care', 'Health Monitors', 'First Aid', 'Wellness'],
-    'Books & Media': ['All', 'Books', 'Movies', 'Music', 'Games', 'Magazines', 'Educational'],
-    'Pet Supplies': ['All', 'Dog Supplies', 'Cat Supplies', 'Fish Supplies', 'Bird Supplies', 'Small Pets'],
-    'Perfumes': ['All', 'Women\'s Perfumes', 'Men\'s Perfumes', 'Unisex', 'Gift Sets', 'Luxury']
-  };
-
   selectedCategory: string = '';
-  selectedSubCategory: string = '';
+  selectedSubcategory: string = '';
   audienceOptions = [
     { value: 'public', label: 'Public', icon: 'bi-globe', description: 'Anyone can see this post' },
     { value: 'followers', label: 'Followers', icon: 'bi-people-fill', description: 'Only your followers can see this post' },
@@ -108,19 +91,19 @@ export class ModalComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onCategoryChange(event: any) {
-    this.selectedCategory = event.target.value;
-    this.selectedSubCategory = '';
+  onCategoryChange() {
+    this.selectedSubcategory = '';
   }
 
-  getSubCategories(): string[] {
-    return this.subCategories[this.selectedCategory] || [];
+  getSelectedCategorySubcategories(): string[] {
+    const category = this.categories.find(c => c.name === this.selectedCategory);
+    return category?.subcategories || [];
   }
 
   async addPost() {
     const postContent = this.postTextarea.nativeElement.value;
 
-    if (!this.selectedCategory || !this.selectedSubCategory) {
+    if (!this.selectedCategory || !this.selectedSubcategory) {
       alert('Please select both category and subcategory before posting.');
       return;
     }
@@ -132,7 +115,7 @@ export class ModalComponent implements OnInit {
         timestamp: new Date(),
         content: postContent,
         category: this.selectedCategory,
-        subCategory: this.selectedSubCategory,
+        subCategory: this.selectedSubcategory,
         audience: this.selectedAudience,
         media: this.mediaItems.map(item => ({
           type: item.type,
@@ -199,7 +182,7 @@ export class ModalComponent implements OnInit {
     this.postTextarea.nativeElement.value = '';
     this.previewUrls = [];
     this.selectedCategory = '';
-    this.selectedSubCategory = '';
+    this.selectedSubcategory = '';
     this.selectedAudience = 'public';
     this.showEmojiPicker = false;
     this.postPrice = null;
@@ -277,12 +260,13 @@ export class ModalComponent implements OnInit {
 
   private handleDocumentFile(file: File) {
     const url = URL.createObjectURL(file);
+    const thumbnailClass = this.getDocumentThumbnail(file.name);
     this.mediaItems.push({
       type: 'document',
       url: url,
       name: file.name,
       size: file.size,
-      thumbnailUrl: this.getDocumentThumbnail(file.name)
+      thumbnailUrl: thumbnailClass
     });
   }
 
@@ -292,16 +276,17 @@ export class ModalComponent implements OnInit {
   }
 
   private getDocumentThumbnail(fileName: string): string {
-    if (fileName.endsWith('.pdf')) {
-      return 'assets/icons/pdf-icon.png';
-    } else if (fileName.endsWith('.doc') || fileName.endsWith('.docx')) {
-      return 'assets/icons/word-icon.png';
-    } else if (fileName.endsWith('.xls') || fileName.endsWith('.xlsx')) {
-      return 'assets/icons/excel-icon.png';
-    } else if (fileName.endsWith('.ppt') || fileName.endsWith('.pptx')) {
-      return 'assets/icons/powerpoint-icon.png';
+    const ext = fileName.toLowerCase();
+    if (ext.endsWith('.pdf')) {
+      return 'fas fa-file-pdf text-danger fa-2x';
+    } else if (ext.endsWith('.doc') || ext.endsWith('.docx')) {
+      return 'fas fa-file-word text-primary fa-2x';
+    } else if (ext.endsWith('.xls') || ext.endsWith('.xlsx')) {
+      return 'fas fa-file-excel text-success fa-2x';
+    } else if (ext.endsWith('.ppt') || ext.endsWith('.pptx')) {
+      return 'fas fa-file-powerpoint text-warning fa-2x';
     }
-    return 'assets/icons/document-icon.png';
+    return 'fas fa-file-alt text-secondary fa-2x';
   }
 
   formatFileSize(bytes: number): string {
@@ -313,14 +298,14 @@ export class ModalComponent implements OnInit {
   }
 
   // Image navigation methods
-  prevImage() {
+  prevImage(): void {
     if (this.currentIndex > 0) {
       this.currentIndex--;
     }
   }
 
-  nextImage() {
-    if (this.currentIndex < this.previewUrls.length - 1) {
+  nextImage(): void {
+    if (this.currentIndex < this.mediaItems.length - 1) {
       this.currentIndex++;
     }
   }

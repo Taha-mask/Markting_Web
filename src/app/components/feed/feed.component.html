@@ -4,7 +4,7 @@
     <app-trending-sidebar class="sid col-md-3 col-12 position-relative mt-4 d-flex ms-1"></app-trending-sidebar>
 
     <!-- Main Content (Feed) -->
-    <div class="main-content col-md-6 col-12 scrollable-content d-flex mt-2 ">
+    <div class="main-content col-md-6 col-12 scrollable-content d-flex mt-4 ">
       <div class="cat-container mb-4">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-3 ms-3">
@@ -137,57 +137,109 @@
               </div>
 
               <!-- Media Content -->
-              <div class="media-content" *ngIf="post.media && post.media.length > 0">
-                <div class="position-relative">
-                  <!-- Image -->
-                  <img *ngIf="post.media[post.currentImageIndex].type === 'image'"
-                       [src]="post.media[post.currentImageIndex].url"
-                       class="img-fluid rounded"
-                       alt="Post image">
+              <div class="post-media" *ngIf="post.media && post.media.length > 0">
+                <!-- Image Display -->
+                <div *ngIf="post.media[post.currentImageIndex].type === 'image'" class="image-container">
+                  <img [src]="post.media[post.currentImageIndex].url" alt="Post image" class="post-image">
+                </div>
 
-                  <!-- Video -->
-                  <video *ngIf="post.media[post.currentImageIndex].type === 'video'"
-                         [src]="post.media[post.currentImageIndex].url"
-                         class="img-fluid rounded"
-                         controls>
+                <!-- Video Display -->
+                <div *ngIf="post.media[post.currentImageIndex].type === 'video'" class="video-container">
+                  <video 
+                    controls 
+                    controlsList="nodownload" 
+                    preload="metadata" 
+                    class="post-video"
+                    (loadedmetadata)="onVideoLoad($event)">
+                    <source [src]="post.media[post.currentImageIndex].url" type="video/mp4">
+                    Your browser does not support the video tag.
                   </video>
+                </div>
 
-                  <!-- Document -->
-                  <div *ngIf="post.media[post.currentImageIndex].type === 'document'"
-                       class="document-preview">
-                    <div class="document-icon">
-                      <img [src]="post.media[post.currentImageIndex].thumbnailUrl"
-                           alt="Document icon">
+                <!-- Document Display -->
+                <div *ngIf="post.media[post.currentImageIndex].type === 'document'" class="document-container" (click)="loadDocument(post.media[post.currentImageIndex])">
+                  <!-- Document Preview Header -->
+                  <div class="document-header d-flex align-items-center justify-content-between p-3 border-bottom">
+                    <div class="d-flex align-items-center">
+                      <i [class]="getDocumentIcon(post.media[post.currentImageIndex].name)" class="fs-4 me-2"></i>
+                      <div>
+                        <h6 class="mb-0">{{post.media[post.currentImageIndex].name}}</h6>
+                        <small class="text-muted">{{formatFileSize(post.media[post.currentImageIndex].size)}}</small>
+                      </div>
                     </div>
-                    <div class="document-info">
-                      <h5>{{ post.media[post.currentImageIndex].name }}</h5>
-                      <p>{{ formatFileSize(post.media[post.currentImageIndex].size!) }}</p>
-                      <a [href]="post.media[post.currentImageIndex].url"
-                         class="btn btn-primary btn-sm"
-                         target="_blank">
-                        <i class="bi bi-eye"></i> View Document
-                      </a>
+                    <div class="document-actions">
+                      <button class="btn btn-sm btn-outline-secondary me-2" (click)="downloadDocument(post.media[post.currentImageIndex])">
+                        <i class="bi bi-download"></i> Download
+                      </button>
                     </div>
                   </div>
 
-                  <!-- Navigation Buttons -->
-                  <div class="navigation-buttons" *ngIf="post.media.length > 1">
-                    <button class="btn btn-light btn-sm"
-                            (click)="prevImage(post)"
-                            [disabled]="post.currentImageIndex === 0">
-                      <i class="bi bi-chevron-left"></i>
-                    </button>
-                    <button class="btn btn-light btn-sm"
-                            (click)="nextImage(post)"
-                            [disabled]="post.currentImageIndex === post.media.length - 1">
-                      <i class="bi bi-chevron-right"></i>
-                    </button>
+                  <!-- Document Preview Area -->
+                  <div class="document-preview-area position-relative">
+                    <!-- Loading State -->
+                    <div *ngIf="post.media[post.currentImageIndex].isLoading" class="document-loading">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+
+                    <!-- Document Pages -->
+                    <div class="document-pages" [style.transform]="'scale(' + post.media[post.currentImageIndex].zoom + ')'">
+                      <ng-container *ngFor="let page of post.media[post.currentImageIndex].pages; let i = index">
+                        <div class="document-page" [class.active]="i === post.media[post.currentImageIndex].currentPage">
+                          <img [src]="page" [alt]="'Page ' + (i + 1)" class="page-content">
+                        </div>
+                      </ng-container>
+                    </div>
+
+                    <!-- Navigation Controls -->
+                    <div class="document-controls">
+                      <!-- Page Navigation -->
+                      <div class="page-navigation d-flex align-items-center justify-content-center mb-2">
+                        <button class="btn btn-sm btn-light me-2" 
+                                [disabled]="post.media[post.currentImageIndex].currentPage === 0"
+                                (click)="prevPage(post.media[post.currentImageIndex])">
+                          <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <span class="current-page">
+                          {{post.media[post.currentImageIndex].currentPage + 1}} / {{post.media[post.currentImageIndex].pages?.length}}
+                        </span>
+                        <button class="btn btn-sm btn-light ms-2" 
+                                [disabled]="post.media[post.currentImageIndex].currentPage === post.media[post.currentImageIndex].pages?.length - 1"
+                                (click)="nextPage(post.media[post.currentImageIndex])">
+                          <i class="bi bi-chevron-right"></i>
+                        </button>
+                      </div>
+
+                      <!-- Zoom Controls -->
+                      <div class="zoom-controls d-flex align-items-center justify-content-center">
+                        <button class="btn btn-sm btn-light me-2" 
+                                [disabled]="post.media[post.currentImageIndex].zoom <= 0.5"
+                                (click)="zoomOut(post.media[post.currentImageIndex])">
+                          <i class="bi bi-zoom-out"></i>
+                        </button>
+                        <span class="zoom-level">{{(post.media[post.currentImageIndex].zoom || 1) * 100}}%</span>
+                        <button class="btn btn-sm btn-light ms-2" 
+                                [disabled]="post.media[post.currentImageIndex].zoom >= 2"
+                                (click)="zoomIn(post.media[post.currentImageIndex])">
+                          <i class="bi bi-zoom-in"></i>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <!-- Media Count -->
-                <div class="media-count mt-2" *ngIf="post.media.length > 1">
-                  {{ post.currentImageIndex + 1 }}/{{ post.media.length }}
+                <!-- Navigation Controls -->
+                <div class="media-controls" *ngIf="post.media.length > 1">
+                  <button class="nav-btn prev" (click)="prevImage(post)" [disabled]="post.currentImageIndex === 0">
+                    <i class="bi bi-chevron-left"></i>
+                  </button>
+                  <button class="nav-btn next" (click)="nextImage(post)" [disabled]="post.currentImageIndex === post.media.length - 1">
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
+                  <div class="media-counter">
+                    {{ post.currentImageIndex + 1 }}/{{ post.media.length }}
+                  </div>
                 </div>
               </div>
 
@@ -359,7 +411,7 @@
     </div>
 
     <!-- Right Sidebar -->
-    <div class="risaide col-md-2 col-12 p-0 mt-5 ms-2">
+    <div class="risaide col-md-2 col-12 p-0 mt-5 ms-3">
       <div class="position-sticky ris" style="top: 20px;">
         <!-- Trending Feeds Section -->
         <div class="trending me-3">

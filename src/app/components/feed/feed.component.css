@@ -1722,3 +1722,250 @@ body {
     padding: 6px 10px;
   }
 }
+
+/* Post Media Styles */
+.post-media {
+  position: relative;
+  margin: 15px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Image Container */
+.image-container {
+  width: 100%;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Video Container */
+.video-container {
+  width: 100%;
+  max-height: 500px;
+  background: #000;
+}
+
+.post-video {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+}
+
+/* Document Container */
+.document-container {
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.document-preview {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.document-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  font-size: 24px;
+  color: #0d6efd;
+}
+
+.document-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.document-name {
+  display: block;
+  font-weight: 500;
+  color: #212529;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.document-size {
+  display: block;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.document-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: 15px;
+}
+
+/* Media Controls */
+.media-controls {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0,0,0,0.6);
+  padding: 8px 12px;
+  border-radius: 20px;
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.media-counter {
+  color: white;
+  font-size: 0.875rem;
+  margin: 0 10px;
+}
+
+/* Video Controls Enhancement */
+video::-webkit-media-controls-panel {
+  background-image: linear-gradient(transparent, rgba(0,0,0,0.7));
+}
+
+video::-webkit-media-controls-play-button {
+  background-color: white;
+  border-radius: 50%;
+}
+
+video::-webkit-media-controls-timeline {
+  background-color: rgba(255,255,255,0.2);
+  border-radius: 4px;
+  margin: 0 10px;
+}
+
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display {
+  color: white;
+}
+
+/* Document Viewer Styles */
+.document-container {
+  background: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.document-header {
+  background: white;
+}
+
+.document-preview-area {
+  position: relative;
+  min-height: 400px;
+  background: #e9ecef;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.document-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.document-pages {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  transition: transform 0.3s ease;
+  transform-origin: center center;
+}
+
+.document-page {
+  display: none;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
+.document-page.active {
+  display: block;
+}
+
+.page-content {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.document-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 3;
+}
+
+.page-navigation,
+.zoom-controls {
+  background: white;
+  border-radius: 20px;
+  padding: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.page-counter,
+.zoom-level {
+  font-size: 0.875rem;
+  color: #495057;
+  padding: 0 10px;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .document-preview-area {
+    min-height: 300px;
+    padding: 10px;
+  }
+
+  .document-controls {
+    padding: 5px;
+  }
+
+  .page-counter,
+  .zoom-level {
+    min-width: 60px;
+    font-size: 0.75rem;
+  }
+}

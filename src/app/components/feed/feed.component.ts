@@ -75,6 +75,13 @@ export class FeedComponent implements OnInit, OnDestroy {
   newComment: string = '';
   private postSubscription: Subscription | null = null;
 
+  // Document viewer properties
+  currentPage: number = 1;
+  totalPages: number = 1;
+  currentZoom: number = 1;
+  isDocumentLoading: boolean = false;
+  activeDocument: any = null;
+
   categories = [
     { name: 'All', icon: 'bi bi-collection' },
     { name: 'Electrical Tools', icon: 'bi bi-tools' },
@@ -961,11 +968,117 @@ export class FeedComponent implements OnInit, OnDestroy {
   }
 
   formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
+    if (!bytes) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  getDocumentIcon(fileName: string): string {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'pdf':
+        return 'bi bi-file-pdf text-danger';
+      case 'doc':
+      case 'docx':
+        return 'bi bi-file-word text-primary';
+      case 'xls':
+      case 'xlsx':
+        return 'bi bi-file-excel text-success';
+      case 'ppt':
+      case 'pptx':
+        return 'bi bi-file-ppt text-warning';
+      case 'txt':
+        return 'bi bi-file-text text-info';
+      default:
+        return 'bi bi-file-earmark text-secondary';
+    }
+  }
+
+  viewDocument(url: string): void {
+    window.open(url, '_blank');
+  }
+
+  // تحسين وظيفة تشغيل الفيديو
+  onVideoLoad(event: Event): void {
+    const video = event.target as HTMLVideoElement;
+    video.addEventListener('loadedmetadata', () => {
+      // تعيين جودة الفيديو المناسبة
+      if (video.videoHeight > 720) {
+        video.style.maxHeight = '720px';
+      }
+    });
+
+    // تحسين أداء الفيديو
+    video.addEventListener('canplay', () => {
+      video.play().catch(() => {
+        // التعامل مع الأخطاء المحتملة عند التشغيل التلقائي
+        console.log('Autoplay prevented');
+      });
+    });
+
+    // معالجة مشكلة التوقف في المنتصف
+    video.addEventListener('stalled', () => {
+      video.load(); // إعادة تحميل الفيديو
+    });
+  }
+
+  // Document viewer methods
+  nextPage(media: any): void {
+    if (media.currentPage < media.pages?.length - 1) {
+      media.currentPage++;
+    }
+  }
+
+  prevPage(media: any): void {
+    if (media.currentPage > 0) {
+      media.currentPage--;
+    }
+  }
+
+  zoomIn(media: any): void {
+    if (!media.zoom) {
+      media.zoom = 1;
+    }
+    media.zoom = Math.min(media.zoom + 0.2, 2);
+  }
+
+  zoomOut(media: any): void {
+    if (!media.zoom) {
+      media.zoom = 1;
+    }
+    media.zoom = Math.max(media.zoom - 0.2, 0.5);
+  }
+
+  private applyZoom(): void {
+    const pages = document.querySelectorAll('.document-pages');
+    pages.forEach((page: any) => {
+      if (page.style) {
+        page.style.transform = `scale(${this.currentZoom})`;
+      }
+    });
+  }
+
+  loadDocument(document: any): void {
+    this.isDocumentLoading = true;
+    this.activeDocument = document;
+    
+    // Simulate document loading - replace with actual document loading logic
+    setTimeout(() => {
+      this.totalPages = document.pages || 1;
+      this.currentPage = 1;
+      this.currentZoom = 1;
+      this.isDocumentLoading = false;
+    }, 1000);
+  }
+
+  downloadDocument(media: any): void {
+    if (media && media.url) {
+      window.open(media.url, '_blank');
+    } else {
+      console.warn('No document URL available for download');
+    }
   }
 }
 
