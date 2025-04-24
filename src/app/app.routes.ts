@@ -22,7 +22,8 @@ import { LoadingComponent } from './components/loading/loading.component';
 import { LocationComponent } from './location/location.component';
 import  {ReviewsComponent} from './reviews/reviews.component';
 import {CartComponent} from './cart/cart.component';
-import {SavedPostComponent} from './saved-post/saved-post.component'
+import {SavedPostComponent} from './saved-post/saved-post.component';
+import { PostoneComponent } from './postone/postone.component';
 
 export const routes: Routes = [
   {path: 'explore' , component : ExplorepageComponent},
@@ -49,7 +50,8 @@ export const routes: Routes = [
   {path:'reviews',component: ReviewsComponent},
   {path:'cart',component: CartComponent},
   {path:'saved-post',component:SavedPostComponent},
-  
+  {path: 'postone' ,component:PostoneComponent},
+
   {
     path: 'right-sidebar',
     component: RightsideComponent,

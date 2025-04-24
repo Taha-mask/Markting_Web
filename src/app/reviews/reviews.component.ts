@@ -1,8 +1,7 @@
-import { Component, ElementRef, ViewChild, Renderer2 } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-reviews',
-  standalone: true,
   templateUrl: './reviews.component.html',
   styleUrls: ['./reviews.component.css']
 })
@@ -10,7 +9,14 @@ export class ReviewsComponent {
   @ViewChild('reviewText') reviewTextRef!: ElementRef<HTMLTextAreaElement>;
   @ViewChild('reviewsList') reviewsListRef!: ElementRef<HTMLDivElement>;
 
+  stars = Array(5).fill(0);
+  selectedRating = 5;
+
   constructor(private renderer: Renderer2) {}
+
+  selectRating(rating: number): void {
+    this.selectedRating = rating;
+  }
 
   addReview(): void {
     const text = this.reviewTextRef.nativeElement.value.trim();
@@ -26,7 +32,7 @@ export class ReviewsComponent {
 
     const stars = this.renderer.createElement('div');
     this.renderer.addClass(stars, 'stars');
-    const starsText = this.renderer.createText('★★★★★');
+    const starsText = this.renderer.createText('★'.repeat(this.selectedRating));
     this.renderer.appendChild(stars, starsText);
 
     const reviewText = this.renderer.createElement('p');
@@ -37,11 +43,11 @@ export class ReviewsComponent {
     this.renderer.appendChild(card, stars);
     this.renderer.appendChild(card, reviewText);
 
-    // استخدم insertBefore بدلاً من prepend
     const parent = this.reviewsListRef.nativeElement;
     const firstChild = parent.firstChild;
     this.renderer.insertBefore(parent, card, firstChild);
 
     this.reviewTextRef.nativeElement.value = '';
+    this.selectedRating = 5;
   }
 }

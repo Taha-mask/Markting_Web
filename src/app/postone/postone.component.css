@@ -1,0 +1,172 @@
+
+.post-card {
+  max-width: 600px;
+  margin: 20px auto;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+.post-header {
+  display: flex;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.header-info h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.header-info p {
+  font-size: 14px;
+  color: #666;
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-top: 15px;
+}
+
+.post-text {
+  padding: 15px;
+  font-size: 16px;
+  color: #333;
+}
+
+.reactions {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+
+.reactions button {
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #007bff;
+}
+
+.reactions button:hover {
+  text-decoration: underline;
+}
+
+.comments-section {
+  padding: 15px;
+  border-top: 1px solid #eee;
+}
+
+.add-comment-container {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.add-comment-container input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  margin-right: 10px;
+}
+
+.add-comment-container button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.add-comment-container button:hover {
+  background-color: #0056b3;
+}
+
+.comment {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-header h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.comment-time {
+  font-size: 12px;
+  color: #777;
+}
+
+.comment-body {
+  margin-top: 8px;
+}
+
+.comment-body p {
+  font-size: 14px;
+  color: #333;
+}
+
+.comment-body button {
+  background-color: transparent;
+  border: none;
+  color: #007bff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.comment-body button:hover {
+  text-decoration: underline;
+}
+
+.replies {
+  margin-top: 10px;
+}
+
+.reply-input-container {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.reply-input-container input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+.reply-input-container button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.reply-input-container button:hover {
+  background-color: #0056b3;
+}
