@@ -1,0 +1,26 @@
+<div class="preview-overlay">
+  <button class="close-button" (click)="cancel()">&times;</button>
+
+  <div class="preview-container">
+    <h2 class="mb-3">Preview</h2>
+
+    <ng-container *ngIf="data.url">
+      <div class="video-wrapper" *ngIf="data.type === 'video'">
+        <video [src]="data.url" controls class="preview-media"></video>
+      </div>
+
+      <img *ngIf="data.type === 'image'" [src]="data.url" alt="Preview Image" class="preview-media">
+    </ng-container>
+
+    <div class="text-input" *ngIf="data.type === 'video'">
+      <h5>Title</h5>
+      <input type="text" class="form-control" maxlength="60" [(ngModel)]="storyText" placeholder="Write here what you want to write under the video..." />
+    </div>
+    
+
+    <div class="buttons">
+      <button (click)="confirmStory()">Confirm</button>
+      <button (click)="cancel()">Cancel</button>
+    </div>
+  </div>
+</div>
