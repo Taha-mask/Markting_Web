@@ -1,115 +1,141 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
+/* container styles */
 .container {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.search-container {
-  width: 60%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-  margin-top: 35px;
-}
-
-.search-input {
-  padding: 10px;
-  width: 100%;
-  max-width: 400px;
-  border-radius: 25px;
-  border: 2px solid #66F3E3;
-  outline: none;
-  font-size: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
 .activity-box {
-  background: linear-gradient(90deg, #E084B7, #8BA4E3, #66F3E3);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 20px;
+  font-size: 24px;
   font-weight: bold;
-  text-align: center;
-  width: 60%;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* تحريك الأزرار جنب بعض */
+.sort-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.sort-btn, .read-all-btn {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.sort-btn:hover, .read-all-btn:hover {
+  background-color: #218838;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
   margin-bottom: 20px;
 }
 
-.activity-container, .stats-box, .reach-box {
-  width: 60%;
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-  margin-top: 20px;
-  text-align: left;
+.search-input {
+  width: 50%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.activity-container {
+  margin-bottom: 20px;
 }
 
 .activity-item {
   display: flex;
   align-items: center;
+  margin-bottom: 15px;
   padding: 15px;
-  border-bottom: 1px solid #ddd;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
 }
 
 .activity-item img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 15px;
+  width: 50px;           /* حجم الصورة */
+  height: 50px;          /* حجم الصورة */
+  border-radius: 50%;    /* الشكل الدائري */
+  margin-right: 15px;    /* المسافة بين الصورة والنص */
+}
+
+.activity-item p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.activity-date {
+  font-size: 12px;
+  color: #888;
 }
 
 .reach-title {
   font-size: 20px;
   font-weight: bold;
-  margin-top: 30px;
-  text-align: center;
+  margin-top: 40px;
+}
+
+.stats-box {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
 }
 
 .stat-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  width: 30%;
   padding: 15px;
-  border-bottom: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16px;
 }
 
+.stat-item .icon {
+  font-size: 24px;
+}
+
+.stat-item .text {
+  font-weight: bold;
+}
+
+.stat-item .percentage {
+  font-size: 18px;
+  color: #007BFF;
+}
 
 .pie-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
-  margin-top: 30px;
+  align-items: center;
 }
 
 .pie-chart {
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background: conic-gradient(#E084B7 20.34%, #8BA4E3 0% 100%);
-  margin: 0 auto;
+  background-image: conic-gradient(
+    #007BFF 50%,       /* Blue (Likes) */
+    #FEF34C 30%,       /* Yellow (Comments) */
+    #FF5959 20%        /* Red (Shares) */
+  );
+  margin-bottom: 10px;
 }
 
 .chart-label {
-  text-align: center;
-  font-weight: bold;
-  margin-top: 10px;
-  font-size: 1.2rem; 
+  font-size: 14px;
+  color: #888;
 }

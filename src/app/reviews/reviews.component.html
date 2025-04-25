@@ -1,49 +1,35 @@
 <div class="reviews-container">
-  <!-- Header -->
-  <div class="header">
-    <h1 class="re">Reviews</h1>
-    <div class="average-rating">
-      4.8
-      <span class="stars">★★★★★</span>
-      (105)
+  <div *ngFor="let review of reviews" class="review-box">
+    <h4>{{ review.username || 'Shahd' }}</h4>
+    <div class="stars">
+      <ng-container *ngFor="let star of [].constructor(5); let i = index">
+        <span [ngClass]="{ 'filled': i < review.rating }">&#9733;</span>
+      </ng-container>
     </div>
+    <p>{{ review.comment }}</p>
   </div>
 
-  <!-- Review Form -->
+  <hr>
+
+  <h3>Write a New Review</h3>
+
   <div class="review-form">
-    <textarea id="reviewText" placeholder="Write your review..." #reviewText></textarea>
-
-    <!-- ⭐ نجوم التقييم -->
-    <div class="star-rating">
-      <span
-        *ngFor="let star of stars; let i = index"
-        (click)="selectRating(i + 1)"
-      >
-        ★
-      </span>
+    <div class="stars">
+      <ng-container *ngFor="let star of [].constructor(5); let i = index">
+        <span
+          (mouseover)="hoverStar(i + 1)"
+          (mouseout)="resetStars()"
+          (click)="setRating(i + 1)"
+          [ngClass]="{ 'filled': i < newReview.rating }"
+          style="cursor: pointer;"
+        >
+          &#9733;
+        </span>
+      </ng-container>
     </div>
 
-    <button (click)="addReview()">Submit Review</button>
-  </div>
-
-  <!-- قائمة الريفيوز -->
-  <div class="reviews" #reviewsList>
-    <div class="review-card">
-      <div class="name">Shahd</div>
-      <div class="stars">★★★★★</div>
-      <p>I recently had the pleasure of experiencing the services, and it exceeded my expectations...</p>
-    </div>
-
-    <div class="review-card">
-      <div class="name">Gojo</div>
-      <div class="stars">★★★★★</div>
-      <p>The team was friendly and knowledgeable, answering all my questions with patience...</p>
-    </div>
-
-    <div class="review-card">
-      <div class="name">Kelwa</div>
-      <div class="stars">★★★★★</div>
-      <p>I was thoroughly impressed by the professionalism and dedication of the staff...</p>
-    </div>
+    <textarea [(ngModel)]="newReview.comment" placeholder="Write Your Review..."></textarea>
+    <br>
+    <button (click)="submitReview()">Send!</button>
   </div>
 </div>

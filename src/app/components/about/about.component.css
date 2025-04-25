@@ -1,37 +1,87 @@
-body {
-  background-color: #ffffff !important; /* تأكيد الخلفية البيضاء */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  scroll-behavior: smooth;
-  color: #333;
-  margin-top: 50px;
+/* الأنيميشن العامة */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.about-section,
-#why-brandit {
-  background-color: #ffffff;
-  padding: 60px 15px; /* عشان ندي مساحة من الجوانب */
-  margin-top: 50px;
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-h2 {
-  font-size: 40px;
-  color: #000;
-  margin-bottom: 30px; /* تحكم في المسافة تحت العنوان */
-}
-
-span {
-  color: #1f55c9;
-}
-
+/* تأثيرات الصور */
 .about-img {
   width: 100%;
   max-width: 320px;
   height: auto;
   border-radius: 15px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  background-color: #ffffff; /* عشان الخلفية ورا الصور */
+  background-color: #ffffff;
   padding: 10px;
-  margin: 0 auto; /* توسيط الصور */
+  margin: 0 auto;
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards;
+}
+
+/* تأثيرات العناوين والنصوص */
+h2, h4, p {
+  opacity: 0;
+  animation: slideIn 1s ease-out forwards;
+}
+
+/* التأثير على النصوص في الأقسام */
+h2 {
+  animation-delay: 0.1s;
+}
+
+h4 {
+  animation-delay: 0.3s;
+}
+
+p {
+  animation-delay: 0.5s;
+}
+
+/* التأثيرات على القسم About */
+.about-section,
+#why-brandit {
+  background-color: #ffffff;
+  padding: 60px 15px;
+  margin-top: 50px;
+}
+
+h2 {
+  font-size: 40px;
+  color: #000;
+  margin-bottom: 30px;
+}
+
+span {
+  color: #1f55c9;
+}
+
+/* التأثير على الصور في الأقسام */
+.about-img {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  padding: 10px;
+  margin: 0 auto;
 }
 
 .btn-custom {
@@ -53,6 +103,26 @@ span {
   box-shadow: 0 10px 20px rgba(31, 85, 201, 0.4);
 }
 
+/* التأثيرات على #why-brandit */
+#why-brandit .row {
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeIn 1.5s ease-out forwards;
+}
+
+#why-brandit .row:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+#why-brandit .row:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+#why-brandit .row:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+/* التأثيرات عند التمرير */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -67,35 +137,8 @@ span {
   background: #555;
 }
 
-#why-brandit h4 {
-  color: #1f55c9;
-  font-size: 24px;
-  margin-bottom: 15px;
-}
-
-#why-brandit p {
-  font-size: 16px;
-  color: #333;
-  line-height: 1.6;
-}
-
-#why-brandit .row {
-  margin-bottom: 40px;
-}
-
-
-.container {
-  max-width: 1140px;
-  margin: 0 auto;
-}
-
-
+/* أنيميشن عند التمرير */
 @media (max-width: 767px) {
-  h2 {
-    font-size: 28px;
-    margin-top: 30px;
-  }
-
   .about-img {
     max-width: 90%;
     margin-bottom: 20px;
@@ -146,6 +189,4 @@ span {
   #why-brandit p {
     font-size: 15px;
   }
-  
 }
-
