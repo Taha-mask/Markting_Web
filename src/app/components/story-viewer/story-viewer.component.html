@@ -19,7 +19,7 @@
     
 
     <div class="buttons">
-      <button (click)="confirmStory()">Confirm</button>
+      <button (click)="confirmStory()" [disabled]="!storyText || storyText.trim() === ''">Confirm</button>
       <button (click)="cancel()">Cancel</button>
     </div>
   </div>

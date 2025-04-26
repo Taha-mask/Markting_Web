@@ -1,5 +1,22 @@
-@media screen and (max-width: 600px) {
-  .shorts-wrapper {
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+body.modal-open {
+  overflow: hidden !important;
+}
+
+
+
+@media screen and (max-width: 768px) {
+  .shorts-container {
     position: fixed;
     top: 0;
     left: 0;
@@ -10,22 +27,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: auto;
   }
 
+  
   .short {
-    width: 100vw; 
-    height: 100vh;
-    object-fit: cover; 
-    border-radius: 0; 
-  }
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    position: relative;
+}
 
-  .navbar {
-    display: none !important; 
-  }
 
   .comments-section {
     width: 80vw !important;
-    max-width: 400px !important;
+    max-width: 300px !important;
     min-width: auto !important;
     height: 60vh;
     max-height: 500px;
@@ -43,8 +58,9 @@
     width: 80%;  /* يجعلها تأخذ 80% من عرض الشاشة */
     height: auto;
     min-height: 120px; /* جعل الارتفاع مناسب */
-    right: 10%;
+    /* right: 10%; */
     top: 40%;
+    margin-right: 5%;
     transform: translate(0, -50%);
   }
 
@@ -54,8 +70,13 @@
   }
 
   .share-section h4 {
-    font-size: 16px;
+    font-size: 20px;
   }
+  .stories-sidebar{
+    display: none;
+  }
+
+  
 }
 
 @media screen and (max-width: 900px) {
@@ -78,6 +99,7 @@
     height: 100vh;
     object-fit: cover; 
     border-radius: 0; 
+    margin: auto;
   }
 
   .navbar {
@@ -99,22 +121,37 @@
     overflow-y: auto; 
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   }
+
+  
+  
 }
 
 
 /* ////////// */
 
+.main-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.shorts-container {
+  display: flex;
+  width: 100%;
+  height: 90vh;
+  position: relative;
+  background-color: #141414;
+}
+
+/* Sidebar */
 .stories-sidebar {
-  position: fixed;
-  width: 300px;
+  width: 20%;
   background-color: #fff;
   padding: 20px;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  top: 10%;
-  left: 0;
-  height: 100vh;
+  height: 90vh;
   overflow-y: auto;
+  position: relative; /* غيرناها من absolute */
 }
 
 .stories-sidebar h3 {
@@ -123,7 +160,7 @@
 }
 
 .create-story {
-  background-color: #51b8cd;
+  background-color: #315ecf;
   color: white;
   border: none;
   padding: 10px;
@@ -178,18 +215,22 @@
     margin: auto;
     justify-content: center;
     align-items: center;
-    max-height: 90vh;
-    background-color: rgb(0, 0, 0);
-    height: 100vh;
+    background-color: rgb(17, 17, 17);
+    height: 100vh;                   /* 100% of the viewport height */
+    width: 105%;
+
 }
 
 .short {
   width: 320px; 
-  height: 560px; 
-  top: 0%;
-  position: relative;
+  height: 560px;
+  display: flex; 
+  position: absolute;
   overflow: hidden;
+  margin-top: 2%;
+  margin-left: 45%;           /* Add some space between shorts */
   border-radius: 20px; 
+  /* z-index: ; */
   /* background-color: #000; */
 }
 
@@ -238,8 +279,10 @@
 
 .actions {
   position: absolute;
-  right: 10px;
+  /* right: 10px; */
   bottom: 10%;
+  /* top: 25%; */
+  right: 5%;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -255,21 +298,29 @@
 }
 
 .story-navigation {
-  margin-bottom: 2rem;
-  left: 60rem;
-  position:fixed;
-  bottom: 40%;
+  border: none;  
+  position:absolute;
+  top: 2%;
+  right: -4%;
   justify-content: space-between;
   width: 80px;
   gap: 50px; 
 }
 
+.story-navigation button {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 0px;
+  border-radius: 50%;
+  font-size: 10px;
+}
 .todown {
   margin-top: 10px;
 }
 
 .nav-btn {
-  padding: 10px;
+  padding: 0px;
   background-color: #444444;
   color: white;
   border: none;
@@ -314,7 +365,7 @@
 }
 
 /* comments-section  */
-.comments-section {
+/* .comments-section {
   position: fixed;
   right: 5%;
   top: 10%;
@@ -342,7 +393,7 @@
   color: rgb(255, 255, 255);
   border-radius: 15%!important;
   margin-bottom: 10px;
-}
+} */
 
 .send-btn {
   /* margin-top: 10px; */
@@ -354,30 +405,31 @@
 
 }
 
-.comment-input {
+/* .comment-input {
   margin-top: 30px;
   gap: 5px;
   height: 2.5rem;
   display: flex;
   
-}
+} */
 
 /* .actions span {
   margin-left: 10px;
 } */
-/* share-section */
+/* share-section */   
 .share-section {
   z-index: 100;
   display: flex;
   flex-direction: column; /* ترتيب العناصر عموديًا */
   align-items: center;
+  text-align: center;
   justify-content: center;
   position: fixed;
-  right: 50%;
+  right: 45%;
   top: 50%;
   transform: translate(50%, -50%); /* ضبط التمركز في المنتصف */
   background-color: rgb(37, 37, 37);
-  width: 300px;
+  width: 400px;
   height: auto;
   padding: 15px;
   border-radius: 10px;
@@ -387,11 +439,12 @@
   position: absolute;
   top: 0;
   left: 0;
-  margin: 20px;
+  margin: 10px;
   color: white;
 }
 
 .share-links button {
+  
   margin-top: 30px;
   margin-right: 5px;
   margin-left: 5px;
@@ -399,6 +452,7 @@
   height: 20%;
   font-size: 18px;
   background-color: rgb(37, 37, 37);
+  border: white;
 }
 
 .share-section button.close-btn {
@@ -498,4 +552,240 @@ video.transitioning {
   padding: 20px;
   border-radius: 10px;
   width: 50%;
+}
+
+
+
+/* new */
+.like-btn {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #007bff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.like-btn i {
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+/* إضافة لون مميز عند الإعجاب */
+.like-btn i.fa-solid {
+  color: #007bff; /* اللون عند الإعجاب */
+}
+
+.like-btn i.fa-regular {
+  color: #aaa; /* اللون عند عدم الإعجاب */
+}
+
+/* .profile-pic {
+  width: 40px;  
+  height: 40px;
+  border-radius: 50%;  
+  object-fit: cover; 
+  border: 1px solid #000000;
+} */
+/* profile-pic input-pic{
+  width: 40px;  
+  height: 40px;
+  border-radius: 50%;  
+  object-fit: cover; 
+  border: 1px solid #000000;
+} */
+
+/* /// ///////////////////*/
+
+.comments-section {
+  position: fixed;
+  right: 5%;
+  top: 15%;
+  border-top: 1px solid #ddd;
+  margin-top: 10px;
+  height: 500px;
+  width: 400px;
+  padding: 10px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+
+  h4 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .comment {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    transition: background 0.3s ease;
+  }
+
+  .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+  .comment-content {
+      flex-grow: 1;
+
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .comment-text {
+        font-size: 14px;
+        color: #333;
+        margin: 5px 0;
+      }
+
+      .comment-actions {
+        display: flex;
+        gap: 10px;
+
+        .action-btn {
+          border: none;
+          background: none;
+          cursor: pointer;
+          font-size: 18px;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          color: #777;
+          transition: color 0.3s ease-in-out, transform 0.2s ease-in-out;
+        
+          i {
+            transition: transform 0.2s ease-in-out;
+          }
+        
+          &:hover {
+            color: #333;
+          }
+        }
+        
+        
+        .liked {
+          color: #007bff !important; 
+          transform: scale(1.2);
+        }
+        
+        .disliked {
+          color: #007bff !important; 
+          transform: scale(1.2);
+        }
+        
+        }
+      }
+    }
+    .comment-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+    }
+    
+    .input-pic {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0; /* يمنع تصغير الصورة */
+    }
+
+    .form-control {
+      flex-grow: 1;
+      border-radius: 20px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    .send-btn {
+      background-color: #007bff!important;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.3s ease;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  
+
+.send-btn{
+  border-radius: 20%!important;
+}
+
+.profile-pic,.input-pic{
+  width: 40px!;  
+  height: 40px;
+  border-radius: 50%;  
+  object-fit: cover; 
+}
+@media screen and (max-width: 600px) {
+  
+  .comments-section {
+    width: 90vw;
+    height: 60vh;
+    max-width: 400px;
+    top: 20vh;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+
+
+  .close-btn-comment{
+    position: absolute;
+    top: 10px!important;
+    right: 10px!important;
+    font-size: 18px!important;
+    cursor: pointer!important;
+    color: #a50909!important;
+  }
+  
+  close-btn-comment:hover {
+    color: #ff0000!important;
+  }
+}
+
+.storytime {
+  position: absolute;
+  top: 70%;
+  right: 20%;
+  color: white;
+  font-size: 12px;
+}
+
+.closeComments{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: white;
+  color: black!important;
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  margin-bottom: 20px!important;
+  background-color: white!important;
 }
