@@ -16,7 +16,6 @@ import { ExplorepageComponent } from './components/explorepage/explorepage.compo
 import { AccountCenterComponent } from './components/account-center/account-center.component';
 import { RightsideComponent } from './components/rightside/rightside.component';
 
-import { OrdersComponent } from './components/orders/orders.component';
 import { BlogComponent } from './components/blog/blog.component';
 import { SupportComponent } from './components/support/support.component';
 import { PromotionsComponent } from './components/promotions/promotions.component';
@@ -53,7 +52,6 @@ export const routes: Routes = [
   {path: 'notf' , component : NotificationComponent},
   {path: 'TypeAccount' , component : TypeAccountComponent},
   {path: 'givefeedback' , component : GiveFeedbackComponent},
-  {path: 'orders' , component : OrdersComponent},
   {path: 'blog' , component : BlogComponent},
   {path: 'promotions' , component : PromotionsComponent},
   {path: 'support' , component : SupportComponent},

@@ -5,4 +5,5 @@ export interface User {
   role: string;
   profileImageUrl: string;
   status: string;
+  isFollowing?: boolean;
 }

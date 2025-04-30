@@ -35,7 +35,7 @@
     <div class="short">
       <video
         #videoPlayer
-        [src]="publishedStories[currentStoryIndexPublished]?.src"
+        [src]="publishedStories[currentStoryIndexPublished].src"
         autoplay
         loop
         (click)="togglePlayPause()"
@@ -46,16 +46,13 @@
         <img src="/images/husseini.jpg" alt="User Image" />
         <h5>Al-Husseini</h5>
         <span class="storytime">
-          {{
-            publishedStories[currentStoryIndexPublished]?.uploadTime
-              | date: "shortTime"
-          }}
+          {{ publishedStories[currentStoryIndexPublished].uploadTime | date: "shortTime" }}
         </span>
       </div>
 
       <div class="video-info">
         <p class="video-description">
-          {{ publishedStories[currentStoryIndexPublished]?.description }}
+          {{ publishedStories[currentStoryIndexPublished].description }}
         </p>
       </div>
 
