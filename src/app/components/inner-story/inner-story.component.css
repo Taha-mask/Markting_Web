@@ -226,7 +226,7 @@ body.modal-open {
   height: 560px;
   display: flex; 
   position: absolute;
-  overflow: hidden;
+  /* overflow: hidden; */
   margin-top: 2%;
   margin-left: 45%;           /* Add some space between shorts */
   border-radius: 20px; 
@@ -301,10 +301,10 @@ body.modal-open {
   border: none;  
   position:absolute;
   top: 2%;
-  right: -4%;
+  right: -30%;
   justify-content: space-between;
   width: 80px;
-  gap: 50px; 
+  gap: 50px;
 }
 
 .story-navigation button {

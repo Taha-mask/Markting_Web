@@ -80,35 +80,35 @@ export class InnerStoryComponent {
     if (index < 0 || index >= this.publishedStories.length) return;
 
     this.currentStoryIndexPublished = index;
-    this.openStoryViewer();
+    // this.openFilePicker();
   }
 
-  openStoryViewer(): void {
-    if (!this.publishedStories || this.publishedStories.length === 0 || this.currentStoryIndexPublished < 0 || this.currentStoryIndexPublished >= this.publishedStories.length) return;
+  // openStoryViewer(): void {
+  //   if (!this.publishedStories || this.publishedStories.length === 0 || this.currentStoryIndexPublished < 0 || this.currentStoryIndexPublished >= this.publishedStories.length) return;
 
-    const story = this.publishedStories[this.currentStoryIndexPublished];
+  //   const story = this.publishedStories[this.currentStoryIndexPublished];
 
-    const dialogRef = this.dialog.open(StoryViewerComponent, {
+  //   const dialogRef = this.dialog.open(StoryViewerComponent, {
 
-      data: { 
-        url: story.src, 
-        type: story.type
-      },
-      width: '80vw',
-      height: '90vh',
-      panelClass: 'custom-dialog-container'
-    });
+  //     data: { 
+  //       url: story.src, 
+  //       type: story.type
+  //     },
+  //     width: '80vw',
+  //     height: '90vh',
+  //     panelClass: 'custom-dialog-container'
+  //   });
 
-    dialogRef.afterOpened().subscribe(() => {
-      document.body.classList.add('modal-open');
-    });
+  //   dialogRef.afterOpened().subscribe(() => {
+  //     document.body.classList.add('modal-open');
+  //   });
     
-    dialogRef.afterClosed().subscribe(() => {
-      document.body.classList.remove('modal-open');
-    });
+  //   dialogRef.afterClosed().subscribe(() => {
+  //     document.body.classList.remove('modal-open');
+  //   });
     
 
-  }
+  // }
 
   openFilePicker() {
     if (this.fileInput) {
