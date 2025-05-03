@@ -1,0 +1,224 @@
+<!-- Modal الأساسي -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true" #postModal>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postModalLabel">Create Post</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- User Info -->
+        <div class="d-flex align-items-center mb-3">
+          <img [src]="users[0].profileImageUrl" alt="Profile Picture" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+          <div>
+            <h6 class="mb-0">{{ users[0].username }}</h6>
+          </div>
+        </div>
+
+        <!-- Price Field -->
+        <div class="mb-3 price-field">
+          <label class="form-label">Price (Optional)</label>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" 
+                   class="form-control" 
+                   [(ngModel)]="postPrice" 
+                   placeholder="Enter price"
+                   min="0"
+                   step="0.01">
+          </div>
+          <div class="price-preview mt-2" *ngIf="postPrice">
+            <span class="badge bg-primary">Price: <strong>${{ postPrice }}</strong></span>
+          </div>
+        </div>
+
+        <!-- Audience Selector -->
+        <div class="audience-selector mb-3">
+          <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"
+                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i [class]="getAudienceIcon()"></i>
+              {{ selectedAudience | titlecase }}
+            </button>
+            <ul class="dropdown-menu" style="width: 300px;">
+              <li *ngFor="let option of audienceOptions">
+                <button class="dropdown-item d-flex align-items-center gap-2"
+                        (click)="setAudience(option.value)">
+                  <i [class]="'bi ' + option.icon"></i>
+                  <div>
+                    <div class="fw-bold">{{ option.label }}</div>
+                    <small class="text-muted">{{ option.description }}</small>
+                  </div>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="form-group mb-3">
+          <label for="category" class="form-label">Category</label>
+          <select class="form-select" id="category" [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange()" required>
+            <option value="" disabled selected>Select a category</option>
+            <option *ngFor="let category of categories" [value]="category.name">
+              <i [class]="category.icon"></i> {{ category.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Subcategories -->
+        <div class="form-group mb-3" *ngIf="selectedCategory">
+          <label for="subcategory" class="form-label">Subcategory</label>
+          <select class="form-select" id="subcategory" [(ngModel)]="selectedSubcategory" required>
+            <option value="" disabled selected>Select a subcategory</option>
+            <option *ngFor="let subcategory of getSelectedCategorySubcategories()" [value]="subcategory">
+              {{ subcategory }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Post Content -->
+        <div class="form-group">
+          <textarea #postTextarea class="form-control" rows="4" placeholder="What's on your mind?"
+            (dragover)="onDragOver($event)" (drop)="onDrop($event)"></textarea>
+        </div>
+
+        <!-- File Input -->
+        <input type="file" 
+               #fileInput 
+               style="display: none" 
+               (change)="onFileSelected($event)" 
+               accept="image/*,video/*,{{ allowedDocumentTypes }}" 
+               multiple>
+
+        <!-- Media Preview -->
+        <div class="media-preview mt-3" *ngIf="mediaItems.length > 0">
+          <div class="position-relative">
+            <!-- Image Preview -->
+            <img *ngIf="mediaItems[currentIndex].type === 'image'"
+                 [src]="mediaItems[currentIndex].url" 
+                 class="img-fluid rounded" 
+                 alt="Preview">
+
+            <!-- Video Preview -->
+            <video *ngIf="mediaItems[currentIndex].type === 'video'"
+                   [src]="mediaItems[currentIndex].url" 
+                   class="img-fluid rounded" 
+                   controls>
+            </video>
+
+            <!-- Document Preview -->
+            <div *ngIf="mediaItems[currentIndex].type === 'document'" 
+                 class="document-preview p-3 bg-light rounded">
+              <div class="d-flex align-items-center">
+                <div class="document-icon me-3">
+                  <i [class]="mediaItems[currentIndex].thumbnailUrl"></i>
+                </div>
+                <div class="document-info flex-grow-1">
+                  <h5 class="mb-2 text-truncate">{{ mediaItems[currentIndex].name }}</h5>
+                  <p class="mb-2 text-muted small">{{ formatFileSize(mediaItems[currentIndex].size!) }}</p>
+                  <div class="document-actions">
+                    <a [href]="mediaItems[currentIndex].url" 
+                       class="btn btn-sm btn-outline-primary me-2" 
+                       target="_blank"
+                       download>
+                      <i class="fas fa-download me-1"></i> Download
+                    </a>
+                    <a [href]="mediaItems[currentIndex].url" 
+                       class="btn btn-sm btn-outline-secondary" 
+                       target="_blank">
+                      <i class="fas fa-eye me-1"></i> View
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="navigation-buttons" *ngIf="mediaItems.length > 1">
+              <button class="btn btn-light btn-sm" 
+                      (click)="prevImage()" 
+                      [disabled]="currentIndex === 0">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button class="btn btn-light btn-sm" 
+                      (click)="nextImage()" 
+                      [disabled]="currentIndex === mediaItems.length - 1">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+
+            <!-- Delete Button -->
+            <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2" 
+                    (click)="deleteCurrentItem()">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+
+          <!-- Media Count -->
+          <div class="media-count mt-2" *ngIf="mediaItems.length > 1">
+            {{ currentIndex + 1 }}/{{ mediaItems.length }}
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div>
+            <button class="btn btn-light me-2" (click)="triggerFileInput()">
+              <i class="bi bi-image"></i>
+            </button>
+            <button class="btn btn-light me-2" (click)="toggleEmojiPicker()">
+              <i class="bi bi-emoji-smile"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Emoji Picker -->
+        <div class="emoji-picker-container" *ngIf="showEmojiPicker">
+          <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary"
+        (click)="addPost()"
+        [disabled]="(!postTextarea.value.trim() && !mediaItems.length) || !selectedCategory || !selectedSubcategory">
+          Post
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal الجديد -->
+<div class="modal fade" id="audienceModal" tabindex="-1" aria-labelledby="audienceModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="audienceModalLabel">Select Audience</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- بيانات جديدة -->
+        <div class="mb-3">
+          <h6>Choose your audience:</h6>
+          <ul class="list-group">
+            <li class="list-group-item" (click)="selectAudience('public')">
+              Public <input type="radio" name="audience" value="public" style="position: absolute; top:13px ; right: 10px;" [checked]="selectedAudience === 'public'">
+            </li>
+            <li class="list-group-item" (click)="selectAudience('friends')">
+              Friends <input type="radio" name="audience" value="friends" style="position: absolute; top:13px ; right: 10px;" [checked]="selectedAudience === 'friends'">
+            </li>
+            <li class="list-group-item" (click)="selectAudience('onlyMe')">
+              Only Me <input type="radio" name="audience" value="onlyMe" style="position: absolute; top:13px ; right: 10px;" [checked]="selectedAudience === 'onlyMe'">
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" (click)="saveAudience()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>

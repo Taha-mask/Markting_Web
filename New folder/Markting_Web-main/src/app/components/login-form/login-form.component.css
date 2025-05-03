@@ -1,0 +1,435 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    font-family: 'poppins', sans-serif;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 100px;
+    margin-top: 10px;
+}
+
+/* تحسين عرض الـ login-box */
+.login-box {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 440px;
+    height: 580px;
+    padding: 30px;
+}
+
+.login-header{
+    text-align: left;
+    margin: 20px 0 40px 0;
+}
+
+
+.login-header header{
+    color: #333;
+font-size: 30px;
+font-weight: 600;
+}
+
+.input-box .input-field{
+
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .login-img {
+    display: none;
+  }
+  
+  .login-box {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .login-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .login-header header {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .oauth-login {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .google-login, .facebook-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .google-login {
+    background-color: #db4437;
+    color: white;
+  }
+  
+  .facebook-login {
+    background-color: #3b5998;
+    color: white;
+  }
+  
+  .google-login:hover, .facebook-login:hover {
+    opacity: 0.9;
+  }
+  
+  .google-login i, .facebook-login i {
+    margin-right: 10px;
+    font-size: 20px;
+  }
+  
+  .divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .divider span {
+    padding: 0 10px;
+    color: #999;
+    font-size: 14px;
+  }
+  
+  .input-box {
+    margin-bottom: 15px;
+    position: relative;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 10px 40px 10px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .password-strength-meter {
+    height: 5px;
+    background-color: #e0e0e0;
+    margin-top: 5px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  
+  .strength-bar {
+    height: 100%;
+    width: 0;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+  }
+  
+  #togglePassword {
+    position: absolute;
+    right: 12px;
+    top: 25px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    z-index: 2;
+    font-size: 18px;
+    transition: color 0.3s ease;
+  }
+  
+  #togglePassword:hover {
+    color: #333;
+  }
+  
+  .input-box .fa-eye,
+  .input-box .fa-eye-slash {
+    position: absolute;
+    right: 12px;
+    top: 25px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+    z-index: 2;
+    font-size: 18px;
+    transition: color 0.3s ease;
+  }
+  
+  .input-box .fa-eye:hover,
+  .input-box .fa-eye-slash:hover {
+    color: #333;
+  }
+  
+  .error-message {
+    color: #f44336;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  .forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .input-submit {
+    text-align: center;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  @media (min-width: 768px) {
+    .login-img {
+      display: block;
+      max-width: 300px;
+      margin-right: 30px;
+    }
+  
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+  ::placeholder {
+    font-weight: 500;
+    color: #222;
+  }
+  
+  .input-field:focus {
+    width: 105%;
+    border-bottom-color: #5c83c6;
+  }
+  
+  section {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  #check {
+    margin-right: 10px;
+  }
+  
+  a {
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  section a {
+    color: #555;
+  }
+  
+  .sign-up-link {
+    text-align: center;
+    font-size: 15px;
+    margin-top: 20px;
+  }
+  
+  .sign-up-link a {
+    color: #000;
+    font-weight: 600;
+
+
+}
+
+input:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+
+@media (max-width: 768px) {
+    .container {
+        margin-left: 0; /* إزالة الهامش الأيسر */
+        width: 100%; /* اجعل العنصر يمتد على الشاشة بالكامل */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .login-box {
+        width: 100%; /* جعل النموذج يمتد بالكامل */
+        max-width: 350px; /* تحديد أقصى عرض */
+        height: auto; /* السماح بالتمدد بناءً على المحتوى */
+        padding: 20px;
+    }
+
+    /* إخفاء الصورة إذا كانت جزءًا من التصميم */
+    .login-img {
+        display: none;
+    }
+}
+
+
+  
+  
+  input:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+
+/* Updated Modal Styles for Perfect Centering */
+.modal-dialog {
+  display: flex;
+  align-items: center;
+  min-height: calc(100% - 1rem);
+  margin: 0 auto;
+}
+
+.modal-content {
+  border-radius: 1rem;
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 450px;
+  margin: auto;
+  background: white;
+}
+
+.modal.fade .modal-dialog {
+  transform: translate(0, -50px);
+  transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+  transform: none;
+}
+
+/* Ensure modal is centered on all screen sizes */
+@media (min-width: 576px) {
+  .modal-dialog {
+    max-width: 450px;
+    margin: 1.75rem auto;
+  }
+}
+
+/* Additional styling for modal content */
+.modal-header {
+  border-bottom: none;
+  padding: 2rem 2rem 1rem;
+}
+
+.modal-body {
+  padding: 1rem 2rem;
+}
+
+.modal-footer {
+  border-top: none;
+  padding: 1rem 2rem 2rem;
+}
+
+.modal-backdrop.show {
+  opacity: 0.7;
+}
+
+/* Style improvements for form elements inside modal */
+.form-floating > .form-control {
+  height: calc(3.5rem + 2px);
+  padding: 1rem 0.75rem;
+}
+
+.form-floating > .form-control:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-floating > label {
+  padding: 1rem 0.75rem;
+}
+
+.btn-primary {
+  padding: 0.8rem 2rem;
+  font-weight: 500;
+}
+
+/* Center the shield icon and make it larger */
+.bi-shield-lock {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--bs-primary);
+}
+
+/* Improve text readability */
+.text-muted {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}

@@ -1,0 +1,791 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+body.modal-open {
+  overflow: hidden !important;
+}
+
+
+
+@media screen and (max-width: 768px) {
+  .shorts-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    z-index: 1000; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+  }
+
+  
+  .short {
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    position: relative;
+}
+
+
+  .comments-section {
+    width: 80vw !important;
+    max-width: 300px !important;
+    min-width: auto !important;
+    height: 60vh;
+    max-height: 500px;
+    left: 50%;
+    top: 20vh;
+    transform: translateX(-50%);
+    border-radius: 10px; 
+    padding: 15px;
+    background-color: white;
+    overflow-y: auto; 
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .share-section {
+    width: 80%;  /* يجعلها تأخذ 80% من عرض الشاشة */
+    height: auto;
+    min-height: 120px; /* جعل الارتفاع مناسب */
+    /* right: 10%; */
+    top: 40%;
+    margin-right: 5%;
+    transform: translate(0, -50%);
+  }
+
+  .share-links button {
+    width: 100px;
+    height: 100px;
+  }
+
+  .share-section h4 {
+    font-size: 20px;
+  }
+  .stories-sidebar{
+    display: none;
+  }
+
+  
+}
+
+@media screen and (max-width: 900px) {
+  
+  .shorts-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    z-index: 1000; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .short {
+    width: 100vw; 
+    height: 100vh;
+    object-fit: cover; 
+    border-radius: 0; 
+    margin: auto;
+  }
+
+  .navbar {
+    display: none !important; 
+  }
+
+  .comments-section {
+    width: 80vw !important;
+    max-width: 500px !important;
+    min-width: auto !important;
+    height: 70vh;
+    max-height: 600px;
+    left: 50%;
+    top: 15vh;
+    transform: translateX(-50%);
+    border-radius: 10px; 
+    padding: 15px;
+    background-color: white;
+    overflow-y: auto; 
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  
+  
+}
+
+
+/* ////////// */
+
+.main-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.shorts-container {
+  display: flex;
+  width: 100%;
+  height: 90vh;
+  position: relative;
+  background-color: #141414;
+}
+
+/* Sidebar */
+.stories-sidebar {
+  width: 20%;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  height: 90vh;
+  overflow-y: auto;
+  position: relative; /* غيرناها من absolute */
+}
+
+.stories-sidebar h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.create-story {
+  background-color: #0984e3;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stories-list {
+  list-style: none;
+  padding: 0;
+}
+
+.stories-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.stories-list li:hover {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+.stories-list li.active {
+  background-color: #f0f0f0;
+}
+
+.stories-list li img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.stories-list li .story-info {
+  flex-grow: 1;
+}
+
+.stories-list li .story-info h4 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.shorts-wrapper {
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(17, 17, 17);
+    height: 100vh;                   /* 100% of the viewport height */
+    width: 105%;
+
+}
+
+.short {
+  width: 320px; 
+  height: 560px;
+  display: flex; 
+  position: absolute;
+  overflow: hidden;
+  margin-top: 2%;
+  margin-left: 45%;           /* Add some space between shorts */
+  border-radius: 20px; 
+  /* z-index: ; */
+  /* background-color: #000; */
+}
+
+.short video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 20px;
+}
+
+.short img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
+  border-radius: 20px;
+}
+
+.video-info {
+  position: absolute;
+  bottom: 0%;
+  left: 20px;
+  color: white;
+}
+
+.user_info {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  align-items: center;
+  gap: 10px;
+  display: flex;
+}
+
+.user_info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.user_info h5 {
+  color: white;
+  font-size: 14px;
+  margin: 0;
+}
+
+.actions {
+  position: absolute;
+  /* right: 10px; */
+  bottom: 10%;
+  /* top: 25%; */
+  right: 5%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.actions button {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 5px;
+  border-radius: 50%;
+  font-size: 18px;
+}
+
+.story-navigation {
+  border: none;  
+  position:absolute;
+  top: 2%;
+  right: -4%;
+  justify-content: space-between;
+  width: 80px;
+  gap: 50px; 
+}
+
+.story-navigation button {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 0px;
+  border-radius: 50%;
+  font-size: 10px;
+}
+.todown {
+  margin-top: 10px;
+}
+
+.nav-btn {
+  padding: 0px;
+  background-color: #444444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem; /* حجم الأيقونة */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+}
+
+.nav-btn:disabled {
+  background-color: #444444;
+  cursor: auto;
+}
+
+.nav-btn i {
+  font-size: 1.5rem; /* التحكم في حجم الأيقونة */
+}
+
+.like-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 1.2rem;
+  padding: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.like-btn i {
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+.like-btn i.bi-hand-thumbs-up-fill {
+  color: rgb(255, 255, 255);  /*like*/
+}
+
+/* comments-section  */
+/* .comments-section {
+  position: fixed;
+  right: 5%;
+  top: 10%;
+  border-top: 1px solid #ddd;
+  margin-top: 10px;
+  height: 500px;
+  width: 400px;
+  padding: 10px;
+  background: #ffffff;
+  border-radius: 8px;
+}
+.count-commet{
+  margin-left: 10px;
+}
+
+.comment {
+  background: #ffffff;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+}
+
+.comments-section button {
+  background-color: #653cbe;
+  color: rgb(255, 255, 255);
+  border-radius: 15%!important;
+  margin-bottom: 10px;
+} */
+
+.send-btn {
+  /* margin-top: 10px; */
+  margin-left: 20px;
+  border-radius: 50%!important;
+  gap: 5px;
+  height: 2.5rem;
+  /* display: block; */  
+
+}
+
+/* .comment-input {
+  margin-top: 30px;
+  gap: 5px;
+  height: 2.5rem;
+  display: flex;
+  
+} */
+
+/* .actions span {
+  margin-left: 10px;
+} */
+/* share-section */   
+.share-section {
+  z-index: 100;
+  display: flex;
+  flex-direction: column; /* ترتيب العناصر عموديًا */
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  position: fixed;
+  right: 45%;
+  top: 50%;
+  transform: translate(50%, -50%); /* ضبط التمركز في المنتصف */
+  background-color: rgb(37, 37, 37);
+  width: 400px;
+  height: auto;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.share-section h4 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 10px;
+  color: white;
+}
+
+.share-links button {
+  
+  margin-top: 30px;
+  margin-right: 5px;
+  margin-left: 5px;
+  width: 20%;
+  height: 20%;
+  font-size: 18px;
+  background-color: rgb(37, 37, 37);
+  border: white;
+}
+
+.share-section button.close-btn {
+  position: absolute;
+  top: 10px; 
+  right: 10px; 
+  background-color: rgb(37, 37, 37);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+}
+.comments-section button.closecommentBTN{
+  position: absolute;
+  top: 10px; 
+  right: 10px; 
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.options-container {
+  position: relative;
+  display: inline-block;
+}
+
+.options-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.options-section {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background-color: rgb(42, 42, 42);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+  z-index: 1000;
+}
+
+.options-section button {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  text-align: left;
+  color: white;
+  background-color: rgb(42, 42, 42);
+  border: none;
+  cursor: pointer;
+}
+
+.options-section button:hover {
+  background-color: rgb(37, 37, 37);
+  border-radius: 0%;
+}
+
+/* .closecommentBTN{
+  position: relative !important;
+  right: 0px !important;
+  color: red !important;
+  background-color: white !important;
+  border-radius: 0% !important;
+} */
+
+video {
+  transition: opacity 0.10s ease, transform 0.10 ease;
+}
+
+video.transitioning {
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 50%;
+}
+
+
+
+/* new */
+.like-btn {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #007bff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.like-btn i {
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+/* إضافة لون مميز عند الإعجاب */
+.like-btn i.fa-solid {
+  color: #007bff; /* اللون عند الإعجاب */
+}
+
+.like-btn i.fa-regular {
+  color: #aaa; /* اللون عند عدم الإعجاب */
+}
+
+/* .profile-pic {
+  width: 40px;  
+  height: 40px;
+  border-radius: 50%;  
+  object-fit: cover; 
+  border: 1px solid #000000;
+} */
+/* profile-pic input-pic{
+  width: 40px;  
+  height: 40px;
+  border-radius: 50%;  
+  object-fit: cover; 
+  border: 1px solid #000000;
+} */
+
+/* /// ///////////////////*/
+
+.comments-section {
+  position: fixed;
+  right: 5%;
+  top: 15%;
+  border-top: 1px solid #ddd;
+  margin-top: 10px;
+  height: 500px;
+  width: 400px;
+  padding: 10px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+
+  h4 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .comment {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    transition: background 0.3s ease;
+  }
+
+  .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+  .comment-content {
+      flex-grow: 1;
+
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .comment-text {
+        font-size: 14px;
+        color: #333;
+        margin: 5px 0;
+      }
+
+      .comment-actions {
+        display: flex;
+        gap: 10px;
+
+        .action-btn {
+          border: none;
+          background: none;
+          cursor: pointer;
+          font-size: 18px;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          color: #777;
+          transition: color 0.3s ease-in-out, transform 0.2s ease-in-out;
+        
+          i {
+            transition: transform 0.2s ease-in-out;
+          }
+        
+          &:hover {
+            color: #333;
+          }
+        }
+        
+        
+        .liked {
+          color: #007bff !important; 
+          transform: scale(1.2);
+        }
+        
+        .disliked {
+          color: #007bff !important; 
+          transform: scale(1.2);
+        }
+        
+        }
+      }
+    }
+    .comment-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+    }
+    
+    .input-pic {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0; /* يمنع تصغير الصورة */
+    }
+
+    .form-control {
+      flex-grow: 1;
+      border-radius: 20px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    .send-btn {
+      background-color: #007bff!important;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.3s ease;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  
+
+.send-btn{
+  border-radius: 20%!important;
+}
+
+.profile-pic,.input-pic{
+  width: 40px!;  
+  height: 40px;
+  border-radius: 50%;  
+  object-fit: cover; 
+}
+@media screen and (max-width: 600px) {
+  
+  .comments-section {
+    width: 90vw;
+    height: 60vh;
+    max-width: 400px;
+    top: 20vh;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+
+
+  .close-btn-comment{
+    position: absolute;
+    top: 10px!important;
+    right: 10px!important;
+    font-size: 18px!important;
+    cursor: pointer!important;
+    color: #a50909!important;
+  }
+  
+  close-btn-comment:hover {
+    color: #ff0000!important;
+  }
+}
+
+.storytime {
+  position: absolute;
+  top: 70%;
+  right: 20%;
+  color: white;
+  font-size: 12px;
+}
+
+.closeComments{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: white;
+  color: black!important;
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  margin-bottom: 20px!important;
+  background-color: white!important;
+}
