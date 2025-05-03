@@ -11,6 +11,7 @@ import { Post } from '../../interfaces/post';
 import { AuthService } from '../../services/auth.service';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import * as bootstrap from 'bootstrap';
+import { SuggestedUser } from '../../interfaces/suggested-user.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -248,7 +249,7 @@ export class ProfileAsVisitorComponent implements OnInit, OnDestroy, CanActivate
   showTestimonials: boolean = true;
   portfolioView: 'grid' | 'list' = 'grid';
 
-  userFol = [
+  userFol: SuggestedUser[] = [
     {
       id: '2',
       username: 'Wade Warren',
@@ -256,7 +257,13 @@ export class ProfileAsVisitorComponent implements OnInit, OnDestroy, CanActivate
       profileImageUrl: 'images/user-1.png',
       status: 'Online',
       role: 'user',
-      isFollowing: false
+      isFollowing: false,
+      rating: 4.5,
+      followersCount: 1200,
+      lastActive: new Date(),
+      bio: 'Digital Marketing Expert with 5+ years of experience',
+      location: 'New York, USA',
+      skills: ['Social Media Marketing', 'SEO', 'Content Creation']
     },
     {
       id: '3',
@@ -265,16 +272,14 @@ export class ProfileAsVisitorComponent implements OnInit, OnDestroy, CanActivate
       profileImageUrl: 'images/user-2.png',
       status: 'Online',
       role: 'user',
-      isFollowing: false
+      isFollowing: false,
+      rating: 4.8,
+      followersCount: 2500,
+      lastActive: new Date(),
+      bio: 'Content Creator & Social Media Manager',
+      location: 'London, UK',
+      skills: ['Content Strategy', 'Social Media Management', 'Branding']
     },
-  ];
-
-  recentActivities: any[] = [
-    {
-      icon: 'bi bi-heart-fill text-danger',
-      description: 'Liked Social Media Campaign Strategy post',
-      timestamp: new Date(2025, 2, 15, 14, 30)
-    }
   ];
 
   private postSubscription: any;
@@ -593,13 +598,6 @@ export class ProfileAsVisitorComponent implements OnInit, OnDestroy, CanActivate
         isFollowing: false
       },
     ];
-  }
-
-  clearActivity(activity: any) {
-    const index = this.recentActivities.indexOf(activity);
-    if (index > -1) {
-      this.recentActivities.splice(index, 1);
-    }
   }
 
   getStars(rating: number): number[] {

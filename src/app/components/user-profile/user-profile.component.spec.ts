@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ProfileComponent } from './profile-as-visitor.component';
+import { ProfileComponent } from './user-profile.component';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';

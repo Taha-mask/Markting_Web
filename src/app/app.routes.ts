@@ -27,7 +27,7 @@ import { LocationComponent } from './components/location/location.component';
 import  {ReviewsComponent} from './components/reviews/reviews.component';
 import {CartComponent} from './components/cart/cart.component';
 import {SavedPostComponent} from './components/saved-post/saved-post.component'
-
+import { ProfileAsVisitorComponent } from './components/profile-as-visitor/profile-as-visitor.component';
 
 export const routes: Routes = [
   {
@@ -71,6 +71,7 @@ export const routes: Routes = [
   {path:'reviews',component: ReviewsComponent},
   {path:'cart',component: CartComponent},
   {path:'Saved-post',component:SavedPostComponent},
+
 
   {
     path: 'right-sidebar',

@@ -863,3 +863,73 @@
   margin-top: 10px;
   font-weight: 500;
 }
+
+/* Rating Section Styles */
+.analytics-item .rating-stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.analytics-item .rating-stars i {
+  font-size: 1.8rem;
+  transition: all 0.3s ease;
+}
+
+.analytics-item .rating-stars i.bi-star-fill {
+  color: #ffc107;
+  text-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+}
+
+.analytics-item .rating-stars i.bi-star {
+  color: #e0e0e0;
+}
+
+.analytics-item .rating-badge {
+  background: linear-gradient(45deg, #ffc107, #ff9800);
+  color: white;
+  padding: 0.3rem .7rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: .8rem;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+.analytics-item .rating-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff8e1;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-top: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.analytics-item .rating-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.analytics-item .rating-label {
+  font-size: 1rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.analytics-item .rating-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #333;
+  background: linear-gradient(45deg, #ffc107, #ff9800);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.analytics-item .rating-projects {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}

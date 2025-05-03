@@ -27,7 +27,7 @@ export class PostService {
   }
 
   updatePost(post: Post) {
-    // Implementation  
+    // Implementation
   }
 
   deletePost(post: Post) {
@@ -182,7 +182,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
     {
       id: '1',
       username: 'Taha Mahmoud',
-      type: 'Marketer', 
+      type: 'Marketer',
       profileImageUrl: 'images/user-1.png',
       status: 'Online',
       role: 'user'
@@ -248,8 +248,8 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   portfolioView: 'grid' | 'list' = 'grid';
 
   userFol = [
-    { name: 'Wade Warren', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false },
-    { name: 'Darlene Robertson', title: 'Digital Marketing Specialist', img: 'images/user-2.png', Follow: false },
+    { name: 'Wade Warren', title: 'Digital Marketing Specialist', img: 'images/user-1.png', role: 'marketer', Follow: false },
+    { name: 'Darlene Robertson', title: 'Digital Marketing Specialist', img: 'images/user-2.png', role: 'customer', Follow: false },
   ];
 
   recentActivities: any[] = [
@@ -578,8 +578,8 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
 
   refreshSuggestions() {
     this.userFol = [
-      { name: 'New User ' + Math.floor(Math.random() * 100), title: 'Digital Marketing Specialist', img: 'images/user-' + Math.floor(Math.random() * 5 + 1) + '.png', Follow: false },
-      { name: 'New User ' + Math.floor(Math.random() * 100), title: 'Content Creator', img: 'images/user-' + Math.floor(Math.random() * 5 + 1) + '.png', Follow: false },
+      { name: 'New User ' + Math.floor(Math.random() * 100), title: 'Digital Marketing Specialist', img: 'images/user-' + Math.floor(Math.random() * 5 + 1) + '.png', role: 'marketer', Follow: false },
+      { name: 'New User ' + Math.floor(Math.random() * 100), title: 'Content Creator', img: 'images/user-' + Math.floor(Math.random() * 5 + 1) + '.png',role:'customer' , Follow: false },
     ];
   }
 
