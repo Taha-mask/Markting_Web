@@ -33,6 +33,23 @@
 
     <!-- <div class="shorts-wrapper col-12 col-md-8 col-lg-9 "> -->
     <div class="short">
+      <!-- /*story-navigation*/ -->
+      <div class="story-navigation">
+        <button
+          class="nav-btn"
+          (click)="goToPreviousStory()"
+          [disabled]="currentStoryIndexPublished === 0"
+        >
+          <i class="fa-solid fa-arrow-up"></i>
+        </button>
+        <button
+          class="nav-btn todown"
+          (click)="goToNextStory()"
+          [disabled]="currentStoryIndexPublished === users.length - 1"
+        >
+          <i class="fa-solid fa-arrow-down"></i>
+        </button>
+      </div>
       <video
         #videoPlayer
         [src]="publishedStories[currentStoryIndexPublished].src"
@@ -82,23 +99,7 @@
         </button>
       </div>
 
-      <!-- /*story-navigation*/ -->
-      <div class="story-navigation">
-        <button
-          class="nav-btn"
-          (click)="goToPreviousStory()"
-          [disabled]="currentStoryIndexPublished === 0"
-        >
-          <i class="fa-solid fa-arrow-up"></i>
-        </button>
-        <button
-          class="nav-btn todown"
-          (click)="goToNextStory()"
-          [disabled]="currentStoryIndexPublished === users.length - 1"
-        >
-          <i class="fa-solid fa-arrow-down"></i>
-        </button>
-      </div>
+      
 
       <div class="actions">
         <button class="btn btn-light like-btn" (click)="toggleLike()">
