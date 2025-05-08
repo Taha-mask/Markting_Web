@@ -1,0 +1,221 @@
+<div class="search-container">
+    <div class="container-fluid account-center">
+        <!-- Search Stats -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="search-stats text-center">
+                    <h1 class="display-6 mb-3">Find What You Need</h1>
+                    <p class="text-muted">Discover people, posts, videos, and more</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Sidebar with Search and Filters -->
+            <div class="col-12 col-md-3 sidebar">
+                <!-- Sidebar Header with Icon and Title -->
+                <div class="sidebar-header d-flex align-items-center justify-content-between mb-4">
+                    <span class="fs-4 d-flex align-items-center">
+                        <div class="filter-icon-wrapper me-2">
+                            <i class="bi bi-funnel-fill"></i>
+                        </div>
+                        <span>Search Filter</span>
+                    </span>
+                    <div class="filter-count" *ngIf="activeTab !== 'all'">
+                        <span class="badge rounded-pill bg-primary">1</span>
+                    </div>
+                </div>
+
+                <!-- Modern Search Bar -->
+                <div class="search-bar mb-4">
+                    <div class="input-group shadow-sm">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-search search-icon"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0" 
+                               placeholder="Type to search..." 
+                               [(ngModel)]="searchQuery"
+                               (keyup.enter)="onSearch()"
+                               [class.is-searching]="loading">
+                        <button class="btn btn-outline-secondary" 
+                                type="button" 
+                                (click)="onSearch()" 
+                                [disabled]="loading"
+                                aria-label="Search">
+                            <i class="bi" [class.bi-arrow-right-circle]="!loading" [class.bi-arrow-repeat]="loading" [class.spin]="loading"></i>
+                        </button>
+                    </div>
+                    <div class="search-suggestions mt-2" *ngIf="!searchQuery && !loading">
+                        <small class="text-muted">Try searching for: </small>
+                        <span class="suggestion-tag" (click)="searchQuery = 'Ahmed'; onSearch()">Ahmed</span>
+                        <span class="suggestion-tag" (click)="searchQuery = 'Developer'; onSearch()">Developer</span>
+                        <span class="suggestion-tag" (click)="searchQuery = 'Teacher'; onSearch()">Teacher</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <div class="nav flex-column nav-pills gap-1" role="tablist" aria-label="Search categories">
+                    <a class="nav-link" 
+                       [class.active]="activeTab === 'all'"
+                       (click)="setActiveTab('all')"
+                       role="tab">
+                        <i class="bi bi-ui-checks-grid me-2"></i> All
+                    </a>
+                    <a class="nav-link" 
+                       [class.active]="activeTab === 'people'"
+                       (click)="setActiveTab('people')"
+                       role="tab">
+                        <i class="bi bi-person-lines-fill me-2"></i> People
+                    </a>
+                    <a class="nav-link" 
+                       [class.active]="activeTab === 'posts'"
+                       (click)="setActiveTab('posts')"
+                       role="tab">
+                        <i class="bi bi-file-earmark-text me-2"></i> Posts
+                    </a>
+                    <a class="nav-link" 
+                       [class.active]="activeTab === 'videos'"
+                       (click)="setActiveTab('videos')"
+                       role="tab">
+                        <i class="bi bi-camera-reels me-2"></i> Videos
+                    </a>
+                    <a class="nav-link" 
+                       [class.active]="activeTab === 'pages'"
+                       (click)="setActiveTab('pages')"
+                       role="tab">
+                        <i class="bi bi-journal-richtext me-2"></i> Pages
+                    </a>
+                    <a class="nav-link" 
+                       [class.active]="activeTab === 'offers'"
+                       (click)="setActiveTab('offers')"
+                       role="tab">
+                        <i class="bi bi-gift me-2"></i> Offers
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-12 col-md-9 content-area">
+                <!-- Loading State -->
+                <div *ngIf="loading" class="loading-state text-center my-5">
+                    <div class="spinner-border mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="text-muted mb-0">Searching for "{{searchQuery}}"...</p>
+                </div>
+
+                <!-- Error Message -->
+                <div *ngIf="error && !loading" class="alert alert-warning my-3">
+                    <i class="bi bi-exclamation-circle"></i> {{ error }}
+                </div>
+
+                <!-- No Results Message -->
+                <div *ngIf="!loading && !error && getFilteredResults().length === 0 && searchQuery" 
+                     class="alert alert-info my-3">
+                    <i class="bi bi-info-circle"></i> No results found for "{{ searchQuery }}" in {{ activeTab }} category.
+                </div>
+
+                <!-- Search Results -->
+                <div *ngIf="!loading && getFilteredResults().length > 0" class="search-results">
+                    <!-- People Results -->
+                    <div *ngIf="activeTab === 'people' || activeTab === 'all'" class="mb-4">
+                        <div class="list-group">
+                            <a *ngFor="let person of getFilteredResults()" 
+                               class="list-group-item list-group-item-action">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-wrapper me-3">
+                                        <img [src]="person.avatar" 
+                                             class="rounded-circle" 
+                                             alt="Profile picture"
+                                             width="56" 
+                                             height="56">
+                                        <span class="status-indicator online"></span>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <h6 class="mb-0">{{ person.name }}</h6>
+                                            <span class="verified-badge ms-2" *ngIf="person.name.includes('Master')">
+                                                <i class="bi bi-patch-check-fill"></i>
+                                            </span>
+                                        </div>
+                                        <p class="mb-2 text-muted small">{{ person.subtitle }}</p>
+                                        <div class="user-stats">
+                                            <span class="stat-item">
+                                                <i class="bi bi-people-fill me-1"></i>
+                                                {{ person.mutualFriends }} mutual friends
+                                            </span>
+                                            <span class="stat-item ms-3">
+                                                <i class="bi bi-geo-alt-fill me-1"></i>
+                                                {{ person.subtitle.includes('Lives in') ? person.subtitle.split('Lives in ')[1] : 'Location not specified' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-person-plus-fill me-1"></i> Connect
+                                    </button>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+           
+       
+                
+
+                <!-- Search Results -->
+                <div *ngIf="!loading && getFilteredResults().length > 0" class="search-results">
+                    <!-- Results Header -->
+                    <div class="results-header">
+                        <h2>Results</h2>
+                        <p class="results-count">Found {{getFilteredResults().length}} matches</p>
+                    </div>
+                    <!-- People Results -->
+                    <div *ngIf="activeTab === 'people' || activeTab === 'all'" class="results-section">
+                        <div class="results-list">
+                            <div *ngFor="let person of getFilteredResults()" 
+                                 class="result-card">
+                                <div class="card-content">
+                                    <div class="avatar-section">
+                                        <div class="avatar-wrapper">
+                                            <img [src]="person.avatar" 
+                                                 alt="Profile picture"
+                                                 width="64" 
+                                                 height="64">
+                                            <span class="status-badge online"></span>
+                                        </div>
+                                    </div>
+                                    <div class="info-section">
+                                        <div class="name-row">
+                                            <h3 class="person-name">{{ person.name }}</h3>
+                                            <div class="badge-wrapper" *ngIf="person.name.includes('Master')">
+                                                <span class="verified-badge">
+                                                    <i class="bi bi-patch-check-fill"></i>
+                                                    <span>Verified</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <p class="person-subtitle">{{ person.subtitle }}</p>
+                                        <div class="stats-row">
+                                            <div class="stat-item">
+                                                <i class="bi bi-people-fill"></i>
+                                                <span>{{ person.mutualFriends }} mutual friends</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <i class="bi bi-geo-alt-fill"></i>
+                                                <span>{{ person.subtitle.includes('Lives in') ? person.subtitle.split('Lives in ')[1] : 'Location not specified' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="action-section">
+                                        <button class="connect-btn">
+                                            <i class="bi bi-person-plus-fill"></i>
+                                            <span>Connect</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        

@@ -28,7 +28,8 @@ import  {ReviewsComponent} from './components/reviews/reviews.component';
 import {CartComponent} from './components/cart/cart.component';
 import {SavedPostComponent} from './components/saved-post/saved-post.component'
 import { ProfileAsVisitorComponent } from './components/profile-as-visitor/profile-as-visitor.component';
-
+import { SearchPageComponent } from './components/search-page/search-page.component';
+import { TermsAndPrivacyComponent } from './components/terms-and-privacy/terms-and-privacy.component';
 export const routes: Routes = [
   {
     path: '',
@@ -71,6 +72,9 @@ export const routes: Routes = [
   {path:'reviews',component: ReviewsComponent},
   {path:'cart',component: CartComponent},
   {path:'Saved-post',component:SavedPostComponent},
+  {path:'search',component:SearchPageComponent},
+  {path:'terms-and-privacy', component: TermsAndPrivacyComponent},
+
 
 
   {
