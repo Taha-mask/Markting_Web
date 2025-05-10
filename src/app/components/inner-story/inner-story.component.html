@@ -59,13 +59,26 @@
         [ngClass]="{ transitioning: transitioning }"
       ></video>
 
-      <div class="user_info">
-        <img src="/images/husseini.jpg" alt="User Image" />
-        <h5>Al-Husseini</h5>
-        <span class="storytime">
-          {{ publishedStories[currentStoryIndexPublished].uploadTime | date: "shortTime" }}
-        </span>
-      </div>
+      <div
+  class="user_info"
+  *ngIf="
+    publishedStories.length > 0 &&
+    currentStoryIndexPublished >= 0 &&
+    publishedStories[currentStoryIndexPublished]?.user === currentUser.user
+  "
+>
+  <img [src]="currentUser.image" alt="User Image" />
+  <h5>{{ currentUser.user }}</h5>
+  <span class="storytime">
+    {{
+      publishedStories[currentStoryIndexPublished]?.uploadTime
+        | date: 'shortTime'
+    }}
+  </span>
+</div>
+
+
+
 
       <div class="video-info">
         <p class="video-description">
@@ -94,12 +107,12 @@
           </button>
         </div>
 
+        
+
         <button class="btn btn-light close-btn" (click)="closeShareSection()">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-
-      
 
       <div class="actions">
         <button class="btn btn-light like-btn" (click)="toggleLike()">

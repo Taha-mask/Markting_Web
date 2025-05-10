@@ -30,6 +30,8 @@ import {SavedPostComponent} from './components/saved-post/saved-post.component'
 import { ProfileAsVisitorComponent } from './components/profile-as-visitor/profile-as-visitor.component';
 import { SearchPageComponent } from './components/search-page/search-page.component';
 import { TermsAndPrivacyComponent } from './components/terms-and-privacy/terms-and-privacy.component';
+import { ProfileAsCustomerComponent } from './components/profile-as-cutomer/profile-as-customer.component';
+import { ProfileAsVisitorCustomerComponent } from './components/profile-as-visitor-customer/profile-as-visitor-customer.component';
 export const routes: Routes = [
   {
     path: '',
@@ -74,9 +76,8 @@ export const routes: Routes = [
   {path:'Saved-post',component:SavedPostComponent},
   {path:'search',component:SearchPageComponent},
   {path:'terms-and-privacy', component: TermsAndPrivacyComponent},
-
-
-
+  {path:'profile-as-customer', component: ProfileAsCustomerComponent},
+  {path:'profile-as-visitor-as-customer', component: ProfileAsVisitorCustomerComponent},
   {
     path: 'right-sidebar',
     component: RightsideComponent,
