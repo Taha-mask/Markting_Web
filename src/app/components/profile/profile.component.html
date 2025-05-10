@@ -82,7 +82,8 @@
             <button class="btn btn-primary btn-block" (click)="openEditProfileModal()">
               <i class="bi bi-pencil-square"></i> Edit Profile
             </button>
-            <button class="btn btn-outline-primary btn-block" (click)="previewPublicProfile()">
+            <button routerLinkActive="active" routerLink="/profile-as-visitor" class="btn btn-outline-primary btn-block" (click)="previewPublicProfile()">
+
               <i class="bi bi-eye"></i> View as Visitor
             </button>
           </div>

@@ -60,7 +60,7 @@ export class InnerStoryComponent {
       src: "vedios/الانسان المصري بياكل كم جرام سكر ؟.mp4", // لينك الفيديو الافتراضي
       type: "video",
       description: "test Story",
-      user: "Admin",
+      user: "Al-Husseini",
       uploadTime: new Date()
     }
   ];

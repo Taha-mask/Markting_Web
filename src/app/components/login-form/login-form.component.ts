@@ -214,4 +214,6 @@ export class LoginFormComponent implements OnInit, OnDestroy {
       modal?.hide();
     }
   }
+
+  
 }
