@@ -78,6 +78,7 @@ export const routes: Routes = [
   {path:'terms-and-privacy', component: TermsAndPrivacyComponent},
   {path:'profile-as-customer', component: ProfileAsCustomerComponent},
   {path:'profile-as-visitor-as-customer', component: ProfileAsVisitorCustomerComponent},
+  {path:'profile-as-visitor', component: ProfileAsVisitorComponent},
   {
     path: 'right-sidebar',
     component: RightsideComponent,

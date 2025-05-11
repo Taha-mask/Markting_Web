@@ -393,6 +393,13 @@ onClickOutside(event: Event) {
     uploadTime: new Date(Date.now())
   };
   
+getUserImage(userName: string | undefined): string {
+  if (!userName) return 'default.jpg';
+  const user = this.users.find(u => u.user === userName);
+  return user ? user.image : 'default.jpg';
+}
+
+
 
   ////////////////////////
 

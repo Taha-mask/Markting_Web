@@ -13,7 +13,7 @@ import { ProfileAsVisitorCustomerComponent } from "./components/profile-as-visit
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, FooterComponent, PostDetailsComponent, RouterOutlet, ProfileAsCustomerComponent, ProfileAsVisitorCustomerComponent,],
+  imports: [CommonModule, NavbarComponent, FooterComponent, PostDetailsComponent, RouterOutlet, ProfileAsCustomerComponent, ProfileAsVisitorCustomerComponent, ProfileAsVisitorComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })

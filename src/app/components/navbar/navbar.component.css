@@ -78,7 +78,9 @@ input:focus {
   width: 500px;
   border-radius: 34px;
 }
-
+.search-container a {
+  text-decoration: none;
+}
 .search-container input {
   border: none;
   outline: none;

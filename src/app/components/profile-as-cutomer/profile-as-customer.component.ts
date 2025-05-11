@@ -246,6 +246,9 @@ export class ProfileAsCustomerComponent implements OnInit, OnDestroy, CanActivat
   showAnalytics: boolean = false;
   showTestimonials: boolean = true;
   portfolioView: 'grid' | 'list' = 'grid';
+  userRating: number = 0;
+  hoverRating: number = 0;
+  isRated: boolean = false;
 
   userFol = [
     { name: 'Wade Warren', title: 'Digital Marketing Specialist', img: 'images/user-1.png', Follow: false },
@@ -773,5 +776,12 @@ export class ProfileAsCustomerComponent implements OnInit, OnDestroy, CanActivat
 
   removeAchievement(index: number) {
     this.achievements.splice(index, 1);
+  }
+
+   rateProfile(rating: number) {
+    this.userRating = rating;
+    this.isRated = true;
+    // Here you would typically make an API call to save the rating
+    console.log(`User rated profile with ${rating} stars`);
   }
 }

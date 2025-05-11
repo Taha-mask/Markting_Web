@@ -60,15 +60,14 @@
       ></video>
 
       <div
-  class="user_info"
-  *ngIf="
-    publishedStories.length > 0 &&
-    currentStoryIndexPublished >= 0 &&
-    publishedStories[currentStoryIndexPublished]?.user === currentUser.user
-  "
+   class="user_info"
+  *ngIf="publishedStories.length > 0 && currentStoryIndexPublished >= 0"
 >
-  <img [src]="currentUser.image" alt="User Image" />
-  <h5>{{ currentUser.user }}</h5>
+  <img
+    [src]="getUserImage(publishedStories[currentStoryIndexPublished]?.user)"
+    alt="User Image"
+  />
+  <h5>{{ publishedStories[currentStoryIndexPublished]?.user }}</h5>
   <span class="storytime">
     {{
       publishedStories[currentStoryIndexPublished]?.uploadTime
@@ -76,9 +75,6 @@
     }}
   </span>
 </div>
-
-
-
 
       <div class="video-info">
         <p class="video-description">

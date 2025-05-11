@@ -458,6 +458,8 @@
           </div>
         </div>
 
+
+        
         <!-- Recent Activity -->
         <!-- <div class="card mb-4 shadow-sm">
           <div class="card-body">
@@ -494,56 +496,53 @@
           <div class="card-body">
             <h5 class="card-title mb-3 fw-bold">Analytics Summary</h5>
             <div class="analytics-item mb-3">
-              <div
-                class="d-flex justify-content-between align-items-center mb-2"
-              >
+              <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-medium">Profile Views</span>
-                <span class="badge bg-primary rounded-pill">{{
-                  analytics.profileViews
-                }}</span>
+                <span class="badge bg-primary rounded-pill">{{analytics.profileViews}}</span>
               </div>
-              <div class="progress" style="height: 6px">
-                <div
-                  class="progress-bar bg-primary"
-                  role="progressbar"
-                  [style.width]="(analytics.profileViews / 2000) * 100 + '%'"
-                ></div>
-              </div>
-            </div>
-            <div class="analytics-item mb-3">
-              <div
-                class="d-flex justify-content-between align-items-center mb-2"
-              >
-                <span class="fw-medium">Activity</span>
-                <span class="badge bg-success rounded-pill"
-                  >{{ analytics.postEngagement }}%</span
-                >
-              </div>
-              <div class="progress" style="height: 6px">
-                <div
-                  class="progress-bar bg-success"
-                  role="progressbar"
-                  [style.width]="analytics.postEngagement + '%'"
-                ></div>
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-primary" role="progressbar" [style.width]="(analytics.profileViews / 2000 * 100) + '%'"></div>
               </div>
             </div>
             <!-- <div class="analytics-item mb-3">
-              <div
-                class="d-flex justify-content-between align-items-center mb-2"
-              >
-                <span class="fw-medium">Follower Growth</span>
-                <span class="badge bg-info rounded-pill"
-                  >+{{ analytics.followerGrowth }}%</span
-                >
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-medium">Post Engagement</span>
+                <span class="badge bg-success rounded-pill">{{analytics.postEngagement}}%</span>
               </div>
-              <div class="progress" style="height: 6px">
-                <div
-                  class="progress-bar bg-info"
-                  role="progressbar"
-                  [style.width]="analytics.followerGrowth + '%'"
-                ></div>
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-success" role="progressbar" [style.width]="analytics.postEngagement + '%'"></div>
               </div>
             </div> -->
+            <div class="analytics-item mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-medium">Activity</span>
+                <span class="badge bg-info rounded-pill">+{{analytics.followerGrowth}}%</span>
+              </div>
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-info" role="progressbar" [style.width]="analytics.followerGrowth + '%'"></div>
+              </div>
+            </div>
+            <div class="analytics-item mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-medium">Rating</span>
+                <span class="rating-badge">{{analytics.averageRating}}/5</span>
+              </div>
+              <div class="rating-container">
+                <div class="rating-info">
+                  <div class="rating-stars">
+                    <i class="bi"
+                       [class.bi-star-fill]="star <= analytics.averageRating"
+                       [class.bi-star]="star > analytics.averageRating"
+                       *ngFor="let star of [1,2,3,4,5]">
+                    </i>
+                  </div>
+                  <span class="rating-projects">Based on {{analytics.completedProjects}} projects</span>
+                </div>
+                <div class="rating-value">
+                  {{analytics.averageRating}}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
