@@ -10,6 +10,8 @@ import { ProfileAsVisitorComponent } from './components/profile-as-visitor/profi
 
 import { ProfileAsCustomerComponent } from "./components/profile-as-cutomer/profile-as-customer.component";
 import { ProfileAsVisitorCustomerComponent } from "./components/profile-as-visitor-customer/profile-as-visitor-customer.component";
+import { filter } from 'rxjs/operators';
+
 @Component({
   selector: 'app-root',
   standalone: true,

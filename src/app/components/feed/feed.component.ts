@@ -771,6 +771,7 @@ export class FeedComponent implements OnInit, OnDestroy {
       console.error('Faild', err);
     }
   });
+  
 }
 
 
