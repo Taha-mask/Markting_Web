@@ -32,6 +32,9 @@ import { SearchPageComponent } from './components/search-page/search-page.compon
 import { TermsAndPrivacyComponent } from './components/terms-and-privacy/terms-and-privacy.component';
 import { ProfileAsCustomerComponent } from './components/profile-as-cutomer/profile-as-customer.component';
 import { ProfileAsVisitorCustomerComponent } from './components/profile-as-visitor-customer/profile-as-visitor-customer.component';
+
+import { PostoneComponent } from './components/postone/postone.component';
+
 export const routes: Routes = [
   {
     path: '',
@@ -76,9 +79,16 @@ export const routes: Routes = [
   {path:'Saved-post',component:SavedPostComponent},
   {path:'search',component:SearchPageComponent},
   {path:'terms-and-privacy', component: TermsAndPrivacyComponent},
+<<<<<<< HEAD
   {path:'profile-as-customer', component: ProfileAsCustomerComponent},
   {path:'profile-as-visitor-as-customer', component: ProfileAsVisitorCustomerComponent},
   {path:'profile-as-visitor', component: ProfileAsVisitorComponent},
+=======
+
+
+  {path: 'postone' ,component:PostoneComponent},
+
+>>>>>>> 45c8083fd5211f38846a0630e2303566d1a35edf
   {
     path: 'right-sidebar',
     component: RightsideComponent,

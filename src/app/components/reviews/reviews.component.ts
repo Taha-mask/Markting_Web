@@ -1,47 +1,51 @@
-import { Component, ElementRef, ViewChild, Renderer2 } from '@angular/core';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-reviews',
   standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './reviews.component.html',
   styleUrls: ['./reviews.component.css']
 })
 export class ReviewsComponent {
-  @ViewChild('reviewText') reviewTextRef!: ElementRef<HTMLTextAreaElement>;
-  @ViewChild('reviewsList') reviewsListRef!: ElementRef<HTMLDivElement>;
+  Math = Math;
 
-  constructor(private renderer: Renderer2) {}
+  reviews = [
+    { username: 'Sara', comment: 'ممتاز جدًا', rating: 4 },
+    { username: 'Layla', comment: 'حلو بس فيه شوية ملاحظات', rating: 3 },
+  ];
 
-  addReview(): void {
-    const text = this.reviewTextRef.nativeElement.value.trim();
-    if (text === '') return;
+  newReview = {
+    username: '',
+    comment: '',
+    rating: 0
+  };
 
-    const card = this.renderer.createElement('div');
-    this.renderer.addClass(card, 'review-card');
+  submitReview() {
+    if (this.newReview.comment && this.newReview.rating > 0) {
+      this.reviews.push({ ...this.newReview });
+      this.newReview = { username: '', comment: '', rating: 0 };
+    }
+  }
 
-    const name = this.renderer.createElement('div');
-    this.renderer.addClass(name, 'name');
-    const nameText = this.renderer.createText('Anonymous');
-    this.renderer.appendChild(name, nameText);
+  setRating(stars: number) {
+    this.newReview.rating = stars;
+  }
 
-    const stars = this.renderer.createElement('div');
-    this.renderer.addClass(stars, 'stars');
-    const starsText = this.renderer.createText('★★★★★');
-    this.renderer.appendChild(stars, starsText);
+  hoverStar(stars: number) {
+    this.newReview.rating = stars; 
+  }
 
-    const reviewText = this.renderer.createElement('p');
-    const reviewTextContent = this.renderer.createText(text);
-    this.renderer.appendChild(reviewText, reviewTextContent);
+  resetStars() {
+    if (this.newReview.rating === 0) {
+      this.newReview.rating = 0;
+    }
+  }
 
-    this.renderer.appendChild(card, name);
-    this.renderer.appendChild(card, stars);
-    this.renderer.appendChild(card, reviewText);
-
-    // استخدم insertBefore بدلاً من prepend
-    const parent = this.reviewsListRef.nativeElement;
-    const firstChild = parent.firstChild;
-    this.renderer.insertBefore(parent, card, firstChild);
-
-    this.reviewTextRef.nativeElement.value = '';
+  getAverageRating(): number {
+    const totalRating = this.reviews.reduce((sum, review) => sum + review.rating, 0);
+    return this.reviews.length ? totalRating / this.reviews.length : 0;
   }
 }

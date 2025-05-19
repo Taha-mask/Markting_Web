@@ -160,19 +160,44 @@ export class LoginFormComponent implements OnInit, OnDestroy {
       localStorage.removeItem('rememberedEmail');
     }
 
+    console.log('Submitting login request...');
     this.userService.login(email, password)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: LoginResponse) => {
-          console.log('Login successful:', response.token);
+          console.log('Login successful:', response);
           this.isLoading = false;
-          localStorage.setItem('token', response.token);
-          this.router.navigate(['/feed']);
+          
+          // Store token in localStorage (already done in UserService)
+          // Store user type if available
+          if (response.user && response.user.userType) {
+            this.userService.setUserType(response.user.userType);
+          }
+          
+          // Navigate based on user type if available
+          const userType = response.user?.userType?.toLowerCase() || '';
+          if (userType === 'marketer' || userType === 'markter') {
+            this.router.navigate(['/dashboard']);
+          } else {
+            this.router.navigate(['/feed']);
+          }
         },
         error: (error: ApiError) => {
-          console.error('Login failed:', error.message);
+          console.error('Login failed:', error);
           this.isLoading = false;
-          this.loginError = error.message || 'Invalid email or password. Please try again.';
+          
+          // Provide more specific error messages based on error status
+          if (error.status === 400) {
+            this.loginError = 'Invalid email or password. Please check your credentials and try again.';
+          } else if (error.status === 401) {
+            this.loginError = 'Unauthorized. Your account may be inactive or locked.';
+          } else if (error.status === 404) {
+            this.loginError = 'Account not found. Please check your email or register for a new account.';
+          } else if (error.status === 0) {
+            this.loginError = 'Unable to connect to the server. Please check your internet connection and try again.';
+          } else {
+            this.loginError = error.message || 'An error occurred during login. Please try again later.';
+          }
         },
       });
   }
