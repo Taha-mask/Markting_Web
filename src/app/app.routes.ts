@@ -79,16 +79,13 @@ export const routes: Routes = [
   {path:'Saved-post',component:SavedPostComponent},
   {path:'search',component:SearchPageComponent},
   {path:'terms-and-privacy', component: TermsAndPrivacyComponent},
-<<<<<<< HEAD
   {path:'profile-as-customer', component: ProfileAsCustomerComponent},
   {path:'profile-as-visitor-as-customer', component: ProfileAsVisitorCustomerComponent},
   {path:'profile-as-visitor', component: ProfileAsVisitorComponent},
-=======
 
 
   {path: 'postone' ,component:PostoneComponent},
 
->>>>>>> 45c8083fd5211f38846a0630e2303566d1a35edf
   {
     path: 'right-sidebar',
     component: RightsideComponent,
