@@ -11,10 +11,10 @@ import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.c
 import { User } from '../../interfaces/user';
 import { Subscription } from 'rxjs';
 import { Dropdown } from 'bootstrap';
-import {FooterComponent} from '../footer/footer.component';
+import { FooterComponent } from '../footer/footer.component';
 
 import { Router } from '@angular/router';
-
+import { CommentService } from '../services/comment.service';
 declare var bootstrap: any;
 
 interface ReactionCount {
@@ -46,6 +46,7 @@ interface TrendingFeed {
   providers: [DatePipe]
 })
 export class FeedComponent implements OnInit, OnDestroy {
+  
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild(TrendingSidebarComponent) trendingSidebar!: TrendingSidebarComponent;
   @ViewChildren('commentContainer') commentContainers!: QueryList<ElementRef>;
@@ -738,32 +739,41 @@ export class FeedComponent implements OnInit, OnDestroy {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
 
-  addComment(post: any, commentText: string) {
-    if (!commentText || commentText.trim() === '') return;
+ addComment(post: any, commentText: string): void {
+  if (!commentText || commentText.trim() === '') return;
 
-    const newComment: any = {
-      id: this.generateUniqueId(),
-      username: this.currentUser,
-      profileImageUrl: this.user[0].profileImageUrl,
-      text: commentText.trim(),
-      timestamp: new Date(),
-      likes: 0,
-      likedBy: [],
-      replies: []
-    };
+  const newCommentData = {
+    content: commentText.trim(),
+    postId: post.id
+  };
 
-    // Add the comment to the post
-    if (!post.comments) {
-      post.comments = [];
+  this.commentService.addComment(newCommentData).subscribe({
+    next: (savedComment) => {
+      // ✅ تأكد إن التعليقات هتظهر
+      post.showComments = true;
+
+      if (!post.comments) post.comments = [];
+      post.comments.push({
+        id: savedComment.id,
+        username: this.currentUser,
+        profileImageUrl: this.user[0].profileImageUrl,
+        text: savedComment.content,
+        timestamp: savedComment.timestamp || new Date(),
+        likes: 0,
+        likedBy: [],
+        replies: []
+      });
+
+      this.newComment = '';
+      this.scrollToLastComment(post);
+    },
+    error: (err: any) => {
+      console.error('Faild', err);
     }
-    post.comments.push(newComment);
+  });
+}
 
-    // Reset comment input
-    this.newComment = '';
 
-    // Scroll to the newly added comment
-    this.scrollToLastComment(post);
-  }
 
   scrollToLastComment(post: any) {
     // Use setTimeout to ensure DOM has updated
@@ -873,7 +883,11 @@ export class FeedComponent implements OnInit, OnDestroy {
     // For example, navigate to a chat page or open a message dialog
   }
 
-  constructor(private postService: PostService , private router : Router) {}
+constructor(
+  private postService: PostService,
+  private router: Router,
+  private commentService: CommentService
+) {}
 
   ngOnInit() {
     this.postSubscription = this.postService.getPosts().subscribe(posts => {
