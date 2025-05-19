@@ -13,6 +13,7 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { UserService } from '../../services/User.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { Observable } from 'rxjs';
 
 interface SignupMarketerForm {
   firstName: FormControl<string | null>;
@@ -59,7 +60,7 @@ export class SignupMarketerComponent implements OnInit {
   public passwordStrength = 0;
   public selectedProfileImage: File | null = null;
   public selectedIdImage: File | null = null;
-  public defaultProfileImage = 'assets/images/default-profile.png';
+  public defaultProfileImage = 'images/user-1.png';
 
   constructor(
     private userService: UserService,
@@ -157,47 +158,301 @@ export class SignupMarketerComponent implements OnInit {
     return selectedCountry ? selectedCountry.flagCode : '';
   }
 
+  // Success message properties
+  public showSuccessMessage = false;
+  public successMessage = '';
+
   public onSubmit(): void {
     if (this.marketerRegisterForm.valid) {
       this.isLoading = true;
+      this.showSuccessMessage = false;
+      console.log('Starting marketer registration process...');
 
-      const formData = new FormData();
-      Object.keys(this.marketerRegisterForm.value).forEach((key) => {
-        const value = this.marketerRegisterForm.get(key)?.value;
-        if (value !== null && value !== undefined) {
-          if (key === 'phone') {
-            const countryCode = this.marketerRegisterForm.get('country')?.value;
-            formData.append('phone', `${countryCode}${value}`);
-          } else {
-            formData.append(key, value);
-          }
-        }
-      });
+      // First, handle file uploads if there are any
+      const uploadTasks: Promise<any>[] = [];
+      let profilePicturePath = 'default-profile.jpg';
+      let userIDPath = 'default-id.jpg';
 
+      // Upload profile image if selected
       if (this.selectedProfileImage) {
-        formData.append('profileImage', this.selectedProfileImage);
-      }
-      if (this.selectedIdImage) {
-        formData.append('idImage', this.selectedIdImage);
+        const profileUploadTask = new Promise<any>((resolve, reject) => {
+          this.userService.uploadFile(this.selectedProfileImage!).subscribe({
+            next: (response) => {
+              console.log('Profile image uploaded:', response);
+              profilePicturePath = response.filePath;
+              resolve(response);
+            },
+            error: (error) => {
+              console.error('Profile image upload failed:', error);
+              resolve(null); // Resolve with null to continue the process
+            }
+          });
+        });
+        uploadTasks.push(profileUploadTask);
       }
 
-      this.userService.registerMarketer(formData).subscribe({
-        next: (response) => {
-          console.log('Registration successful:', response);
-          this.router.navigate(['/login']);
-        },
-        error: (error) => {
-          console.error('Registration failed:', error);
+      // Upload ID image if selected
+      if (this.selectedIdImage) {
+        const idUploadTask = new Promise<any>((resolve, reject) => {
+          this.userService.uploadFile(this.selectedIdImage!).subscribe({
+            next: (response) => {
+              console.log('ID image uploaded:', response);
+              userIDPath = response.filePath;
+              resolve(response);
+            },
+            error: (error) => {
+              console.error('ID image upload failed:', error);
+              resolve(null); // Resolve with null to continue the process
+            }
+          });
+        });
+        uploadTasks.push(idUploadTask);
+      }
+
+      // After all uploads are complete, proceed with user registration
+      Promise.all(uploadTasks)
+        .then(() => {
+          console.log('All file uploads completed, proceeding with registration');
+
+          // Get birth date value safely
+          const birthDateValue = this.marketerRegisterForm.get('birthDate')?.value;
+          let birthDateString = '';
+
+          if (birthDateValue) {
+            // Convert to ISO string and extract the date part
+            birthDateString = new Date(birthDateValue).toISOString().split('T')[0];
+          } else {
+            // Fallback to current date if no birth date is provided
+            birthDateString = new Date().toISOString().split('T')[0];
+          }
+
+          // Format data according to API expectations with proper casing and structure
+          const marketerData = {
+            BirthDate: birthDateString,
+            Email: this.marketerRegisterForm.get('email')?.value || '',
+            UserName: this.marketerRegisterForm.get('firstName')?.value + '_' + this.marketerRegisterForm.get('lastName')?.value,
+            City: 'Assiut',
+            Country: 'Egypt',
+            Street: '15 El-Nasr Street',
+            Gender: this.marketerRegisterForm.get('gender')?.value === 'male' ? 'M' : 'F',
+            LastName: this.marketerRegisterForm.get('lastName')?.value || '',
+            FirstName: this.marketerRegisterForm.get('firstName')?.value || '',
+            Status: 'active',
+            Region: 'Upper Egypt',
+            Role: 'Marketer',
+            CreatedAt: new Date().toISOString().split('T')[0],
+            Password: this.marketerRegisterForm.get('password')?.value || '',
+            ProfilePicturePath: profilePicturePath,
+            Description: this.marketerRegisterForm.get('companyDescription')?.value || '',
+            PhoneNumber: this.marketerRegisterForm.get('phone')?.value || '',
+            CompanyName: this.marketerRegisterForm.get('companyName')?.value || '',
+            Companywebsite: this.marketerRegisterForm.get('companyWebsite')?.value || '',
+            UserIDPath: userIDPath,
+            AcceptTerms: this.marketerRegisterForm.get('termsAccepted')?.value === true,
+            UserType: 1 // 1 for Marketer, 0 for Customer
+          };
+
+          console.log('Submitting marketer registration data');
+
+          // Call the registration service
+          this.userService.registerMarketer(marketerData).subscribe({
+            next: (response) => {
+              console.log('Registration successful:', response);
+              this.isLoading = false;
+              
+              // Store user data in localStorage for persistence
+              if (response.token) {
+                localStorage.setItem('token', response.token);
+                
+                // Store user details if available
+                if (response.user) {
+                  localStorage.setItem('currentUser', JSON.stringify(response.user));
+                } else {
+                  // Create a basic user object if not returned from API
+                  const userObj = {
+                    firstName: marketerData.FirstName,
+                    lastName: marketerData.LastName,
+                    email: marketerData.Email,
+                    userType: 'Marketer',
+                    profilePicturePath: marketerData.ProfilePicturePath
+                  };
+                  localStorage.setItem('currentUser', JSON.stringify(userObj));
+                }
+              }
+              
+              // Show success message
+              this.showSuccessMessage = true;
+              this.successMessage = 'Registration successful! You will be redirected to the dashboard in a moment.';
+              
+              // Navigate to dashboard after a short delay
+              setTimeout(() => {
+                this.router.navigate(['/dashboard']);
+              }, 3000);
+            },
+            error: (error) => {
+              console.error('Registration failed:', error);
+              this.isLoading = false;
+
+              // Handle different types of errors
+              let errorMessage = 'Registration failed. ';
+              
+              // Log the raw error response for debugging
+              console.log('Raw error response:', error);
+              
+              // Try to parse the response text if available
+              if (error.error && error.error.text) {
+                try {
+                  const errorBody = JSON.parse(error.error.text);
+                  console.log('Parsed error body:', errorBody);
+                } catch (e) {
+                  console.log('Could not parse error text:', error.error.text);
+                }
+              }
+
+              if (error.error) {
+                if (typeof error.error === 'string') {
+                  errorMessage += error.error;
+                } else if (error.error.message) {
+                  errorMessage += error.error.message;
+                } else if (error.error.errors) {
+                  // Handle validation errors
+                  const validationErrors = error.error.errors;
+                  const errorMessages = Object.keys(validationErrors)
+                    .map(key => {
+                      const fieldName = this.getFieldDisplayName(key);
+                      return `${fieldName}: ${validationErrors[key].join(', ')}`;
+                    })
+                    .join('\n');
+                  errorMessage += '\n' + errorMessages;
+                } else if (error.error.title) {
+                  errorMessage += error.error.title;
+                }
+              } else if (error.status === 0) {
+                errorMessage += 'Unable to connect to the server. Please check your internet connection and try again.';
+              } else if (error.status === 400) {
+                // Provide more specific guidance for common 400 errors
+                if (birthDateString && new Date(birthDateString) > new Date(new Date().setFullYear(new Date().getFullYear() - 18))) {
+                  errorMessage += 'You must be at least 18 years old to register as a marketer. Please check your birth date.';
+                } else {
+                  errorMessage += 'Invalid data provided. Common issues include:\n' +
+                    '- Email address already in use\n' +
+                    '- Username already taken\n' +
+                    '- Missing required fields\n' +
+                    '- Password does not meet complexity requirements';
+                }
+              } else if (error.status === 401) {
+                errorMessage += 'Unauthorized access. Please try again.';
+              } else if (error.status === 403) {
+                errorMessage += 'Access forbidden. Please try again.';
+              } else if (error.status === 404) {
+                errorMessage += 'Registration service not found. Please try again later.';
+              } else if (error.status === 409) {
+                errorMessage += 'Email already exists. Please use a different email address.';
+              } else if (error.status === 500) {
+                errorMessage += 'Server error. Please try again later.';
+              } else {
+                errorMessage += 'An unexpected error occurred. Please try again.';
+              }
+
+              // Show error message to user
+              alert(errorMessage);
+            }
+          });
+        })
+        .catch(error => {
+          console.error('Error during file upload:', error);
           this.isLoading = false;
-          alert('Registration failed. Please try again.');
-        },
-        complete: () => {
-          this.isLoading = false;
-        },
-      });
+          let errorMessage = 'Error uploading files. ';
+
+          if (error.error) {
+            if (typeof error.error === 'string') {
+              errorMessage += error.error;
+            } else if (error.error.message) {
+              errorMessage += error.error.message;
+            } else if (error.error.errors) {
+              const validationErrors = error.error.errors;
+              errorMessage += Object.values(validationErrors).flat().join('\n');
+            }
+          } else if (error.status === 0) {
+            errorMessage += 'Unable to connect to the server. Please check your internet connection.';
+          } else if (error.status === 413) {
+            errorMessage += 'File size is too large. Please choose a smaller file.';
+          } else if (error.status === 415) {
+            errorMessage += 'File type not supported. Please upload a valid image file.';
+          } else {
+            errorMessage += 'Please try again.';
+          }
+
+          alert(errorMessage);
+        });
     } else {
       this.marketerRegisterForm.markAllAsTouched();
+      const formErrors = this.getFormValidationErrors();
+      if (formErrors.length > 0) {
+        alert('Please fix the following errors:\n' + formErrors.join('\n'));
+      } else {
+        alert('Please check your form for any errors.');
+      }
     }
+  }
+
+  private getFieldDisplayName(fieldName: string): string {
+    const fieldNames: { [key: string]: string } = {
+      'firstName': 'First Name',
+      'lastName': 'Last Name',
+      'email': 'Email',
+      'password': 'Password',
+      'confirmPassword': 'Confirm Password',
+      'phone': 'Phone Number',
+      'country': 'Country',
+      'birthDate': 'Birth Date',
+      'gender': 'Gender',
+      'companyName': 'Company Name',
+      'companyWebsite': 'Company Website',
+      'companyDescription': 'Company Description',
+      'termsAccepted': 'Terms and Conditions'
+    };
+    return fieldNames[fieldName] || fieldName;
+  }
+
+  private getFormValidationErrors(): string[] {
+    const errors: string[] = [];
+    Object.keys(this.marketerRegisterForm.controls).forEach(key => {
+      const control = this.marketerRegisterForm.get(key);
+      if (control?.errors) {
+        Object.keys(control.errors).forEach(errorKey => {
+          const fieldName = this.getFieldDisplayName(key);
+          switch (errorKey) {
+            case 'required':
+              errors.push(`${fieldName} is required`);
+              break;
+            case 'email':
+              errors.push('Please enter a valid email address');
+              break;
+            case 'minlength':
+              if (control.errors?.[errorKey]?.requiredLength) {
+                errors.push(`${fieldName} must be at least ${control.errors[errorKey].requiredLength} characters`);
+              }
+              break;
+            case 'pattern':
+              errors.push(`${fieldName} format is invalid`);
+              break;
+            case 'weakPassword':
+              errors.push('Password is too weak. Please use a stronger password with uppercase, lowercase, numbers, and special characters');
+              break;
+            case 'passwordMismatch':
+              errors.push('Passwords do not match');
+              break;
+            case 'underAge':
+              errors.push('You must be at least 18 years old');
+              break;
+            default:
+              errors.push(`${fieldName} is invalid`);
+          }
+        });
+      }
+    });
+    return errors;
   }
 
   public initForm(): void {

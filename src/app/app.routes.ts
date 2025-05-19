@@ -30,6 +30,9 @@ import {SavedPostComponent} from './components/saved-post/saved-post.component'
 import { ProfileAsVisitorComponent } from './components/profile-as-visitor/profile-as-visitor.component';
 import { SearchPageComponent } from './components/search-page/search-page.component';
 import { TermsAndPrivacyComponent } from './components/terms-and-privacy/terms-and-privacy.component';
+
+import { PostoneComponent } from './components/postone/postone.component';
+
 export const routes: Routes = [
   {
     path: '',
@@ -76,6 +79,7 @@ export const routes: Routes = [
   {path:'terms-and-privacy', component: TermsAndPrivacyComponent},
 
 
+  {path: 'postone' ,component:PostoneComponent},
 
   {
     path: 'right-sidebar',

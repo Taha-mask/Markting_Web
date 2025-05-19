@@ -1,0 +1,62 @@
+<div class="post-card">
+
+  <div class="post-header">
+    <img src="https://i.pinimg.com/736x/71/f9/b1/71f9b1438c722091cbf4d1745a986c83.jpg" alt="Profile" class="avatar" />
+    <div class="header-info">
+      <h2>Shahd Mostafa</h2>
+      <p>Marketer | Public Speaker | Influencer</p>
+      <span>1w</span>
+    </div>
+  </div>
+
+
+  <img src="https://i.pinimg.com/736x/36/d9/a2/36d9a22e85ffa3d9aaac33f78a98153a.jpg" alt="Marketing Post" class="post-image" />
+
+
+  <div class="post-text">
+    هل تريد أن تجعل علامتك التجارية حديث الجميع؟! هل لديك منتج أو خدمة رائعة ولكن لا؟ 📝
+    تعرف كيف تصل إلى جمهورك المستهدف؟ 🤔
+    التسويق هو المفتاح السحري لنجاح أي مشروع، سواء كنت صاحب مشروع ناشئ أو شركة قائمة،
+    التسويق الصح هو اللي هيكبر اسمك! متخليش مجهودك يضيع، خليك ذكي وابدأ حملتك التسويقية دلوقتي 💡📢
+  </div>
+
+
+  <div class="reactions">
+    <button (click)="likePost()">❤️ {{ liked ? 'Liked' : 'Like' }}</button>
+    <button (click)="toggleComments()">{{ showComments ? 'Hide Comments' : 'Show Comments' }}</button>
+    <button (click)="sharePost()">🔁 Share</button>
+  </div>
+
+
+  <div class="comments-section" *ngIf="showComments">
+    <div class="add-comment-container">
+      <input [(ngModel)]="commentText" type="text" placeholder="Add a comment..." />
+      <button (click)="commentPost()">Post Comment</button>
+    </div>
+
+
+    <div *ngFor="let comment of comments; let i = index" class="comment">
+      <div class="comment-header">
+        <h4>{{ comment.username }}</h4>
+        <span class="comment-time">{{ comment.time }}</span>
+      </div>
+
+      <div class="comment-body">
+        <p>{{ comment.text }}</p>
+        <button (click)="likeComment(i)">❤️ {{ comment.likes || 0 }}</button>
+        <button (click)="toggleReply(i)">🔁 Reply</button>
+
+
+        <div *ngIf="showReplies[i]" class="reply-input-container">
+          <input [(ngModel)]="comment.replyText" type="text" placeholder="Write a reply..." />
+          <button (click)="replyToComment(i)">Reply</button>
+        </div>
+
+
+        <div *ngFor="let reply of comment.replies" class="reply">
+          <p><strong>{{ reply.username }}</strong> ({{ reply.time }}): {{ reply.text }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

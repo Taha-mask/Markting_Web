@@ -1,48 +1,53 @@
 <div class="container">
+  <!-- Search Input -->
   <div class="search-container">
-    <input type="text" placeholder="Search Your Activity" class="search-input">
+    <input type="text" [(ngModel)]="searchText" placeholder="Search Your Activity" class="search-input">
   </div>
-  <p class="activity-box">Your Activity</p>
 
-  <div class="activity-container">
-    <div class="activity-item">
-        <img src="/images/profile2.jpg" alt="Profile">
-        <p>Shahd posted a new post in her profile.</p>
-    </div>
-    <div class="activity-item">
-        <img src="/images/pic4.jpg" alt="Profile">
-        <p>Shahd commented on Sara's post.</p>
-    </div>
-    <div class="activity-item">
-        <img src="/images/cat.jpg" alt="Profile">
-        <p>Shahd reacted to Sara's post.</p>
+  <!-- Activity Header with Buttons -->
+  <div class="activity-box">
+    <span>Your Activity</span>
+    <div class="sort-buttons">
+      <button class="read-all-btn" (click)="toggleActivities()">
+        {{ showAllActivities ? 'Hide All' : 'Read All' }}
+      </button>
+      <button class="sort-btn" (click)="sortByNewest()">Sort by Newest</button>
+      <button class="sort-btn" (click)="sortByOldest()">Sort by Oldest</button>
     </div>
   </div>
 
+  <!-- Activities -->
+  <div class="activity-container" *ngIf="showAllActivities">
+    <div class="activity-item" *ngFor="let activity of filteredActivities">
+      <!-- Profile Image -->
+      <img [src]="activity.image" alt="Profile" class="profile-img">
+      <p>{{ activity.name }} {{ activity.text }}</p>
+    </div>
+  </div>
 
+  <!-- Reach Stats -->
   <p class="reach-title">📊 Reach in Last 30 Days</p>
   <div class="stats-box">
     <div class="stat-item">
-        <span class="icon">📌</span>
-        <span class="text">Posts</span>
-        <span class="percentage">40.2%</span>
+      <span class="icon">📌</span>
+      <span class="text">Posts</span>
+      <span class="percentage" style="color: #007BFF;">40.2%</span>
     </div>
     <div class="stat-item">
-        <span class="icon">💬</span>
-        <span class="text">Comments</span>
-        <span class="percentage">30%</span>
+      <span class="icon">💬</span>
+      <span class="text">Comments</span>
+      <span class="percentage" style="color: #FEF34C;">30%</span>
     </div>
     <div class="stat-item">
-        <span class="icon">❤️</span>
-        <span class="text">Reactions</span>
-        <span class="percentage">70.4%</span>
+      <span class="icon">❤️</span>
+      <span class="text">Reactions</span>
+      <span class="percentage" style="color: #FF5959;">70.4%</span>
     </div>
-
-
-
   </div>
+
+  <!-- Pie Chart -->
   <div class="pie-container">
-  <div class="pie-chart"></div>
-  <p class="chart-label">Customer: 20.34% | Marketer: 80.22%</p>
+    <div class="pie-chart"></div>
+    <p class="chart-label">Customer: 20.34% | Marketer: 80.22%</p>
   </div>
 </div>

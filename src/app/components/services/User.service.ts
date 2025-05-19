@@ -16,8 +16,8 @@ interface OAuthResponse {
 export class UserService {
   private userType: string = 'customer';
   private followingCount: number = 618;
-  private apiUrl: string = 'https://example.com/api'; // Replace with your actual API URL
-  
+  private apiUrl: string = 'http://brandit.runasp.net/api'; // Updated Backend API URL
+
   // Observable for authentication state
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.isTokenValid());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
@@ -61,7 +61,7 @@ export class UserService {
 
       // Decode payload
       const payload = JSON.parse(atob(tokenParts[1]));
-      
+
       // Check expiration
       const currentTime = Math.floor(Date.now() / 1000);
       if (payload.exp && payload.exp < currentTime) {
@@ -89,18 +89,70 @@ export class UserService {
   }
 
   updateUserPreference(key: string, value: any): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/user/preferences`, { 
-      [key]: value 
+    return this.http.patch(`${this.apiUrl}/user/preferences`, {
+      [key]: value
     });
   }
 
-  registerMarketer(formData: FormData): Observable<RegistrationResponse> {
-    return this.http.post<RegistrationResponse>(`${this.apiUrl}/auth/register-marketer`, formData).pipe(
+  uploadFile(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<any>(`${this.apiUrl}/Upload/UploadImage`, formData);
+  }
+
+  formDataToUserDto(formData: FormData, userType: string): any {
+    // Convert FormData to a UserDto object that matches the backend API
+    const userDto: any = {
+      Email: formData.get('email') as string,
+      FirstName: formData.get('firstName') as string,
+      LastName: formData.get('lastName') as string,
+      Password: formData.get('password') as string,
+      PhoneNumber: formData.get('phone') as string,
+      Gender: (formData.get('gender') as string) === 'male' ? 'M' : 'F',
+      BirthDate: formData.get('birthDate') as string,
+      Country: formData.get('country') as string,
+      City: '',  // Default values for fields not in the form
+      Street: '',
+      Description: formData.get('companyDescription') as string,
+      AcceptTerms: formData.get('termsAccepted') === 'true',
+      UserType: userType === 'Marketer' ? 1 : 0  // 1 for Marketer, 0 for Customer
+    };
+
+    // Add marketer-specific fields if this is a marketer registration
+    if (userType === 'Marketer') {
+      userDto.CompanyName = formData.get('companyName') as string;
+      userDto.Companywebsite = formData.get('companyWebsite') as string || null;
+    }
+
+    return userDto;
+  }
+
+  registerMarketer(data: any): Observable<RegistrationResponse> {
+    console.log('Sending marketer registration data to API:', data);
+    // Call the backend API endpoint for marketer registration with JSON data
+    return this.http.post<RegistrationResponse>(`${this.apiUrl}/User/RegisterMarketer`, data).pipe(
       catchError(this.handleError),
       map(response => {
+        console.log('Registration response received:', response);
         if (response.token) {
           localStorage.setItem('token', response.token);
           this.isAuthenticatedSubject.next(true);
+          
+          // Create a user object if not provided in response
+          if (!response.user && response.userId) {
+            const user = {
+              id: response.userId,
+              email: data.Email,
+              firstName: data.FirstName,
+              lastName: data.LastName,
+              userType: 'Marketer',
+              profilePicturePath: data.ProfilePicturePath
+            };
+            response.user = user;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+          } else if (response.user) {
+            localStorage.setItem('currentUser', JSON.stringify(response.user));
+          }
         }
         return response;
       })
@@ -108,7 +160,11 @@ export class UserService {
   }
 
   registerUser(formData: FormData): Observable<RegistrationResponse> {
-    return this.http.post<RegistrationResponse>(`${this.apiUrl}/auth/register-user`, formData).pipe(
+    // Convert FormData to a UserDto object that matches the backend API
+    const userDto = this.formDataToUserDto(formData, 'Customer');
+
+    // Call the backend API endpoint for customer registration
+    return this.http.post<RegistrationResponse>(`${this.apiUrl}/User/RegisterCustomer`, userDto).pipe(
       catchError(this.handleError),
       map(response => {
         if (response.token) {
@@ -121,13 +177,25 @@ export class UserService {
   }
 
   login(email: string, password: string): Observable<LoginResponse> {
-    const body = { email, password };
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, body).pipe(
+    console.log('Attempting login with:', { email });
+    // Format the request body according to API expectations
+    const body = { 
+      Email: email, 
+      Password: password 
+    };
+    
+    return this.http.post<LoginResponse>(`${this.apiUrl}/User/Login`, body).pipe(
       catchError(this.handleError),
       map(response => {
+        console.log('Login response received:', response);
         if (response.token) {
           localStorage.setItem('token', response.token);
           this.isAuthenticatedSubject.next(true);
+          
+          // Store user information if available
+          if (response.user) {
+            localStorage.setItem('currentUser', JSON.stringify(response.user));
+          }
         }
         return response;
       })

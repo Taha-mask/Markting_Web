@@ -14,6 +14,14 @@ export interface RegistrationResponse {
     message: string;
     userId?: string;
     token?: string;  // Added optional token property
+    user?: {
+        id?: string;
+        email?: string;
+        firstName?: string;
+        lastName?: string;
+        userType?: string;
+        profilePicturePath?: string;
+    };
 }
 
 export interface ApiError {
