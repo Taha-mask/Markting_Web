@@ -14,6 +14,11 @@ export class AuthService {
     return user ? JSON.parse(user) : null;
   }
 
+  getUserId(): string {
+    const user = this.getCurrentUser();
+    return user?.id || '';
+  }
+
   updateUserProfile(user: User): Observable<User> {
     return this.apiService.put<User>(`users/${user.username}`, user);
   }

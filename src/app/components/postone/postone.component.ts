@@ -1,90 +1,133 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { PostService } from '../../services/post.service';
+import { Post } from '../../interfaces/post';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-postone',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, HttpClientModule],
   templateUrl: './postone.component.html',
   styleUrls: ['./postone.component.css']
 })
-export class PostoneComponent {
-
-  post = {
-    username: 'Shahd Mostafa',
-    job: 'Marketer | Public Speaker | Influencer',
-    time: '1w',
-    text: `هل تريد أن تجعل علامتك التجارية حديث الجميع؟! هل لديك منتج أو خدمة رائعة ولكن لا؟ 📝
-          تعرف كيف تصل إلى جمهورك المستهدف؟ 🤔 التسويق هو المفتاح السحري لنجاح أي مشروع، سواء كنت صاحب مشروع ناشئ أو شركة قائمة،
-          التسويق الصح هو اللي هيكبر اسمك! متخليش مجهودك يضيع، خليك ذكي وابدأ حملتك التسويقية دلوقتي 💡📢`,
-    image: 'https://i.pinimg.com/736x/36/d9/a2/36d9a22e85ffa3d9aaac33f78a98153a.jpg'
-  };
-
-  comments = [
-    {
-      username: 'Ahmed',
-      text: 'تعليق جميل جدًا!',
-      time: '1h ago',
-      replies: [] as { username: string, text: string, time: string }[],  // تأكد من أن الردود كائنات بالشكل الصحيح
-      replyText: '',
-      likes: 5
-    }
-  ];
+export class PostoneComponent implements OnInit {
+  posts: Post[] = [];
+  loading = true;
+  error = false;
+  
+  comments: any[] = [];
+  
+  constructor(private postService: PostService) {}
 
   showComments: boolean = false;
   liked: boolean = false;
   commentText: string = '';
   showReplies: boolean[] = [];
-
-
-  toggleComments(): void {
-    this.showComments = !this.showComments;
+  
+  ngOnInit() {
+    this.loadPosts();
+  }
+  
+  loadPosts() {
+    this.loading = true;
+    this.postService.getPosts().subscribe({
+      next: (posts) => {
+        this.posts = posts;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading posts:', error);
+        this.error = true;
+        this.loading = false;
+      }
+    });
   }
 
 
-  likePost(): void {
-    this.liked = !this.liked;
+  toggleComments(post: Post): void {
+    post.showComments = !post.showComments;
   }
-  commentPost(): void {
+
+
+  likePost(post: Post): void {
+    post.liked = !post.liked;
+    // Here you would call the API to like the post
+    // this.postService.likePost(post.id).subscribe(...);
+  }
+  commentPost(post: Post): void {
     if (this.commentText.trim()) {
-      this.comments.push({
-        username: 'Shahd',  
-        text: this.commentText,
-        time: 'just now',
-        replies: [],
-        replyText: '',
-        likes: 0
-      });
+      const comment = {
+        id: this.generateUniqueId(),
+        postId: post.id,
+        username: 'Current User', // This should be the logged-in user
+        content: this.commentText,
+        timestamp: new Date(),
+        likes: 0,
+        replies: []
+      };
+      
+      // Here you would call the API to add the comment
+      // this.postService.addComment(post.id, comment).subscribe(...);
+      
+      // For now, just add it to the local post object
+      if (!post.comments) {
+        post.comments = [];
+      }
+      post.comments.push(comment);
       this.commentText = '';
     }
   }
-
-
-  likeComment(index: number): void {
-    this.comments[index].likes += 1;
+  
+  generateUniqueId(): string {
+    return Date.now().toString(36) + Math.random().toString(36).substring(2);
   }
 
 
-  toggleReply(index: number): void {
-    this.showReplies[index] = !this.showReplies[index];
-  }
-
-
-  replyToComment(index: number): void {
-    if (this.comments[index].replyText.trim()) {
-      const reply = {
-        username: 'Shahd',
-        text: this.comments[index].replyText,
-        time: new Date().toLocaleTimeString()
-      };
-      this.comments[index].replies.push(reply);
-      this.comments[index].replyText = '';
+  likeComment(post: Post, commentId: string): void {
+    if (post.comments) {
+      const comment = post.comments.find(c => c.id === commentId);
+      if (comment) {
+        comment.likes = (comment.likes || 0) + 1;
+        // Here you would call the API to like the comment
+        // this.postService.likeComment(commentId).subscribe(...);
+      }
     }
   }
 
-  // وظيفة للمشاركة
-  sharePost(): void {
-    console.log("Post shared!");
+
+  toggleReply(comment: any): void {
+    comment.showReplies = !comment.showReplies;
+  }
+
+
+  replyToComment(post: Post, comment: any): void {
+    if (comment.replyText && comment.replyText.trim()) {
+      const reply = {
+        id: this.generateUniqueId(),
+        username: 'Current User', // This should be the logged-in user
+        content: comment.replyText,
+        timestamp: new Date(),
+        likes: 0
+      };
+      
+      if (!comment.replies) {
+        comment.replies = [];
+      }
+      
+      comment.replies.push(reply);
+      comment.replyText = '';
+      
+      // Here you would call the API to add the reply
+      // this.postService.addReply(comment.id, reply).subscribe(...);
+    }
+  }
+
+  // Share post function
+  sharePost(post: Post): void {
+    console.log("Post shared:", post.id);
+    // Here you would call the API to share the post
+    // this.postService.sharePost(post.id).subscribe(...);
   }
 }

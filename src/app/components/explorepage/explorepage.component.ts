@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { Router, RouterModule } from '@angular/router';
-import { PostService } from '../services/post.service';
+import { PostService } from '../../services/post.service';
 import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.component';
 import { User } from '../../interfaces/user';
 import { Post } from '../../interfaces/post';

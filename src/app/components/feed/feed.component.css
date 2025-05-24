@@ -49,6 +49,62 @@
   background: #555;
 }
 
+/* Reaction Picker Styles */
+.reaction-wrapper {
+  position: relative;
+}
+
+.reaction-picker {
+  bottom: 40px;
+  left: 0;
+  z-index: 100;
+  border-radius: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.reaction-item {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reaction-item:hover {
+  transform: scale(1.2);
+  background-color: #f8f9fa;
+}
+
+/* Top Reactions Display */
+.top-reactions {
+  display: flex;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.reaction-count {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  background-color: #f8f9fa;
+  padding: 3px 8px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+}
+
+.reaction-icon {
+  margin-right: 3px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Left Sidebar */
 .cover-photo img {
   width: 100%;
@@ -1557,16 +1613,16 @@ body {
     min-width: 75px;
     height: 120px;
   }
-  
+
   .story-frame {
     width: 75px;
     height: 75px;
   }
-  
+
   .story-frame i {
     font-size: 28px !important;
   }
-  
+
   .category-text {
     font-size: 0.8rem;
     max-width: 75px;

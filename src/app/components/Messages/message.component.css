@@ -9,6 +9,7 @@
   margin: 20px auto;
   max-width: 1400px;
   width: 95%;
+  background-color: #fff;
 }
 
 ::-webkit-scrollbar {
@@ -206,6 +207,7 @@
   align-items: center;
   justify-content: space-between;
   font-size: 12px;
+  margin-top: 4px;
 }
 
 .message-sent .message-footer {
@@ -672,4 +674,27 @@
   .chat-messages {
     padding-bottom: 80px; /* Add space for fixed input */
   }
+}
+
+/* Loading indicators and empty states */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  color: #007bff;
+}
+
+.text-center.py-4, .text-center.py-5 {
+  padding: 2rem 0;
+}
+
+/* Empty chat state */
+.rightside .text-center i.fas.fa-comments {
+  font-size: 3rem;
+  color: #adb5bd;
+  margin-bottom: 1rem;
+}
+
+/* Loading messages state */
+.rightside .d-flex.justify-content-center.align-items-center {
+  height: 100%;
 }

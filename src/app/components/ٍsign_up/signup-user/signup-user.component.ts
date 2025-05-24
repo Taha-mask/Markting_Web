@@ -11,7 +11,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { UserService } from '../../services/User.service';
+import { UserService } from '../../../services/User.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 interface UserRegisterForm {
@@ -151,7 +151,7 @@ export class SignupUserComponent implements OnInit {
   private validatePhoneNumber(control: AbstractControl): ValidationErrors | null {
     const countryCode = this.userRegisterForm.get('country')?.value;
     const selectedCountry = this.countries.find(c => c.code === countryCode);
-    
+
     if (!selectedCountry || !control.value) return null;
 
     return control.value.length === selectedCountry.phoneLength ? null : { invalidLength: true };
@@ -171,43 +171,130 @@ export class SignupUserComponent implements OnInit {
 
   public register(): void {
     this.errorMessage = null;
-    
+
     if (this.userRegisterForm.valid) {
       this.isLoading = true;
 
-      const formData = new FormData();
-      Object.keys(this.userRegisterForm.value).forEach((key) => {
-        const value = this.userRegisterForm.get(key)?.value;
-        if (value !== null && value !== undefined) {
-          if (key === 'phone') {
-            const countryCode = this.userRegisterForm.get('country')?.value;
-            formData.append('phone', `${countryCode}${value}`);
+      // First, upload the profile image if selected
+      if (this.selectedProfileImage) {
+        this.uploadProfileImage().then(imageUrl => {
+          // After image upload, proceed with user registration
+          this.registerUser(imageUrl);
+        }).catch(error => {
+          console.error('Image upload failed:', error);
+          this.isLoading = false;
+          this.errorMessage = 'Failed to upload profile image. Please try again.';
+        });
+      } else {
+        // No profile image, proceed with registration directly
+        this.registerUser();
+      }
+    } else {
+      // Form is invalid, show validation errors
+      this.userRegisterForm.markAllAsTouched();
+      this.errorMessage = 'Please fill all required fields correctly.';
+
+      // Highlight the first invalid field
+      const invalidControls = Object.keys(this.userRegisterForm.controls)
+        .filter(key => this.userRegisterForm.get(key)?.invalid);
+
+      if (invalidControls.length > 0) {
+        const firstInvalidField = document.querySelector(`[formControlName=${invalidControls[0]}]`);
+        if (firstInvalidField) {
+          (firstInvalidField as HTMLElement).focus();
+        }
+      }
+    }
+  }
+
+  private uploadProfileImage(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!this.selectedProfileImage) {
+        resolve('');
+        return;
+      }
+
+      this.userService.uploadFile(this.selectedProfileImage)
+        .subscribe({
+          next: (response) => {
+            if (response && response.imageUrl) {
+              resolve(response.imageUrl);
+            } else {
+              reject('Invalid response from image upload service');
+            }
+          },
+          error: (error) => {
+            console.error('Error uploading image:', error);
+            this.errorMessage = 'Failed to upload profile image. Please try again.';
+            reject(error);
+          }
+        });
+    });
+  }
+
+  private registerUser(profileImageUrl: string = ''): void {
+    // Create FormData object for the API request
+    const formData = new FormData();
+    Object.keys(this.userRegisterForm.value).forEach((key) => {
+      const value = this.userRegisterForm.get(key)?.value;
+      if (value !== null && value !== undefined) {
+        if (key === 'phone') {
+          // Format phone number with country code
+          const countryCode = this.userRegisterForm.get('country')?.value;
+          formData.append('phone', `${countryCode}${value}`);
+        } else {
+          formData.append(key, value);
+        }
+      }
+    });
+
+    // Add profile image URL if available
+    if (profileImageUrl) {
+      formData.append('profileImageUrl', profileImageUrl);
+    }
+
+    // Add additional required fields
+    formData.append('userType', '0'); // 0 for Customer
+    formData.append('status', 'active');
+    formData.append('createdAt', new Date().toISOString().split('T')[0]);
+
+    console.log('Submitting customer registration data');
+
+    // Call the user service to register the customer
+    this.userService.registerUser(formData).subscribe({
+        next: (response: any) => {
+          console.log('Registration successful:', response);
+          this.isLoading = false;
+
+          // Show success message
+          this.errorMessage = null;
+          alert('Registration successful! You will be redirected to the login page.');
+
+          // Navigate to login page
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 1500);
+        },
+        error: (error: any) => {
+          console.error('Registration failed:', error);
+          this.isLoading = false;
+
+          // Handle different error formats
+          if (error.error && typeof error.error === 'object') {
+            if (error.error.message) {
+              this.errorMessage = error.error.message;
+            } else if (error.error.errors) {
+              // Handle validation errors
+              const errorMessages = Object.values(error.error.errors).flat();
+              this.errorMessage = errorMessages.join('. ');
+            } else {
+              this.errorMessage = 'Registration failed. Please try again.';
+            }
           } else {
-            formData.append(key, value);
+            this.errorMessage = error.message || 'Registration failed. Please try again.';
           }
         }
       });
-
-      if (this.selectedProfileImage) {
-        formData.append('profileImage', this.selectedProfileImage);
-      }
-
-      this.userService.registerUser(formData).subscribe({
-        next: (response) => {
-          this.router.navigate(['/login']);
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.errorMessage = error.error?.message || 'Registration failed. Please try again.';
-        },
-        complete: () => {
-          this.isLoading = false;
-        },
-      });
-    } else {
-      this.userRegisterForm.markAllAsTouched();
-      this.errorMessage = 'Please fill all required fields correctly.';
-    }
   }
 
   public initForm(): void {

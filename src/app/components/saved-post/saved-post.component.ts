@@ -63,6 +63,32 @@ export class SavedPostComponent implements OnInit {
       price: 899.99,
       likes: 32,
       isLiked: true
+    },
+    {
+      id: 3,
+      title: 'Smart Home Bundle',
+      description: 'Complete smart home setup with voice control.',
+      imageUrl: 'images/post-image-2.png',
+      timestamp: new Date(),
+      username: 'Mohammed Hassan',
+      userImage: 'images/user-3.png',
+      category: 'Home & Kitchen',
+      price: 599.99,
+      likes: 28,
+      isLiked: false
+    },
+    {
+      id: 4,
+      title: 'Gaming Console Pro',
+      description: 'Latest gaming console with 2 controllers and games.',
+      imageUrl: 'images/post-image-4.png',
+      timestamp: new Date(),
+      username: 'Fatima Ahmed',
+      userImage: 'images/user-4.png',
+      category: 'Video Games',
+      price: 499.99,
+      likes: 56,
+      isLiked: true
     }
   ];
 
@@ -73,7 +99,27 @@ export class SavedPostComponent implements OnInit {
   showShareModal: boolean = false;
   selectedPost: SavedPost | null = null;
 
-  categories: string[] = ['All', 'Electronics', 'Photography', 'Fashion', 'Home', 'Sports'];
+  categories = [
+    { name: 'All', icon: 'bi bi-collection' },
+    { name: 'Electrical Tools', icon: 'bi bi-tools' },
+    { name: 'Food', icon: 'bi bi-egg-fried' },
+    { name: 'Medicines', icon: 'bi bi-capsule' },
+    { name: 'Electronics', icon: 'bi bi-laptop' },
+    { name: 'Clothing', icon: 'bi bi-person' },
+    { name: 'Fashion', icon: 'bi bi-handbag' },
+    { name: 'Home & Kitchen', icon: 'bi bi-house-door' },
+    { name: 'Beauty & Personal Care', icon: 'bi bi-scissors' },
+    { name: 'Home Appliances', icon: 'bi bi-fan' },
+    { name: 'Sports & Fitness', icon: 'bi bi-bicycle' },
+    { name: 'Video Games', icon: 'bi bi-controller' },
+    { name: 'Toys & Hobbies', icon: 'bi bi-joystick' },
+    { name: 'Auto Parts', icon: 'bi bi-car-front' },
+    { name: 'Groceries', icon: 'bi bi-cart' },
+    { name: 'Health & Personal Care', icon: 'bi bi-heart-pulse' },
+    { name: 'Books & Media', icon: 'bi bi-book' },
+    { name: 'Pet Supplies', icon: 'bi bi-heart' },
+    { name: 'Perfumes', icon: 'bi bi-flower1' }
+  ];
 
   get filteredPosts(): SavedPost[] {
     return this.savedPosts

@@ -1,124 +1,199 @@
-import { Component, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { Component, ViewChild, ElementRef, Renderer2, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TimeagoModule } from 'ngx-timeago';
-import { StoryViewerComponent } from '../story-viewer/story-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatChipsModule } from '@angular/material/chips';
+import { trigger, transition, style, animate } from '@angular/animations';
+import { StoryViewerComponent } from '../story-viewer/story-viewer.component';
 import { HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 
+interface Story {
+  id: number;
+  src: string;
+  type: 'video' | 'image';
+  description: string;
+  user: {
+    name: string;
+    image: string;
+  };
+  uploadTime: Date;
+  likes: number;
+  views: number;
+  isLiked: boolean;
+  isSaved: boolean;
+  comments: Comment[];
+  isAdvertisement?: boolean;
+  advertisementDuration?: number; // Duration in days
+  advertisementEndDate?: Date;
+  advertisementCost?: number;
+  advertisementStatus?: 'active' | 'expired' | 'pending';
+  targetAudience?: string[];
+  advertisementStats?: {
+    clicks: number;
+    impressions: number;
+    engagement: number;
+  };
+}
+
+interface Comment {
+  id: number;
+  text: string;
+  userImage: string;
+  username: string;
+  time: Date;
+  likes: number;
+  dislikes: number;
+  isLiked: boolean;
+  isDisliked: boolean;
+  replies: Comment[];
+}
 
 @Component({
   selector: 'app-inner-story',
   standalone: true,
-  imports: [CommonModule, FormsModule, TimeagoModule, StoryViewerComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TimeagoModule,
+    MatButtonModule,
+    MatIconModule,
+    MatInputModule,
+    MatSliderModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatCheckboxModule,
+    MatTooltipModule,
+    MatChipsModule
+    // Note: StoryViewerComponent is used via MatDialog.open() and not directly in the template
+  ],
   templateUrl: './inner-story.component.html',
-  styleUrls: ['./inner-story.component.css']
+  styleUrls: ['./inner-story.component.css'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ opacity: 0, transform: 'translateY(10px)' }))
+      ])
+    ]),
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('300ms ease-out', style({ transform: 'translateX(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ transform: 'translateX(100%)' }))
+      ])
+    ])
+  ]
 })
-export class InnerStoryComponent {
-  
+export class InnerStoryComponent implements OnInit {
   @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef<HTMLVideoElement>;
   @ViewChild('fileInput') fileInput!: ElementRef;
 
-  previewUrl: string | null = null;
-  isImage = false;
-  isVideo = false;
-
-  likes = 0;
-  liked = false;
-  showComments = false;
-  showShareSection: boolean = false;
-  showOptions = false;
-  comments: { text: string; userImage: string; username: string; time: Date; likes: number; dislikes: number; liked: boolean; disliked: boolean }[] = [];  
-
-  showModal = false;
-  newComment = "";
-  currentUser = { user: 'Al-Husseini', image: 'images/husseini.jpg' };
-  selectedFileUrl: string | null = null; 
-  selectedFileType: string | null = null;
-  storyDescription: string = ""; 
+  stories: Story[] = [
+    {
+      id: 1,
+      src: '/public/vedios/الانسان المصري بياكل كم جرام سكر ؟.mp4',
+      type: 'video',
+      description: 'Check out this amazing story!',
+      user: {
+        name: 'Al-Husseini',
+        image: '/public/images/user-2.png'
+      },
+      uploadTime: new Date(),
+      likes: 120,
+      views: 1500,
+      isLiked: false,
+      isSaved: false,
+      comments: []
+    },
+    {
+      id: 2,
+      src: '/public/vedios/الانسان المصري بياكل كم جرام سكر ؟.mp4',
+      type: 'video',
+      description: 'Another interesting story',
+      user: {
+        name: 'Taha',
+        image: '/public/images/user-1.png'
+      },
+      uploadTime: new Date(),
+      likes: 85,
+      views: 1200,
+      isLiked: false,
+      isSaved: false,
+      comments: []
+    }
+  ];
 
   currentStoryIndex = 0;
-  isSidebarVisible: boolean = false;
-  transitioning: boolean = false;
+  isSidebarVisible = true;
+  showComments = false;
+  showShareModal = false;
+  showOptions = false;
+  newComment = '';
+  isLoading = false;
+  isPlaying = true;
+  progress = 0;
+  duration = 0;
+  volume = 1;
+  isMuted = false;
+  showVolumeSlider = false;
+  showProgressBar = true;
+  hideControlsTimeout: any;
 
-  users = [
-    { user: 'Al-Husseini', image: 'images/husseini.jpg', time: new Date(), likes: 0, dislikes: 0, loved: false, text: this.newComment },
-    { user: 'Taha', image: 'images/taha.jpg', time: new Date(), text: "nice work", likes: 0, dislikes: 0, loved: false },
-    { user: 'Hassan', image: 'images/hassan.jpg', time: new Date(), text: "", likes: 0, dislikes: 0, loved: false },
-    { user: 'Shahd', image: 'images/shahd.jpg', time: new Date(), text: "", likes: 0, dislikes: 0, loved: false },
-    { user: 'Asmaa', image: 'images/asmaa.jpg', time: new Date(), text: "", likes: 0, dislikes: 0, loved: false }
-  ];
-  
-  publishedStories: { 
-    src: string; 
-    type: string; 
-    description: string; 
-    user: string; 
-    uploadTime: Date; 
-  }[] = [
-    {
-      src: "vedios/الانسان المصري بياكل كم جرام سكر ؟.mp4", // لينك الفيديو الافتراضي
-      type: "video",
-      description: "test Story",
-      user: "Admin",
-      uploadTime: new Date()
-    }
-  ];
-  
-  
+  // Advertisement related properties
+  isCreatingAdvertisement = false;
+  advertisementDuration = 7; // Default 7 days
+  advertisementCost = 0;
+  selectedTargetAudience: string[] = [];
+  availableAudiences = ['General', 'Men', 'Women', 'Youth', 'Adults', 'Seniors', 'Professionals', 'Students'];
+  costPerDay = 10; // Base cost per day in dollars
 
-  currentStoryIndexPublished: number = 0;
-  
-  story = [
-    { src: 'vedios/الانسان المصري بياكل كم جرام سكر ؟.mp4', type: 'video', description: 'How much sugar Egyptian person eat' },
-    { src: 'vedios/اختبرت قوة اقوي عامل نظافة في العالم !.mp4', type: 'video', description: 'أقوى قبضة في العالم' }
-  ];
-  
-  constructor(private dialog: MatDialog, private renderer: Renderer2) {}
+  constructor(private dialog: MatDialog, private renderer: Renderer2, private router: Router) {}
 
-  selectPublishedStory(index: number): void {
-    if (index < 0 || index >= this.publishedStories.length) return;
-
-    this.currentStoryIndexPublished = index;
-    // this.openFilePicker();
+  ngOnInit() {
+    console.log('Stories:', this.stories);
+    console.log('Current Story Index:', this.currentStoryIndex);
+    this.initializeVideoPlayer();
   }
 
-  // openStoryViewer(): void {
-  //   if (!this.publishedStories || this.publishedStories.length === 0 || this.currentStoryIndexPublished < 0 || this.currentStoryIndexPublished >= this.publishedStories.length) return;
-
-  //   const story = this.publishedStories[this.currentStoryIndexPublished];
-
-  //   const dialogRef = this.dialog.open(StoryViewerComponent, {
-
-  //     data: { 
-  //       url: story.src, 
-  //       type: story.type
-  //     },
-  //     width: '80vw',
-  //     height: '90vh',
-  //     panelClass: 'custom-dialog-container'
-  //   });
-
-  //   dialogRef.afterOpened().subscribe(() => {
-  //     document.body.classList.add('modal-open');
-  //   });
-    
-  //   dialogRef.afterClosed().subscribe(() => {
-  //     document.body.classList.remove('modal-open');
-  //   });
-    
-
-  // }
-
-  openFilePicker() {
-    if (this.fileInput) {
-      this.fileInput.nativeElement.click();
+  private initializeVideoPlayer() {
+    if (this.videoPlayer) {
+      console.log('Video Player initialized');
+      const video = this.videoPlayer.nativeElement;
+      video.addEventListener('timeupdate', () => {
+        this.progress = (video.currentTime / video.duration) * 100;
+      });
+      video.addEventListener('loadedmetadata', () => {
+        this.duration = video.duration;
+        console.log('Video duration:', this.duration);
+      });
+    } else {
+      console.log('Video Player not found');
     }
   }
+
+  // Method to open file picker with optional advertisement flag
   
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) return;
+    if (!input.files?.length) return;
   
     const file = input.files[0];
     const fileType = file.type.startsWith('video') ? 'video' : 'image';
@@ -126,306 +201,319 @@ export class InnerStoryComponent {
     const reader = new FileReader();
     reader.onload = () => {
       const fileUrl = reader.result as string;
-  
-      if (!fileUrl) {
-        console.error("Failed to load file URL");
-        return;
-      }
-  
-      // افتح preview للستوري في الديالوج
+      if (!fileUrl) return;
+
       const dialogRef = this.dialog.open(StoryViewerComponent, {
-        data: { url: fileUrl, type: fileType },
-        width: '0vw',
-        height: '0vh',
+        data: {
+          url: fileUrl,
+          type: fileType,
+          isAdvertisement: this.isCreatingAdvertisement,
+          advertisementDuration: this.advertisementDuration,
+          selectedTargetAudience: this.selectedTargetAudience,
+          advertisementCost: this.advertisementCost
+        },
+        width: '100%',
+        height: '100%',
         panelClass: 'fullscreen-dialog'
       });
   
-      // استقبل البيانات بعد ما اليوزر يضغط Confirm
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result && result.url && result.description) {
-          const newStory = {
-            src: result.url,
-            type: result.type,
-            description: result.description,
-            uploadTime: new Date(),
-            user: 'Elhusseini'
-          };
-  
-          this.publishedStories.push(newStory);
-          console.log("Story Added to List: ", this.publishedStories);
+      dialogRef.afterClosed().subscribe(result => {
+        if (result?.url && result?.description) {
+          // If creating an advertisement, update the advertisement properties
+          if (result.isAdvertisement) {
+            this.advertisementDuration = result.advertisementDuration;
+            this.selectedTargetAudience = result.selectedTargetAudience;
+            this.updateAdvertisementCost();
+          }
+
+          this.addNewStory(
+            result.url,
+            fileType,
+            result.description,
+            result.isAdvertisement
+          );
         }
       });
     };
-  
     reader.readAsDataURL(file);
   }
   
+  private addNewStory(url: string, type: 'video' | 'image', description: string, isAdvertisement = false) {
+    const newStory: Story = {
+      id: this.stories.length + 1,
+      src: url,
+      type,
+      description,
+      user: {
+        name: 'Al-Husseini',
+        image: 'images/user-2.png'
+      },
+      uploadTime: new Date(),
+      likes: 0,
+      views: 0,
+      isLiked: false,
+      isSaved: false,
+      comments: [],
+      isAdvertisement: isAdvertisement
+    };
 
-  confirmStory(): void {
-    if (this.selectedFileUrl) {
-      const newStory = {
-        src: this.selectedFileUrl,
-        type: this.selectedFileType!,
-        description: this.storyDescription,
-        user: "Al-Husseini",
-        uploadTime: new Date()
+    if (isAdvertisement) {
+      // Calculate end date based on duration
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + this.advertisementDuration);
+
+      // Add advertisement specific properties
+      newStory.advertisementDuration = this.advertisementDuration;
+      newStory.advertisementEndDate = endDate;
+      newStory.advertisementCost = this.calculateAdvertisementCost();
+      newStory.advertisementStatus = 'active';
+      newStory.targetAudience = [...this.selectedTargetAudience];
+      newStory.advertisementStats = {
+        clicks: 0,
+        impressions: 1, // Start with 1 impression (the creator)
+        engagement: 0
       };
+    }
 
-      this.publishedStories.push(newStory);
-      this.selectedFileUrl = null;
-      this.selectedFileType = null;
-      this.storyDescription = "";
+    this.stories.unshift(newStory);
+
+    // Reset advertisement creation state
+    if (isAdvertisement) {
+      this.resetAdvertisementForm();
     }
   }
 
-  goToPreviousStory(): void {
-    if (this.currentStoryIndexPublished > 0) {
-      this.applyTransition();
-      setTimeout(() => {
-        this.currentStoryIndexPublished--;
-        this.removeTransition();
-      }, 100);
+  resetAdvertisementForm() {
+    this.isCreatingAdvertisement = false;
+    this.advertisementDuration = 7;
+    this.selectedTargetAudience = [];
+    this.advertisementCost = 0;
+  }
+
+  calculateAdvertisementCost(): number {
+    // Base calculation: cost per day * number of days
+    let cost = this.costPerDay * this.advertisementDuration;
+
+    // Add premium for targeted audiences (more specific targeting costs more)
+    if (this.selectedTargetAudience.length > 0) {
+      cost += (this.selectedTargetAudience.length * 5); // $5 per target audience segment
+    }
+
+    return cost;
+  }
+
+  updateAdvertisementCost() {
+    this.advertisementCost = this.calculateAdvertisementCost();
+  }
+
+  toggleAdvertisementCreation() {
+    this.isCreatingAdvertisement = !this.isCreatingAdvertisement;
+    if (this.isCreatingAdvertisement) {
+      this.updateAdvertisementCost();
     }
   }
 
+  toggleAudienceSelection(audience: string) {
+    const index = this.selectedTargetAudience.indexOf(audience);
+    if (index === -1) {
+      this.selectedTargetAudience.push(audience);
+    } else {
+      this.selectedTargetAudience.splice(index, 1);
+    }
+    this.updateAdvertisementCost();
+  }
 
+  createAdvertisement() {
+    this.openFilePicker(true);
+  }
 
-  goToNextStory(): void {
-    if (this.currentStoryIndexPublished < this.publishedStories.length - 1) {
-      this.applyTransition();
-      setTimeout(() => {
-        this.currentStoryIndexPublished++;
-        this.removeTransition();
-      }, 100);
+  openFilePicker(isAdvertisement = false) {
+    this.isCreatingAdvertisement = isAdvertisement;
+    this.fileInput.nativeElement.click();
+  }
+
+  togglePlayPause() {
+    if (this.videoPlayer) {
+      if (this.isPlaying) {
+        this.videoPlayer.nativeElement.pause();
+      } else {
+        this.videoPlayer.nativeElement.play();
+      }
+      this.isPlaying = !this.isPlaying;
     }
   }
 
-  
-  toggleLike() {
-    this.liked = !this.liked;
-    this.likes += this.liked ? 1 : -1;
+  seekTo(event: MouseEvent) {
+    if (this.videoPlayer) {
+      const progressBar = event.currentTarget as HTMLElement;
+      const rect = progressBar.getBoundingClientRect();
+      const pos = (event.clientX - rect.left) / rect.width;
+      this.videoPlayer.nativeElement.currentTime = pos * this.duration;
+    }
   }
 
-  toggleComments() {
-    this.showComments = !this.showComments;
+  toggleMute() {
+    if (this.videoPlayer) {
+      this.isMuted = !this.isMuted;
+      this.videoPlayer.nativeElement.muted = this.isMuted;
+    }
   }
 
-  // add conmment
-  addComment() {
+  setVolume(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.volume = parseFloat(input.value);
+    if (this.videoPlayer) {
+      this.videoPlayer.nativeElement.volume = this.volume;
+    }
+  }
+
+  toggleLike(story: Story) {
+    story.isLiked = !story.isLiked;
+    story.likes += story.isLiked ? 1 : -1;
+  }
+
+  toggleSave(story: Story) {
+    story.isSaved = !story.isSaved;
+  }
+
+  addComment(story: Story) {
     if (this.newComment.trim()) {
-      const newCommentObj = {
+      const comment: Comment = {
+        id: story.comments.length + 1,
         text: this.newComment,
-        userImage: 'images/husseini.jpg', 
-        username: 'User123',
+        userImage: 'images/user-2.png',
+        username: 'Al-Husseini',
         time: new Date(),
         likes: 0,
         dislikes: 0,
-        liked: false,
-        disliked: false
+        isLiked: false,
+        isDisliked: false,
+        replies: []
       };
-  
-      this.comments.unshift(newCommentObj); 
+      story.comments.unshift(comment);
       this.newComment = ''; 
-      
-      
     }
-    
   }
-  likeComment(comment: any) {
-    if (comment.liked) {
-      comment.liked = false;
-      comment.likes--;
-    } else {
-      comment.liked = true;
-      comment.likes++;
-  
-      // إلغاء الديسلايك لو كان موجود
-      if (comment.disliked) {
-        comment.disliked = false;
+
+  likeComment(comment: Comment) {
+    comment.isLiked = !comment.isLiked;
+    comment.likes += comment.isLiked ? 1 : -1;
+    if (comment.isLiked && comment.isDisliked) {
+      comment.isDisliked = false;
         comment.dislikes--;
-      }
     }
   }
-  
-  dislikeComment(comment: any) {
-    if (comment.disliked) {
-      comment.disliked = false;
-      comment.dislikes--;
-    } else {
-      comment.disliked = true;
-      comment.dislikes++;
-  
-      // إلغاء اللايك لو كان موجود
-      if (comment.liked) {
-        comment.liked = false;
+
+  dislikeComment(comment: Comment) {
+    comment.isDisliked = !comment.isDisliked;
+    comment.dislikes += comment.isDisliked ? 1 : -1;
+    if (comment.isDisliked && comment.isLiked) {
+      comment.isLiked = false;
         comment.likes--;
-      }
-    }
-  }
-  
-
-  togglePlayPause() {
-    const video = this.videoPlayer.nativeElement;
-    video.paused ? video.play() : video.pause();
-  }
-
-
-  toggleShareSection(event: Event) {
-    event.stopPropagation(); 
-    this.showShareSection = !this.showShareSection;
-  }
-
-  closeShareSection() {
-    this.showShareSection = false;
-  }
- 
-
-  closeCommentSection(): void {
-    this.showComments = false;
-  }
-
-  toggleOptions(event: Event) {
-    this.showOptions = !this.showOptions;
-    event.stopPropagation(); 
-  }
-
-  showDescription() {
-    console.log('Show Description Clicked');
-  }
-
-  showReport() {
-    console.log('Show Report Clicked');
-  }
-
-
-  @HostListener('document:click', ['$event'])
-onClickOutside(event: Event) {
-  const target = event.target as HTMLElement;
-
-  
-  if (!target.closest('.share-section') && !target.closest('.share-btn')) {
-    this.showShareSection = false;
-  }
-
-  
-  if (!target.closest('.options-section') && !target.closest('.options-btn')) {
-    this.showOptions = false;
-  }
-}
-
-  toggleList() {
-    this.isSidebarVisible = !this.isSidebarVisible;
-  }
-
-
-  private touchStartY: number = 0;
-  private touchEndY: number = 0;
-
-  @HostListener('touchstart', ['$event'])
-  onTouchStart(event: TouchEvent) {
-    this.touchStartY = event.touches[0].clientY;
-  }
-
-  @HostListener('touchend', ['$event'])
-  onTouchEnd(event: TouchEvent) {
-    this.touchEndY = event.changedTouches[0].clientY;
-    this.handleSwipe();
-  }
-
-  private handleSwipe() {
-    const swipeThreshold = 50; 
-
-    if (this.touchStartY - this.touchEndY > swipeThreshold) {
-      this.goToNextStory();
-    } else if (this.touchEndY - this.touchStartY > swipeThreshold) {
-      this.goToPreviousStory();
     }
   }
 
-  private applyTransition() {
-    this.transitioning = true;
-  }
+  shareStory(story: Story) {
+    this.showShareModal = true;
+    // Implement sharing logic
 
-  private removeTransition() {
-    setTimeout(() => {
-      this.transitioning = false;
-    }, 300);
-  }
-
-  
-  closeComments(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    
-    if (target.classList.contains('close-btn')) {
-      this.showComments = false;
-      event.stopPropagation();  
-      return;
-    }
-  
-    const commentsSection = document.querySelector('.comments-section');
-    if (commentsSection && !commentsSection.contains(target)) {
-      this.showComments = false;
+    // If this is an advertisement, increment engagement
+    if (story.isAdvertisement && story.advertisementStats) {
+      story.advertisementStats.engagement++;
     }
   }
-  
 
-  shareOnFacebook() {
-    const url = encodeURIComponent(window.location.href);
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
-  }
-    
-  
-  shareOnWhatsApp() {
-    const url = encodeURIComponent(window.location.href);
-    window.open(`https://api.whatsapp.com/send?text=${url}`, '_blank');
-  }
-  
-  copyLink() {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      alert('Link copied to clipboard!');
-    }).catch(err => {
-      console.error('Failed to copy link:', err);
-    });
+  /**
+   * Checks if an advertisement is currently active based on its end date
+   */
+  isAdActive(story: Story): boolean {
+    if (!story.isAdvertisement || !story.advertisementEndDate) {
+      return false;
+    }
+
+    const now = new Date();
+    return now < story.advertisementEndDate;
   }
 
+  /**
+   * Calculates the number of days remaining for an advertisement
+   */
+  getDaysRemaining(story: Story): number {
+    if (!story.isAdvertisement || !story.advertisementEndDate) {
+      return 0;
+    }
 
-  storytime = {
-    uploadTime: new Date(Date.now())
-  };
-  
+    const now = new Date();
+    const endDate = new Date(story.advertisementEndDate);
+    const diffTime = endDate.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  ////////////////////////
+    return diffDays > 0 ? diffDays : 0;
+  }
 
-  // @ViewChild('fileInput') fileInput!: ElementRef;
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'ArrowUp':
+        this.previousStory();
+        break;
+      case 'ArrowDown':
+        this.nextStory();
+        break;
+      case ' ':
+        this.togglePlayPause();
+        break;
+    }
+  }
 
-  // openFilePicker() {
-  //   this.fileInput.nativeElement.click();
-  // }
-  
-  
-  // onFileSelected(event: Event) {
-  //   const input = event.target as HTMLInputElement;
-  //   if (input.files && input.files.length > 0) {
-  //     const file = input.files[0];
-  //     this.selectedFileType = file.type.startsWith('video') ? 'video' : 'image';
-  
-  //     const reader = new FileReader();
-  //     reader.onload = () => {
-  //       this.selectedFileUrl = reader.result as string;
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // }
+  previousStory() {
+    if (this.currentStoryIndex > 0) {
+      this.currentStoryIndex--;
+      this.resetVideoState();
+    }
+  }
 
+  nextStory() {
+    if (this.currentStoryIndex < this.stories.length - 1) {
+      this.currentStoryIndex++;
+      this.resetVideoState();
+    }
+  }
 
- 
+  private resetVideoState() {
+    this.isPlaying = true;
+    this.progress = 0;
+    if (this.videoPlayer) {
+      this.videoPlayer.nativeElement.currentTime = 0;
+      this.videoPlayer.nativeElement.play();
+    }
+  }
 
-  // openModal() {
-  //   this.showModal = true;
-  // }
+  showControls() {
+    this.showProgressBar = true;
+    clearTimeout(this.hideControlsTimeout);
+    this.hideControlsTimeout = setTimeout(() => {
+      this.showProgressBar = false;
+    }, 3000);
+  }
 
-  // closeModal() {
-  //   this.showModal = false;
-  // }
+  formatTime(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
 
+  handleVideoError(event: any) {
+    console.error('Video Error:', event);
+    // يمكنك إضافة رسالة خطأ للمستخدم هنا
+  }
+
+  onVideoLoaded() {
+    console.log('Video loaded successfully');
+    if (this.videoPlayer) {
+      this.videoPlayer.nativeElement.play().catch(error => {
+        console.error('Error playing video:', error);
+      });
+    }
+  }
 }

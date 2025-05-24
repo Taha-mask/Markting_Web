@@ -17,8 +17,8 @@
 
           <div class="filter-section">
             <select [(ngModel)]="selectedCategory" class="form-select">
-              <option *ngFor="let category of categories" [value]="category">
-                {{category}}
+              <option *ngFor="let category of categories" [value]="category.name">
+                <i [class]="category.icon"></i> {{category.name}}
               </option>
             </select>
 

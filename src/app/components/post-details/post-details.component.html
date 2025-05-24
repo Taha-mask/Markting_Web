@@ -1,15 +1,15 @@
 <div class="post-details-container" *ngIf="post">
   <div class="post-image">
-    <img [src]="post.imageUrl" alt="Post Image">
+    <img [src]="post.profileImageUrl" alt="Post Image">
   </div>
   <div class="post-content-wrapper">
-    <h2>{{ post.title }}</h2>
+    <h2>{{ post.username }}</h2>
     <div class="post-content">
       <p>{{ post.content }}</p>
     </div>
     <div class="post-metadata">
-      <p>Posted by: {{ post.author }}</p>
-      <p>Date: {{ post.date | date }}</p>
+      <p>Posted by: {{ post.username }}</p>
+      <p>Date: {{ post.timestamp | date }}</p>
     </div>
   </div>
 </div>

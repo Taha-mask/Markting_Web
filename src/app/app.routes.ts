@@ -30,7 +30,6 @@ import {SavedPostComponent} from './components/saved-post/saved-post.component'
 import { ProfileAsVisitorComponent } from './components/profile-as-visitor/profile-as-visitor.component';
 import { SearchPageComponent } from './components/search-page/search-page.component';
 import { TermsAndPrivacyComponent } from './components/terms-and-privacy/terms-and-privacy.component';
-
 import { PostoneComponent } from './components/postone/postone.component';
 
 export const routes: Routes = [
@@ -61,8 +60,7 @@ export const routes: Routes = [
   {path: 'support' , component : SupportComponent},
   {path: 'login' , component : LoginFormComponent},
   {path: 'about' , component : AboutComponent},
-  {path: 'Story' , component : InnerStoryComponent},
-  {path: 'stories' , component : InnerStoryComponent},
+  {path: 'story' , component : InnerStoryComponent},
   {path: 'Explore' , component : ExplorepageComponent},
   { path: 'create-post', component: ModalComponent },
   {path: 'signup-user', component: SignupUserComponent },
@@ -86,5 +84,9 @@ export const routes: Routes = [
     component: RightsideComponent,
     title: 'Right Sidebar'
   },
-  {path:"**", component: Error404Component}
+  {path:"**", component: Error404Component},
+  {
+    path: 'story',
+    component: InnerStoryComponent
+  }
 ];

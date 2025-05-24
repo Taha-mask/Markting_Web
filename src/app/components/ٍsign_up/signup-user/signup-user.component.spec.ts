@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { SignupUserComponent } from './signup-user.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { UserService } from '../../services/User.service';
+import { UserService } from '../../../services/User.service';
 import { of, throwError } from 'rxjs';
 
 describe('SignupUserComponent', () => {

@@ -49,6 +49,7 @@ interface Comment {
   timestamp: Date;
   profileImageUrl: string;
   id: string;
+  replies: Comment[];
 }
 
 @Component({
@@ -108,6 +109,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
       audience: 'public',
       media: [{ type: 'image', url: 'public/images/post-1.jpg' }],
       currentImageIndex: 0,
+      images: ['public/images/post-1.jpg'],
       likes: 124,
       Shares: 30,
       Saves: 45,
@@ -118,25 +120,22 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
       isFollowing: false,
       comments: [
         {
-          id: 'comment-1',
+          id: '1', // Convert number to string
           username: 'John Doe',
-          text: 'Amazing results! Would love to hear more about your strategy.',
+          content: 'Amazing results! Would love to hear more about your strategy.',
           likes: 5,
           likedBy: [],
           timestamp: new Date(),
-          profileImageUrl: 'public/images/user-2.png'
+          profileImageUrl: 'public/images/user-2.png',
+          replies: []
         }
       ],
       reactions: {
-        '👍': 45,
-        '🔥': 32,
-        '👏': 28
+        '👍': Array.from({ length: 45 }, (_, i) => ({ id: `like_${i+1}`, timestamp: new Date() })),
+        '🔥': Array.from({ length: 32 }, (_, i) => ({ id: `fire_${i+1}`, timestamp: new Date() })),
+        '👏': Array.from({ length: 28 }, (_, i) => ({ id: `clap_${i+1}`, timestamp: new Date() }))
       },
-      id: '',
-      title: '',
-      imageUrl: '',
-      author: '',
-      date: new Date()
+      id: '1' // Convert number to string
     }
   ];
 
@@ -324,20 +323,37 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
 
   toggleLike(post: Post) {
     post.liked = !post.liked;
-    post.likes += post.liked ? 1 : -1;
+    post.likes = (post.likes || 0) + (post.liked ? 1 : -1);
 
     if (post.reactions) {
-      post.reactions['👍'] = (post.reactions['👍'] || 0) + (post.liked ? 1 : -1);
+      // Initialize the like reactions array if it doesn't exist
+      if (!post.reactions['👍']) {
+        post.reactions['👍'] = [];
+      }
+      
+      if (post.liked) {
+        // Add a new like reaction
+        const reactionId = `like_${Date.now()}`;
+        post.reactions['👍'].push({
+          id: reactionId,
+          timestamp: new Date()
+        });
+      } else {
+        // Remove the last like reaction if any exist
+        if (post.reactions['👍'].length > 0) {
+          post.reactions['👍'].pop();
+        }
+      }
     }
   }
 
   sharePost(post: Post) {
-    post.Shares += 1;
+    post.Shares = (post.Shares || 0) + 1;
   }
 
   toggleSave(post: Post) {
     post.saved = !post.saved;
-    post.Saves += post.saved ? 1 : -1;
+    post.Saves = (post.Saves || 0) + (post.saved ? 1 : -1);
   }
 
   toggleComments(post: Post) {
@@ -345,13 +361,13 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   }
 
   prevImage(post: Post) {
-    if (post.currentImageIndex > 0) {
+    if (post.currentImageIndex !== undefined && post.currentImageIndex > 0) {
       post.currentImageIndex--;
     }
   }
 
   nextImage(post: Post) {
-    if (post.media && post.currentImageIndex < post.media.length - 1) {
+    if (post.media && post.currentImageIndex !== undefined && post.currentImageIndex < post.media.length - 1) {
       post.currentImageIndex++;
     }
   }
@@ -360,7 +376,10 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
     if (!post.reactions) return [];
 
     return Object.entries(post.reactions)
-      .map(([reaction, count]) => ({ reaction, count }))
+      .map(([reaction, reactions]) => ({ 
+        reaction, 
+        count: reactions.length 
+      }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);
   }
@@ -378,6 +397,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
         audience: 'public',
         media: this.newPostImages,
         currentImageIndex: 0,
+        images: this.newPostImages.map(img => img.url),
         likes: 0,
         Shares: 0,
         Saves: 0,
@@ -387,11 +407,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
         saved: false,
         comments: [],
         reactions: {},
-        id: '',
-        title: '',
-        imageUrl: '',
-        author: '',
-        date: new Date()
+        id: '1' // Convert number to string
       };
       this.posts.unshift(newPost);
       this.postService.addPost(newPost);

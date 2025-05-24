@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { UserService } from '../services/User.service';
+import { UserService } from '../../services/User.service';
 import { LoginResponse, ApiError } from '../models/auth.model';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';

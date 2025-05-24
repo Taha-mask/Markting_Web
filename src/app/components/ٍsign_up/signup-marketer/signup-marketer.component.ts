@@ -11,7 +11,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { UserService } from '../../services/User.service';
+import { UserService } from '../../../services/User.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 
@@ -177,12 +177,12 @@ export class SignupMarketerComponent implements OnInit {
       if (this.selectedProfileImage) {
         const profileUploadTask = new Promise<any>((resolve, reject) => {
           this.userService.uploadFile(this.selectedProfileImage!).subscribe({
-            next: (response) => {
+            next: (response: { filePath: string }) => {
               console.log('Profile image uploaded:', response);
               profilePicturePath = response.filePath;
               resolve(response);
             },
-            error: (error) => {
+            error: (error: { message?: string, error?: any, status?: number }) => {
               console.error('Profile image upload failed:', error);
               resolve(null); // Resolve with null to continue the process
             }
@@ -195,12 +195,12 @@ export class SignupMarketerComponent implements OnInit {
       if (this.selectedIdImage) {
         const idUploadTask = new Promise<any>((resolve, reject) => {
           this.userService.uploadFile(this.selectedIdImage!).subscribe({
-            next: (response) => {
+            next: (response: { filePath: string }) => {
               console.log('ID image uploaded:', response);
               userIDPath = response.filePath;
               resolve(response);
             },
-            error: (error) => {
+            error: (error: { message?: string, error?: any, status?: number }) => {
               console.error('ID image upload failed:', error);
               resolve(null); // Resolve with null to continue the process
             }
@@ -256,7 +256,7 @@ export class SignupMarketerComponent implements OnInit {
 
           // Call the registration service
           this.userService.registerMarketer(marketerData).subscribe({
-            next: (response) => {
+            next: (response: { token: string, user?: any }) => {
               console.log('Registration successful:', response);
               this.isLoading = false;
               
@@ -289,7 +289,7 @@ export class SignupMarketerComponent implements OnInit {
                 this.router.navigate(['/dashboard']);
               }, 3000);
             },
-            error: (error) => {
+            error: (error: { message?: string, error?: any, status?: number }) => {
               console.error('Registration failed:', error);
               this.isLoading = false;
 

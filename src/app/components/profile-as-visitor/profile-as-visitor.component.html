@@ -164,11 +164,11 @@
 
                   <!-- Post Media -->
                   <div *ngIf="post.media && post.media.length > 0" class="mb-3 position-relative">
-                    <ng-container *ngIf="post.media[post.currentImageIndex].url.includes('video'); else imageTemplate">
-                      <video [src]="post.media[post.currentImageIndex].url" controls class="img-fluid rounded w-100 post-img"></video>
+                    <ng-container *ngIf="post.media && post.currentImageIndex !== undefined && post.media[post.currentImageIndex] && post.media[post.currentImageIndex].url && post.media[post.currentImageIndex].url.includes('video'); else imageTemplate">
+                      <video [src]="post.media && post.currentImageIndex !== undefined && post.media[post.currentImageIndex] ? post.media[post.currentImageIndex].url : ''" controls class="img-fluid rounded w-100 post-img"></video>
                     </ng-container>
                     <ng-template #imageTemplate>
-                      <img [src]="post.media[post.currentImageIndex].url" alt="Post Image" class="img-fluid rounded w-100 post-img" />
+                      <img [src]="post.media && post.currentImageIndex !== undefined && post.media[post.currentImageIndex] ? post.media[post.currentImageIndex].url : ''" alt="Post Image" class="img-fluid rounded w-100 post-img" />
                     </ng-template>
                     <div class="position-absolute top-50 start-0 translate-middle-y">
                       <button class="btn btn-light rounded-circle" (click)="prevImage(post)" [disabled]="post.currentImageIndex === 0">
@@ -199,7 +199,7 @@
                     </div>
                     <div (click)="toggleComments(post)" class="d-flex align-items-center" style="cursor: pointer;">
                       <i class="bi bi-chat-dots-fill text-secondary"></i>
-                      <span class="ms-1" style="user-select: none;">{{ post.comments.length }} <span class="comment">Comments</span></span>
+                      <span class="ms-1" style="user-select: none;">{{ post.comments?.length || 0 }} <span class="comment">Comments</span></span>
                     </div>
                     <div (click)="sharePost(post)" class="d-flex align-items-center" style="cursor: pointer;">
                       <i class="bi bi-share-fill text-primary"></i>
@@ -232,7 +232,7 @@
                             <h6 class="mb-0 me-2">{{comment.username}}</h6>
                             <small class="text-muted">{{comment.timestamp | date:'short'}}</small>
                           </div>
-                          <p class="mb-1">{{comment.text}}</p>
+                          <p class="mb-1">{{comment.content}}</p>
                           <div class="comment-actions">
                             <button class="btn btn-sm btn-link p-0 me-3">Like</button>
                             <button class="btn btn-sm btn-link p-0">Reply</button>

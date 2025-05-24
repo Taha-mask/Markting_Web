@@ -2,7 +2,7 @@
   <button class="close-button" (click)="cancel()">&times;</button>
 
   <div class="preview-container">
-    <h2 class="mb-3">Preview</h2>
+    <h2 class="mb-3">{{ data.isAdvertisement ? 'Create Advertisement' : 'Preview Story' }}</h2>
 
     <ng-container *ngIf="data.url">
       <div class="video-wrapper" *ngIf="data.type === 'video'">
@@ -12,15 +12,64 @@
       <img *ngIf="data.type === 'image'" [src]="data.url" alt="Preview Image" class="preview-media">
     </ng-container>
 
-    <div class="text-input" *ngIf="data.type === 'video'">
-      <h5>Title</h5>
-      <input type="text" class="form-control" maxlength="60" [(ngModel)]="storyText" placeholder="Write here what you want to write under the video..." />
+    <div class="text-input">
+      <h5>{{ data.isAdvertisement ? 'Advertisement Title' : 'Title' }}</h5>
+      <input type="text" class="form-control" maxlength="60" [(ngModel)]="storyText" 
+        placeholder="{{ data.isAdvertisement ? 'Enter your advertisement title or description...' : 'Write here what you want to write under the content...' }}" />
     </div>
     
+    <!-- Advertisement Options -->
+    <div class="advertisement-options" *ngIf="data.isAdvertisement">
+      <h5 class="mt-4">Advertisement Settings</h5>
+      
+      <div class="duration-selector mb-3">
+        <label for="durationSlider">Duration (days): {{ advertisementDuration }}</label>
+        <input 
+          type="range" 
+          id="durationSlider" 
+          class="form-range" 
+          min="1" 
+          max="30" 
+          [(ngModel)]="advertisementDuration"
+          (input)="updateAdvertisementCost()"
+        >
+        <div class="duration-marks">
+          <span>1</span>
+          <span>7</span>
+          <span>14</span>
+          <span>30</span>
+        </div>
+      </div>
+      
+      <div class="target-audience mb-3">
+        <label>Target Audience:</label>
+        <div class="audience-chips">
+          <div *ngFor="let audience of availableAudiences" 
+               class="audience-chip" 
+               [class.selected]="selectedTargetAudience.includes(audience)"
+               (click)="toggleAudienceSelection(audience)">
+            {{ audience }}
+          </div>
+        </div>
+        <small class="text-muted">Select multiple audiences to target (each selection increases cost)</small>
+      </div>
+      
+      <div class="cost-summary alert alert-info">
+        <h6>Cost Summary</h6>
+        <p class="mb-1">Base cost: ${{ costPerDay }} per day × {{ advertisementDuration }} days</p>
+        <p class="mb-1" *ngIf="selectedTargetAudience.length > 0">Targeting premium: ${{ selectedTargetAudience.length * 5 }}</p>
+        <p class="mb-0"><strong>Total cost: ${{ calculateAdvertisementCost() }}</strong></p>
+      </div>
+    </div>
 
-    <div class="buttons">
-      <button (click)="confirmStory()" [disabled]="!storyText || storyText.trim() === ''">Confirm</button>
-      <button (click)="cancel()">Cancel</button>
+    <div class="buttons mt-4">
+      <button 
+        (click)="confirmStory()" 
+        [disabled]="!storyText || storyText.trim() === ''"
+        class="btn btn-primary">
+        {{ data.isAdvertisement ? 'Create Advertisement' : 'Confirm' }}
+      </button>
+      <button (click)="cancel()" class="btn btn-secondary">Cancel</button>
     </div>
   </div>
 </div>

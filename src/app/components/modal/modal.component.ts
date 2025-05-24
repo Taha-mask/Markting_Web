@@ -1,13 +1,16 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
-import { PostService } from '../services/post.service';
+import { PostService } from '../../services/post.service';
 import { Post } from '../../interfaces/post';
 import * as bootstrap from 'bootstrap';
 import { User } from '../../interfaces/user';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../../services/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 interface ImagePreview {
   file: File;
@@ -86,7 +89,7 @@ export class ModalComponent implements OnInit {
   allowedDocumentTypes = '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt';
   allowedVideoTypes = 'video/*';
 
-  constructor(private postService: PostService) {}
+  constructor(private postService: PostService, private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
   }
@@ -109,9 +112,18 @@ export class ModalComponent implements OnInit {
     }
 
     if (postContent.trim() || this.mediaItems.length > 0) {
-      const newPost = {
-        username: this.users[0].username,
-        profileImageUrl: this.users[0].profileImageUrl,
+      // Generate a unique ID for the post
+      const uniqueId = Date.now();
+      console.log('Creating new post with ID:', uniqueId);
+      
+      // Get the current user from auth service
+      const currentUser = this.authService.getCurrentUser();
+      
+      // Create a complete post object with all required properties
+      const post: Post = {
+        id: uniqueId.toString(), // Convert number to string
+        username: currentUser?.username || this.users[0].username,
+        profileImageUrl: currentUser?.profileImageUrl || this.users[0].profileImageUrl,
         timestamp: new Date(),
         content: postContent,
         category: this.selectedCategory,
@@ -124,8 +136,9 @@ export class ModalComponent implements OnInit {
           size: item.size,
           thumbnailUrl: item.thumbnailUrl
         })),
+        images: this.mediaItems.filter(item => item.type === 'image').map(item => item.url),
         currentImageIndex: 0,
-        price: this.postPrice,
+        price: this.postPrice === null ? undefined : this.postPrice,
         likes: 0,
         Shares: 0,
         Saves: 0,
@@ -134,48 +147,81 @@ export class ModalComponent implements OnInit {
         liked: false,
         saved: false,
         isFollowing: false,
-        comments: []
+        comments: [],
+        reactions: {},
+        topReactions: []
       };
 
-      const post: Post = {
-        id: Date.now().toString(), // Generate a temporary ID
-        title: '', // Add empty title if required
-        imageUrl: this.mediaItems[0]?.url || '', // Use first media URL or empty string
-        author: this.users[0].username,
-        date: new Date(),
-        username: newPost.username,
-        profileImageUrl: newPost.profileImageUrl,
-        timestamp: newPost.timestamp,
-        content: newPost.content,
-        category: newPost.category,
-        subCategory: newPost.subCategory,
-        audience: newPost.audience,
-        media: newPost.media,
-        currentImageIndex: newPost.currentImageIndex,
-        price: newPost.price,
-        likes: newPost.likes,
-        Shares: newPost.Shares,
-        Saves: newPost.Saves,
-        showComments: newPost.showComments,
-        isEditing: newPost.isEditing,
-        liked: newPost.liked,
-        saved: newPost.saved,
-        isFollowing: newPost.isFollowing,
-        comments: newPost.comments
-      };
-
-      this.postService.addPost(post);
-      this.clearForm();
-      this.closeModal();
+      // Add the post to the service using the API
+      this.postService.createPost(post).subscribe({
+        next: (createdPost) => {
+          console.log('Post created successfully:', createdPost);
+          
+          // Clear the form and close the modal
+          this.clearForm();
+          this.closeModal();
+          
+          // Navigate to the feed page after adding the post
+          this.router.navigate(['/feed']);
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error('Error creating post:', error);
+          
+          if (error.status === 401) {
+            alert('You need to be logged in to create a post. Please sign in and try again.');
+          } else if (error.status === 500) {
+            // The post was likely added to the local feed due to our fallback mechanism
+            console.log('Using local fallback for post creation');
+            this.clearForm();
+            this.closeModal();
+            this.router.navigate(['/feed']);
+          } else {
+            alert(`Error creating post: ${error.message || 'Unknown error'}`);
+            // Still close the modal and clear the form since the post was added locally
+            this.clearForm();
+            this.closeModal();
+            this.router.navigate(['/feed']);
+          }
+        }
+      });
     }
   }
 
   closeModal() {
+    // First, manually remove all modal-related elements and classes
+    const modalBackdrops = document.querySelectorAll('.modal-backdrop');
+    modalBackdrops.forEach(backdrop => {
+      backdrop.remove();
+    });
+    
+    // Remove all modal-open classes and inline styles from body
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    
+    // Then close the modal through Bootstrap API
     const modalElement = this.postModal.nativeElement;
     const modalInstance = bootstrap.Modal.getInstance(modalElement);
     if (modalInstance) {
       modalInstance.hide();
     }
+    
+    // Additional cleanup to ensure no opacity remains
+    setTimeout(() => {
+      // Double-check for any remaining backdrops
+      const remainingBackdrops = document.querySelectorAll('.modal-backdrop');
+      remainingBackdrops.forEach(backdrop => {
+        backdrop.remove();
+      });
+      
+      // Ensure body is fully reset
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      
+      // Reset any inline opacity styles that might have been added
+      document.body.style.opacity = '';
+    }, 300);
   }
 
   clearForm() {
