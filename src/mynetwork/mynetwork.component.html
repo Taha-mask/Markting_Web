@@ -1,0 +1,24 @@
+<div class="network-container">
+  <h2>My Network</h2>
+  <div class="tabs">
+    <button (click)="activeTab = 'followers'" [class.active]="activeTab === 'followers'">Followers</button>
+    <button (click)="activeTab = 'following'" [class.active]="activeTab === 'following'">Following</button>
+    <button (click)="activeTab = 'suggestions'" [class.active]="activeTab === 'suggestions'">Suggestions</button>
+  </div>
+
+  <div class="cards">
+    <div *ngFor="let person of getPeople()" class="card">
+      <img [src]="person.image" alt="{{person.name}}" class="profile-img" />
+      <h3>{{ person.name }}</h3>
+      <p class="title">{{ person.title }}</p>
+      <p class="mutual">{{ person.mutual }}</p>
+      <button class="action-btn"
+              [ngClass]="{
+                'white-btn': person.status === 'Following' || person.status === 'Disconnect'
+              }"
+              (click)="toggleStatus(person)">
+        {{ person.status }}
+      </button>
+    </div>
+  </div>
+</div>

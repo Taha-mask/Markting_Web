@@ -24,6 +24,7 @@ import  {ReviewsComponent} from './reviews/reviews.component';
 import {CartComponent} from './cart/cart.component';
 import {SavedPostComponent} from './saved-post/saved-post.component';
 import { PostoneComponent } from './postone/postone.component';
+import { MynetworkComponent } from '../mynetwork/mynetwork.component';
 
 export const routes: Routes = [
   {path: 'explore' , component : ExplorepageComponent},
@@ -51,6 +52,7 @@ export const routes: Routes = [
   {path:'cart',component: CartComponent},
   {path:'saved-post',component:SavedPostComponent},
   {path: 'postone' ,component:PostoneComponent},
+  {path : 'mynetwork' ,component:MynetworkComponent},
 
   {
     path: 'right-sidebar',
