@@ -83,6 +83,17 @@
   margin-top: 30px;
 
 }
+.menutwo{
+   color: black;
+  border: none;
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 10px;
+
+}
 .li:hover{
   color:rgb(44, 44, 126);
   margin-left: 20px;
