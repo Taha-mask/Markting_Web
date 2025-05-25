@@ -1,73 +1,35 @@
-
-<div class="container feedback-form" style="text-align: center; align-items: center;">
-<form action="" method="post">
-    <h3 style="margin-bottom: 50px; margin-right: -100px;">Drop Us A Feedback</h3>
+<div class="container feedback-form">
+  <form action="" method="post">
+    <h3>Drop Us A Feedback</h3>
     <div class="row">
-<div class="col-md-6">
-<div class="form-group">
-<input type="text" class="form-control" placeholder="Your First Name " style="width: 350px; padding: 10px; margin-left: 260px;">
-</div>
-<br>
+      <div class="col">
+        <input type="text" class="form-control" placeholder="Your First Name">
+        <input type="text" class="form-control" placeholder="Your Phone Number">
+        <p>Did you have any trouble using the website?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="trouble"> Yes</label>
+          <label><input type="radio" name="trouble"> No</label>
+        </div>
+        <textarea name="txtMsg" class="form-control" placeholder="Your Message or Suggestion"></textarea>
+      </div>
 
-
-<div class="form-group">
-    <input type="text" class="form-control" placeholder="Your Phone Number" style="width: 350px; padding: 10px; margin-left: 260px;">
+      <div class="col">
+        <input type="text" class="form-control" placeholder="Your Last Name">
+        <input type="email" class="form-control" placeholder="Your Email Address">
+        <p>Do you share our website with your friends?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="share"> Yes</label>
+          <label><input type="radio" name="share"> No</label>
+        </div>
+        <p>What number of stars do you give us?</p>
+        <div class="rating">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+      </div>
     </div>
-<br>
-    <div class="form-group" style="margin-left: 260px;">
-<p>Did You have any trouble using the website?</p>
-Yes <input type="radio" name="1">
-No <input type="radio" name="1">
+
+    <div class="btn-container">
+      <button class="btnfeedback">Send Feedback</button>
     </div>
-<br>
-<br>
-<br>
-<br>
-    <textarea name="txtNsg" class="form-control" placeholder="You Message Or Suggestion" style="width: 400px; height: 100px; margin-bottom: 8px; padding: 10px; margin-left: 450px;"></textarea>
-    <br>
-
-    <div class="form-group">
-
-<button  class="btnfeedback" >
-    Send Feedback
-</button>
-    </div>
+  </form>
 </div>
-
-<div class="col-md-6">
-
-    <div class="form-group" style="margin-right: 210px">
-        <input type="text" name="TxtEmail" class="form-control" placeholder="Enter Last Name" style="width: 350px; padding: 10px; margin-left: 110px;">
-        <br>
-        <div class="form-group" >
-            <input type="text" class="form-control" placeholder="Enter Email Address" style="width: 350px; padding: 10px; margin-left: 110px;">
-            </div>
-        <br>
-        <p style="margin-right: -200px;">Do You Share our Website With Your Friends?</p>
-        <label for="" style="margin-left: 170px;">Yes</label>
-         <input type="radio" name="2" style="margin-left: 5px;">
-         <label for="" style="margin-left: 5px;">No</label>
-<input type="radio" name="2" style="margin-left: 5px;">
-            </div>
-            <div class="form-group">
-<p style="margin-right: 30px">What Number Of stars You Give Us?</p>
-<div class="rating"  style="margin-left: 170px;">
-    <span (click)="rate(1)" (mouseover)="highlight(1)" (mouseleave)="resetHighlight()" [attr.style]="'color:' + (1 <= (hoverRating || currentRating) ? '#0062cc' : '#ccc')">★</span>
-    <span (click)="rate(2)" (mouseover)="highlight(2)" (mouseleave)="resetHighlight()" [attr.style]="'color:' + (2 <= (hoverRating || currentRating) ? '#0062cc' : '#ccc')">★</span>
-    <span (click)="rate(3)" (mouseover)="highlight(3)" (mouseleave)="resetHighlight()" [attr.style]="'color:' + (3 <= (hoverRating || currentRating) ? '#0062cc' : '#ccc')">★</span>
-    <span (click)="rate(4)" (mouseover)="highlight(4)" (mouseleave)="resetHighlight()" [attr.style]="'color:' + (4 <= (hoverRating || currentRating) ? '#0062cc' : '#ccc')">★</span>
-    <span (click)="rate(5)" (mouseover)="highlight(5)" (mouseleave)="resetHighlight()" [attr.style]="'color:' + (5 <= (hoverRating || currentRating) ? '#0062cc' : '#ccc')">★</span>
-  </div>
-
-            </div>
-</div>
-    </div>
-</form>
-</div>
-
-
-
-
-
-
-
