@@ -35,17 +35,18 @@ interface Country {
 }
 
 @Component({
-    selector: 'app-signup-user',
-    imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        RouterModule,
-        HttpClientModule,
-    ],
-    providers: [UserService],
-    templateUrl: './signup-user.component.html',
-    styleUrls: ['./signup-user.component.css']
+  selector: 'app-signup-user',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    HttpClientModule,
+  ],
+  providers: [UserService],
+  templateUrl: './signup-user.component.html',
+  styleUrls: ['./signup-user.component.css'],
 })
 export class SignupUserComponent implements OnInit {
   public userRegisterForm!: FormGroup<UserRegisterForm>;
@@ -61,7 +62,7 @@ export class SignupUserComponent implements OnInit {
     private userService: UserService,
     private router: Router,
     private http: HttpClient,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
   ) {
     this.initForm();
   }
@@ -132,14 +133,14 @@ export class SignupUserComponent implements OnInit {
 
   public updatePhoneValidation(): void {
     const countryCode = this.userRegisterForm.get('country')?.value;
-    const selectedCountry = this.countries.find(c => c.code === countryCode);
+    const selectedCountry = this.countries.find((c) => c.code === countryCode);
     const phoneControl = this.userRegisterForm.get('phone');
 
     if (selectedCountry) {
       phoneControl?.setValidators([
         Validators.required,
         Validators.pattern(`^[0-9]{${selectedCountry.phoneLength}}$`),
-        this.validatePhoneNumber.bind(this)
+        this.validatePhoneNumber.bind(this),
       ]);
     } else {
       phoneControl?.setValidators([Validators.required]);
@@ -147,24 +148,30 @@ export class SignupUserComponent implements OnInit {
     phoneControl?.updateValueAndValidity();
   }
 
-  private validatePhoneNumber(control: AbstractControl): ValidationErrors | null {
+  private validatePhoneNumber(
+    control: AbstractControl,
+  ): ValidationErrors | null {
     const countryCode = this.userRegisterForm.get('country')?.value;
-    const selectedCountry = this.countries.find(c => c.code === countryCode);
+    const selectedCountry = this.countries.find((c) => c.code === countryCode);
 
     if (!selectedCountry || !control.value) return null;
 
-    return control.value.length === selectedCountry.phoneLength ? null : { invalidLength: true };
+    return control.value.length === selectedCountry.phoneLength
+      ? null
+      : { invalidLength: true };
   }
 
   public getPhonePlaceholder(): string {
     const countryCode = this.userRegisterForm.get('country')?.value;
-    const selectedCountry = this.countries.find(c => c.code === countryCode);
-    return selectedCountry ? `Enter ${selectedCountry.phoneLength}-digit phone` : 'Enter phone';
+    const selectedCountry = this.countries.find((c) => c.code === countryCode);
+    return selectedCountry
+      ? `Enter ${selectedCountry.phoneLength}-digit phone`
+      : 'Enter phone';
   }
 
   public getSelectedCountryFlagCode(): string {
     const countryCode = this.userRegisterForm.get('country')?.value;
-    const selectedCountry = this.countries.find(c => c.code === countryCode);
+    const selectedCountry = this.countries.find((c) => c.code === countryCode);
     return selectedCountry ? selectedCountry.flagCode : '';
   }
 
@@ -176,14 +183,17 @@ export class SignupUserComponent implements OnInit {
 
       // First, upload the profile image if selected
       if (this.selectedProfileImage) {
-        this.uploadProfileImage().then(imageUrl => {
-          // After image upload, proceed with user registration
-          this.registerUser(imageUrl);
-        }).catch(error => {
-          console.error('Image upload failed:', error);
-          this.isLoading = false;
-          this.errorMessage = 'Failed to upload profile image. Please try again.';
-        });
+        this.uploadProfileImage()
+          .then((imageUrl) => {
+            // After image upload, proceed with user registration
+            this.registerUser(imageUrl);
+          })
+          .catch((error) => {
+            console.error('Image upload failed:', error);
+            this.isLoading = false;
+            this.errorMessage =
+              'Failed to upload profile image. Please try again.';
+          });
       } else {
         // No profile image, proceed with registration directly
         this.registerUser();
@@ -194,11 +204,14 @@ export class SignupUserComponent implements OnInit {
       this.errorMessage = 'Please fill all required fields correctly.';
 
       // Highlight the first invalid field
-      const invalidControls = Object.keys(this.userRegisterForm.controls)
-        .filter(key => this.userRegisterForm.get(key)?.invalid);
+      const invalidControls = Object.keys(
+        this.userRegisterForm.controls,
+      ).filter((key) => this.userRegisterForm.get(key)?.invalid);
 
       if (invalidControls.length > 0) {
-        const firstInvalidField = document.querySelector(`[formControlName=${invalidControls[0]}]`);
+        const firstInvalidField = document.querySelector(
+          `[formControlName=${invalidControls[0]}]`,
+        );
         if (firstInvalidField) {
           (firstInvalidField as HTMLElement).focus();
         }
@@ -213,21 +226,21 @@ export class SignupUserComponent implements OnInit {
         return;
       }
 
-      this.userService.uploadFile(this.selectedProfileImage)
-        .subscribe({
-          next: (response) => {
-            if (response && response.imageUrl) {
-              resolve(response.imageUrl);
-            } else {
-              reject('Invalid response from image upload service');
-            }
-          },
-          error: (error) => {
-            console.error('Error uploading image:', error);
-            this.errorMessage = 'Failed to upload profile image. Please try again.';
-            reject(error);
+      this.userService.uploadFile(this.selectedProfileImage).subscribe({
+        next: (response) => {
+          if (response && response.imageUrl) {
+            resolve(response.imageUrl);
+          } else {
+            reject('Invalid response from image upload service');
           }
-        });
+        },
+        error: (error) => {
+          console.error('Error uploading image:', error);
+          this.errorMessage =
+            'Failed to upload profile image. Please try again.';
+          reject(error);
+        },
+      });
     });
   }
 
@@ -261,39 +274,42 @@ export class SignupUserComponent implements OnInit {
 
     // Call the user service to register the customer
     this.userService.registerUser(formData).subscribe({
-        next: (response: any) => {
-          console.log('Registration successful:', response);
-          this.isLoading = false;
+      next: (response: any) => {
+        console.log('Registration successful:', response);
+        this.isLoading = false;
 
-          // Show success message
-          this.errorMessage = null;
-          alert('Registration successful! You will be redirected to the login page.');
+        // Show success message
+        this.errorMessage = null;
+        alert(
+          'Registration successful! You will be redirected to the login page.',
+        );
 
-          // Navigate to login page
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 1500);
-        },
-        error: (error: any) => {
-          console.error('Registration failed:', error);
-          this.isLoading = false;
+        // Navigate to login page
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1500);
+      },
+      error: (error: any) => {
+        console.error('Registration failed:', error);
+        this.isLoading = false;
 
-          // Handle different error formats
-          if (error.error && typeof error.error === 'object') {
-            if (error.error.message) {
-              this.errorMessage = error.error.message;
-            } else if (error.error.errors) {
-              // Handle validation errors
-              const errorMessages = Object.values(error.error.errors).flat();
-              this.errorMessage = errorMessages.join('. ');
-            } else {
-              this.errorMessage = 'Registration failed. Please try again.';
-            }
+        // Handle different error formats
+        if (error.error && typeof error.error === 'object') {
+          if (error.error.message) {
+            this.errorMessage = error.error.message;
+          } else if (error.error.errors) {
+            // Handle validation errors
+            const errorMessages = Object.values(error.error.errors).flat();
+            this.errorMessage = errorMessages.join('. ');
           } else {
-            this.errorMessage = error.message || 'Registration failed. Please try again.';
+            this.errorMessage = 'Registration failed. Please try again.';
           }
+        } else {
+          this.errorMessage =
+            error.message || 'Registration failed. Please try again.';
         }
-      });
+      },
+    });
   }
 
   public initForm(): void {
@@ -344,26 +360,40 @@ export class SignupUserComponent implements OnInit {
           nonNullable: true,
         }),
       },
-      { validators: this.passwordMatchValidator.bind(this) }
+      { validators: this.passwordMatchValidator.bind(this) },
     );
   }
 
   public loadCountries(): void {
     this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe({
       next: (data) => {
-        this.countries = data.map(country => ({
-          name: country.name.common,
-          code: country.idd.root + (country.idd.suffixes?.[0] || ''),
-          flagCode: country.cca2.toLowerCase(),
-          phoneLength: this.getPhoneLength(country.idd.root + (country.idd.suffixes?.[0] || ''))
-        })).sort((a, b) => a.name.localeCompare(b.name));
+        this.countries = data
+          .map((country) => ({
+            name: country.name.common,
+            code: country.idd.root + (country.idd.suffixes?.[0] || ''),
+            flagCode: country.cca2.toLowerCase(),
+            phoneLength: this.getPhoneLength(
+              country.idd.root + (country.idd.suffixes?.[0] || ''),
+            ),
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name));
       },
       error: (error) => {
         console.error('Error loading countries:', error);
         this.countries = [
-          { name: 'United States', code: '+1', flagCode: 'us', phoneLength: 10 },
+          {
+            name: 'United States',
+            code: '+1',
+            flagCode: 'us',
+            phoneLength: 10,
+          },
           { name: 'Canada', code: '+1', flagCode: 'ca', phoneLength: 10 },
-          { name: 'United Kingdom', code: '+44', flagCode: 'gb', phoneLength: 10 },
+          {
+            name: 'United Kingdom',
+            code: '+44',
+            flagCode: 'gb',
+            phoneLength: 10,
+          },
           { name: 'Egypt', code: '+20', flagCode: 'eg', phoneLength: 10 },
         ];
       },
@@ -372,15 +402,17 @@ export class SignupUserComponent implements OnInit {
 
   private getPhoneLength(code: string): number {
     const phoneLengths: { [key: string]: number } = {
-      '+1': 10,  // USA, Canada
+      '+1': 10, // USA, Canada
       '+44': 10, // UK
       '+20': 10, // Egypt
-      '+33': 9,  // France
+      '+33': 9, // France
     };
     return phoneLengths[code] || 10;
   }
 
-  public passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
+  public passwordStrengthValidator(
+    control: AbstractControl,
+  ): ValidationErrors | null {
     const password = control.value;
     let strength = 0;
 
@@ -393,7 +425,9 @@ export class SignupUserComponent implements OnInit {
     return strength < 3 ? { weakPassword: true } : null;
   }
 
-  public passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
+  public passwordMatchValidator(
+    group: AbstractControl,
+  ): ValidationErrors | null {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
 

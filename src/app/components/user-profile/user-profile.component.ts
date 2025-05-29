@@ -1,4 +1,12 @@
-import { Component, HostListener, ViewChild, ElementRef, OnInit, OnDestroy, inject } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  ViewChild,
+  ElementRef,
+  OnInit,
+  OnDestroy,
+  inject,
+} from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -9,11 +17,15 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Post } from '../../interfaces/post';
 import { AuthService } from '../../services/auth.service';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import {
+  CanActivate,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+} from '@angular/router';
 import * as bootstrap from 'bootstrap';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PostService {
   private posts = new Subject<Post[]>();
@@ -52,30 +64,34 @@ interface Comment {
 }
 
 @Component({
-    selector: 'app-profile',
-    imports: [RouterModule, FormsModule, CommonModule, PickerModule],
-    templateUrl: './profile.component.html',
-    styleUrls: ['./profile.component.css'],
-    animations: [
-        trigger('fadeInOut', [
-            transition(':enter', [
-                style({ opacity: 0 }),
-                animate('400ms ease-in', style({ opacity: 1 }))
-            ]),
-            transition(':leave', [
-                animate('400ms ease-out', style({ opacity: 0 }))
-            ])
-        ]),
-        trigger('slideInOut', [
-            transition(':enter', [
-                style({ transform: 'translateY(-20px)', opacity: 0 }),
-                animate('400ms cubic-bezier(0.4, 0, 0.2, 1)', style({ transform: 'translateY(0)', opacity: 1 }))
-            ]),
-            transition(':leave', [
-                animate('400ms cubic-bezier(0.4, 0, 0.2, 1)', style({ transform: 'translateY(-20px)', opacity: 0 }))
-            ])
-        ])
-    ]
+  selector: 'app-profile',
+  imports: [RouterModule, FormsModule, CommonModule, PickerModule],
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.css'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('400ms ease-in', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [animate('400ms ease-out', style({ opacity: 0 }))]),
+    ]),
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ transform: 'translateY(-20px)', opacity: 0 }),
+        animate(
+          '400ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ transform: 'translateY(0)', opacity: 1 }),
+        ),
+      ]),
+      transition(':leave', [
+        animate(
+          '400ms cubic-bezier(0.4, 0, 0.2, 1)',
+          style({ transform: 'translateY(-20px)', opacity: 0 }),
+        ),
+      ]),
+    ]),
+  ],
 })
 export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   @ViewChild('fileInput') fileInput!: ElementRef;
@@ -91,8 +107,20 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
 
   newPostContent: string = '';
   newPostImages: { type: 'image' | 'video' | 'document'; url: string }[] = [];
-  newPortfolioItem: any = { title: '', description: '', category: 'Social Media', link: '', imageUrl: '' };
-  newAchievement: any = { title: '', description: '', date: '', icon: 'trophy', category: '' };
+  newPortfolioItem: any = {
+    title: '',
+    description: '',
+    category: 'Social Media',
+    link: '',
+    imageUrl: '',
+  };
+  newAchievement: any = {
+    title: '',
+    description: '',
+    date: '',
+    icon: 'trophy',
+    category: '',
+  };
   currentPassword: string = '';
   newPassword: string = '';
   profileVisibility: string = 'Public';
@@ -101,7 +129,8 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
       username: 'Taha Mahmoud',
       profileImageUrl: '',
       timestamp: new Date(),
-      content: 'Just launched a successful social media campaign that increased engagement by 150%! 🚀 #DigitalMarketing #Success',
+      content:
+        'Just launched a successful social media campaign that increased engagement by 150%! 🚀 #DigitalMarketing #Success',
       category: 'Marketing',
       subCategory: 'Social Media',
       audience: 'public',
@@ -123,20 +152,20 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
           likes: 5,
           likedBy: [],
           timestamp: new Date(),
-          profileImageUrl: 'public/images/user-2.png'
-        }
+          profileImageUrl: 'public/images/user-2.png',
+        },
       ],
       reactions: {
         '👍': 45,
         '🔥': 32,
-        '👏': 28
+        '👏': 28,
       },
       id: '',
       title: '',
       imageUrl: '',
       author: '',
-      date: new Date()
-    }
+      date: new Date(),
+    },
   ];
 
   portfolioItems: Array<{
@@ -168,14 +197,14 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
     averageRating: 4.8,
     completedProjects: 45,
     clientSatisfaction: 98,
-    followerGrowth: 12
+    followerGrowth: 12,
   };
 
   availability = {
     status: 'Available',
     workHours: '9:00 AM - 5:00 PM',
     timezone: 'GMT+2',
-    responseTime: '< 24 hours'
+    responseTime: '< 24 hours',
   };
   user: User[] = [
     {
@@ -184,8 +213,8 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
       type: 'Marketer',
       profileImageUrl: 'images/user-1.png',
       status: 'Online',
-      role: 'user'
-    }
+      role: 'user',
+    },
   ];
 
   stats = {
@@ -195,7 +224,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
     views: 12345,
     projectsCompleted: 45,
     clientSatisfaction: 98,
-    responseRate: 95
+    responseRate: 95,
   };
 
   skills: string[] = [
@@ -205,7 +234,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
     'SEO Optimization',
     'Email Marketing',
     'Analytics',
-    'Brand Strategy'
+    'Brand Strategy',
   ];
 
   achievements: Array<{
@@ -220,15 +249,16 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
       date: '2024',
       description: 'Recognized for exceptional marketing campaigns',
       icon: 'trophy',
-      category: 'Award'
-    }
+      category: 'Award',
+    },
   ];
 
   profileImageUrl = this.user[0].profileImageUrl;
   isDragging = false;
   scrollLeft: number = 0;
   startX: number = 0;
-  bio: string = 'Digital Marketing Specialist | Content Creator | Social Media Expert';
+  bio: string =
+    'Digital Marketing Specialist | Content Creator | Social Media Expert';
   isEditingBio: boolean = false;
 
   location: string = 'Egypt, Assiut';
@@ -247,16 +277,28 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   portfolioView: 'grid' | 'list' = 'grid';
 
   userFol = [
-    { name: 'Wade Warren', title: 'Digital Marketing Specialist', img: 'images/user-1.png', role: 'marketer', Follow: false },
-    { name: 'Darlene Robertson', title: 'Digital Marketing Specialist', img: 'images/user-2.png', role: 'customer', Follow: false },
+    {
+      name: 'Wade Warren',
+      title: 'Digital Marketing Specialist',
+      img: 'images/user-1.png',
+      role: 'marketer',
+      Follow: false,
+    },
+    {
+      name: 'Darlene Robertson',
+      title: 'Digital Marketing Specialist',
+      img: 'images/user-2.png',
+      role: 'customer',
+      Follow: false,
+    },
   ];
 
   recentActivities: any[] = [
     {
       icon: 'bi bi-heart-fill text-danger',
       description: 'Liked Social Media Campaign Strategy post',
-      timestamp: new Date(2025, 2, 15, 14, 30)
-    }
+      timestamp: new Date(2025, 2, 15, 14, 30),
+    },
   ];
 
   private postSubscription: any;
@@ -264,7 +306,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
 
   constructor(
     private postService: PostService,
-    private router: Router
+    private router: Router,
   ) {
     this.loadUserData();
     this.initializePortfolio();
@@ -272,10 +314,17 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
     this.initializeTestimonials();
   }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+  ): boolean {
     const currentUser = this.authService.getCurrentUser();
     const profileId = route.params['id'];
-    if (currentUser && currentUser.id === profileId && currentUser.role === 'marketer') {
+    if (
+      currentUser &&
+      currentUser.id === profileId &&
+      currentUser.role === 'marketer'
+    ) {
       return true;
     }
     this.router.navigate(['/unauthorized']);
@@ -286,21 +335,23 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
     this.initializeProfile();
     this.startAnalyticsTracking();
 
-    this.posts.forEach(post => {
+    this.posts.forEach((post) => {
       post.profileImageUrl = this.user[0].profileImageUrl;
     });
 
-    this.postSubscription = this.postService.getPosts().subscribe((updatedPosts: Post[]) => {
-      updatedPosts.forEach(post => {
-        post.profileImageUrl = this.user[0].profileImageUrl;
+    this.postSubscription = this.postService
+      .getPosts()
+      .subscribe((updatedPosts: Post[]) => {
+        updatedPosts.forEach((post) => {
+          post.profileImageUrl = this.user[0].profileImageUrl;
+        });
+
+        this.posts = updatedPosts.filter(
+          (post) => post.username === this.user[0].username,
+        );
+
+        this.stats.posts = this.posts.length;
       });
-
-      this.posts = updatedPosts.filter(post =>
-        post.username === this.user[0].username
-      );
-
-      this.stats.posts = this.posts.length;
-    });
   }
 
   ngOnDestroy() {
@@ -326,7 +377,8 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
     post.likes += post.liked ? 1 : -1;
 
     if (post.reactions) {
-      post.reactions['👍'] = (post.reactions['👍'] || 0) + (post.liked ? 1 : -1);
+      post.reactions['👍'] =
+        (post.reactions['👍'] || 0) + (post.liked ? 1 : -1);
     }
   }
 
@@ -390,7 +442,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
         title: '',
         imageUrl: '',
         author: '',
-        date: new Date()
+        date: new Date(),
       };
       this.posts.unshift(newPost);
       this.postService.addPost(newPost);
@@ -437,10 +489,13 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   onPostImageChange(event: Event) {
     const files = (event.target as HTMLInputElement).files;
     if (files) {
-      Array.from(files).forEach(file => {
+      Array.from(files).forEach((file) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.newPostImages.push({ type: 'image', url: e.target?.result as string });
+          this.newPostImages.push({
+            type: 'image',
+            url: e.target?.result as string,
+          });
         };
         reader.readAsDataURL(file);
       });
@@ -453,7 +508,9 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
 
   editPortfolioItem(item: any) {
     this.newPortfolioItem = { ...item };
-    const modal = new bootstrap.Modal(document.getElementById('addPortfolioModal')!);
+    const modal = new bootstrap.Modal(
+      document.getElementById('addPortfolioModal')!,
+    );
     modal.show();
   }
 
@@ -466,14 +523,26 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
 
   savePortfolioItem() {
     if (this.newPortfolioItem.title && this.newPortfolioItem.description) {
-      const index = this.portfolioItems.findIndex(item => item.title === this.newPortfolioItem.title && item !== this.newPortfolioItem);
+      const index = this.portfolioItems.findIndex(
+        (item) =>
+          item.title === this.newPortfolioItem.title &&
+          item !== this.newPortfolioItem,
+      );
       if (index > -1) {
         this.portfolioItems[index] = { ...this.newPortfolioItem };
       } else {
         this.portfolioItems.push({ ...this.newPortfolioItem });
       }
-      this.newPortfolioItem = { title: '', description: '', category: 'Social Media', link: '', imageUrl: '' };
-      const modal = bootstrap.Modal.getInstance(document.getElementById('addPortfolioModal')!);
+      this.newPortfolioItem = {
+        title: '',
+        description: '',
+        category: 'Social Media',
+        link: '',
+        imageUrl: '',
+      };
+      const modal = bootstrap.Modal.getInstance(
+        document.getElementById('addPortfolioModal')!,
+      );
       modal?.hide();
     }
   }
@@ -490,8 +559,16 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   }
 
   openAddPortfolioModal() {
-    this.newPortfolioItem = { title: '', description: '', category: 'Social Media', link: '', imageUrl: '' };
-    const modal = new bootstrap.Modal(document.getElementById('addPortfolioModal')!);
+    this.newPortfolioItem = {
+      title: '',
+      description: '',
+      category: 'Social Media',
+      link: '',
+      imageUrl: '',
+    };
+    const modal = new bootstrap.Modal(
+      document.getElementById('addPortfolioModal')!,
+    );
     modal.show();
   }
 
@@ -505,32 +582,56 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
 
   editAchievement(achievement: any) {
     this.newAchievement = { ...achievement };
-    const modal = new bootstrap.Modal(document.getElementById('addAchievementModal')!);
+    const modal = new bootstrap.Modal(
+      document.getElementById('addAchievementModal')!,
+    );
     modal.show();
   }
 
   saveAchievement() {
     if (this.newAchievement.title && this.newAchievement.description) {
-      const index = this.achievements.findIndex(ach => ach.title === this.newAchievement.title && ach !== this.newAchievement);
+      const index = this.achievements.findIndex(
+        (ach) =>
+          ach.title === this.newAchievement.title &&
+          ach !== this.newAchievement,
+      );
       if (index > -1) {
         this.achievements[index] = { ...this.newAchievement };
       } else {
         this.achievements.push({ ...this.newAchievement });
       }
-      this.newAchievement = { title: '', description: '', date: '', icon: 'trophy', category: '' };
-      const modal = bootstrap.Modal.getInstance(document.getElementById('addAchievementModal')!);
+      this.newAchievement = {
+        title: '',
+        description: '',
+        date: '',
+        icon: 'trophy',
+        category: '',
+      };
+      const modal = bootstrap.Modal.getInstance(
+        document.getElementById('addAchievementModal')!,
+      );
       modal?.hide();
     }
   }
 
   openAddAchievementModal() {
-    this.newAchievement = { title: '', description: '', date: '', icon: 'trophy', category: '' };
-    const modal = new bootstrap.Modal(document.getElementById('addAchievementModal')!);
+    this.newAchievement = {
+      title: '',
+      description: '',
+      date: '',
+      icon: 'trophy',
+      category: '',
+    };
+    const modal = new bootstrap.Modal(
+      document.getElementById('addAchievementModal')!,
+    );
     modal.show();
   }
 
   openEditProfileModal() {
-    const modal = new bootstrap.Modal(document.getElementById('editProfileModal')!);
+    const modal = new bootstrap.Modal(
+      document.getElementById('editProfileModal')!,
+    );
     modal.show();
   }
 
@@ -541,7 +642,9 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
     this.phoneNumber = this.phoneNumber.trim();
     this.email = this.email.trim();
     this.authService.updateUserProfile(this.user[0]);
-    const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal')!);
+    const modal = bootstrap.Modal.getInstance(
+      document.getElementById('editProfileModal')!,
+    );
     modal?.hide();
   }
 
@@ -550,18 +653,23 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
   }
 
   openSettingsPanel() {
-    const modal = new bootstrap.Modal(document.getElementById('settingsPanel')!);
+    const modal = new bootstrap.Modal(
+      document.getElementById('settingsPanel')!,
+    );
     modal.show();
   }
 
   changePassword() {
     if (this.currentPassword && this.newPassword) {
-      this.authService.changePassword(this.currentPassword, this.newPassword)
+      this.authService
+        .changePassword(this.currentPassword, this.newPassword)
         .then(() => {
           alert('Password updated successfully');
           this.currentPassword = '';
           this.newPassword = '';
-          const modal = bootstrap.Modal.getInstance(document.getElementById('settingsPanel')!);
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById('settingsPanel')!,
+          );
           modal?.hide();
         })
         .catch((error: Error) => {
@@ -577,8 +685,20 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
 
   refreshSuggestions() {
     this.userFol = [
-      { name: 'New User ' + Math.floor(Math.random() * 100), title: 'Digital Marketing Specialist', img: 'images/user-' + Math.floor(Math.random() * 5 + 1) + '.png', role: 'marketer', Follow: false },
-      { name: 'New User ' + Math.floor(Math.random() * 100), title: 'Content Creator', img: 'images/user-' + Math.floor(Math.random() * 5 + 1) + '.png',role:'customer' , Follow: false },
+      {
+        name: 'New User ' + Math.floor(Math.random() * 100),
+        title: 'Digital Marketing Specialist',
+        img: 'images/user-' + Math.floor(Math.random() * 5 + 1) + '.png',
+        role: 'marketer',
+        Follow: false,
+      },
+      {
+        name: 'New User ' + Math.floor(Math.random() * 100),
+        title: 'Content Creator',
+        img: 'images/user-' + Math.floor(Math.random() * 5 + 1) + '.png',
+        role: 'customer',
+        Follow: false,
+      },
     ];
   }
 
@@ -603,8 +723,8 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
         title: 'Social Media Campaign',
         description: 'Successful marketing campaign for a major brand',
         imageUrl: 'path/to/portfolio1.jpg',
-        category: 'Social Media'
-      }
+        category: 'Social Media',
+      },
     ];
   }
 
@@ -620,13 +740,16 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
       ...this.stats,
       views: this.analytics.profileViews,
       projectsCompleted: this.analytics.completedProjects,
-      clientSatisfaction: this.analytics.clientSatisfaction
+      clientSatisfaction: this.analytics.clientSatisfaction,
     };
   }
 
   private setupEventListeners() {
     document.addEventListener('click', (event) => {
-      if (this.showEmojiPicker && !(event.target as HTMLElement).closest('.emoji-picker-container')) {
+      if (
+        this.showEmojiPicker &&
+        !(event.target as HTMLElement).closest('.emoji-picker-container')
+      ) {
         this.showEmojiPicker = false;
       }
     });
@@ -639,14 +762,17 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
       averageRating: 4.8,
       completedProjects: 45,
       clientSatisfaction: 98,
-      followerGrowth: 12
+      followerGrowth: 12,
     };
   }
 
   private startAnalyticsTracking() {
     setInterval(() => {
       this.analytics.profileViews += Math.floor(Math.random() * 5);
-      this.analytics.followerGrowth = Math.min(100, this.analytics.followerGrowth + Math.random() * 2);
+      this.analytics.followerGrowth = Math.min(
+        100,
+        this.analytics.followerGrowth + Math.random() * 2,
+      );
       this.calculateStats();
     }, 60000);
   }
@@ -657,8 +783,8 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
         name: 'Digital Marketing Professional',
         issuer: 'Google',
         date: '2024',
-        credentialUrl: 'https://example.com/cert'
-      }
+        credentialUrl: 'https://example.com/cert',
+      },
     ];
   }
 
@@ -669,8 +795,8 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
         author: 'John Doe',
         company: 'Tech Corp',
         rating: 5,
-        date: '2024-03-01'
-      }
+        date: '2024-03-01',
+      },
     ];
   }
 
@@ -682,7 +808,7 @@ export class ProfileComponent implements OnInit, OnDestroy, CanActivate {
         const newImageUrl = e.target?.result as string;
         this.profileImageUrl = newImageUrl;
         this.user[0].profileImageUrl = newImageUrl;
-        this.posts.forEach(post => {
+        this.posts.forEach((post) => {
           post.profileImageUrl = newImageUrl;
         });
       };
