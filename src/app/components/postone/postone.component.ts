@@ -6,11 +6,10 @@ import { Post } from '../../interfaces/post';
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({
-  selector: 'app-postone',
-  standalone: true,
-  imports: [FormsModule, CommonModule, HttpClientModule],
-  templateUrl: './postone.component.html',
-  styleUrls: ['./postone.component.css']
+    selector: 'app-postone',
+    imports: [FormsModule, CommonModule, HttpClientModule],
+    templateUrl: './postone.component.html',
+    styleUrls: ['./postone.component.css']
 })
 export class PostoneComponent implements OnInit {
   posts: Post[] = [];

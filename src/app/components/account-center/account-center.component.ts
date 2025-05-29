@@ -193,17 +193,16 @@ interface ProfileRecommendation {
 }
 
 @Component({
-  selector: 'app-account-center',
-  standalone: true,
-  imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    FormsModule, 
-    HttpClientModule,
-    ReplacePipe
-  ],
-  templateUrl: './account-center.component.html',
-  styleUrls: ['./account-center.component.css']
+    selector: 'app-account-center',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+        HttpClientModule,
+        ReplacePipe
+    ],
+    templateUrl: './account-center.component.html',
+    styleUrls: ['./account-center.component.css']
 })
 export class AccountCenterComponent implements OnInit {
   passwordForm!: FormGroup;

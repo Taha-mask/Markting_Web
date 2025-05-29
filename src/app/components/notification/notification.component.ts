@@ -16,24 +16,21 @@ interface Notification {
 }
 
 @Component({
-  selector: 'app-notification',
-  standalone: true,
-  imports: [TrendingSidebarComponent, CommonModule],
-  templateUrl: './notification.component.html',
-  styleUrls: ['./notification.component.css'],
-  animations: [
-    trigger('notificationAnimation', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-10px)' }),
-        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', 
-          style({ opacity: 1, transform: 'translateY(0)' }))
-      ]),
-      transition(':leave', [
-        animate('200ms cubic-bezier(0.4, 0, 0.2, 1)', 
-          style({ opacity: 0, transform: 'translateY(-10px)' }))
-      ])
-    ])
-  ]
+    selector: 'app-notification',
+    imports: [TrendingSidebarComponent, CommonModule],
+    templateUrl: './notification.component.html',
+    styleUrls: ['./notification.component.css'],
+    animations: [
+        trigger('notificationAnimation', [
+            transition(':enter', [
+                style({ opacity: 0, transform: 'translateY(-10px)' }),
+                animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'translateY(0)' }))
+            ]),
+            transition(':leave', [
+                animate('200ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 0, transform: 'translateY(-10px)' }))
+            ])
+        ])
+    ]
 })
 export class NotificationComponent implements OnInit {
   notifications: Notification[] = [];

@@ -3,11 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common'; // إضافة CommonModule
 
 @Component({
-  selector: 'app-status',
-  standalone: true,
-  imports: [CommonModule, FormsModule],  // إضافة CommonModule هنا
-  templateUrl: './status.component.html',
-  styleUrls: ['./status.component.css']
+    selector: 'app-status',
+    imports: [CommonModule, FormsModule], // إضافة CommonModule هنا
+    templateUrl: './status.component.html',
+    styleUrls: ['./status.component.css']
 })
 export class StatusComponent {
   showAllActivities = true;

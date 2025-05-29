@@ -17,11 +17,10 @@ interface CartItem {
 
 
 @Component({
-  selector: 'app-cart',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './cart.component.html',
-  styleUrl: './cart.component.css'
+    selector: 'app-cart',
+    imports: [CommonModule],
+    templateUrl: './cart.component.html',
+    styleUrl: './cart.component.css'
 })
 export class CartComponent {
   products: Product[] = [

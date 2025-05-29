@@ -12,22 +12,21 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @Component({
-  selector: 'app-story-viewer',
-  standalone: true,
-  imports: [
-    CommonModule, 
-    FormsModule,
-    ReactiveFormsModule,
-    MatSelectModule,
-    MatSliderModule,
-    MatChipsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatTooltipModule
-  ],
-  templateUrl: './story-viewer.component.html',
-  styleUrls: ['./story-viewer.component.css']
+    selector: 'app-story-viewer',
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatSelectModule,
+        MatSliderModule,
+        MatChipsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatTooltipModule
+    ],
+    templateUrl: './story-viewer.component.html',
+    styleUrls: ['./story-viewer.component.css']
 })
 export class StoryViewerComponent {
   isPreview: boolean = false;

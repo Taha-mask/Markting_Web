@@ -10,11 +10,10 @@ import { ProfileAsVisitorComponent } from './components/profile-as-visitor/profi
 import { filter } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule, NavbarComponent, RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+    selector: 'app-root',
+    imports: [CommonModule, NavbarComponent, RouterOutlet],
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
   title = 'Markting_Web';

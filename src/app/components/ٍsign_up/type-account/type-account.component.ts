@@ -3,9 +3,10 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-type-account',
-  templateUrl: './type-account.component.html',
-  styleUrls: ['./type-account.component.css'],
+    selector: 'app-type-account',
+    templateUrl: './type-account.component.html',
+    styleUrls: ['./type-account.component.css'],
+    standalone: false
 })
 export class TypeAccountComponent {
   constructor(private router: Router) {}

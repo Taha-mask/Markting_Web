@@ -10,11 +10,10 @@ import { ChatService, Chat, Message } from '../../services/chat.service';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-message',
-  standalone: true,
-  imports: [CommonModule, PickerModule, FormsModule, HighlightPipe, HttpClientModule],
-  templateUrl: './message.component.html',
-  styleUrls: ['./message.component.css']
+    selector: 'app-message',
+    imports: [CommonModule, PickerModule, FormsModule, HighlightPipe, HttpClientModule],
+    templateUrl: './message.component.html',
+    styleUrls: ['./message.component.css']
 })
 export class MessageComponent implements OnInit, AfterViewChecked, OnDestroy {
   // Chat and message data

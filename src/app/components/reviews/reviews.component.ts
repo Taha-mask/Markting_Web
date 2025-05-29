@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-reviews',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './reviews.component.html',
-  styleUrls: ['./reviews.component.css']
+    selector: 'app-reviews',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './reviews.component.html',
+    styleUrls: ['./reviews.component.css']
 })
 export class ReviewsComponent {
   Math = Math;

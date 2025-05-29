@@ -3,11 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-search-page',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './search-page.component.html',
-  styleUrl: './search-page.component.css'
+    selector: 'app-search-page',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './search-page.component.html',
+    styleUrl: './search-page.component.css'
 })
 export class SearchPageComponent implements OnInit {
   searchQuery: string = '';

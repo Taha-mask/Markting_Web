@@ -35,18 +35,17 @@ interface Country {
 }
 
 @Component({
-  selector: 'app-signup-user',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
-    HttpClientModule,
-  ],
-  providers: [UserService],
-  templateUrl: './signup-user.component.html',
-  styleUrls: ['./signup-user.component.css'],
+    selector: 'app-signup-user',
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterModule,
+        HttpClientModule,
+    ],
+    providers: [UserService],
+    templateUrl: './signup-user.component.html',
+    styleUrls: ['./signup-user.component.css']
 })
 export class SignupUserComponent implements OnInit {
   public userRegisterForm!: FormGroup<UserRegisterForm>;

@@ -47,12 +47,11 @@ interface SuggestedUser {
 type PostType = Post;
 
 @Component({
-  selector: 'app-explorepage',
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent],
-  templateUrl:'./explorepage.component.html',
-  styleUrls: ['./explorepage.component.css'],
-  providers: [DatePipe, PostService],
+    selector: 'app-explorepage',
+    imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent],
+    templateUrl: './explorepage.component.html',
+    styleUrls: ['./explorepage.component.css'],
+    providers: [DatePipe, PostService]
 })
 export class ExplorepageComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef;

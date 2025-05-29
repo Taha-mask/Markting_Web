@@ -39,12 +39,11 @@ interface TrendingFeed {
 }
 
 @Component({
-  selector: 'app-feed',
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent, FooterComponent],
-  templateUrl:'./feed.component.html',
-  styleUrls: ['./feed.component.css'],
-  providers: [DatePipe]
+    selector: 'app-feed',
+    imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent, FooterComponent],
+    templateUrl: './feed.component.html',
+    styleUrls: ['./feed.component.css'],
+    providers: [DatePipe]
 })
 export class FeedComponent implements OnInit, OnDestroy {
   // Safe accessor methods for document properties

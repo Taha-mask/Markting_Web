@@ -4,11 +4,10 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-give-feedback',
-  standalone: true,
-  imports: [NavbarComponent, FormsModule, ReactiveFormsModule, CommonModule],
-  templateUrl: './give-feedback.component.html',
-  styleUrl: './give-feedback.component.css'
+    selector: 'app-give-feedback',
+    imports: [NavbarComponent, FormsModule, ReactiveFormsModule, CommonModule],
+    templateUrl: './give-feedback.component.html',
+    styleUrl: './give-feedback.component.css'
 })
 export class GiveFeedbackComponent {
   feedbackForm: FormGroup;

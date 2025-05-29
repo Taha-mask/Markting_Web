@@ -8,11 +8,10 @@ import { CommonModule } from '@angular/common';
 import { MessageComponent } from '../Messages/message.component';
 
 @Component({
-  selector: 'app-navbar',
-  standalone: true,
-  imports: [RouterModule, ModalComponent, ReportComponent, CommonModule],
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+    selector: 'app-navbar',
+    imports: [RouterModule, ModalComponent, ReportComponent, CommonModule],
+    templateUrl: './navbar.component.html',
+    styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
   @ViewChild('reportModal') reportModal!: ElementRef;

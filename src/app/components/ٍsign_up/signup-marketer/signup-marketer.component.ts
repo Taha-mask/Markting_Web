@@ -39,18 +39,17 @@ interface Country {
 }
 
 @Component({
-  selector: 'app-signup-marketer',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
-    HttpClientModule,
-  ],
-  providers: [UserService],
-  templateUrl: './signup-marketer.component.html',
-  styleUrls: ['./signup-marketer.component.css'],
+    selector: 'app-signup-marketer',
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterModule,
+        HttpClientModule,
+    ],
+    providers: [UserService],
+    templateUrl: './signup-marketer.component.html',
+    styleUrls: ['./signup-marketer.component.css']
 })
 export class SignupMarketerComponent implements OnInit {
   public marketerRegisterForm!: FormGroup<SignupMarketerForm>;

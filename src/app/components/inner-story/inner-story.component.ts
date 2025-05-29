@@ -60,47 +60,46 @@ interface Comment {
 }
 
 @Component({
-  selector: 'app-inner-story',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    TimeagoModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatSliderModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatCheckboxModule,
-    MatTooltipModule,
-    MatChipsModule
-    // Note: StoryViewerComponent is used via MatDialog.open() and not directly in the template
-  ],
-  templateUrl: './inner-story.component.html',
-  styleUrls: ['./inner-story.component.css'],
-  animations: [
-    trigger('fadeInOut', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(10px)' }),
-        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ]),
-      transition(':leave', [
-        animate('300ms ease-in', style({ opacity: 0, transform: 'translateY(10px)' }))
-      ])
-    ]),
-    trigger('slideInOut', [
-      transition(':enter', [
-        style({ transform: 'translateX(100%)' }),
-        animate('300ms ease-out', style({ transform: 'translateX(0)' }))
-      ]),
-      transition(':leave', [
-        animate('300ms ease-in', style({ transform: 'translateX(100%)' }))
-      ])
-    ])
-  ]
+    selector: 'app-inner-story',
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        TimeagoModule,
+        MatButtonModule,
+        MatIconModule,
+        MatInputModule,
+        MatSliderModule,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatCheckboxModule,
+        MatTooltipModule,
+        MatChipsModule
+        // Note: StoryViewerComponent is used via MatDialog.open() and not directly in the template
+    ],
+    templateUrl: './inner-story.component.html',
+    styleUrls: ['./inner-story.component.css'],
+    animations: [
+        trigger('fadeInOut', [
+            transition(':enter', [
+                style({ opacity: 0, transform: 'translateY(10px)' }),
+                animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+            ]),
+            transition(':leave', [
+                animate('300ms ease-in', style({ opacity: 0, transform: 'translateY(10px)' }))
+            ])
+        ]),
+        trigger('slideInOut', [
+            transition(':enter', [
+                style({ transform: 'translateX(100%)' }),
+                animate('300ms ease-out', style({ transform: 'translateX(0)' }))
+            ]),
+            transition(':leave', [
+                animate('300ms ease-in', style({ transform: 'translateX(100%)' }))
+            ])
+        ])
+    ]
 })
 export class InnerStoryComponent implements OnInit {
   @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef<HTMLVideoElement>;

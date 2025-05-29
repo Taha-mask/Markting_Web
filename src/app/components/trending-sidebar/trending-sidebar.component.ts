@@ -5,11 +5,10 @@ import { User } from '../../interfaces/user';
 import { UserService } from '../../services/User.service';
 
 @Component({
-  selector: 'app-trending-sidebar',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './trending-sidebar.component.html',
-  styleUrls: ['./trending-sidebar.component.css']
+    selector: 'app-trending-sidebar',
+    imports: [CommonModule, RouterModule],
+    templateUrl: './trending-sidebar.component.html',
+    styleUrls: ['./trending-sidebar.component.css']
 })
 export class TrendingSidebarComponent implements OnInit {
   followingCount: number = 0;

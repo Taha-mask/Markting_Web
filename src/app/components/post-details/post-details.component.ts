@@ -6,11 +6,10 @@ import { Post } from '../../interfaces/post';
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({
-  selector: 'app-post-details',
-  standalone: true,
-  imports: [CommonModule, HttpClientModule],
-  templateUrl: './post-details.component.html',
-  styleUrl: './post-details.component.css'
+    selector: 'app-post-details',
+    imports: [CommonModule, HttpClientModule],
+    templateUrl: './post-details.component.html',
+    styleUrl: './post-details.component.css'
 })
 export class PostDetailsComponent implements OnInit {
   postId: string | null = null;

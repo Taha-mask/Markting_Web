@@ -32,11 +32,10 @@ interface Category {
 }
 
 @Component({
-  selector: 'app-modal',
-  standalone: true,
-  imports: [CommonModule, FormsModule, PickerComponent],
-  templateUrl: './modal.component.html',
-  styleUrls: ['./modal.component.css'],
+    selector: 'app-modal',
+    imports: [CommonModule, FormsModule, PickerComponent],
+    templateUrl: './modal.component.html',
+    styleUrls: ['./modal.component.css']
 })
 export class ModalComponent implements OnInit {
   @ViewChild('postModal') postModal!: ElementRef;
