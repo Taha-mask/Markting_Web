@@ -2,18 +2,13 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { UserService } from '../../services/User.service';
-import { LoginResponse, ApiError } from '../models/auth.model';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import * as bootstrap from 'bootstrap';
 import { FooterComponent } from '../footer/footer.component';
-
-interface OAuthResponse {
-  token: string;
-  userId: string;
-}
+import { FirebaseSupabaseService } from '../../services/firebase-supabase.service';
 
 @Component({
     selector: 'app-login-form',
@@ -26,7 +21,6 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   showPassword = false;
   isLoading = false;
   loginError: string | null = null;
-  passwordStrength = 0;
   private destroy$ = new Subject<void>();
   email: string = '';
   password: string = '';
@@ -39,27 +33,18 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private firebaseSupabaseService: FirebaseSupabaseService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [
-        Validators.required, 
-        Validators.minLength(8),
-        this.passwordStrengthValidator
-      ]],
+      password: ['', [Validators.required]],
       rememberMe: [false],
     });
-
-    // Password strength tracking
-    this.loginForm.get('password')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(password => {
-        this.passwordStrength = this.calculatePasswordStrength(password);
-      });
   }
 
   ngOnInit() {
+    // Load remembered email if exists
     const rememberedEmail = localStorage.getItem('rememberedEmail');
     if (rememberedEmail) {
       this.loginForm.patchValue({
@@ -76,75 +61,20 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+    const passwordInput = document.getElementById('password') as HTMLInputElement;
+    if (passwordInput) {
+      passwordInput.type = this.showPassword ? 'text' : 'password';
+    }
   }
 
-  // Custom password strength validator
-  passwordStrengthValidator(control: any) {
-    const password = control.value;
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumbers = /[0-9]/.test(password);
-    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
-    
-    const valid = hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar && password.length >= 8;
-    return valid ? null : { weakPassword: true };
-  }
-
-  // Calculate password strength percentage
-  calculatePasswordStrength(password: string): number {
-    let strength = 0;
-    if (password.length >= 8) strength += 25;
-    if (/[A-Z]/.test(password)) strength += 25;
-    if (/[a-z]/.test(password)) strength += 25;
-    if (/[0-9]/.test(password)) strength += 15;
-    if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) strength += 10;
-    return Math.min(strength, 100);
-  }
-
-  // OAuth login methods with proper type annotations
-  loginWithGoogle() {
-    this.isLoading = true;
-    this.loginError = null;
-
-    // Simulated Google login method - replace with actual implementation
-    this.userService.loginWithGoogle()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: OAuthResponse) => {
-          this.isLoading = false;
-          localStorage.setItem('token', response.token);
-          this.router.navigate(['/feed']);
-        },
-        error: (error: ApiError) => {
-          this.isLoading = false;
-          this.loginError = error.message || 'Google login failed. Please try again.';
-        }
-      });
-  }
-
-  loginWithFacebook() {
-    this.isLoading = true;
-    this.loginError = null;
-
-    // Simulated Facebook login method - replace with actual implementation
-    this.userService.loginWithFacebook()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: OAuthResponse) => {
-          this.isLoading = false;
-          localStorage.setItem('token', response.token);
-          this.router.navigate(['/feed']);
-        },
-        error: (error: ApiError) => {
-          this.isLoading = false;
-          this.loginError = error.message || 'Facebook login failed. Please try again.';
-        }
-      });
-  }
-
-  onSubmit() {
+  async onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
+      if (!this.loginForm.get('email')?.valid) {
+        this.loginError = 'Please enter a valid email address';
+      } else if (!this.loginForm.get('password')?.valid) {
+        this.loginError = 'Please enter your password';
+      }
       return;
     }
 
@@ -159,58 +89,80 @@ export class LoginFormComponent implements OnInit, OnDestroy {
       localStorage.removeItem('rememberedEmail');
     }
 
-    console.log('Submitting login request...');
-    this.userService.login(email, password)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: LoginResponse) => {
-          console.log('Login successful:', response);
-          this.isLoading = false;
-          
-          // Store token in localStorage (already done in UserService)
-          // Store user type if available
-          if (response.user && response.user.userType) {
-            this.userService.setUserType(response.user.userType);
-          }
-          
-          // Navigate based on user type if available
-          const userType = response.user?.userType?.toLowerCase() || '';
-          if (userType === 'marketer' || userType === 'markter') {
-            this.router.navigate(['/dashboard']);
-          } else {
-            this.router.navigate(['/feed']);
-          }
-        },
-        error: (error: ApiError) => {
-          console.error('Login failed:', error);
-          this.isLoading = false;
-          
-          // Provide more specific error messages based on error status
-          if (error.status === 400) {
-            this.loginError = 'Invalid email or password. Please check your credentials and try again.';
-          } else if (error.status === 401) {
-            this.loginError = 'Unauthorized. Your account may be inactive or locked.';
-          } else if (error.status === 404) {
-            this.loginError = 'Account not found. Please check your email or register for a new account.';
-          } else if (error.status === 0) {
-            this.loginError = 'Unable to connect to the server. Please check your internet connection and try again.';
-          } else {
-            this.loginError = error.message || 'An error occurred during login. Please try again later.';
-          }
-        },
-      });
+    try {
+      // Sign in with Firebase Authentication
+      const userCredential = await this.firebaseSupabaseService.signIn(email, password);
+      console.log('Login successful:', userCredential);
+
+      // Get user data from Firestore
+      const userDoc = await this.firebaseSupabaseService.getDocument('marketers', userCredential.user.uid);
+      
+      // Store user data in localStorage
+      const userData = {
+        uid: userCredential.user.uid,
+        ...userDoc
+      };
+      localStorage.setItem('currentUser', JSON.stringify(userData));
+
+      // Navigate based on user type
+      if (userDoc && userDoc['role']?.toLowerCase() === 'marketer') {
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.router.navigate(['/feed']);
+      }
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      this.isLoading = false;
+      
+      // Provide detailed error messages
+      switch (error.code) {
+        case 'auth/user-not-found':
+          this.loginError = 'Account not found. Please check your email or sign up';
+          break;
+        case 'auth/wrong-password':
+          this.loginError = 'Incorrect password. Please try again';
+          break;
+        case 'auth/user-disabled':
+          this.loginError = 'This account has been disabled. Please contact support';
+          break;
+        case 'auth/too-many-requests':
+          this.loginError = 'Too many failed attempts. Please try again later';
+          break;
+        case 'auth/network-request-failed':
+          this.loginError = 'Network error. Please check your internet connection';
+          break;
+        case 'auth/invalid-email':
+          this.loginError = 'Invalid email format';
+          break;
+        case 'auth/invalid-credential':
+          this.loginError = 'Invalid email or password';
+          break;
+        default:
+          this.loginError = 'Login failed. Please check your credentials and try again';
+      }
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   async resetPassword() {
-    if (!this.resetEmail) return;
+    if (!this.resetEmail) {
+      this.resetError = 'Please enter your email address';
+      return;
+    }
+
+    if (!this.validateEmail(this.resetEmail)) {
+      this.resetError = 'Please enter a valid email address';
+      return;
+    }
 
     this.isResetting = true;
     this.resetError = '';
     this.resetSuccess = false;
 
     try {
-      // Call your auth service's reset password method
-      await this.authService.sendPasswordResetEmail(this.resetEmail);
+      // Call Firebase password reset
+      await this.firebaseSupabaseService.resetPassword(this.resetEmail);
       this.resetSuccess = true;
       this.resetEmail = '';
       
@@ -221,14 +173,31 @@ export class LoginFormComponent implements OnInit, OnDestroy {
         modal?.hide();
       }
       
-      // You can show a success toast or alert here
-      alert('Password reset instructions have been sent to your email.');
+      alert('Password reset instructions have been sent to your email');
       
     } catch (error: any) {
-      this.resetError = error.message || 'Failed to send reset instructions. Please try again.';
+      console.error('Password reset error:', error);
+      switch (error.code) {
+        case 'auth/user-not-found':
+          this.resetError = 'No account found with this email address';
+          break;
+        case 'auth/invalid-email':
+          this.resetError = 'Invalid email format';
+          break;
+        case 'auth/too-many-requests':
+          this.resetError = 'Too many attempts. Please try again later';
+          break;
+        default:
+          this.resetError = 'Failed to send reset instructions. Please try again';
+      }
     } finally {
       this.isResetting = false;
     }
+  }
+
+  private validateEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
   closeResetModal() {

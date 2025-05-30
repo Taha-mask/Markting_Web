@@ -14,6 +14,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { UserService } from '../../../services/User.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
+import { FirebaseSupabaseService } from '../../../services/firebase-supabase.service';
 
 interface SignupMarketerForm {
   firstName: FormControl<string | null>;
@@ -29,6 +30,8 @@ interface SignupMarketerForm {
   companyWebsite: FormControl<string | null>;
   companyDescription: FormControl<string | null>;
   termsAccepted: FormControl<boolean | null>;
+  location: FormControl<string | null>;
+  nationalId: FormControl<string | null>;
 }
 
 interface Country {
@@ -47,7 +50,7 @@ interface Country {
         RouterModule,
         HttpClientModule,
     ],
-    providers: [UserService],
+    providers: [UserService, FirebaseSupabaseService],
     templateUrl: './signup-marketer.component.html',
     styleUrls: ['./signup-marketer.component.css']
 })
@@ -60,12 +63,15 @@ export class SignupMarketerComponent implements OnInit {
   public selectedProfileImage: File | null = null;
   public selectedIdImage: File | null = null;
   public defaultProfileImage = 'images/user-1.png';
+  public showSuccessMessage = false;
+  public successMessage = '';
 
   constructor(
     private userService: UserService,
     private router: Router,
     private http: HttpClient,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private firebaseSupabaseService: FirebaseSupabaseService
   ) {
     this.initForm();
   }
@@ -157,233 +163,88 @@ export class SignupMarketerComponent implements OnInit {
     return selectedCountry ? selectedCountry.flagCode : '';
   }
 
-  // Success message properties
-  public showSuccessMessage = false;
-  public successMessage = '';
-
-  public onSubmit(): void {
+  public async onSubmit(): Promise<void> {
     if (this.marketerRegisterForm.valid) {
       this.isLoading = true;
       this.showSuccessMessage = false;
       console.log('Starting marketer registration process...');
 
-      // First, handle file uploads if there are any
-      const uploadTasks: Promise<any>[] = [];
-      let profilePicturePath = 'default-profile.jpg';
-      let userIDPath = 'default-id.jpg';
-
-      // Upload profile image if selected
-      if (this.selectedProfileImage) {
-        const profileUploadTask = new Promise<any>((resolve, reject) => {
-          this.userService.uploadFile(this.selectedProfileImage!).subscribe({
-            next: (response: { filePath: string }) => {
-              console.log('Profile image uploaded:', response);
-              profilePicturePath = response.filePath;
-              resolve(response);
-            },
-            error: (error: { message?: string, error?: any, status?: number }) => {
-              console.error('Profile image upload failed:', error);
-              resolve(null); // Resolve with null to continue the process
-            }
-          });
-        });
-        uploadTasks.push(profileUploadTask);
-      }
-
-      // Upload ID image if selected
-      if (this.selectedIdImage) {
-        const idUploadTask = new Promise<any>((resolve, reject) => {
-          this.userService.uploadFile(this.selectedIdImage!).subscribe({
-            next: (response: { filePath: string }) => {
-              console.log('ID image uploaded:', response);
-              userIDPath = response.filePath;
-              resolve(response);
-            },
-            error: (error: { message?: string, error?: any, status?: number }) => {
-              console.error('ID image upload failed:', error);
-              resolve(null); // Resolve with null to continue the process
-            }
-          });
-        });
-        uploadTasks.push(idUploadTask);
-      }
-
-      // After all uploads are complete, proceed with user registration
-      Promise.all(uploadTasks)
-        .then(() => {
-          console.log('All file uploads completed, proceeding with registration');
-
+      try {
           // Get birth date value safely
           const birthDateValue = this.marketerRegisterForm.get('birthDate')?.value;
-          let birthDateString = '';
+        let birthDateString = birthDateValue ? new Date(birthDateValue).toISOString().split('T')[0] : '';
 
-          if (birthDateValue) {
-            // Convert to ISO string and extract the date part
-            birthDateString = new Date(birthDateValue).toISOString().split('T')[0];
-          } else {
-            // Fallback to current date if no birth date is provided
-            birthDateString = new Date().toISOString().split('T')[0];
-          }
-
-          // Format data according to API expectations with proper casing and structure
+        // Prepare data for Firebase
           const marketerData = {
-            BirthDate: birthDateString,
-            Email: this.marketerRegisterForm.get('email')?.value || '',
-            UserName: this.marketerRegisterForm.get('firstName')?.value + '_' + this.marketerRegisterForm.get('lastName')?.value,
-            City: 'Assiut',
-            Country: 'Egypt',
-            Street: '15 El-Nasr Street',
-            Gender: this.marketerRegisterForm.get('gender')?.value === 'male' ? 'M' : 'F',
-            LastName: this.marketerRegisterForm.get('lastName')?.value || '',
-            FirstName: this.marketerRegisterForm.get('firstName')?.value || '',
-            Status: 'active',
-            Region: 'Upper Egypt',
-            Role: 'Marketer',
-            CreatedAt: new Date().toISOString().split('T')[0],
-            Password: this.marketerRegisterForm.get('password')?.value || '',
-            ProfilePicturePath: profilePicturePath,
-            Description: this.marketerRegisterForm.get('companyDescription')?.value || '',
-            PhoneNumber: this.marketerRegisterForm.get('phone')?.value || '',
-            CompanyName: this.marketerRegisterForm.get('companyName')?.value || '',
-            Companywebsite: this.marketerRegisterForm.get('companyWebsite')?.value || '',
-            UserIDPath: userIDPath,
-            AcceptTerms: this.marketerRegisterForm.get('termsAccepted')?.value === true,
-            UserType: 1 // 1 for Marketer, 0 for Customer
-          };
+          birthDate: birthDateString,
+          email: this.marketerRegisterForm.get('email')?.value || '',
+          userName: this.marketerRegisterForm.get('firstName')?.value + '_' + this.marketerRegisterForm.get('lastName')?.value,
+          gender: this.marketerRegisterForm.get('gender')?.value || '',
+          lastName: this.marketerRegisterForm.get('lastName')?.value || '',
+          firstName: this.marketerRegisterForm.get('firstName')?.value || '',
+          status: 'active',
+          role: 'Marketer',
+          createdAt: new Date().toISOString().split('T')[0],
+          password: this.marketerRegisterForm.get('password')?.value || '',
+          description: this.marketerRegisterForm.get('companyDescription')?.value || '',
+          phoneNumber: this.marketerRegisterForm.get('phone')?.value || '',
+          companyName: this.marketerRegisterForm.get('companyName')?.value || '',
+          companyWebsite: this.marketerRegisterForm.get('companyWebsite')?.value || '',
+          acceptTerms: this.marketerRegisterForm.get('termsAccepted')?.value === true,
+          userType: 1,
+          location: this.marketerRegisterForm.get('location')?.value || '',
+          nationalId: this.marketerRegisterForm.get('nationalId')?.value || '',
+        };
 
-          console.log('Submitting marketer registration data');
+        // Add data to Firebase
+        try {
+          // First create the user in Firebase Authentication
+          const email = this.marketerRegisterForm.get('email')?.value || '';
+          const password = this.marketerRegisterForm.get('password')?.value || '';
+          
+          const userId = await this.firebaseSupabaseService.createUser(email, password);
+          console.log("User created in Authentication with ID:", userId);
 
-          // Call the registration service
-          this.userService.registerMarketer(marketerData).subscribe({
-            next: (response: { token: string, user?: any }) => {
-              console.log('Registration successful:', response);
-              this.isLoading = false;
-              
-              // Store user data in localStorage for persistence
-              if (response.token) {
-                localStorage.setItem('token', response.token);
-                
-                // Store user details if available
-                if (response.user) {
-                  localStorage.setItem('currentUser', JSON.stringify(response.user));
-                } else {
-                  // Create a basic user object if not returned from API
-                  const userObj = {
-                    firstName: marketerData.FirstName,
-                    lastName: marketerData.LastName,
-                    email: marketerData.Email,
-                    userType: 'Marketer',
-                    profilePicturePath: marketerData.ProfilePicturePath
-                  };
-                  localStorage.setItem('currentUser', JSON.stringify(userObj));
-                }
-              }
+          // Then add the document to Firestore
+          const docId = await this.firebaseSupabaseService.addDocument('marketers', {
+            ...marketerData,
+            uid: userId // Add the Authentication UID to the document
+          });
+          console.log("Document written with ID: ", docId);
+
+          // Store user data in localStorage with the document ID
+          localStorage.setItem('currentUser', JSON.stringify({
+            id: docId,
+            uid: userId,
+            ...marketerData
+          }));
               
               // Show success message
               this.showSuccessMessage = true;
-              this.successMessage = 'Registration successful! You will be redirected to the dashboard in a moment.';
+          this.successMessage = 'Registration successful! You will be redirected to the feed page in a moment.';
               
-              // Navigate to dashboard after a short delay
+          // Navigate to feed page after a short delay
               setTimeout(() => {
-                this.router.navigate(['/dashboard']);
+            this.router.navigate(['/feed']);
               }, 3000);
-            },
-            error: (error: { message?: string, error?: any, status?: number }) => {
+        } catch (error) {
+          console.error('Error in registration process:', error);
+          throw new Error('Failed to create account. Please try again.');
+        }
+
+      } catch (error: any) {
               console.error('Registration failed:', error);
               this.isLoading = false;
 
-              // Handle different types of errors
               let errorMessage = 'Registration failed. ';
-              
-              // Log the raw error response for debugging
-              console.log('Raw error response:', error);
-              
-              // Try to parse the response text if available
-              if (error.error && error.error.text) {
-                try {
-                  const errorBody = JSON.parse(error.error.text);
-                  console.log('Parsed error body:', errorBody);
-                } catch (e) {
-                  console.log('Could not parse error text:', error.error.text);
-                }
-              }
-
-              if (error.error) {
-                if (typeof error.error === 'string') {
-                  errorMessage += error.error;
-                } else if (error.error.message) {
-                  errorMessage += error.error.message;
-                } else if (error.error.errors) {
-                  // Handle validation errors
-                  const validationErrors = error.error.errors;
-                  const errorMessages = Object.keys(validationErrors)
-                    .map(key => {
-                      const fieldName = this.getFieldDisplayName(key);
-                      return `${fieldName}: ${validationErrors[key].join(', ')}`;
-                    })
-                    .join('\n');
-                  errorMessage += '\n' + errorMessages;
-                } else if (error.error.title) {
-                  errorMessage += error.error.title;
-                }
-              } else if (error.status === 0) {
-                errorMessage += 'Unable to connect to the server. Please check your internet connection and try again.';
-              } else if (error.status === 400) {
-                // Provide more specific guidance for common 400 errors
-                if (birthDateString && new Date(birthDateString) > new Date(new Date().setFullYear(new Date().getFullYear() - 18))) {
-                  errorMessage += 'You must be at least 18 years old to register as a marketer. Please check your birth date.';
-                } else {
-                  errorMessage += 'Invalid data provided. Common issues include:\n' +
-                    '- Email address already in use\n' +
-                    '- Username already taken\n' +
-                    '- Missing required fields\n' +
-                    '- Password does not meet complexity requirements';
-                }
-              } else if (error.status === 401) {
-                errorMessage += 'Unauthorized access. Please try again.';
-              } else if (error.status === 403) {
-                errorMessage += 'Access forbidden. Please try again.';
-              } else if (error.status === 404) {
-                errorMessage += 'Registration service not found. Please try again later.';
-              } else if (error.status === 409) {
-                errorMessage += 'Email already exists. Please use a different email address.';
-              } else if (error.status === 500) {
-                errorMessage += 'Server error. Please try again later.';
+        if (error.message) {
+          errorMessage += error.message;
               } else {
                 errorMessage += 'An unexpected error occurred. Please try again.';
               }
 
-              // Show error message to user
               alert(errorMessage);
             }
-          });
-        })
-        .catch(error => {
-          console.error('Error during file upload:', error);
-          this.isLoading = false;
-          let errorMessage = 'Error uploading files. ';
-
-          if (error.error) {
-            if (typeof error.error === 'string') {
-              errorMessage += error.error;
-            } else if (error.error.message) {
-              errorMessage += error.error.message;
-            } else if (error.error.errors) {
-              const validationErrors = error.error.errors;
-              errorMessage += Object.values(validationErrors).flat().join('\n');
-            }
-          } else if (error.status === 0) {
-            errorMessage += 'Unable to connect to the server. Please check your internet connection.';
-          } else if (error.status === 413) {
-            errorMessage += 'File size is too large. Please choose a smaller file.';
-          } else if (error.status === 415) {
-            errorMessage += 'File type not supported. Please upload a valid image file.';
-          } else {
-            errorMessage += 'Please try again.';
-          }
-
-          alert(errorMessage);
-        });
     } else {
       this.marketerRegisterForm.markAllAsTouched();
       const formErrors = this.getFormValidationErrors();
@@ -511,6 +372,17 @@ export class SignupMarketerComponent implements OnInit {
         }),
         termsAccepted: new FormControl(false, {
           validators: [Validators.requiredTrue],
+          nonNullable: true,
+        }),
+        location: new FormControl('', {
+          validators: [Validators.required],
+          nonNullable: true,
+        }),
+        nationalId: new FormControl('', {
+          validators: [
+            Validators.required,
+            Validators.pattern('^[0-9]{14}$')
+          ],
           nonNullable: true,
         }),
       },
