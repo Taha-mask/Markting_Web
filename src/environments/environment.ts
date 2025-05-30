@@ -1,8 +1,4 @@
-export interface Environment {
-  production: boolean;
-  useFallbackMode: boolean;
-  connectionRetryAttempts: number;
-  connectionRetryDelay: number;
+interface Environment {
   firebaseConfig: {
     apiKey: string;
     authDomain: string;
@@ -20,12 +16,7 @@ export interface Environment {
 }
 
 export const environment: Environment = {
-  production: false,
 
-  // Connection settings
-  useFallbackMode: false, // Set to true to use mock data when server is unavailable
-  connectionRetryAttempts: 3,
-  connectionRetryDelay: 1000, // ms
 
   firebaseConfig: {
     apiKey: 'AIzaSyAekjysbfUmFQF4j4xrsJ5y0jASBDnSveE',

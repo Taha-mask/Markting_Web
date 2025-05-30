@@ -9,7 +9,9 @@ import {
   signOut,
   onAuthStateChanged,
   UserCredential,
-  sendPasswordResetEmail as firebaseSendPasswordResetEmail
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup
 } from '@angular/fire/auth';
 import {
   Firestore,
@@ -26,6 +28,11 @@ import {
 } from '@angular/fire/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Router } from '@angular/router';
+
+interface OAuthResponse {
+  token: string;
+  userId: string;
+}
 
 export interface User {
   id?: string;
@@ -249,6 +256,54 @@ export class UserService {
     } catch (error) {
       console.error('Error getting user data from Firestore:', error);
       return null;
+    }
+  }
+
+  // Google login
+  async loginWithGoogle(): Promise<OAuthResponse> {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(this.auth, provider);
+      const token = await result.user.getIdToken();
+      return { token, userId: result.user.uid };
+    } catch (error) {
+      console.error('Google login failed:', error);
+      throw error;
+    }
+  }
+
+  // Facebook login
+  async loginWithFacebook(): Promise<OAuthResponse> {
+    try {
+      const provider = new FacebookAuthProvider();
+      const result = await signInWithPopup(this.auth, provider);
+      const token = await result.user.getIdToken();
+      return { token, userId: result.user.uid };
+    } catch (error) {
+      console.error('Facebook login failed:', error);
+      throw error;
+    }
+  }
+
+  async registerMarketer(marketerData: any): Promise<any> {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        marketerData.email,
+        marketerData.password
+      );
+
+      const userDocRef = doc(this.firestore, 'marketers', userCredential.user.uid);
+      await setDoc(userDocRef, {
+        ...marketerData,
+        userId: userCredential.user.uid,
+        createdAt: new Date().toISOString()
+      });
+
+      return { success: true, message: 'Marketer registered successfully' };
+    } catch (error) {
+      console.error('Marketer registration failed:', error);
+      throw error;
     }
   }
 }

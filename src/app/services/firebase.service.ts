@@ -88,18 +88,43 @@ export class FirebaseService {
     return this.currentUser;
   }
 
+  getAuth() {
+    return this.auth;
+  }
+
   // Marketers Collection
-  async addMarketer(marketerData: any) {
+  async addMarketer(marketerData: any): Promise<string> {
     try {
-      const docRef = await addDoc(collection(this.db, 'marketers'), {
+      if (!this.currentUser?.uid) {
+        throw new Error('No authenticated user found');
+      }
+
+      // Validate required fields
+      const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'companyName'];
+      const missingFields = requiredFields.filter(field => !marketerData[field]);
+
+      if (missingFields.length > 0) {
+        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      }
+
+      // Create marketer document with timestamp and user ID
+      const marketerDoc = {
         ...marketerData,
-        userId: this.currentUser?.uid,
-        createdAt: new Date().toISOString()
-      });
+        userId: this.currentUser.uid,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        status: 'active'
+      };
+
+      // Add document to marketers collection
+      const docRef = await addDoc(collection(this.db, 'marketers'), marketerDoc);
+
+      console.log('Marketer added successfully with ID:', docRef.id);
       return docRef.id;
-    } catch (error) {
+
+    } catch (error: any) {
       console.error('Error adding marketer:', error);
-      throw error;
+      throw new Error(`Failed to add marketer: ${error.message}`);
     }
   }
 

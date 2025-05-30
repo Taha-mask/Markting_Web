@@ -1,5 +1,4 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
@@ -9,8 +8,7 @@ import * as bootstrap from 'bootstrap';
 import { User } from '../../interfaces/user';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { AuthService } from '../../services/auth.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { SupabaseService } from '../../services/supabase.service';
 
 interface ImagePreview {
   file: File;
@@ -32,10 +30,11 @@ interface Category {
 }
 
 @Component({
-    selector: 'app-modal',
-    imports: [CommonModule, FormsModule, PickerComponent],
-    templateUrl: './modal.component.html',
-    styleUrls: ['./modal.component.css']
+  selector: 'app-modal',
+  standalone: true,
+  imports: [CommonModule, FormsModule, PickerComponent],
+  templateUrl: './modal.component.html',
+  styleUrls: ['./modal.component.css'],
 })
 export class ModalComponent implements OnInit {
   @ViewChild('postModal') postModal!: ElementRef;
@@ -88,7 +87,10 @@ export class ModalComponent implements OnInit {
   allowedDocumentTypes = '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt';
   allowedVideoTypes = 'video/*';
 
-  constructor(private postService: PostService, private router: Router, private authService: AuthService) {}
+  constructor(
+    private postService: PostService,
+    private supabaseService: SupabaseService
+  ) {}
 
   ngOnInit(): void {
   }
@@ -111,116 +113,74 @@ export class ModalComponent implements OnInit {
     }
 
     if (postContent.trim() || this.mediaItems.length > 0) {
-      // Generate a unique ID for the post
-      const uniqueId = Date.now();
-      console.log('Creating new post with ID:', uniqueId);
-      
-      // Get the current user from auth service
-      const currentUser = this.authService.getCurrentUser();
-      
-      // Create a complete post object with all required properties
-      const post: Post = {
-        id: uniqueId.toString(), // Convert number to string
-        username: currentUser?.username || this.users[0].username,
-        profileImageUrl: currentUser?.profileImageUrl || this.users[0].profileImageUrl,
-        timestamp: new Date(),
-        content: postContent,
-        category: this.selectedCategory,
-        subCategory: this.selectedSubcategory,
-        audience: this.selectedAudience,
-        media: this.mediaItems.map(item => ({
-          type: item.type,
-          url: item.url,
-          name: item.name,
-          size: item.size,
-          thumbnailUrl: item.thumbnailUrl
-        })),
-        images: this.mediaItems.filter(item => item.type === 'image').map(item => item.url),
-        currentImageIndex: 0,
-        price: this.postPrice === null ? undefined : this.postPrice,
-        likes: 0,
-        Shares: 0,
-        Saves: 0,
-        showComments: false,
-        isEditing: false,
-        liked: false,
-        saved: false,
-        isFollowing: false,
-        comments: [],
-        reactions: {},
-        topReactions: []
-      };
+      try {
+        const newPost = {
+          username: this.users[0].username,
+          profileImageUrl: this.users[0].profileImageUrl,
+          timestamp: new Date(),
+          content: postContent,
+          category: this.selectedCategory,
+          subCategory: this.selectedSubcategory,
+          audience: this.selectedAudience,
+          media: this.mediaItems.map(item => ({
+            type: item.type,
+            url: item.url,
+            name: item.name,
+            size: item.size,
+            thumbnailUrl: item.thumbnailUrl
+          })),
+          currentImageIndex: 0,
+          price: this.postPrice,
+          likes: 0,
+          Shares: 0,
+          Saves: 0,
+          showComments: false,
+          isEditing: false,
+          liked: false,
+          saved: false,
+          isFollowing: false,
+          comments: []
+        };
 
-      // Add the post to the service using the API
-      this.postService.createPost(post).subscribe({
-        next: (createdPost) => {
-          console.log('Post created successfully:', createdPost);
-          
-          // Clear the form and close the modal
-          this.clearForm();
-          this.closeModal();
-          
-          // Navigate to the feed page after adding the post
-          this.router.navigate(['/feed']);
-        },
-        error: (error: HttpErrorResponse) => {
-          console.error('Error creating post:', error);
-          
-          if (error.status === 401) {
-            alert('You need to be logged in to create a post. Please sign in and try again.');
-          } else if (error.status === 500) {
-            // The post was likely added to the local feed due to our fallback mechanism
-            console.log('Using local fallback for post creation');
-            this.clearForm();
-            this.closeModal();
-            this.router.navigate(['/feed']);
-          } else {
-            alert(`Error creating post: ${error.message || 'Unknown error'}`);
-            // Still close the modal and clear the form since the post was added locally
-            this.clearForm();
-            this.closeModal();
-            this.router.navigate(['/feed']);
-          }
-        }
-      });
+        const post: Post = {
+          id: Date.now().toString(),
+          username: newPost.username,
+          profileImageUrl: newPost.profileImageUrl,
+          timestamp: newPost.timestamp,
+          content: newPost.content,
+          category: newPost.category,
+          subCategory: newPost.subCategory,
+          audience: newPost.audience,
+          media: newPost.media,
+          currentImageIndex: newPost.currentImageIndex,
+          price: newPost.price,
+          likes: newPost.likes,
+          Shares: newPost.Shares,
+          Saves: newPost.Saves,
+          showComments: newPost.showComments,
+          isEditing: newPost.isEditing,
+          liked: newPost.liked,
+          saved: newPost.saved,
+          isFollowing: newPost.isFollowing,
+          comments: newPost.comments
+        };
+
+        await this.postService.addPost(post);
+        this.clearForm();
+        this.closeModal();
+      } catch (error) {
+        console.error('Error adding post:', error);
+        alert('Failed to add post. Please try again.');
+      }
     }
   }
 
   closeModal() {
-    // First, manually remove all modal-related elements and classes
-    const modalBackdrops = document.querySelectorAll('.modal-backdrop');
-    modalBackdrops.forEach(backdrop => {
-      backdrop.remove();
-    });
-    
-    // Remove all modal-open classes and inline styles from body
-    document.body.classList.remove('modal-open');
-    document.body.style.overflow = '';
-    document.body.style.paddingRight = '';
-    
-    // Then close the modal through Bootstrap API
     const modalElement = this.postModal.nativeElement;
     const modalInstance = bootstrap.Modal.getInstance(modalElement);
     if (modalInstance) {
       modalInstance.hide();
     }
-    
-    // Additional cleanup to ensure no opacity remains
-    setTimeout(() => {
-      // Double-check for any remaining backdrops
-      const remainingBackdrops = document.querySelectorAll('.modal-backdrop');
-      remainingBackdrops.forEach(backdrop => {
-        backdrop.remove();
-      });
-      
-      // Ensure body is fully reset
-      document.body.classList.remove('modal-open');
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
-      
-      // Reset any inline opacity styles that might have been added
-      document.body.style.opacity = '';
-    }, 300);
   }
 
   clearForm() {
@@ -280,39 +240,51 @@ export class ModalComponent implements OnInit {
     }
   }
 
-  private handleImageFile(file: File) {
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
+  private async handleImageFile(file: File) {
+    try {
+      const imageUrl = await this.supabaseService.uploadImage(file, 'post-images');
       this.mediaItems.push({
         type: 'image',
-        url: e.target.result,
+        url: imageUrl,
         name: file.name,
         size: file.size
       });
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
   }
 
-  private handleVideoFile(file: File) {
-    const url = URL.createObjectURL(file);
-    this.mediaItems.push({
-      type: 'video',
-      url: url,
-      name: file.name,
-      size: file.size
-    });
+  private async handleVideoFile(file: File) {
+    try {
+      const videoUrl = await this.supabaseService.uploadVideo(file, 'post-videos');
+      this.mediaItems.push({
+        type: 'video',
+        url: videoUrl,
+        name: file.name,
+        size: file.size
+      });
+    } catch (error) {
+      console.error('Error uploading video:', error);
+      throw error;
+    }
   }
 
-  private handleDocumentFile(file: File) {
-    const url = URL.createObjectURL(file);
-    const thumbnailClass = this.getDocumentThumbnail(file.name);
-    this.mediaItems.push({
-      type: 'document',
-      url: url,
-      name: file.name,
-      size: file.size,
-      thumbnailUrl: thumbnailClass
-    });
+  private async handleDocumentFile(file: File) {
+    try {
+      const documentUrl = await this.supabaseService.uploadImage(file, 'post-documents');
+      const thumbnailClass = this.getDocumentThumbnail(file.name);
+      this.mediaItems.push({
+        type: 'document',
+        url: documentUrl,
+        name: file.name,
+        size: file.size,
+        thumbnailUrl: thumbnailClass
+      });
+    } catch (error) {
+      console.error('Error uploading document:', error);
+      throw error;
+    }
   }
 
   private isDocumentFile(file: File): boolean {
@@ -429,7 +401,7 @@ export class ModalComponent implements OnInit {
       if (item.type === 'video' || item.type === 'document') {
         URL.revokeObjectURL(item.url);
       }
-      
+
       this.mediaItems.splice(this.currentIndex, 1);
       if (this.currentIndex >= this.mediaItems.length) {
         this.currentIndex = this.mediaItems.length - 1;
@@ -437,6 +409,17 @@ export class ModalComponent implements OnInit {
       if (this.mediaItems.length === 0) {
         this.currentIndex = 0;
       }
+    }
+  }
+
+  async handleImageUpload(file: File) {
+    try {
+      const imageUrl = await this.supabaseService.uploadImage(file);
+      console.log('Image uploaded successfully:', imageUrl);
+      // Use the imageUrl (e.g., save to user profile, display in UI, etc.)
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+      // Handle error (show error message to user, etc.)
     }
   }
 }

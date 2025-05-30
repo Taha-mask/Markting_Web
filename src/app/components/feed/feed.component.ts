@@ -3,19 +3,18 @@ import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
-import { Post, Comment } from '../../interfaces/post';
+import { Post } from '../../interfaces/post';
+import { PostComment } from '../../interfaces/Comment';
 import { RouterModule } from '@angular/router';
 import { PostService } from '../../services/post.service';
+import { CommentService } from '../../services/comment.service';
 import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.component';
 import { User } from '../../interfaces/user';
 import { Subscription } from 'rxjs';
 import { Dropdown } from 'bootstrap';
-import {FooterComponent} from '../footer/footer.component';
+import { FooterComponent } from '../footer/footer.component';
 
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
 declare var bootstrap: any;
 
 interface ReactionCount {
@@ -39,49 +38,21 @@ interface TrendingFeed {
 }
 
 @Component({
-    selector: 'app-feed',
-    imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent, FooterComponent],
-    templateUrl: './feed.component.html',
-    styleUrls: ['./feed.component.css'],
-    providers: [DatePipe]
+  selector: 'app-feed',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule, PickerModule, TrendingSidebarComponent, FooterComponent],
+  templateUrl:'./feed.component.html',
+  styleUrls: ['./feed.component.css'],
+  providers: [DatePipe]
 })
 export class FeedComponent implements OnInit, OnDestroy {
-  // Safe accessor methods for document properties
-  getCurrentMedia(post: Post): any {
-    if (!post || !post.media || post.currentImageIndex === undefined || post.currentImageIndex < 0 || !post.media[post.currentImageIndex]) {
-      return null;
-    }
-    return post.media[post.currentImageIndex];
-  }
 
-  getMediaCurrentPage(post: Post): number {
-    const currentMedia = this.getCurrentMedia(post);
-    return currentMedia?.currentPage || 0;
-  }
-
-  getMediaPagesLength(post: Post): number {
-    const currentMedia = this.getCurrentMedia(post);
-    return currentMedia?.pages?.length || 0;
-  }
-
-  getMediaZoom(post: Post): number {
-    const currentMedia = this.getCurrentMedia(post);
-    return currentMedia?.zoom || 1;
-  }
-
-  isMediaZoomMaxReached(post: Post): boolean {
-    return this.getMediaZoom(post) >= 2;
-  }
-
-  isMediaZoomMinReached(post: Post): boolean {
-    return this.getMediaZoom(post) <= 0.5;
-  }
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild(TrendingSidebarComponent) trendingSidebar!: TrendingSidebarComponent;
   @ViewChildren('commentContainer') commentContainers!: QueryList<ElementRef>;
   isDropdownVisible = false;
   postContent: string = '';
-  filteredPosts: Post[] = [];
+  filteredPosts: any[] = [];
   user: any[] = [
     {
       username: 'Taha Mahmoud',
@@ -91,13 +62,13 @@ export class FeedComponent implements OnInit, OnDestroy {
   currentUser = 'Taha Mahmoud';
   activeCategory: string = 'All';
   activeSubCategory: string = '';
-  subCategories: { name: string; icon: string }[] = [];
+  subCategories: any[] = [];
   navbarVisible = true;
   lastScrollTop = 0;
   private startX = 0;
   private scrollLeft = 0;
   private isDragging = false;
-  selectedPost: Post | null = null;
+  selectedPost: any;
   postUrl: string = '';
   linkCopied: boolean = false;
   currentReplyText: string = '';
@@ -173,10 +144,9 @@ export class FeedComponent implements OnInit, OnDestroy {
       link: 'https://example.com/feed4'
     }
   ];
-  selectedImage: string = '';
 
   formatCategoryName(name: string): string {
-    return name.replace(/&/g, '<br>&');
+    return name.replace('&', '<br>&');
   }
 
   followUser(user: any) {
@@ -202,7 +172,7 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
   }
 
-  getSubCategories(categoryName: string): { name: string; icon: string }[] {
+  getSubCategories(categoryName: string): any[] {
     const subCategoriesMap: { [key: string]: string[] } = {
       'All': ['All Categories'],
       'Electrical Tools': ['All', 'Power Tools', 'Hand Tools', 'Measuring Tools', 'Safety Equipment'],
@@ -225,12 +195,10 @@ export class FeedComponent implements OnInit, OnDestroy {
       'Perfumes': ['All', 'Women\'s Perfumes', 'Men\'s Perfumes', 'Unisex', 'Gift Sets', 'Luxury']
     };
 
-    return (subCategoriesMap[categoryName] || []).map(name => {
-      return {
-        name: name,
+    return (subCategoriesMap[categoryName] || []).map(name => ({
+      name,
       icon: this.getIconForSubCategory(name)
-      };
-    });
+    }));
   }
 
   getIconForSubCategory(name: string): string {
@@ -310,12 +278,12 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.activeSubCategory = '';  // Reset sub-category when changing category
 
     if (categoryName === 'All') {
-      this.filteredPosts = [...this.posts].sort((a, b) =>
+      this.filteredPosts = [...this.samplePosts].sort((a, b) =>
         (b.timestamp as any) - (a.timestamp as any)
       );
     } else {
       this.subCategories = this.getSubCategories(categoryName);
-      this.filteredPosts = this.posts
+      this.filteredPosts = this.samplePosts
         .filter(post => post.category === categoryName)
         .sort((a, b) => (b.timestamp as any) - (a.timestamp as any));
     }
@@ -328,15 +296,63 @@ export class FeedComponent implements OnInit, OnDestroy {
       // Show all posts for the current category
       this.filterPostsByCategory(this.activeCategory);
     } else {
-      this.filteredPosts = this.posts.filter(post =>
+      this.filteredPosts = this.samplePosts.filter(post =>
         post.category === this.activeCategory &&
         post.subCategory === subCategoryName
       ).sort((a, b) => (b.timestamp as any) - (a.timestamp as any));
     }
   }
 
-  // Posts data - initialized as empty array, will be populated from API
-  posts: Post[] = [];
+  // Sample posts data
+  samplePosts: any[] = [
+    {
+      username: 'Taha Mahmoud',
+      profileImageUrl: 'images/user-1.jpg',
+      timestamp: new Date(),
+      content: 'This is a sample post content about electronics!',
+      category: 'Electronics',
+      subCategory: 'General',
+      images: [
+        'images/post-image-1.png',
+        'images/post-image-2.png',
+        'images/post-image-3.png',
+      ],
+      currentImageIndex: 0,
+      likes: 15,
+      Shares: 30,
+      Saves: 5,
+      showComments: false,
+      isEditing: false,
+      liked: false,
+      saved: false,
+      isFollowing: false,
+      comments: [
+        {
+          id: 'comment1',
+          username: 'Sarah Johnson',
+          text: 'Great post! Very informative.',
+          likes: 5,
+          likedBy: [
+            { username: 'Mike Chen', profileImageUrl: 'images/user-2.jpg' },
+            { username: 'Emma Davis', profileImageUrl: 'images/user-3.jpg' }
+          ],
+          timestamp: new Date(2025, 2, 15, 14, 30),
+          profileImageUrl: 'images/user-3.jpg',
+          replies: [
+            {
+              id: 'reply1',
+              username: 'Mike Chen',
+              text: 'Totally agree! The insights are valuable.',
+              likes: 2,
+              likedBy: [],
+              timestamp: new Date(2025, 2, 15, 15, 0),
+              profileImageUrl: 'images/user-2.jpg'
+            }
+          ]
+        }
+      ]
+    },
+  ];
 
   getBentoItemClass(index: number): string {
     const pattern = [
@@ -354,110 +370,51 @@ export class FeedComponent implements OnInit, OnDestroy {
     console.log('Friend request sent to', user.name);
   }
 
-  hidePost(post: Post) {
+  hidePost(post: any) {
     const index = this.filteredPosts.indexOf(post);
     if (index > -1) {
       this.filteredPosts.splice(index, 1);
     }
   }
 
-  snoozeUser(post: Post, days: number) {
+  snoozeUser(post: any, days: number) {
     alert(`Snoozed ${post.username} for ${days} days`);
   }
 
-  blockUser(post: Post) {
+  blockUser(post: any) {
     alert(`Blocked ${post.username}`);
   }
 
-  toggleLike(post: Post) {
-    // Update UI immediately for better user experience
+  likePost(post: any) {
+    if (post.liked) {
+      post.likes--;
+    } else {
+      post.likes++;
+    }
     post.liked = !post.liked;
-    post.likes = (post.likes || 0) + (post.liked ? 1 : -1);
-
-    // Call API to update like status
-    this.postService.likePost(post.id).subscribe({
-      next: (updatedPost: Post | null) => {
-        if (updatedPost) {
-          console.log('Post like status updated successfully');
-          const index = this.posts.findIndex((p: Post) => p.id === post.id);
-          if (index !== -1) {
-            // Preserve the UI state for liked status
-            const wasLiked = this.posts[index].liked;
-            this.posts[index] = updatedPost;
-            this.posts[index].liked = wasLiked;
-            this.filterPostsByCategory(this.activeCategory);
-          }
-        }
-      },
-      error: (error: any) => {
-        console.error('Error liking post:', error);
-        // Revert UI changes if API call fails
-        post.liked = !post.liked;
-        post.likes = (post.likes || 0) - (post.liked ? 1 : -1);
-      }
-    });
   }
 
-  toggleComments(post: Post) {
+  toggleComments(post: any) {
     post.showComments = !post.showComments;
   }
 
-  sharePost(post: Post) {
-    // Validate post and post.id before proceeding
-    if (!post) {
-      console.error('Cannot share undefined post');
-      return;
+  sharePost(post: any) {
+    this.selectedPost = post;
+    const postId = post.id || Date.now().toString();
+    this.postUrl = `${window.location.origin}/post/${postId}`;
+    const modal = document.getElementById('shareModal');
+    if (modal) {
+      const bootstrapModal = new bootstrap.Modal(modal);
+      bootstrapModal.show();
     }
-
-    // Use post.id directly as a string
-    const postId = post.id;
-
-    if (!postId) {
-      console.error('Invalid post ID for sharing:', post.id);
-      return;
-    }
-
-    this.postService.sharePost(postId).subscribe({
-      next: (updatedPost: Post | null) => {
-        if (updatedPost) {
-          // Update post in posts array
-          const postsIndex = this.posts.findIndex((p: Post) => p.id === updatedPost.id);
-          if (postsIndex !== -1) {
-            this.posts[postsIndex] = updatedPost;
-          }
-
-          // Update post in filteredPosts array
-          const filteredIndex = this.filteredPosts.findIndex((p: Post) => p.id === postId);
-          if (filteredIndex !== -1) {
-            this.filteredPosts[filteredIndex] = updatedPost;
-          }
-        }
-
-        // Apply category filter to refresh the view
-        this.filterPostsByCategory(this.activeCategory);
-
-        // Set selected post and prepare share URL
-        this.selectedPost = updatedPost;
-        this.postUrl = `${window.location.origin}/post/${postId}`;
-
-        // Show the share modal
-        const modal = document.getElementById('shareModal');
-        if (modal) {
-          const bootstrapModal = new bootstrap.Modal(modal);
-          bootstrapModal.show();
-        }
-      },
-      error: (error: any) => {
-        console.error('Error sharing post:', error);
-      }
-    });
+    post.Shares++;
   }
 
-  toggleEdit(post: Post) {
+  toggleEdit(post: any) {
     post.isEditing = !post.isEditing;
   }
 
-  savePost(post: Post) {
+  savePost(post: any) {
     post.isEditing = false;
   }
 
@@ -480,7 +437,7 @@ export class FeedComponent implements OnInit, OnDestroy {
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target?.result) {
-          this.selectedImage = e.target.result as string;
+          // Add the image to the post when it's created
         }
       };
       reader.readAsDataURL(file);
@@ -489,8 +446,7 @@ export class FeedComponent implements OnInit, OnDestroy {
 
   addPost() {
     if (this.postContent.trim()) {
-      const newPost: Post = {
-        id: '', // Will be set by the backend
+      const newPost: any = {
         username: this.currentUser,
         profileImageUrl: this.user[0].profileImageUrl,
         timestamp: new Date(),
@@ -509,17 +465,18 @@ export class FeedComponent implements OnInit, OnDestroy {
         isFollowing: false,
         comments: []
       };
+      this.samplePosts.unshift(newPost);
+      this.postContent = '';
+      this.filterPostsByCategory(this.activeCategory);
 
-      this.postService.createPost(newPost).subscribe({
-        next: (createdPost: Post) => {
-          this.posts.unshift(createdPost);
-          this.postContent = '';
-          this.filterPostsByCategory(this.activeCategory);
-        },
-        error: (error: any) => {
-          console.error('Error creating post:', error);
-        }
-      });
+      // Cleanup modal backdrop
+      const modalBackdrop = document.querySelector('.modal-backdrop');
+      if (modalBackdrop) {
+        modalBackdrop.remove();
+      }
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
     }
   }
 
@@ -552,105 +509,30 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.isDragging = false;
   }
 
-  toggleSave(post: Post) {
-    post.saved = !post.saved;
-    post.Saves = (post.Saves || 0) + (post.saved ? 1 : -1);
+  toggleLike(post: any) {
+    post.liked = !post.liked;
+    post.likes += post.liked ? 1 : -1;
   }
 
-  nextImage(post: Post) {
-    if (post.media && post.currentImageIndex !== undefined && post.currentImageIndex < post.media.length - 1) {
+  toggleSave(post: any) {
+    post.saved = !post.saved;
+    post.Saves += post.saved ? 1 : -1;
+  }
+
+  nextImage(post: any) {
+    if (post.media && post.currentImageIndex < post.media.length - 1) {
       post.currentImageIndex++;
     }
   }
 
-  prevImage(post: Post) {
-    if (post.currentImageIndex !== undefined && post.currentImageIndex > 0) {
+  prevImage(post: any) {
+    if (post.currentImageIndex > 0) {
       post.currentImageIndex--;
     }
   }
 
-  deleteComment(post: Post, commentIndex: number) {
-    if (post.comments && post.comments.length > commentIndex) {
-      post.comments.splice(commentIndex, 1);
-    }
-  }
-
-  toggleCommentLike(comment: any): void {
-    // Check if the comment is already liked by the current user
-    const isLiked = this.isCommentLikedByCurrentUser(comment);
-
-    if (isLiked) {
-      // If already liked, call the unlike service method
-      // TODO: Implement actual API call for unlikeComment in PostService
-      // Example: this.postService.unlikeComment(comment.id).subscribe({
-      //   next: (updatedComment) => {
-      //     // Update local state based on the backend response
-      //     comment.likedBy = updatedComment.likedBy || [];
-      //     comment.likes = updatedComment.likes || 0;
-      //     comment.isLikedByCurrentUser = this.isCommentLikedByCurrentUser(comment);
-      //     console.log('Comment unliked successfully', updatedComment);
-      //   },
-      //   error: (error) => {
-      //     console.error('Error unliking comment', error);
-      //     // Optionally, revert local changes or show an error message
-      //   }
-      // });
-
-      // Temporary local update for immediate feedback (remove or adjust after implementing backend call)
-      if (comment.likedBy) {
-        comment.likedBy = comment.likedBy.filter((user: string) => user !== this.currentUser);
-      }
-      comment.likes = Math.max(0, (comment.likes || 0) - 1);
-      comment.isLikedByCurrentUser = false;
-
-    } else {
-      // If not liked, call the like service method
-      // TODO: Implement actual API call for likeComment in PostService
-      // Example: this.postService.likeComment(comment.id).subscribe({
-      //   next: (updatedComment) => {
-      //     // Update local state based on the backend response
-      //     if (!updatedComment.likedBy) updatedComment.likedBy = [];
-      //     comment.likedBy = updatedComment.likedBy;
-      //     comment.likes = updatedComment.likes || 0;
-      //     comment.isLikedByCurrentUser = this.isCommentLikedByCurrentUser(comment);
-      //     console.log('Comment liked successfully', updatedComment);
-      //   },
-      //   error: (error) => {
-      //     console.error('Error liking comment', error);
-      //     // Optionally, revert local changes or show an error message
-      //   }
-      // });
-
-       // Temporary local update for immediate feedback (remove or adjust after implementing backend call)
-       if (!comment.likedBy) {
-        comment.likedBy = [];
-      }
-      comment.likedBy.push(this.currentUser);
-      comment.likes = (comment.likes || 0) + 1;
-      comment.isLikedByCurrentUser = true;
-    }
-
-    // Note: The state updates should ideally happen in the .subscribe block after a successful API call.
-    // The local updates above are for immediate UI feedback but might need adjustment.
-  }
-
-  isCommentLikedByCurrentUser(comment: any): boolean {
-    // Check both the isLikedByCurrentUser property and the likedBy array
-    return (
-      comment.isLikedByCurrentUser ||
-      (comment.likedBy && Array.isArray(comment.likedBy) && comment.likedBy.includes(this.currentUser))
-    );
-  }
-
-  likeComment(comment: any): void {
-    this.toggleCommentLike(comment);
-  }
-
-  dislikeComment(comment: any): void {
-    if (!comment.isDisliked) {
-      comment.dislikes = (comment.dislikes || 0) + 1;
-      comment.isDisliked = true;
-    }
+  deleteComment(post: any, commentIndex: number) {
+    post.comments.splice(commentIndex, 1);
   }
 
   editComment(comment: any) {
@@ -671,9 +553,9 @@ export class FeedComponent implements OnInit, OnDestroy {
       });
       comment.text = comment.editText.trim();
       comment.lastEditedBy = this.currentUser;
+    }
     comment.isEditing = false;
     comment.editText = undefined;
-    }
   }
 
   cancelCommentEdit(comment: any) {
@@ -684,36 +566,28 @@ export class FeedComponent implements OnInit, OnDestroy {
   restoreCommentVersion(comment: any, event: Event) {
     const target = event.target as HTMLSelectElement;
     if (!target) {
+      console.warn('Event target is null');
       return;
     }
-
     const selectedIndex = parseInt(target.value);
-    if (comment.editHistory && comment.editHistory[selectedIndex]) {
-      const version = comment.editHistory[selectedIndex];
-      comment.text = version.text;
-      comment.lastEditedBy = version.editedBy;
+    if (comment.editHistory && selectedIndex >= 0 && selectedIndex < comment.editHistory.length) {
+      const selectedVersion = comment.editHistory[selectedIndex];
+      comment.text = selectedVersion.text;
+      comment.lastEditedBy = selectedVersion.editedBy;
     }
+    comment.isEditing = false;
   }
 
   private resetAllEditingStates() {
-    // Process both filteredPosts and posts
-    const allPosts = [...this.filteredPosts, ...this.posts];
-
-    allPosts.forEach((post: Post) => {
-      // Ensure post.comments exists before processing
-      if (post.comments && post.comments.length > 0) {
-        post.comments.forEach((c: any) => {
-          c.isEditing = false;
-          c.editText = undefined;
-          // Ensure replies exists before processing
-          if (c.replies && c.replies.length > 0) {
-            c.replies.forEach((reply: any) => {
-              reply.isEditing = false;
-              reply.editText = undefined;
-            });
-          }
+    this.samplePosts.forEach((post: any) => {
+      post.comments.forEach((c: any) => {
+        c.isEditing = false;
+        c.editText = undefined;
+        c.replies?.forEach((reply: any) => {
+          reply.isEditing = false;
+          reply.editText = undefined;
         });
-      }
+      });
     });
   }
 
@@ -734,7 +608,14 @@ export class FeedComponent implements OnInit, OnDestroy {
     reply.editText = undefined;
   }
 
-  // Comment like functionality is now handled by the enhanced implementation above
+  toggleCommentLike(comment: any) {
+    comment.isLikedByCurrentUser = !comment.isLikedByCurrentUser;
+    comment.likes += comment.isLikedByCurrentUser ? 1 : -1;
+  }
+
+  isCommentLikedByCurrentUser(comment: any): boolean {
+    return comment.isLikedByCurrentUser || false;
+  }
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
@@ -744,32 +625,22 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
   }
 
-  editPost(post: Post) {
+  editPost(post: any) {
     post.isEditing = true;
   }
 
-  deletePost(post: Post) {
-    // Use post.id directly as a string
-    const postId = post.id;
-    this.postService.deletePost(postId).subscribe({
-      next: () => {
-        const index = this.posts.findIndex((p: Post) => p.id === post.id);
-        if (index !== -1) {
-          this.posts.splice(index, 1);
-          this.filterPostsByCategory(this.activeCategory);
-        }
-      },
-      error: (error: any) => {
-        console.error('Error deleting post:', error);
-      }
-    });
+  deletePost(post: any) {
+    const index = this.filteredPosts.indexOf(post);
+    if (index > -1) {
+      this.filteredPosts.splice(index, 1);
+    }
   }
 
-  reportPost(post: Post) {
+  reportPost(post: any) {
     alert(`Reported post by ${post.username}`);
   }
 
-  unfollow(post: Post) {
+  unfollow(post: any) {
     alert(`Unfollowed ${post.username}`);
   }
 
@@ -780,7 +651,7 @@ export class FeedComponent implements OnInit, OnDestroy {
     this.filterPostsByCategory('All');
   }
 
-  shareViaMessage(post: Post) {
+  shareViaMessage(post: any) {
     console.log('Sharing via message:', post);
   }
 
@@ -799,13 +670,13 @@ export class FeedComponent implements OnInit, OnDestroy {
   }
 
   filterByTrending() {
-    this.filteredPosts = [...this.posts]
-      .sort((a: Post, b: Post) => ((b.likes || 0) + (b.comments?.length || 0) + (b.Shares || 0)) - ((a.likes || 0) + (a.comments?.length || 0) + (a.Shares || 0)));
+    this.filteredPosts = this.samplePosts
+      .sort((a, b) => (b.likes + b.comments.length + b.Shares) - (a.likes + a.comments.length + a.Shares));
   }
 
   filterByRecent() {
-    this.filteredPosts = [...this.posts]
-      .sort((a: Post, b: Post) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    this.filteredPosts = this.samplePosts
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }
 
   shareToFacebook() {
@@ -838,164 +709,74 @@ export class FeedComponent implements OnInit, OnDestroy {
     }
   }
 
-  showReactionUsers(post: Post) {
+  addReaction(post: any, reaction: string) {
+    if (!post.reactions) {
+      post.reactions = {};
+    }
+    if (!post.reactions[reaction]) {
+      post.reactions[reaction] = 0;
+    }
+    post.reactions[reaction]++;
+    this.updateReactionUI(post);
+  }
+
+  private updateReactionUI(post: any) {
+    post.topReactions = Object.entries(post.reactions || {})
+      .map(([reaction, count]): ReactionCount => ({ reaction, count: count as number }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3);
+  }
+
+  showReactionUsers(post: any) {
     post.showReactionUsers = !post.showReactionUsers;
-  }
-  // Method to toggle reply input visibility
-  toggleReplyInput(comment: any): void {
-    comment.showReplyInput = !comment.showReplyInput;
-
-    // If showing reply input, focus it after a short delay to allow for DOM update
-    if (comment.showReplyInput) {
-      setTimeout(() => {
-        const replyInput = document.querySelector(`#reply-input-${comment.id}`) as HTMLTextAreaElement;
-        if (replyInput) {
-          replyInput.focus();
-        }
-      }, 100);
-    }
-  }
-
-  // Method to add a reply to a comment
-  addReply(comment: any, replyText: string): void {
-    if (!replyText || !replyText.trim()) {
-      return;
-    }
-
-    // Prepare the reply data to send to the backend
-    const replyDataToSend = {
-      commentId: comment.id, // Assuming comment has an ID
-      content: replyText.trim(),
-      // You might need to add other fields here like userId
-      // The backend should ideally get username and profileImageUrl from the authenticated user
-    };
-
-    // Call the backend service to add the reply
-    // TODO: Implement this method in your PostService
-    this.postService.addReplyToBackend(replyDataToSend).subscribe({
-      next: (savedReplyFromBackend: any) => {
-        // Find the comment in filteredPosts array (to update its replies)
-        const postInFiltered = this.filteredPosts.find(p => p.id === comment.postId); // Assuming comment has postId
-
-        if (postInFiltered) {
-          // Ensure comments array exists before finding the comment
-          if (postInFiltered.comments) {
-            const commentInPost = postInFiltered.comments.find((c: any) => c.id === comment.id);
-
-            if (commentInPost) {
-              if (!commentInPost.replies) {
-                commentInPost.replies = [];
-              }
-
-              // Use the reply object returned from the backend
-              commentInPost.replies.push(savedReplyFromBackend);
-
-              // Scroll to the newly added reply
-              this.scrollToLastReply(commentInPost); // Scroll to the updated comment's replies
-            }
-          }
-        }
-
-        // Reset the reply input
-        this.currentReplyText = '';
-
-        // Toggle off the reply input
-        comment.showReplyInput = false;
-      },
-      error: (error: any) => {
-        console.error('Error adding reply to backend:', error);
-        // Optionally, show an error message to the user
-      }
-    });
-  }
-
-  // Method to scroll to the last reply
-  scrollToLastReply(comment: any): void {
-    setTimeout(() => {
-      try {
-        const replyContainer = document.querySelector(`#replies-${comment.id}`);
-        if (replyContainer) {
-          const lastReply = replyContainer.lastElementChild;
-          if (lastReply) {
-            lastReply.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          } else {
-             // If no last reply element found, scroll the comments container into view
-            this.scrollToLastComment(comment);
-          }
-        }
-      } catch (error) {
-        console.error('Error scrolling to reply:', error);
-      }
-    }, 100);
   }
 
   showCommentLikes(comment: any) {
     comment.showLikedBy = !comment.showLikedBy;
   }
 
-  generateUniqueId(): number {
-    return Math.floor(Math.random() * 1000000); // Simple client-side ID, replace with backend generated ID
+  private generateUniqueId(): string {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
 
-  /**
-   * Generate a reaction ID based on post ID and reaction type
-   * @param postId The ID of the post
-   * @param reactionType The type of reaction
-   * @returns A unique reaction ID string
-   */
-  generateReactionId(postId: string, reactionType: string): string {
-    return `${postId}_${reactionType}_${this.currentUser}`;
-  }
+ addComment(post: any, commentText: string): void {
+  if (!commentText || commentText.trim() === '') return;
 
-  addComment(post: Post, commentText: string) {
-    if (commentText.trim()) {
-      const postId = post.id;
+  const newCommentData = {
+    content: commentText.trim(),
+    postId: post.id
+  };
 
-      // Prepare the comment data to send to the backend
-      const commentDataToSend = {
-        postId: postId,
-        content: commentText.trim(),
-        // You might need to add other fields here like userId
-        // The backend should ideally get username and profileImageUrl from the authenticated user
-      };
+  this.commentService.addComment(newCommentData).subscribe({
+      next: (savedComment: { id: string; content: string; timestamp: Date }) => {
+      // ✅ تأكد إن التعليقات هتظهر
+      post.showComments = true;
 
-      // Call the backend service to add the comment
-      this.postService.addCommentToBackend(commentDataToSend).subscribe({
-        next: (savedCommentFromBackend: any) => {
-          // Find the post in filteredPosts array
-          const postInFiltered = this.filteredPosts.find(p => p.id === post.id);
-
-          if (postInFiltered) {
-            if (!postInFiltered.comments) {
-              postInFiltered.comments = [];
-            }
-
-            // Use the comment object returned from the backend
-            // Add the new comment returned from the backend to the comments array
-            postInFiltered.comments.push(savedCommentFromBackend);
-
-            // Scroll to the new comment
-            this.scrollToLastComment(post);
-
-            // Reset the comment input
-            this.newComment = '';
-          }
-        },
-        error: (error: any) => {
-          console.error('Error adding comment to backend:', error);
-          // Optionally, show an error message to the user
-        }
+      if (!post.comments) post.comments = [];
+      post.comments.push({
+        id: savedComment.id,
+        username: this.currentUser,
+        profileImageUrl: this.user[0].profileImageUrl,
+        text: savedComment.content,
+        timestamp: savedComment.timestamp || new Date(),
+        likes: 0,
+        likedBy: [],
+        replies: []
       });
-    }
-  }
 
-  scrollToLastComment(post: Post) {
+      this.newComment = '';
+      this.scrollToLastComment(post);
+    },
+    error: (err: any) => {
+      console.error('Faild', err);
+    }
+  });
+}
+
+  scrollToLastComment(post: any) {
     // Use setTimeout to ensure DOM has updated
     setTimeout(() => {
       try {
-        // Check if post has comments before trying to access them
-        if (!post.comments || post.comments.length === 0) return;
-
         // Find the last comment in this post's comments
         const lastCommentIndex = post.comments.length - 1;
         const lastCommentElement = document.querySelector(
@@ -1014,16 +795,45 @@ export class FeedComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  focusNextCommentInput(currentPost: Post) {
+  focusNextCommentInput(currentPost: any) {
     // Find the index of the current post
-    const postIndex = this.posts.findIndex((p: Post) => p.id === currentPost.id);
+    const postIndex = this.samplePosts.findIndex(p => p.id === currentPost.id);
 
     // If there's a next post, attempt to focus its comment input
-    if (postIndex < this.posts.length - 1) {
-      const nextPost = this.posts[postIndex + 1];
+    if (postIndex < this.samplePosts.length - 1) {
+      const nextPost = this.samplePosts[postIndex + 1];
       // You might need to implement a method to programmatically focus the next comment input
       console.log('Focusing next post comment input');
     }
+  }
+
+  toggleReplyInput(comment: any) {
+    comment.showReplyInput = !comment.showReplyInput;
+    if (!comment.showReplyInput) {
+      this.currentReplyText = '';
+    }
+  }
+
+  addReply(comment: any, replyText: string) {
+    if (!replyText.trim()) return;
+
+    const reply: any = {
+      id: this.generateUniqueId(),
+      username: this.currentUser,
+      text: replyText,
+      likes: 0,
+      likedBy: [],
+      timestamp: new Date(),
+      profileImageUrl: this.user[0].profileImageUrl,
+      parentId: comment.id
+    };
+
+    if (!comment.replies) {
+      comment.replies = [];
+    }
+    comment.replies.push(reply);
+    this.currentReplyText = '';
+    comment.showReplyInput = false;
   }
 
   onTrendingFeedClick(feed: TrendingFeed) {
@@ -1035,61 +845,24 @@ export class FeedComponent implements OnInit, OnDestroy {
   }
 
   deleteReply(comment: any, replyIndex: number) {
-    if (comment.replies && comment.replies.length > replyIndex) {
-      const replyToDelete = comment.replies[replyIndex];
-      // TODO: Call backend service to delete the reply
-      // Example: this.postService.deleteReplyFromBackend(replyToDelete.id).subscribe({
-      //   next: () => {
-      //     // On successful backend deletion, remove locally
-      //     comment.replies.splice(replyIndex, 1);
-      //     console.log('Reply deleted successfully from backend and UI');
-      //   },
-      //   error: (error) => {
-      //     console.error('Error deleting reply from backend:', error);
-      //     // Optionally, show an error message to the user
-      //   }
-      // });
-
-      // Temporary local deletion for immediate feedback (remove or adjust after implementing backend call)
+    if (comment.replies) {
       comment.replies.splice(replyIndex, 1);
-      console.log('Reply deleted locally');
     }
   }
 
-  pinPost(post: Post) {
-    // Toggle the pinned status locally for immediate feedback
+  pinPost(post: any) {
     post.isPinned = !post.isPinned;
-
-    // TODO: Call backend service to update the pinned status
-    // Example: this.postService.updatePostPinnedStatus(post.id, post.isPinned).subscribe({
-    //   next: (updatedPost) => {
-    //     // Update the post in the local arrays based on the backend response
-    //     const indexFiltered = this.filteredPosts.findIndex(p => p.id === updatedPost.id);
-    //     if (indexFiltered !== -1) { this.filteredPosts[indexFiltered] = updatedPost; }
-    //     const indexPosts = this.posts.findIndex(p => p.id === updatedPost.id);
-    //     if (indexPosts !== -1) { this.posts[indexPosts] = updatedPost; }
-    //     console.log('Post pinned status updated successfully from backend');
-    //   },
-    //   error: (error) => {
-    //     console.error('Error updating post pinned status on backend:', error);
-    //     // Optionally, revert the local change or show an error message
-    //     post.isPinned = !post.isPinned; // Revert local change on error
-    //   }
-    // });
-
-    // Local logic for reordering pinned posts (can be adjusted based on backend behavior)
     if (post.isPinned) {
-      const index = this.posts.indexOf(post);
+      const index = this.samplePosts.indexOf(post);
       if (index > -1) {
-        this.posts.splice(index, 1);
-        this.posts.unshift(post);
+        this.samplePosts.splice(index, 1);
+        this.samplePosts.unshift(post);
       }
     }
     this.filterPostsByCategory(this.activeCategory);
-     // TODO: Call backend service to pin/unpin the post
   }
 
-  sendOrderRequest(post: Post): void {
+  sendOrderRequest(post: any): void {
     // Example logic: Display an alert or send a request to the backend
     console.log(`Order request sent for post by ${post.username}`);
     alert(`Order request sent for post by ${post.username}`);
@@ -1108,31 +881,38 @@ export class FeedComponent implements OnInit, OnDestroy {
     // For example, navigate to a chat page or open a message dialog
   }
 
-  constructor(private postService: PostService, private datePipe: DatePipe, private router: Router, private authService: AuthService) {}
+constructor(
+  private postService: PostService,
+  private router: Router,
+  private commentService: CommentService
+) {}
 
-  ngOnInit(): void {
-    this.loadPosts();
+  ngOnInit() {
+    this.postSubscription = this.postService.getPosts().subscribe(posts => {
+      this.samplePosts = posts;
+      this.filterPostsByCategory(this.activeCategory);
 
-    // Subscribe to new posts
-    this.postSubscription = this.postService.posts$.subscribe(posts => {
-      if (posts && posts.length > 0) {
-        console.log('Received updated posts:', posts.length);
-        this.posts = posts;
-        this.filterPostsByCategory(this.activeCategory);
-      }
-    });
-  }
+      // Initialize Bootstrap 5 dropdowns
+      setTimeout(() => {
+        const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+        dropdownElements.forEach(element => {
+          new bootstrap.Dropdown(element);
+        });
 
-  loadPosts() {
-    this.postService.getPosts().subscribe({
-      next: (posts: Post[]) => {
-        console.log('Initial posts loaded:', posts.length);
-        this.posts = posts;
-        this.filterPostsByCategory(this.activeCategory);
-      },
-      error: (error: any) => {
-        console.error('Error loading posts:', error);
-      }
+        // Add modal close handler
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+          modal.addEventListener('hidden.bs.modal', () => {
+            const modalBackdrop = document.querySelector('.modal-backdrop');
+            if (modalBackdrop) {
+              modalBackdrop.remove();
+            }
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+          });
+        });
+      }, 0);
     });
   }
 
@@ -1305,10 +1085,6 @@ export class FeedComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  /**
-   * Opens a document in a new tab for viewing or downloading
-   * @param media The media object containing the document URL
-   */
   downloadDocument(media: any): void {
     if (media && media.url) {
       window.open(media.url, '_blank');
@@ -1316,75 +1092,4 @@ export class FeedComponent implements OnInit, OnDestroy {
       console.warn('No document URL available for download');
     }
   }
-
-  // Method to toggle like on a reply
-  toggleReplyLike(reply: any): void {
-    // Check if the reply is already liked by the current user
-    const isLiked = this.isReplyLikedByCurrentUser(reply);
-
-    if (isLiked) {
-      // If already liked, call the unlike service method
-      // TODO: Implement actual API call for unlikeReply in PostService
-      // Example: this.postService.unlikeReply(reply.id).subscribe({
-      //   next: (updatedReply) => {
-      //     // Update local state based on the backend response
-      //     reply.likedBy = updatedReply.likedBy || [];
-      //     reply.likes = updatedReply.likes || 0;
-      //     console.log('Reply unliked successfully', updatedReply);
-      //   },
-      //   error: (error) => {
-      //     console.error('Error unliking reply', error);
-      //     // Optionally, revert local changes or show an error message
-      //      if (reply.likedBy) {
-      //        reply.likedBy.push(this.currentUser);
-      //      }
-      //      reply.likes = (reply.likes || 0) + 1;
-      //   }
-      // });
-
-      // Temporary local update for immediate feedback (remove or adjust after implementing backend call)
-      if (reply.likedBy) {
-        reply.likedBy = reply.likedBy.filter((user: string) => user !== this.currentUser);
-      }
-      reply.likes = Math.max(0, (reply.likes || 0) - 1);
-
-    } else {
-      // If not liked, call the like service method
-      // TODO: Implement actual API call for likeReply in PostService
-      // Example: this.postService.likeReply(reply.id).subscribe({
-      //   next: (updatedReply) => {
-      //     // Update local state based on the backend response
-      //      if (!updatedReply.likedBy) updatedReply.likedBy = [];
-      //      reply.likedBy = updatedReply.likedBy;
-      //      reply.likes = updatedReply.likes || 0;
-      //      console.log('Reply liked successfully', updatedReply);
-      //   },
-      //   error: (error) => {
-      //     console.error('Error liking reply', error);
-      //     // Optionally, revert local changes or show an error message
-      //     // Revert local changes if API call fails
-      //     if (reply.likedBy) {
-      //       reply.likedBy = reply.likedBy.filter((user: string) => user !== this.currentUser);
-      //     }
-      //     reply.likes = Math.max(0, (reply.likes || 0) - 1);
-      //   }
-      // });
-
-      // Temporary local update for immediate feedback (remove or adjust after implementing backend call)
-      if (!reply.likedBy) {
-        reply.likedBy = [];
-      }
-      reply.likedBy.push(this.currentUser);
-      reply.likes = (reply.likes || 0) + 1;
-    }
-
-    // Note: The state updates should ideally happen in the .subscribe block after a successful API call.
-    // The local updates above are for immediate UI feedback but might need adjustment.
-  }
-
-  // Method to check if a reply is liked by the current user
-  isReplyLikedByCurrentUser(reply: any): boolean {
-    return reply.likedBy && Array.isArray(reply.likedBy) && reply.likedBy.includes(this.currentUser);
-  }
 }
-
