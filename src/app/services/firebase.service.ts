@@ -1,21 +1,27 @@
-import { Injectable, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { initializeApp } from 'firebase/app';
 import {
-  Auth,
-  signInWithEmailAndPassword,
+  getAuth,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged,
   UserCredential,
-} from '@angular/fire/auth';
+  User as FirebaseUser
+} from 'firebase/auth';
 import {
-  Firestore,
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
   doc,
-  setDoc,
   getDoc,
-  DocumentData,
-} from '@angular/fire/firestore';
+  updateDoc,
+  deleteDoc,
+  query,
+  where
+} from 'firebase/firestore';
+import { environment } from '../../environments/environment';
+import { Router } from '@angular/router';
 
 export interface User {
   id?: string;
@@ -29,134 +35,169 @@ export interface User {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class FirebaseService {
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser: Observable<User | null>;
-  private auth: Auth = inject(Auth);
-  private firestore: Firestore = inject(Firestore);
+  private auth;
+  private db;
+  private currentUser: FirebaseUser | null = null;
 
-  private router = inject(Router);
+  constructor(private router: Router) {
+    const app = initializeApp(environment.firebaseConfig);
+    this.auth = getAuth(app);
+    this.db = getFirestore(app);
 
-  constructor() {
-    this.currentUserSubject = new BehaviorSubject<User | null>(null);
-    this.currentUser = this.currentUserSubject.asObservable();
-
-    onAuthStateChanged(this.auth, async (user) => {
-      if (user) {
-        const token = await user.getIdToken();
-        const userData = await this.getUserDataFromFirestore(user.uid);
-
-        if (userData) {
-          const fullUser: User = {
-            id: user.uid,
-            firstName: userData['firstName'],
-            lastName: userData['lastName'],
-            email: userData['email'],
-            phone: userData['phone'],
-            role: userData['role'],
-            token: token,
-          };
-          this.currentUserSubject.next(fullUser);
-        }
-      } else {
-        this.currentUserSubject.next(null);
-      }
+    // Listen for auth state changes
+    this.auth.onAuthStateChanged((user) => {
+      this.currentUser = user;
     });
   }
 
-  public get currentUserValue(): User | null {
-    return this.currentUserSubject.value;
-  }
-
-  async login(email: string, password: string): Promise<boolean> {
+  // Authentication Methods
+  async register(email: string, password: string): Promise<UserCredential> {
     try {
-      const userCredential: UserCredential = await signInWithEmailAndPassword(
-        this.auth,
-        email,
-        password,
-      );
-      const token = await userCredential.user.getIdToken();
-      const userData = await this.getUserDataFromFirestore(
-        userCredential.user.uid,
-      );
-
-      if (userData) {
-        const fullUser: User = {
-          id: userCredential.user.uid,
-          firstName: userData['firstName'],
-          lastName: userData['lastName'],
-          email: userData['email'],
-          phone: userData['phone'],
-          role: userData['role'],
-          token: token,
-        };
-        this.currentUserSubject.next(fullUser);
-        return true;
-      } else {
-        console.error('No user data found in Firestore');
-        return false;
-      }
+      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+      return userCredential;
     } catch (error) {
-      console.error('Login failed:', error);
-      return false;
+      console.error('Error registering user:', error);
+      throw error;
     }
   }
 
-  async register(
-    user: Omit<User, 'id' | 'token'> & { password: string },
-  ): Promise<boolean> {
+  async login(email: string, password: string): Promise<UserCredential> {
     try {
-      const userCredential: UserCredential =
-        await createUserWithEmailAndPassword(
-          this.auth,
-          user.email,
-          user.password,
-        );
+      const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+      return userCredential;
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw error;
+    }
+  }
 
-      const userDocRef = doc(this.firestore, 'users', userCredential.user.uid);
-      await setDoc(userDocRef, {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
+  async logout(): Promise<void> {
+    try {
+      await signOut(this.auth);
+      this.router.navigate(['/login']);
+    } catch (error) {
+      console.error('Error logging out:', error);
+      throw error;
+    }
+  }
+
+  getCurrentUser(): FirebaseUser | null {
+    return this.currentUser;
+  }
+
+  // Marketers Collection
+  async addMarketer(marketerData: any) {
+    try {
+      const docRef = await addDoc(collection(this.db, 'marketers'), {
+        ...marketerData,
+        userId: this.currentUser?.uid,
+        createdAt: new Date().toISOString()
       });
-
-      console.log('Registered user & saved to Firestore');
-      return true;
+      return docRef.id;
     } catch (error) {
-      console.error('Registration failed:', error);
-      return false;
+      console.error('Error adding marketer:', error);
+      throw error;
     }
   }
 
-  async logout() {
-    await signOut(this.auth);
-    this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
+  async getMarketers() {
+    try {
+      const querySnapshot = await getDocs(collection(this.db, 'marketers'));
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+    } catch (error) {
+      console.error('Error getting marketers:', error);
+      throw error;
+    }
   }
 
-  isAuthenticated(): boolean {
-    return !!this.currentUserSubject.value;
-  }
-
-  getToken(): string | null {
-    return this.currentUserSubject.value?.token || null;
-  }
-
-  private async getUserDataFromFirestore(
-    uid: string,
-  ): Promise<DocumentData | null> {
-    const userDocRef = doc(this.firestore, 'users', uid);
-    const userDocSnap = await getDoc(userDocRef);
-
-    if (userDocSnap.exists()) {
-      return userDocSnap.data();
-    } else {
-      console.error('No such document in Firestore!');
+  async getMarketerByUserId(userId: string) {
+    try {
+      const q = query(collection(this.db, 'marketers'), where('userId', '==', userId));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        return {
+          id: doc.id,
+          ...doc.data()
+        };
+      }
       return null;
+    } catch (error) {
+      console.error('Error getting marketer:', error);
+      throw error;
+    }
+  }
+
+  // Users Collection
+  async addUser(userData: any) {
+    try {
+      const docRef = await addDoc(collection(this.db, 'users'), {
+        ...userData,
+        userId: this.currentUser?.uid,
+        createdAt: new Date().toISOString()
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('Error adding user:', error);
+      throw error;
+    }
+  }
+
+  async getUsers() {
+    try {
+      const querySnapshot = await getDocs(collection(this.db, 'users'));
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+    } catch (error) {
+      console.error('Error getting users:', error);
+      throw error;
+    }
+  }
+
+  async getUserByUserId(userId: string) {
+    try {
+      const q = query(collection(this.db, 'users'), where('userId', '==', userId));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        return {
+          id: doc.id,
+          ...doc.data()
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting user:', error);
+      throw error;
+    }
+  }
+
+  // Common methods for both collections
+  async updateDocument(collectionName: string, docId: string, data: any) {
+    try {
+      const docRef = doc(this.db, collectionName, docId);
+      await updateDoc(docRef, data);
+    } catch (error) {
+      console.error(`Error updating document in ${collectionName}:`, error);
+      throw error;
+    }
+  }
+
+  async deleteDocument(collectionName: string, docId: string) {
+    try {
+      const docRef = doc(this.db, collectionName, docId);
+      await deleteDoc(docRef);
+    } catch (error) {
+      console.error(`Error deleting document from ${collectionName}:`, error);
+      throw error;
     }
   }
 }

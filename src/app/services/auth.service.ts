@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from './api.service';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { User } from '../interfaces/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private apiService: ApiService) {}
+  constructor() {}
 
   getCurrentUser(): User | null {
     const user = localStorage.getItem('currentUser');
@@ -20,31 +19,20 @@ export class AuthService {
   }
 
   updateUserProfile(user: User): Observable<User> {
-    return this.apiService.put<User>(`users/${user.username}`, user);
+    // Store updated user in localStorage
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    return of(user);
   }
 
   changePassword(currentPassword: string, newPassword: string): Promise<void> {
-    return this.apiService.post('users/change-password', { currentPassword, newPassword }).toPromise() as Promise<void>;
+    // Implement with Firebase/Supabase when integrating authentication
+    console.log('Password change functionality needs to be implemented with Firebase/Supabase');
+    return Promise.resolve();
   }
 
   async sendPasswordResetEmail(email: string): Promise<void> {
-    try {
-      // Here you would typically make an API call to your backend
-      // to initiate the password reset process
-      const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send reset email');
-      }
-    } catch (error) {
-      console.error('Error sending reset email:', error);
-      throw error;
-    }
+    // Implement with Firebase/Supabase when integrating authentication
+    console.log('Password reset functionality needs to be implemented with Firebase/Supabase');
+    return Promise.resolve();
   }
 } 

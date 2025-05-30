@@ -1,131 +1,232 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Injectable, inject } from '@angular/core';
+import { Observable, of, throwError, from, BehaviorSubject } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import {
+  Auth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  UserCredential,
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail
+} from '@angular/fire/auth';
+import {
+  Firestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  addDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  query,
+  where
+} from '@angular/fire/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { Router } from '@angular/router';
+
+export interface User {
+  id?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password?: string;
+  role: string;
+  token?: string;
+  profileImage?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = environment.apiUrl || 'https://api.example.com';
   private userType: string = '';
+  private currentUserSubject: BehaviorSubject<User | null>;
+  public currentUser: Observable<User | null>;
 
-  constructor(private http: HttpClient) { }
+  private auth: Auth = inject(Auth);
+  private firestore: Firestore = inject(Firestore);
+  private router = inject(Router);
 
-  // Login user
-  login(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Auth/login`, { email, password })
-      .pipe(
-        map((response: any) => {
-          // Store user token and data in localStorage
-          if (response && response.token) {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('userId', response.userId || response.id || '1');
-            localStorage.setItem('currentUser', JSON.stringify(response));
-          }
-          return response;
-        }),
-        catchError(error => {
-          console.error('Login error:', error);
-          return of({ error: error.message || 'Login failed' });
-        })
-      );
+  constructor() {
+    this.currentUserSubject = new BehaviorSubject<User | null>(null);
+    this.currentUser = this.currentUserSubject.asObservable();
+
+    // Listen for auth state changes
+    onAuthStateChanged(this.auth, async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        const userData = await this.getUserDataFromFirestore(user.uid);
+
+        if (userData) {
+          const fullUser: User = {
+            id: user.uid,
+            firstName: userData['firstName'],
+            lastName: userData['lastName'],
+            email: userData['email'],
+            phone: userData['phone'],
+            role: userData['role'],
+            token: token,
+            profileImage: userData['profileImage']
+          };
+          this.currentUserSubject.next(fullUser);
+          localStorage.setItem('currentUser', JSON.stringify(fullUser));
+        }
+      } else {
+        this.currentUserSubject.next(null);
+        localStorage.removeItem('currentUser');
+      }
+    });
   }
 
-  // Register user
-  register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Auth/register`, userData)
-      .pipe(
-        map((response: any) => {
-          if (response && response.token) {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('userId', response.userId || response.id || '1');
-            localStorage.setItem('currentUser', JSON.stringify(response));
-            this.setUserType('customer');
-          }
-          return response;
-        }),
-        catchError(error => {
-          console.error('Registration error:', error);
-          return of({ error: error.message || 'Registration failed' });
-        })
+  // Get current user value
+  public get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
+  }
+
+  // Login user with Firebase
+  async login(email: string, password: string): Promise<boolean> {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        this.auth,
+        email,
+        password
       );
+      const token = await userCredential.user.getIdToken();
+      const userData = await this.getUserDataFromFirestore(userCredential.user.uid);
+
+      if (userData) {
+        const fullUser: User = {
+          id: userCredential.user.uid,
+          firstName: userData['firstName'],
+          lastName: userData['lastName'],
+          email: userData['email'],
+          phone: userData['phone'],
+          role: userData['role'],
+          token: token,
+          profileImage: userData['profileImage']
+        };
+        this.currentUserSubject.next(fullUser);
+        localStorage.setItem('currentUser', JSON.stringify(fullUser));
+        this.setUserType(userData['role']);
+        return true;
+      } else {
+        console.error('No user data found in Firestore');
+        return false;
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      return false;
+    }
+  }
+
+  // Register user with Firebase
+  async register(userData: Omit<User, 'id' | 'token'>): Promise<boolean> {
+    try {
+      // Create auth user
+      const userCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        userData.email,
+        userData.password || ''
+      );
+
+      // Save user data to Firestore
+      const userDocRef = doc(this.firestore, 'users', userCredential.user.uid);
+      await setDoc(userDocRef, {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phone: userData.phone,
+        role: userData.role || 'customer',
+        createdAt: new Date().toISOString()
+      });
+
+      // Get token
+      const token = await userCredential.user.getIdToken();
+
+      // Create full user object
+      const fullUser: User = {
+        id: userCredential.user.uid,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phone: userData.phone,
+        role: userData.role || 'customer',
+        token: token
+      };
+
+      // Update state
+      this.currentUserSubject.next(fullUser);
+      localStorage.setItem('currentUser', JSON.stringify(fullUser));
+      this.setUserType(userData.role || 'customer');
+
+      return true;
+    } catch (error) {
+      console.error('Registration failed:', error);
+      return false;
+    }
   }
 
   // Logout user
-  logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
+  async logout(): Promise<void> {
+    try {
+      await signOut(this.auth);
+      this.currentUserSubject.next(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('currentUser');
+      this.router.navigate(['/login']);
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   }
 
   // Check if user is logged in
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!this.currentUserSubject.value;
   }
 
-  // Get user profile
-  getUserProfile(userId: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/users/${userId}`)
-      .pipe(
-        catchError(error => {
-          console.error('Error fetching user profile:', error);
-          return of({ error: error.message || 'Failed to fetch user profile' });
-        })
-      );
+  // Get user profile from Firestore
+  async getUserProfile(userId: string): Promise<any> {
+    try {
+      const userData = await this.getUserDataFromFirestore(userId);
+      return userData;
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
   }
 
-  // Update user profile
-  updateUserProfile(userId: string, profileData: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/users/${userId}`, profileData)
-      .pipe(
-        catchError(error => {
-          console.error('Error updating user profile:', error);
-          return of({ error: error.message || 'Failed to update user profile' });
-        })
-      );
+  // Update user profile in Firestore
+  async updateUserProfile(userId: string, profileData: Partial<User>): Promise<boolean> {
+    try {
+      const userDocRef = doc(this.firestore, 'users', userId);
+      await updateDoc(userDocRef, {
+        ...profileData,
+        updatedAt: new Date().toISOString()
+      });
+
+      // Update local user if it's the current user
+      if (this.currentUserValue?.id === userId) {
+        const currentUser = this.currentUserValue;
+        const updatedUser = { ...currentUser, ...profileData };
+        this.currentUserSubject.next(updatedUser);
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      return false;
+    }
   }
 
   // Get current user ID
   getCurrentUserId(): string {
-    return localStorage.getItem('userId') || '1';
-  }
-
-  // OAuth login methods
-  loginWithGoogle(): Observable<any> {
-    // This is a mock implementation - replace with actual Google OAuth integration
-    return this.http.post(`${this.apiUrl}/auth/google`, {})
-      .pipe(
-        map((response: any) => {
-          if (response && response.token) {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('userId', response.userId || '1');
-          }
-          return response;
-        }),
-        catchError(error => {
-          console.error('Google login error:', error);
-          return of({ error: error.message || 'Google login failed' });
-        })
-      );
-  }
-
-  loginWithFacebook(): Observable<any> {
-    // This is a mock implementation - replace with actual Facebook OAuth integration
-    return this.http.post(`${this.apiUrl}/auth/facebook`, {})
-      .pipe(
-        map((response: any) => {
-          if (response && response.token) {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('userId', response.userId || '1');
-          }
-          return response;
-        }),
-        catchError(error => {
-          console.error('Facebook login error:', error);
-          return of({ error: error.message || 'Facebook login failed' });
-        })
-      );
+    return this.currentUserValue?.id || '';
   }
 
   // Set user type
@@ -139,119 +240,15 @@ export class UserService {
     return this.userType || localStorage.getItem('userType') || '';
   }
 
-  // Upload file
-  uploadFile(file: File): Observable<any> {
-    const formData = new FormData();
-    formData.append('file', file, file.name);
-
-    return this.http.post(`${this.apiUrl}/Upload/UploadImage`, formData)
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An error occurred';
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = error.error.message;
-    } else {
-      // Server-side error
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+  // Helper method to get user data from Firestore
+  private async getUserDataFromFirestore(userId: string): Promise<any> {
+    try {
+      const userDocRef = doc(this.firestore, 'users', userId);
+      const userDoc = await getDoc(userDocRef);
+      return userDoc.exists() ? userDoc.data() : null;
+    } catch (error) {
+      console.error('Error getting user data from Firestore:', error);
+      return null;
     }
-    console.error(errorMessage);
-    return throwError(() => error);
-  }
-
-  // Register marketer
-  registerMarketer(marketerData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Auth/register-marketer`, marketerData)
-      .pipe(
-        map((response: any) => {
-          if (response && response.token) {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('userId', response.userId || response.id || '1');
-            localStorage.setItem('currentUser', JSON.stringify(response));
-            this.setUserType('marketer');
-          }
-          return response;
-        }),
-        catchError(error => {
-          console.error('Marketer registration error:', error);
-          return of({ error: error.message || 'Marketer registration failed' });
-        })
-      );
-  }
-
-  // Register customer/user
-  registerUser(userData: any): Observable<any> {
-    // Format data according to API expectations
-    const formattedData = this.formatUserData(userData);
-
-    return this.http.post(`${this.apiUrl}/Auth/register`, formattedData)
-      .pipe(
-        map((response: any) => {
-          if (response && response.token) {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('userId', response.userId || response.id || '1');
-            localStorage.setItem('currentUser', JSON.stringify(response));
-            this.setUserType('customer');
-          }
-          return response;
-        }),
-        catchError(error => {
-          console.error('Customer registration error:', error);
-          return of({ error: error.message || 'Customer registration failed' });
-        })
-      );
-  }
-
-  // Helper method to format user data for API
-  private formatUserData(userData: any): any {
-    // If userData is FormData, extract values and format
-    if (userData instanceof FormData) {
-      const formattedData: any = {
-        FirstName: userData.get('firstName'),
-        LastName: userData.get('secondName'),
-        Email: userData.get('email'),
-        Password: userData.get('password'),
-        PhoneNumber: userData.get('phone'),
-        Gender: userData.get('gender') === 'male' ? 'M' : 'F',
-        UserType: 0, // 0 for Customer
-        AcceptTerms: userData.get('termsAccepted') === 'true',
-        Status: 'active',
-        CreatedAt: new Date().toISOString().split('T')[0]
-      };
-
-      // Add birth date if provided
-      const birthDate = userData.get('birthDate');
-      if (birthDate) {
-        formattedData.BirthDate = new Date(birthDate.toString()).toISOString().split('T')[0];
-      }
-
-      // Add profile image if provided
-      const profileImage = userData.get('profileImage');
-      if (profileImage instanceof File) {
-        formattedData.ProfileImage = profileImage;
-      }
-
-      return formattedData;
-    }
-
-    // If userData is already an object
-    return {
-      FirstName: userData.firstName,
-      LastName: userData.secondName || userData.lastName,
-      Email: userData.email,
-      Password: userData.password,
-      PhoneNumber: userData.phone,
-      Gender: userData.gender === 'male' ? 'M' : 'F',
-      UserType: 0, // 0 for Customer
-      AcceptTerms: userData.termsAccepted === true,
-      Status: 'active',
-      CreatedAt: new Date().toISOString().split('T')[0],
-      BirthDate: userData.birthDate ? new Date(userData.birthDate).toISOString().split('T')[0] : null,
-      ProfileImage: userData.profileImage
-    };
   }
 }
