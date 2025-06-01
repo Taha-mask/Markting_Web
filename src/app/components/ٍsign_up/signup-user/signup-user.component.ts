@@ -8,11 +8,14 @@ import {
   Validators,
   AbstractControl,
   ValidationErrors,
+  FormBuilder,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { UserService } from '../../../services/User.service';
+import { UserService, User } from '../../../services/User.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { FirebaseService } from '../../../services/firebase.service';
+import { SupabaseService } from '../../../services/supabase.service';
 
 interface UserRegisterForm {
   firstName: FormControl<string | null>;
@@ -55,16 +58,32 @@ export class SignupUserComponent implements OnInit {
   public isLoading = false;
   public passwordStrength = 0;
   public selectedProfileImage: File | null = null;
-  public defaultProfileImage = 'assets/images/default-profile.png';
+  public defaultProfileImage = 'images/user-1.png';
   public errorMessage: string | null = null;
+  public userForm: FormGroup;
 
   constructor(
     private userService: UserService,
     private router: Router,
     private http: HttpClient,
     private sanitizer: DomSanitizer,
+    private formBuilder: FormBuilder,
+    private firebaseService: FirebaseService,
+    private supabaseService: SupabaseService
   ) {
     this.initForm();
+    this.userForm = this.formBuilder.group({
+      firstName: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
+      interests: ['', [Validators.required]],
+      location: ['', [Validators.required]]
+    }, {
+      validators: this.passwordMatchValidator
+    });
   }
 
   public ngOnInit(): void {
@@ -175,35 +194,54 @@ export class SignupUserComponent implements OnInit {
     return selectedCountry ? selectedCountry.flagCode : '';
   }
 
-  public register(): void {
+  public async register(): Promise<void> {
     this.errorMessage = null;
 
     if (this.userRegisterForm.valid) {
       this.isLoading = true;
 
-      // First, upload the profile image if selected
-      if (this.selectedProfileImage) {
-        this.uploadProfileImage()
-          .then((imageUrl) => {
-            // After image upload, proceed with user registration
-            this.registerUser(imageUrl);
-          })
-          .catch((error) => {
-            console.error('Image upload failed:', error);
-            this.isLoading = false;
-            this.errorMessage =
-              'Failed to upload profile image. Please try again.';
-          });
-      } else {
-        // No profile image, proceed with registration directly
-        this.registerUser();
+      try {
+        const { email, password } = this.userRegisterForm.value;
+
+        // Register user in Firebase Auth
+        const userCredential = await this.firebaseService.register(email!, password!);
+
+        // Upload profile image if selected
+        let profileImageUrl = '';
+        if (this.selectedProfileImage) {
+          profileImageUrl = await this.supabaseService.uploadImage(this.selectedProfileImage, 'uploads');
+        }
+
+        // Create user data object
+        const userData = {
+          firstName: this.userRegisterForm.value.firstName,
+          lastName: this.userRegisterForm.value.secondName,
+          email: this.userRegisterForm.value.email,
+          phone: this.userRegisterForm.value.phone,
+          role: 'user',
+          gender: this.userRegisterForm.value.gender,
+          birthDate: this.userRegisterForm.value.birthDate,
+          country: this.userRegisterForm.value.country,
+          profileImage: profileImageUrl
+        };
+
+        // Add user data to Firestore
+        await this.firebaseService.addUser(userData);
+
+        this.isLoading = false;
+        this.errorMessage = null;
+        alert('Registration successful! You will be redirected to the login page.');
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1500);
+      } catch (error: any) {
+        this.isLoading = false;
+        this.errorMessage = error.message || 'Registration failed. Please try again.';
       }
     } else {
-      // Form is invalid, show validation errors
       this.userRegisterForm.markAllAsTouched();
       this.errorMessage = 'Please fill all required fields correctly.';
 
-      // Highlight the first invalid field
       const invalidControls = Object.keys(
         this.userRegisterForm.controls,
       ).filter((key) => this.userRegisterForm.get(key)?.invalid);
@@ -217,99 +255,6 @@ export class SignupUserComponent implements OnInit {
         }
       }
     }
-  }
-
-  private uploadProfileImage(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      if (!this.selectedProfileImage) {
-        resolve('');
-        return;
-      }
-
-      this.userService.uploadFile(this.selectedProfileImage).subscribe({
-        next: (response) => {
-          if (response && response.imageUrl) {
-            resolve(response.imageUrl);
-          } else {
-            reject('Invalid response from image upload service');
-          }
-        },
-        error: (error) => {
-          console.error('Error uploading image:', error);
-          this.errorMessage =
-            'Failed to upload profile image. Please try again.';
-          reject(error);
-        },
-      });
-    });
-  }
-
-  private registerUser(profileImageUrl: string = ''): void {
-    // Create FormData object for the API request
-    const formData = new FormData();
-    Object.keys(this.userRegisterForm.value).forEach((key) => {
-      const value = this.userRegisterForm.get(key)?.value;
-      if (value !== null && value !== undefined) {
-        if (key === 'phone') {
-          // Format phone number with country code
-          const countryCode = this.userRegisterForm.get('country')?.value;
-          formData.append('phone', `${countryCode}${value}`);
-        } else {
-          formData.append(key, value);
-        }
-      }
-    });
-
-    // Add profile image URL if available
-    if (profileImageUrl) {
-      formData.append('profileImageUrl', profileImageUrl);
-    }
-
-    // Add additional required fields
-    formData.append('userType', '0'); // 0 for Customer
-    formData.append('status', 'active');
-    formData.append('createdAt', new Date().toISOString().split('T')[0]);
-
-    console.log('Submitting customer registration data');
-
-    // Call the user service to register the customer
-    this.userService.registerUser(formData).subscribe({
-      next: (response: any) => {
-        console.log('Registration successful:', response);
-        this.isLoading = false;
-
-        // Show success message
-        this.errorMessage = null;
-        alert(
-          'Registration successful! You will be redirected to the login page.',
-        );
-
-        // Navigate to login page
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 1500);
-      },
-      error: (error: any) => {
-        console.error('Registration failed:', error);
-        this.isLoading = false;
-
-        // Handle different error formats
-        if (error.error && typeof error.error === 'object') {
-          if (error.error.message) {
-            this.errorMessage = error.error.message;
-          } else if (error.error.errors) {
-            // Handle validation errors
-            const errorMessages = Object.values(error.error.errors).flat();
-            this.errorMessage = errorMessages.join('. ');
-          } else {
-            this.errorMessage = 'Registration failed. Please try again.';
-          }
-        } else {
-          this.errorMessage =
-            error.message || 'Registration failed. Please try again.';
-        }
-      },
-    });
   }
 
   public initForm(): void {

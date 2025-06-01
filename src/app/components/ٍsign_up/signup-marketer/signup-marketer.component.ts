@@ -66,14 +66,29 @@ export class SignupMarketerComponent implements OnInit {
   public showSuccessMessage = false;
   public successMessage = '';
 
+
   constructor(
     private userService: UserService,
     private router: Router,
     private http: HttpClient,
     private sanitizer: DomSanitizer,
     private firebaseSupabaseService: FirebaseSupabaseService
+
   ) {
     this.initForm();
+    this.marketerForm = this.formBuilder.group({
+      firstName: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
+      companyName: ['', [Validators.required]],
+      companyWebsite: ['', [Validators.required]],
+      companyDescription: ['', [Validators.required]]
+    }, {
+      validators: this.passwordMatchValidator
+    });
   }
 
   public ngOnInit(): void {
@@ -252,7 +267,72 @@ export class SignupMarketerComponent implements OnInit {
         alert('Please fix the following errors:\n' + formErrors.join('\n'));
       } else {
         alert('Please check your form for any errors.');
+     
+  // Success message properties
+  public showSuccessMessage = false;
+  public successMessage = '';
+
+  public async onSubmit(): Promise<void> {
+    if (this.marketerRegisterForm.invalid) {
+      this.marketerRegisterForm.markAllAsTouched();
+      return;
+    }
+
+    this.loading = true;
+    this.error = '';
+
+    try {
+      const { email, password } = this.marketerRegisterForm.value;
+
+      // Register user in Firebase Auth
+      const userCredential = await this.firebaseService.register(email!, password!);
+
+      // Upload profile image if selected
+      let profileImageUrl = '';
+      if (this.selectedProfileImage) {
+        profileImageUrl = await this.supabaseService.uploadUserAvatar(this.selectedProfileImage);
       }
+
+      // Upload ID image if selected
+      let idImageUrl = '';
+      if (this.selectedIdImage) {
+        idImageUrl = await this.supabaseService.uploadMarketerId(this.selectedIdImage);
+      }
+
+      // Create marketer data object
+          const marketerData = {
+        firstName: this.marketerRegisterForm.value.firstName,
+        lastName: this.marketerRegisterForm.value.lastName,
+        email: this.marketerRegisterForm.value.email,
+        phone: this.marketerRegisterForm.value.phone,
+        gender: this.marketerRegisterForm.value.gender,
+        birthDate: this.marketerRegisterForm.value.birthDate,
+        country: this.marketerRegisterForm.value.country,
+        companyName: this.marketerRegisterForm.value.companyName,
+        companyWebsite: this.marketerRegisterForm.value.companyWebsite,
+        companyDescription: this.marketerRegisterForm.value.companyDescription,
+        profileImage: profileImageUrl,
+        idDocument: idImageUrl,
+        role: 'marketer'
+      };
+
+      // Add marketer data to Firestore
+      await this.firebaseService.addMarketer(marketerData);
+
+              // Show success message
+              this.showSuccessMessage = true;
+      this.successMessage = 'Registration successful! Redirecting to dashboard...';
+
+              // Navigate to dashboard after a short delay
+              setTimeout(() => {
+                this.router.navigate(['/dashboard']);
+      }, 2000);
+
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      this.error = error.message || 'An error occurred during registration.';
+    } finally {
+      this.loading = false;
     }
   }
 

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { UserService } from '../../services/User.service';
 import { CommonModule } from '@angular/common';
-import { Subject } from 'rxjs';
+import { Subject, from } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import * as bootstrap from 'bootstrap';
@@ -39,6 +39,8 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
+
+
       rememberMe: [false],
     });
   }
@@ -66,6 +68,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
       passwordInput.type = this.showPassword ? 'text' : 'password';
     }
   }
+
 
   async onSubmit() {
     if (this.loginForm.invalid) {
@@ -140,7 +143,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
         default:
           this.loginError = 'Login failed. Please check your credentials and try again';
       }
-    } finally {
+
       this.isLoading = false;
     }
   }
@@ -163,10 +166,10 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     try {
       // Call Firebase password reset
       await this.firebaseSupabaseService.resetPassword(this.resetEmail);
+
       this.resetSuccess = true;
       this.resetEmail = '';
-      
-      // Show success message
+
       const modalElement = document.getElementById('forgetPasswordModal');
       if (modalElement) {
         const modal = bootstrap.Modal.getInstance(modalElement);
@@ -175,6 +178,8 @@ export class LoginFormComponent implements OnInit, OnDestroy {
       
       alert('Password reset instructions have been sent to your email');
       
+
+
     } catch (error: any) {
       console.error('Password reset error:', error);
       switch (error.code) {
@@ -205,6 +210,59 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     if (modalElement) {
       const modal = bootstrap.Modal.getInstance(modalElement);
       modal?.hide();
+    }
+  }
+
+  async loginWithGoogle() {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(this.firebaseService.getAuth(), provider);
+
+      // Get user data from Firestore
+      const userData = await this.firebaseService.getUserByUserId(result.user.uid) as User;
+
+      if (userData) {
+        // Store user data in local storage
+        localStorage.setItem('currentUser', JSON.stringify({
+          ...userData,
+          email: result.user.email
+        }));
+
+        // Navigate based on user role
+        if (userData.role === 'marketer') {
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.router.navigate(['/feed']);
+        }
+      } else {
+        // If user doesn't exist in Firestore, create new user
+        const newUser = {
+          firstName: result.user.displayName?.split(' ')[0] || '',
+          lastName: result.user.displayName?.split(' ')[1] || '',
+          email: result.user.email || '',
+          phone: result.user.phoneNumber || '',
+          role: 'user',
+          profileImage: result.user.photoURL || ''
+        };
+
+        await this.firebaseService.addUser(newUser);
+        this.router.navigate(['/feed']);
+      }
+    } catch (error: any) {
+      console.error('Google login failed:', error);
+      this.loginError = error.message || 'Google login failed. Please try again.';
+    }
+  }
+
+  async loginWithFacebook() {
+    try {
+      const result = await this.userService.loginWithFacebook();
+      if (result) {
+        this.router.navigate(['/feed']);
+      }
+    } catch (error) {
+      console.error('Facebook login failed:', error);
+      this.loginError = 'Facebook login failed. Please try again.';
     }
   }
 }
