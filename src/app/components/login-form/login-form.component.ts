@@ -8,8 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import * as bootstrap from 'bootstrap';
 import { FooterComponent } from '../footer/footer.component';
-import { FirebaseService, User } from '../../services/firebase.service';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { FirebaseSupabaseService } from '../../services/firebase-supabase.service';
 
 @Component({
     selector: 'app-login-form',
@@ -22,7 +21,6 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   showPassword = false;
   isLoading = false;
   loginError: string | null = null;
-  passwordStrength = 0;
   private destroy$ = new Subject<void>();
   email: string = '';
   password: string = '';
@@ -36,27 +34,19 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     private router: Router,
     private userService: UserService,
     private authService: AuthService,
-    private firebaseService: FirebaseService
+    private firebaseSupabaseService: FirebaseSupabaseService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [
-        Validators.required,
-        Validators.minLength(8),
-        this.passwordStrengthValidator
-      ]],
+      password: ['', [Validators.required]],
+
+
       rememberMe: [false],
     });
-
-    // Password strength tracking
-    this.loginForm.get('password')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(password => {
-        this.passwordStrength = this.calculatePasswordStrength(password);
-      });
   }
 
   ngOnInit() {
+    // Load remembered email if exists
     const rememberedEmail = localStorage.getItem('rememberedEmail');
     if (rememberedEmail) {
       this.loginForm.patchValue({
@@ -73,32 +63,21 @@ export class LoginFormComponent implements OnInit, OnDestroy {
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+    const passwordInput = document.getElementById('password') as HTMLInputElement;
+    if (passwordInput) {
+      passwordInput.type = this.showPassword ? 'text' : 'password';
+    }
   }
 
-  passwordStrengthValidator(control: any) {
-    const password = control.value;
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumbers = /[0-9]/.test(password);
-    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
-
-    const valid = hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar && password.length >= 8;
-    return valid ? null : { weakPassword: true };
-  }
-
-  calculatePasswordStrength(password: string): number {
-    let strength = 0;
-    if (password.length >= 8) strength += 25;
-    if (/[A-Z]/.test(password)) strength += 25;
-    if (/[a-z]/.test(password)) strength += 25;
-    if (/[0-9]/.test(password)) strength += 15;
-    if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) strength += 10;
-    return Math.min(strength, 100);
-  }
 
   async onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
+      if (!this.loginForm.get('email')?.valid) {
+        this.loginError = 'Please enter a valid email address';
+      } else if (!this.loginForm.get('password')?.valid) {
+        this.loginError = 'Please enter your password';
+      }
       return;
     }
 
@@ -114,45 +93,80 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     }
 
     try {
-      const userCredential = await this.firebaseService.login(email, password);
-      const user = userCredential.user;
+      // Sign in with Firebase Authentication
+      const userCredential = await this.firebaseSupabaseService.signIn(email, password);
+      console.log('Login successful:', userCredential);
 
       // Get user data from Firestore
-      const userData = await this.firebaseService.getUserByUserId(user.uid) as User;
+      const userDoc = await this.firebaseSupabaseService.getDocument('marketers', userCredential.user.uid);
+      
+      // Store user data in localStorage
+      const userData = {
+        uid: userCredential.user.uid,
+        ...userDoc
+      };
+      localStorage.setItem('currentUser', JSON.stringify(userData));
 
-      if (userData) {
-        // Store user data in local storage
-        localStorage.setItem('currentUser', JSON.stringify({
-          ...userData,
-          email: user.email
-        }));
-
-        // Navigate based on user role
-        if (userData.role === 'marketer') {
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.router.navigate(['/feed']);
-        }
+      // Navigate based on user type
+      if (userDoc && userDoc['role']?.toLowerCase() === 'marketer') {
+        this.router.navigate(['/dashboard']);
       } else {
-        this.loginError = 'User data not found. Please try again.';
+        this.router.navigate(['/feed']);
       }
     } catch (error: any) {
       console.error('Login failed:', error);
-      this.loginError = error.message || 'An error occurred during login. Please try again later.';
-    } finally {
+      this.isLoading = false;
+      
+      // Provide detailed error messages
+      switch (error.code) {
+        case 'auth/user-not-found':
+          this.loginError = 'Account not found. Please check your email or sign up';
+          break;
+        case 'auth/wrong-password':
+          this.loginError = 'Incorrect password. Please try again';
+          break;
+        case 'auth/user-disabled':
+          this.loginError = 'This account has been disabled. Please contact support';
+          break;
+        case 'auth/too-many-requests':
+          this.loginError = 'Too many failed attempts. Please try again later';
+          break;
+        case 'auth/network-request-failed':
+          this.loginError = 'Network error. Please check your internet connection';
+          break;
+        case 'auth/invalid-email':
+          this.loginError = 'Invalid email format';
+          break;
+        case 'auth/invalid-credential':
+          this.loginError = 'Invalid email or password';
+          break;
+        default:
+          this.loginError = 'Login failed. Please check your credentials and try again';
+      }
+
       this.isLoading = false;
     }
   }
 
   async resetPassword() {
-    if (!this.resetEmail) return;
+    if (!this.resetEmail) {
+      this.resetError = 'Please enter your email address';
+      return;
+    }
+
+    if (!this.validateEmail(this.resetEmail)) {
+      this.resetError = 'Please enter a valid email address';
+      return;
+    }
 
     this.isResetting = true;
     this.resetError = '';
     this.resetSuccess = false;
 
     try {
-      await this.authService.sendPasswordResetEmail(this.resetEmail);
+      // Call Firebase password reset
+      await this.firebaseSupabaseService.resetPassword(this.resetEmail);
+
       this.resetSuccess = true;
       this.resetEmail = '';
 
@@ -161,14 +175,34 @@ export class LoginFormComponent implements OnInit, OnDestroy {
         const modal = bootstrap.Modal.getInstance(modalElement);
         modal?.hide();
       }
+      
+      alert('Password reset instructions have been sent to your email');
+      
 
-      alert('Password reset instructions have been sent to your email.');
 
     } catch (error: any) {
-      this.resetError = error.message || 'Failed to send reset instructions. Please try again.';
+      console.error('Password reset error:', error);
+      switch (error.code) {
+        case 'auth/user-not-found':
+          this.resetError = 'No account found with this email address';
+          break;
+        case 'auth/invalid-email':
+          this.resetError = 'Invalid email format';
+          break;
+        case 'auth/too-many-requests':
+          this.resetError = 'Too many attempts. Please try again later';
+          break;
+        default:
+          this.resetError = 'Failed to send reset instructions. Please try again';
+      }
     } finally {
       this.isResetting = false;
     }
+  }
+
+  private validateEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
   closeResetModal() {

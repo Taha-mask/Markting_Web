@@ -18,7 +18,7 @@
         <div class="form-container p-4 border rounded shadow-sm bg-white">
           <form [formGroup]="marketerRegisterForm" (ngSubmit)="onSubmit()" class="needs-validation">
             <div class="row">
-              <!-- Profile Image Upload -->
+              <!-- Profile Image Upload - Commented Out
               <div class="col-12 text-center mb-4">
                 <div class="profile-image-container">
                   <img [src]="getImageUrl(selectedProfileImage)" 
@@ -32,15 +32,12 @@
                   </div>
                 </div>
               </div>
+              -->
 
               <!-- Personal Information -->
               <div class="col-md-6 mb-3">
                 <label for="firstName" class="form-label">First Name</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="firstName" 
-                       formControlName="firstName" 
-                       [class.is-invalid]="marketerRegisterForm.get('firstName')?.invalid && 
+                <input type="text" class="form-control" id="firstName" formControlName="firstName" [class.is-invalid]="marketerRegisterForm.get('firstName')?.invalid && 
                                           marketerRegisterForm.get('firstName')?.touched">
                 <div class="invalid-feedback">
                   Please enter your first name (minimum 2 characters).
@@ -49,11 +46,7 @@
 
               <div class="col-md-6 mb-3">
                 <label for="lastName" class="form-label">Last Name</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="lastName" 
-                       formControlName="lastName" 
-                       [class.is-invalid]="marketerRegisterForm.get('lastName')?.invalid && 
+                <input type="text" class="form-control" id="lastName" formControlName="lastName" [class.is-invalid]="marketerRegisterForm.get('lastName')?.invalid && 
                                           marketerRegisterForm.get('lastName')?.touched">
                 <div class="invalid-feedback">
                   Please enter your last name (minimum 2 characters).
@@ -63,15 +56,11 @@
               <!-- Gender Field -->
               <div class="col-md-6 mb-3">
                 <label for="gender" class="form-label">Gender</label>
-                <select class="form-select" 
-                        id="gender" 
-                        formControlName="gender" 
-                        [class.is-invalid]="marketerRegisterForm.get('gender')?.invalid && 
+                <select class="form-select" id="gender" formControlName="gender" [class.is-invalid]="marketerRegisterForm.get('gender')?.invalid && 
                                            marketerRegisterForm.get('gender')?.touched">
                   <option value="" disabled selected>Select your gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
-                  <option value="other">Other</option>
                 </select>
                 <div class="invalid-feedback">
                   Please select your gender.
@@ -81,26 +70,29 @@
               <!-- Birth Date Field -->
               <div class="col-md-6 mb-3">
                 <label for="birthDate" class="form-label">Birth Date</label>
-                <input type="date" 
-                       class="form-control" 
-                       id="birthDate" 
-                       formControlName="birthDate" 
-                       [max]="getMaxDate()"
-                       [class.is-invalid]="marketerRegisterForm.get('birthDate')?.invalid && 
+                <input type="date" class="form-control" id="birthDate" formControlName="birthDate" [max]="getMaxDate()"
+                  [class.is-invalid]="marketerRegisterForm.get('birthDate')?.invalid && 
                                           marketerRegisterForm.get('birthDate')?.touched">
                 <div class="invalid-feedback">
                   Please enter a valid birth date (must be 18 or older).
                 </div>
               </div>
 
+              <!-- National ID Field -->
+              <div class="col-md-6 mb-3">
+                <label for="nationalId" class="form-label">National ID</label>
+                <input type="text" class="form-control" id="nationalId" formControlName="nationalId"
+                  placeholder="Enter your 14-digit national ID" [class.is-invalid]="marketerRegisterForm.get('nationalId')?.invalid && 
+                                          marketerRegisterForm.get('nationalId')?.touched">
+                <div class="invalid-feedback">
+                  Please enter a valid 14-digit national ID.
+                </div>
+              </div>
+
               <!-- Contact Information -->
               <div class="col-md-6 mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" 
-                       class="form-control" 
-                       id="email" 
-                       formControlName="email" 
-                       [class.is-invalid]="marketerRegisterForm.get('email')?.invalid && 
+                <input type="email" class="form-control" id="email" formControlName="email" [class.is-invalid]="marketerRegisterForm.get('email')?.invalid && 
                                           marketerRegisterForm.get('email')?.touched">
                 <div class="invalid-feedback">
                   Please enter a valid email address.
@@ -112,25 +104,19 @@
                 <div class="input-group phone-input-group">
                   <div class="input-group-prepend h-100">
                     <span class="input-group-text" (click)="toggleCountryDropdown()">
-                      <span *ngIf="marketerRegisterForm.get('country')?.value" 
-                            class="flag-icon flag-icon-{{ getSelectedCountryFlagCode() }}"></span>
+                      <span *ngIf="marketerRegisterForm.get('country')?.value"
+                        class="flag-icon flag-icon-{{ getSelectedCountryFlagCode() }}"></span>
                       {{ marketerRegisterForm.get('country')?.value || '' }}
                       <i class="fas fa-chevron-down"></i>
                     </span>
                   </div>
-                  <input type="tel" 
-                         class="form-control phone-number" 
-                         id="phone" 
-                         formControlName="phone" 
-                         [placeholder]="getPhonePlaceholder()"
-                         [class.is-invalid]="marketerRegisterForm.get('phone')?.invalid && 
+                  <input type="tel" class="form-control phone-number" id="phone" formControlName="phone"
+                    [placeholder]="getPhonePlaceholder()" [class.is-invalid]="marketerRegisterForm.get('phone')?.invalid && 
                                             marketerRegisterForm.get('phone')?.touched">
                   <!-- Custom Dropdown -->
                   <div class="country-dropdown" *ngIf="showCountryDropdown">
                     <div class="country-list">
-                      <div *ngFor="let country of countries" 
-                           class="country-item" 
-                           (click)="selectCountry(country)">
+                      <div *ngFor="let country of countries" class="country-item" (click)="selectCountry(country)">
                         <span class="flag-icon flag-icon-{{ country.flagCode }}"></span>
                         {{ country.name }} ({{ country.code }})
                       </div>
@@ -145,7 +131,17 @@
                 </div>
               </div>
 
-              <!-- ID Document Upload -->
+              <!-- Location Field -->
+              <div class="col-md-6 mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input type="text" class="form-control" id="location" formControlName="location" [class.is-invalid]="marketerRegisterForm.get('location')?.invalid && 
+                                          marketerRegisterForm.get('location')?.touched">
+                <div class="invalid-feedback">
+                  Please enter your location.
+                </div>
+              </div>
+
+              <!-- ID Document Upload - Commented Out
               <div class="col-12 mb-3">
                 <label for="idImage" class="form-label">Upload ID Document</label>
                 <input type="file" 
@@ -158,29 +154,25 @@
                   Please upload a valid ID document.
                 </div>
               </div>
+              -->
 
               <!-- Password Section -->
               <div class="col-md-6 mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" 
-                       class="form-control" 
-                       id="password" 
-                       formControlName="password" 
-                       (input)="checkPasswordStrength($event)" 
-                       [class.is-invalid]="marketerRegisterForm.get('password')?.invalid && 
+                <input type="password" class="form-control" id="password" formControlName="password"
+                  (input)="checkPasswordStrength($event)" [class.is-invalid]="marketerRegisterForm.get('password')?.invalid && 
                                           marketerRegisterForm.get('password')?.touched">
-                
+
                 <!-- Password Strength Indicator -->
                 <div class="progress mt-2" style="height: 5px;">
-                  <div class="progress-bar" 
-                       [style.width.%]="passwordStrength"
-                       [class.bg-danger]="passwordStrength <= 20"
-                       [class.bg-warning]="passwordStrength > 20 && passwordStrength <= 40"
-                       [class.bg-info]="passwordStrength > 40 && passwordStrength <= 60"
-                       [class.bg-primary]="passwordStrength > 60 && passwordStrength <= 80"
-                       [class.bg-success]="passwordStrength > 80"></div>
+                  <div class="progress-bar" [style.width.%]="passwordStrength"
+                    [class.bg-danger]="passwordStrength <= 20"
+                    [class.bg-warning]="passwordStrength > 20 && passwordStrength <= 40"
+                    [class.bg-info]="passwordStrength > 40 && passwordStrength <= 60"
+                    [class.bg-primary]="passwordStrength > 60 && passwordStrength <= 80"
+                    [class.bg-success]="passwordStrength > 80"></div>
                 </div>
-                
+
                 <div class="password-strength-text mt-1">
                   <small [class.text-danger]="passwordStrength <= 20">Very Weak</small>
                   <small [class.text-warning]="passwordStrength > 20 && passwordStrength <= 40">Weak</small>
@@ -196,11 +188,8 @@
 
               <div class="col-md-6 mb-3">
                 <label for="confirmPassword" class="form-label">Confirm Password</label>
-                <input type="password" 
-                       class="form-control" 
-                       id="confirmPassword" 
-                       formControlName="confirmPassword" 
-                       [class.is-invalid]="marketerRegisterForm.get('confirmPassword')?.invalid && 
+                <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword"
+                  [class.is-invalid]="marketerRegisterForm.get('confirmPassword')?.invalid && 
                                           marketerRegisterForm.get('confirmPassword')?.touched">
                 <div class="invalid-feedback">
                   Passwords do not match.
@@ -210,11 +199,8 @@
               <!-- Company Information -->
               <div class="col-md-6 mb-3">
                 <label for="companyName" class="form-label">Company Name</label>
-                <input type="text" 
-                       class="form-control" 
-                       id="companyName" 
-                       formControlName="companyName" 
-                       [class.is-invalid]="marketerRegisterForm.get('companyName')?.invalid && 
+                <input type="text" class="form-control" id="companyName" formControlName="companyName"
+                  [class.is-invalid]="marketerRegisterForm.get('companyName')?.invalid && 
                                           marketerRegisterForm.get('companyName')?.touched">
                 <div class="invalid-feedback">
                   Please enter your company name (minimum 2 characters).
@@ -223,11 +209,8 @@
 
               <div class="col-md-6 mb-3">
                 <label for="companyWebsite" class="form-label">Company Website (Optional)</label>
-                <input type="url" 
-                       class="form-control" 
-                       id="companyWebsite" 
-                       formControlName="companyWebsite" 
-                       [class.is-invalid]="marketerRegisterForm.get('companyWebsite')?.invalid && 
+                <input type="url" class="form-control" id="companyWebsite" formControlName="companyWebsite"
+                  [class.is-invalid]="marketerRegisterForm.get('companyWebsite')?.invalid && 
                                           marketerRegisterForm.get('companyWebsite')?.touched">
                 <div class="invalid-feedback">
                   Please enter a valid website URL (e.g., https://example.com).
@@ -236,11 +219,8 @@
 
               <div class="col-12 mb-3">
                 <label for="companyDescription" class="form-label">Company Description</label>
-                <textarea class="form-control" 
-                          id="companyDescription" 
-                          formControlName="companyDescription" 
-                          rows="3" 
-                          [class.is-invalid]="marketerRegisterForm.get('companyDescription')?.invalid && 
+                <textarea class="form-control" id="companyDescription" formControlName="companyDescription" rows="3"
+                  [class.is-invalid]="marketerRegisterForm.get('companyDescription')?.invalid && 
                                              marketerRegisterForm.get('companyDescription')?.touched"></textarea>
                 <div class="invalid-feedback">
                   Please provide a company description (minimum 20 characters).
@@ -250,11 +230,8 @@
               <!-- Terms and Conditions -->
               <div class="col-12 mb-3">
                 <div class="form-check">
-                  <input type="checkbox" 
-                         class="form-check-input" 
-                         id="termsAccepted" 
-                         formControlName="termsAccepted" 
-                         [class.is-invalid]="marketerRegisterForm.get('termsAccepted')?.invalid && 
+                  <input type="checkbox" class="form-check-input" id="termsAccepted" formControlName="termsAccepted"
+                    [class.is-invalid]="marketerRegisterForm.get('termsAccepted')?.invalid && 
                                             marketerRegisterForm.get('termsAccepted')?.touched">
                   <label class="form-check-label" for="termsAccepted">
                     I accept the terms and conditions
@@ -267,9 +244,8 @@
 
               <!-- Submit Button -->
               <div class="col-12">
-                <button type="submit" 
-                        class="btn btn-primary w-100" 
-                        [disabled]="marketerRegisterForm.invalid || isLoading">
+                <button type="submit" class="btn btn-primary w-100"
+                  [disabled]="marketerRegisterForm.invalid || isLoading">
                   <span *ngIf="!isLoading">Register as Marketer</span>
                   <span *ngIf="isLoading">
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
