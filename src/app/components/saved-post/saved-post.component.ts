@@ -1,22 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TrendingSidebarComponent } from '../trending-sidebar/trending-sidebar.component';
 import { trigger, transition, style, animate } from '@angular/animations';
-
-interface SavedPost {
-  id: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  timestamp: Date;
-  username: string;
-  userImage: string;
-  category: string;
-  price: number;
-  likes: number;
-  isLiked: boolean;
-}
+import { PostService } from '../../services/post.service';
+import { Post } from '../../interfaces/post';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-saved-post',
@@ -35,68 +24,15 @@ interface SavedPost {
         ])
     ]
 })
-export class SavedPostComponent implements OnInit {
-  savedPosts: SavedPost[] = [
-    {
-      id: 1,
-      title: 'Modern Desk Setup',
-      description: 'Complete workspace setup with ergonomic features.',
-      imageUrl: 'images/post-image-1.png',
-      timestamp: new Date(),
-      username: 'Ahmed Ali',
-      userImage: 'images/user-1.png',
-      category: 'Electronics',
-      price: 299.99,
-      likes: 45,
-      isLiked: false
-    },
-    {
-      id: 2,
-      title: 'Professional Camera Kit',
-      description: 'DSLR camera with multiple lenses and accessories.',
-      imageUrl: 'images/post-image-3.png',
-      timestamp: new Date(),
-      username: 'Sara Mohamed',
-      userImage: 'images/user-2.png',
-      category: 'Photography',
-      price: 899.99,
-      likes: 32,
-      isLiked: true
-    },
-    {
-      id: 3,
-      title: 'Smart Home Bundle',
-      description: 'Complete smart home setup with voice control.',
-      imageUrl: 'images/post-image-2.png',
-      timestamp: new Date(),
-      username: 'Mohammed Hassan',
-      userImage: 'images/user-3.png',
-      category: 'Home & Kitchen',
-      price: 599.99,
-      likes: 28,
-      isLiked: false
-    },
-    {
-      id: 4,
-      title: 'Gaming Console Pro',
-      description: 'Latest gaming console with 2 controllers and games.',
-      imageUrl: 'images/post-image-4.png',
-      timestamp: new Date(),
-      username: 'Fatima Ahmed',
-      userImage: 'images/user-4.png',
-      category: 'Video Games',
-      price: 499.99,
-      likes: 56,
-      isLiked: true
-    }
-  ];
-
+export class SavedPostComponent implements OnInit, OnDestroy {
+  savedPosts: Post[] = [];
   searchQuery: string = '';
   selectedCategory: string = 'All';
   sortOption: string = 'newest';
   isLoading: boolean = false;
   showShareModal: boolean = false;
-  selectedPost: SavedPost | null = null;
+  selectedPost: Post | null = null;
+  private subscription: Subscription = new Subscription();
 
   categories = [
     { name: 'All', icon: 'bi bi-collection' },
@@ -120,60 +56,70 @@ export class SavedPostComponent implements OnInit {
     { name: 'Perfumes', icon: 'bi bi-flower1' }
   ];
 
-  get filteredPosts(): SavedPost[] {
+  constructor(private postService: PostService) {}
+
+  ngOnInit(): void {
+    this.isLoading = true;
+    this.subscription.add(
+      this.postService.getSavedPosts().subscribe(posts => {
+        this.savedPosts = posts;
+        this.isLoading = false;
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  get filteredPosts(): Post[] {
     return this.savedPosts
       .filter(post => {
-        const matchesSearch = post.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                            post.description.toLowerCase().includes(this.searchQuery.toLowerCase());
+        const matchesSearch = post.content.toLowerCase().includes(this.searchQuery.toLowerCase());
         const matchesCategory = this.selectedCategory === 'All' || post.category === this.selectedCategory;
         return matchesSearch && matchesCategory;
       })
       .sort((a, b) => {
         switch (this.sortOption) {
           case 'newest':
-            return b.timestamp.getTime() - a.timestamp.getTime();
+            return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
           case 'oldest':
-            return a.timestamp.getTime() - b.timestamp.getTime();
+            return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
           case 'priceHigh':
-            return b.price - a.price;
+            return (b.price || 0) - (a.price || 0);
           case 'priceLow':
-            return a.price - b.price;
+            return (a.price || 0) - (b.price || 0);
           case 'mostLiked':
-            return b.likes - a.likes;
+            return (b.likes || 0) - (a.likes || 0);
           default:
             return 0;
         }
       });
   }
 
-  deletePost(id: number) {
+  deletePost(id: string) {
     this.isLoading = true;
-    setTimeout(() => {
-      this.savedPosts = this.savedPosts.filter(post => post.id !== id);
-      this.isLoading = false;
-    }, 500);
+    this.postService.removeSavedPost(id);
+    this.isLoading = false;
   }
 
-  orderNow(post: SavedPost) {
-    this.isLoading = true;
-    // Simulating API call
-    setTimeout(() => {
-      alert(`Order placed for: ${post.title}\nTotal: $${post.price.toFixed(2)}`);
-      this.isLoading = false;
-    }, 1000);
+  toggleLike(post: Post) {
+    post.liked = !post.liked;
+    post.likes = (post.likes || 0) + (post.liked ? 1 : -1);
+    this.postService.updatePost(post);
   }
 
-  toggleLike(post: SavedPost) {
-    post.isLiked = !post.isLiked;
-    post.likes += post.isLiked ? 1 : -1;
-  }
-
-  sharePost(post: SavedPost) {
+  sharePost(post: Post) {
     this.selectedPost = post;
     this.showShareModal = true;
   }
 
-  async copyLink(post: SavedPost) {
+  closeShareModal() {
+    this.showShareModal = false;
+    this.selectedPost = null;
+  }
+
+  async copyLink(post: Post) {
     const url = `${window.location.origin}/post/${post.id}`;
     try {
       await navigator.clipboard.writeText(url);
@@ -187,7 +133,7 @@ export class SavedPostComponent implements OnInit {
     if (!this.selectedPost) return;
 
     const url = encodeURIComponent(`${window.location.origin}/post/${this.selectedPost.id}`);
-    const text = encodeURIComponent(`Check out this amazing post: ${this.selectedPost.title}`);
+    const text = encodeURIComponent(`Check out this post: ${this.selectedPost.content}`);
 
     let shareUrl = '';
     switch (platform) {
@@ -207,15 +153,10 @@ export class SavedPostComponent implements OnInit {
     }
   }
 
-  closeShareModal() {
-    this.showShareModal = false;
-    this.selectedPost = null;
-  }
-
-  ngOnInit(): void {
-    // Simulate loading state
+  orderNow(post: Post) {
     this.isLoading = true;
     setTimeout(() => {
+      alert(`Order placed for post by ${post.username}`);
       this.isLoading = false;
     }, 1000);
   }

@@ -52,7 +52,7 @@
         <div *ngFor="let post of filteredPosts" class="saved-post-card" @fadeInOut>
           <div class="post-header">
             <div class="user-info">
-              <img [src]="post.userImage" [alt]="post.username" class="avatar">
+              <img [src]="post.profileImageUrl" [alt]="post.username" class="avatar">
               <div class="user-details">
                 <h6>{{post.username}}</h6>
                 <small class="text-muted">{{post.timestamp | date:'medium'}}</small>
@@ -62,16 +62,16 @@
           </div>
 
           <div class="post-content">
-            <img [src]="post.imageUrl" [alt]="post.title" class="post-image">
+            <img *ngIf="post.media && post.media.length > 0" [src]="post.media[0].url" [alt]="post.content" class="post-image">
             <div class="post-details">
-              <h5>{{post.title}}</h5>
-              <p>{{post.description}}</p>
-              <div class="price-tag">${{post.price.toFixed(2)}}</div>
+              <h5>{{post.content}}</h5>
+              <p>{{post.content}}</p>
+              <div class="price-tag" *ngIf="post.price">${{post.price.toFixed(2)}}</div>
 
               <div class="post-actions">
                 <div class="likes-section">
-                  <button class="btn btn-like" [class.liked]="post.isLiked" (click)="toggleLike(post)">
-                    <i class="bi" [class.bi-heart-fill]="post.isLiked" [class.bi-heart]="!post.isLiked"></i>
+                  <button class="btn btn-like" [class.liked]="post.liked" (click)="toggleLike(post)">
+                    <i class="bi" [class.bi-heart-fill]="post.liked" [class.bi-heart]="!post.liked"></i>
                     <span>{{post.likes}}</span>
                   </button>
                 </div>

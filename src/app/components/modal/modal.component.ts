@@ -21,6 +21,7 @@ interface MediaItem {
   name?: string;
   size?: number;
   thumbnailUrl?: string;
+  file?: File;
 }
 
 interface Category {
@@ -114,6 +115,22 @@ export class ModalComponent implements OnInit {
 
     if (postContent.trim() || this.mediaItems.length > 0) {
       try {
+        // Upload all media items first
+        const uploadedMedia = await Promise.all(
+          this.mediaItems.map(async (item) => {
+            if (item.type === 'image' && item.file) {
+              const imageUrl = await this.supabaseService.uploadImage(item.file, 'post-images');
+              return {
+                type: 'image' as const,
+                url: imageUrl,
+                name: item.name,
+                size: item.size
+              };
+            }
+            return item;
+          })
+        );
+
         const newPost = {
           username: this.users[0].username,
           profileImageUrl: this.users[0].profileImageUrl,
@@ -122,14 +139,9 @@ export class ModalComponent implements OnInit {
           category: this.selectedCategory,
           subCategory: this.selectedSubcategory,
           audience: this.selectedAudience,
-          media: this.mediaItems.map(item => ({
-            type: item.type,
-            url: item.url,
-            name: item.name,
-            size: item.size,
-            thumbnailUrl: item.thumbnailUrl
-          })),
+          media: uploadedMedia,
           currentImageIndex: 0,
+          images: uploadedMedia.filter(item => item.type === 'image').map(item => item.url),
           price: this.postPrice,
           likes: 0,
           Shares: 0,
@@ -144,25 +156,7 @@ export class ModalComponent implements OnInit {
 
         const post: Post = {
           id: Date.now().toString(),
-          username: newPost.username,
-          profileImageUrl: newPost.profileImageUrl,
-          timestamp: newPost.timestamp,
-          content: newPost.content,
-          category: newPost.category,
-          subCategory: newPost.subCategory,
-          audience: newPost.audience,
-          media: newPost.media,
-          currentImageIndex: newPost.currentImageIndex,
-          price: newPost.price,
-          likes: newPost.likes,
-          Shares: newPost.Shares,
-          Saves: newPost.Saves,
-          showComments: newPost.showComments,
-          isEditing: newPost.isEditing,
-          liked: newPost.liked,
-          saved: newPost.saved,
-          isFollowing: newPost.isFollowing,
-          comments: newPost.comments
+          ...newPost
         };
 
         await this.postService.addPost(post);

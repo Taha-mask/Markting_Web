@@ -9,9 +9,16 @@ import { Firestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteD
 })
 export class PostService {
   private postsSubject = new BehaviorSubject<Post[]>([]);
+  private savedPosts = new BehaviorSubject<Post[]>([]);
   posts$ = this.postsSubject.asObservable();
 
-  constructor(private firestore: Firestore) { }
+  constructor(private firestore: Firestore) {
+    // Load saved posts from localStorage on service initialization
+    const savedPosts = localStorage.getItem('savedPosts');
+    if (savedPosts) {
+      this.savedPosts.next(JSON.parse(savedPosts));
+    }
+  }
 
   getPost(id: string): Observable<Post> {
     return from(getDoc(doc(this.firestore, 'posts', id))).pipe(
@@ -25,13 +32,11 @@ export class PostService {
   }
 
   getPosts(): Observable<Post[]> {
-    return from(getDocs(collection(this.firestore, 'posts'))).pipe(
-      map(snapshot =>
-        snapshot.docs.map(doc =>
-          this.ensurePostProperties({ id: doc.id, ...doc.data() })
-        )
-      )
-    );
+    return this.postsSubject.asObservable();
+  }
+
+  getSavedPosts(): Observable<Post[]> {
+    return this.savedPosts.asObservable();
   }
 
   addPost(post: Post): Promise<void> {
@@ -46,6 +51,40 @@ export class PostService {
     return posts
       .map(post => this.ensurePostProperties(post))
       .filter(post => post.category === category && post.subCategory === subCategory);
+  }
+
+  savePost(post: Post) {
+    const currentSavedPosts = this.savedPosts.value;
+    // Check if post is already saved
+    if (!currentSavedPosts.find(p => p.id === post.id)) {
+      const updatedSavedPosts = [post, ...currentSavedPosts];
+      this.savedPosts.next(updatedSavedPosts);
+      // Save to localStorage
+      localStorage.setItem('savedPosts', JSON.stringify(updatedSavedPosts));
+    }
+  }
+
+  removeSavedPost(postId: string) {
+    const currentSavedPosts = this.savedPosts.value;
+    const updatedSavedPosts = currentSavedPosts.filter(post => post.id !== postId);
+    this.savedPosts.next(updatedSavedPosts);
+    // Update localStorage
+    localStorage.setItem('savedPosts', JSON.stringify(updatedSavedPosts));
+  }
+
+  updatePost(updatedPost: Post) {
+    const currentPosts = this.postsSubject.value;
+    const index = currentPosts.findIndex(post => post.id === updatedPost.id);
+    if (index !== -1) {
+      currentPosts[index] = updatedPost;
+      this.postsSubject.next([...currentPosts]);
+    }
+  }
+
+  deletePost(postId: string) {
+    const currentPosts = this.postsSubject.value;
+    const updatedPosts = currentPosts.filter(post => post.id !== postId);
+    this.postsSubject.next(updatedPosts);
   }
 
   private ensurePostProperties(post: Partial<Post>): Post {

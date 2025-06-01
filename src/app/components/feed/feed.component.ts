@@ -516,7 +516,35 @@ export class FeedComponent implements OnInit, OnDestroy {
 
   toggleSave(post: any) {
     post.saved = !post.saved;
-    post.Saves += post.saved ? 1 : -1;
+    if (post.saved) {
+      post.Saves++;
+      // Save the post to saved posts
+      const savedPost: Post = {
+        id: post.id,
+        content: post.content,
+        username: post.username,
+        profileImageUrl: post.profileImageUrl,
+        timestamp: post.timestamp,
+        category: post.category,
+        subCategory: post.subCategory,
+        audience: post.audience || 'public',
+        media: post.media || [],
+        currentImageIndex: post.currentImageIndex || 0,
+        likes: post.likes || 0,
+        Shares: post.Shares || 0,
+        Saves: post.Saves || 0,
+        showComments: post.showComments || false,
+        isEditing: post.isEditing || false,
+        liked: post.liked || false,
+        saved: post.saved || false,
+        comments: post.comments || [],
+        isFollowing: post.isFollowing || false
+      };
+      this.postService.savePost(savedPost);
+    } else {
+      post.Saves--;
+      this.postService.removeSavedPost(post.id);
+    }
   }
 
   nextImage(post: any) {
